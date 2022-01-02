@@ -120,7 +120,7 @@
 	if(!active_item || (active_item in src))
 		return
 
-	owner?.visible_message(span_notice("owner] втягивает [active_item] обратно в [owner.ru_ego()] [zone == BODY_ZONE_R_ARM ? "правую" : "левую"] руку."),
+	owner?.visible_message(span_notice("[owner] втягивает [active_item] обратно в [owner.ru_ego()] [zone == BODY_ZONE_R_ARM ? "правую" : "левую"] руку."),
 		span_notice("[capitalize(active_item)] возвращается в мою [zone == BODY_ZONE_R_ARM ? "правую" : "левую"] руку."),
 		span_hear("Слышу короткий механический шелчок."))
 
@@ -297,4 +297,6 @@
 /obj/item/organ/cyberimp/arm/surgery
 	name = "имплант хирургических инструментов"
 	desc = "Набор хирургических инструментов скрывающийся за скрытой панелью на руке пользователя."
-	items_to_create = list(/obj/item/retractor/augment, /obj/item/hemostat/augment, /obj/item/cautery/augment, /obj/item/surgicaldrill/augment, /obj/item/scalpel/augment, /obj/item/circular_saw/augment, /obj/item/surgical_drapes)
+	icon = 'white/Feline/icons/cyber_arm_surgery.dmi'
+	icon_state = "cyber_arm_surgery"
+	items_to_create = list(/obj/item/surgical_drapes, /obj/item/scalpel/augment, /obj/item/circular_saw/augment, /obj/item/hemostat/augment, /obj/item/retractor/augment, /obj/item/cautery/augment, /obj/item/bonesetter/augment)

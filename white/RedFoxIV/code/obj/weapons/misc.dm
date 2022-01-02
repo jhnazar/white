@@ -352,6 +352,8 @@
 		/datum/reagent/medicine/c2/synthflesh = 0.25,
 		/datum/reagent/medicine/sal_acid = 0.33,
 		/datum/reagent/medicine/oxandrolone = 0.33,
+		/datum/reagent/medicine/pen_acid = 0.33,
+		/datum/reagent/medicine/salbutamol = 0.33,
 		/datum/reagent/medicine/cryoxadone = 0.2,
 		/datum/reagent/medicine/c2/penthrite = 1,
 		//misc//
@@ -633,9 +635,9 @@
 	shoes = /obj/item/clothing/shoes/combat/artist
 	r_hand = /obj/item/storage/toolbox/mechanical
 
-/obj/effect/mob_spawn/human/donate/artist/create(ckey, newname)
-	if(ckey)
-		var/client/C = GLOB.directory[ckey]
+/obj/effect/mob_spawn/human/donate/artist/create(mob/user, newname)
+	if(user?.ckey)
+		var/client/C = GLOB.directory[user.ckey]
 		if(C?.prefs)
 			hairstyle =  C.prefs.hairstyle
 			facial_hairstyle = C.prefs.facial_hairstyle
@@ -716,7 +718,7 @@
 		return
 	. = ..()
 
-/obj/effect/mob_spawn/human/donate/artist/create(ckey, newname)
+/obj/effect/mob_spawn/human/donate/artist/create(mob/user, newname)
 	. = ..()
 	var/mob/living/L = .
 	spawned_mobs += L
@@ -737,7 +739,7 @@
 		if(!i)
 			spawned_mobs -= i
 			continue
-		var/mob/living/artist = i
+		var/mob/living/carbon/human/artist = i
 		if(HAS_TRAIT(artist, TRAIT_CRITICAL_CONDITION) || artist.stat == DEAD || !artist.key)
 			spawned_mobs.Remove(artist)
 			artist.alpha = 0 //because dust animation does not hide the body while playing, which look really fuckiing weird
@@ -749,7 +751,9 @@
 			spawned_mobs.Remove(artist)
 			to_chat(artist, span_userdanger("Ох, лучше бы я не покидал Цирк...")) //let them know they fucked up
 			message_admins("Игрок [artist.ckey], будучи Артистом, каким-то образом сбежал из цирка, за что был казнён и лишён доступа к спавнеру до конца раунда. Такого быть не должно: выясните, как он этого добился и передайте кодербасу. Если же это произошло по вине админбаса, удалите сикей игрока из переменной спавнера (round_banned_ckeys). Позиция игрока на момент обнаружения побега: x=[artist.x], y=[artist.y], z=[artist.z], название зоны - [get_area_name(artist)]")
-			artist.pooition = 10000
+			var/obj/item/organ/O = artist.internal_organs_slot[ORGAN_SLOT_GUTS]
+			if(O)
+				O.reagents.add_reagent(/datum/reagent/toxin/poo, 10000)
 			artist.emote("agony")
 
 
@@ -850,7 +854,7 @@
 		return
 
 	var/ghost_role = tgui_alert(usr, "Точно хочешь начать дуэль? (Ты не сможешь вернуться в своё прошлое тело, так что выбирай с умом!)",,list("Да","Нет"))
-	if(ghost_role == "Нет" || !loc || QDELETED(user))
+	if(ghost_role != "Да" || !loc || QDELETED(user))
 		return
 	var/betinput = input("Сколько метакэша готов поставить? (Не меньше 50!)", "1XBET", 50) as num
 	if(betinput < 0)

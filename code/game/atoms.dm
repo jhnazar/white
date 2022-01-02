@@ -281,6 +281,7 @@
 	orbiters = null // The component is attached to us normaly and will be deleted elsewhere
 
 	LAZYCLEARLIST(overlays)
+	LAZYNULL(managed_overlays)
 
 	QDEL_NULL(light)
 	QDEL_NULL(ai_controller)
@@ -612,8 +613,8 @@
 		var/list/materials_list = list()
 		for(var/i in custom_materials)
 			var/datum/material/M = i
-			materials_list += "[M.skloname]"
-		. += span_small("Вероятно, этот предмет создан из <u>[english_list(materials_list)]</u>.")
+			materials_list += "<font color='[M.color]'>[M.skloname]</font>"
+		. += span_small("Этот предмет создан из <u>[english_list(materials_list)]</u>.")
 	if(reagents)
 		. += "<hr>"
 		if(reagents.flags & TRANSPARENT)
@@ -640,7 +641,7 @@
 
 	if(ishuman(user))
 		if(user.stat == CONSCIOUS && !user.eye_blind)
-			user.visible_message(span_small("<b>[user]</b> смотрит на <b>[sklonenie(name, VINITELNI, gender)]</b>.") , span_small("Смотрю на <b>[src.name]</b>.") , null, COMBAT_MESSAGE_RANGE)
+			user.visible_message(span_small("<b>[user]</b> смотрит на <b>[skloname(name, VINITELNI, gender)]</b>.") , span_small("Смотрю на <b>[src.name]</b>.") , null, COMBAT_MESSAGE_RANGE)
 		if(user.status_traits)
 			if(HAS_TRAIT(user, TRAIT_JEWISH))
 				var/datum/export_report/ex = export_item_and_contents(src, EXPORT_PIRATE | EXPORT_CARGO | EXPORT_CONTRABAND, dry_run=TRUE)
@@ -1662,7 +1663,8 @@
 	var/postfix = "[sobject][saddition][hp]"
 
 	var/message = "has [what_done] [starget][postfix]"
-	user.log_message(message, LOG_ATTACK, color="red")
+	if(user)
+		user.log_message(message, LOG_ATTACK, color="red")
 
 	if(user != target)
 		var/reverse_message = "has been [what_done] by [ssource][postfix]"
@@ -1765,8 +1767,8 @@
 	filter_data = null
 	filters = null
 
-/atom/proc/intercept_zImpact(atom/movable/AM, levels = 1)
-	. |= SEND_SIGNAL(src, COMSIG_ATOM_INTERCEPT_Z_FALL, AM, levels)
+/atom/proc/intercept_zImpact(list/falling_movables, levels = 1)
+	. |= SEND_SIGNAL(src, COMSIG_ATOM_INTERCEPT_Z_FALL, falling_movables, levels)
 
 /// Sets the custom materials for an item.
 /atom/proc/set_custom_materials(list/materials, multiplier = 1)

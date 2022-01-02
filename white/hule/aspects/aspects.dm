@@ -275,6 +275,7 @@
 	name = "Fast and Furious"
 	desc = "Люди спешат и не важно куда."
 	weight = 9
+	forbidden = TRUE
 
 /datum/round_aspect/fast_and_furious/run_aspect()
 	CONFIG_SET(number/movedelay/run_delay, 1)
@@ -284,6 +285,7 @@
 	name = "Weak"
 	desc = "Удары стали слабее. Пули мягче. К чему это приведёт?"
 	weight = 6
+	forbidden = TRUE
 
 /datum/round_aspect/weak/run_aspect()
 	CONFIG_SET(number/damage_multiplier, 0.5)
@@ -303,6 +305,7 @@
 	name = "Bloody"
 	desc = "В эту смену любая незначительная травма может оказаться летальной."
 	weight = 6
+	forbidden = TRUE
 
 /datum/round_aspect/bloody/run_aspect()
 	CONFIG_SET(number/damage_multiplier, 3)
@@ -397,6 +400,11 @@
 		var/datum/job/J = I
 		J.total_positions = 750
 
+/datum/controller/subsystem/job/proc/DisableAllJobs()
+	for(var/I in occupations)
+		var/datum/job/J = I
+		J.total_positions = 0
+
 /datum/round_aspect/emergency_meeting
 	name = "Emergency Meeting"
 	desc = "ЭКСТРЕННЫЙ СБОР!"
@@ -424,6 +432,7 @@
 	name = "Oleg"
 	desc = "Олег."
 	weight = 5
+	forbidden = TRUE
 
 /datum/round_aspect/oleg/run_aspect()
 	SSjob.forced_name = "Олег"
@@ -431,4 +440,99 @@
 		for(var/mob/living/carbon/human/H in GLOB.mob_list)
 			H.fully_replace_character_name(H.real_name, "[SSjob.forced_name] \Roman[SSjob.forced_num]")
 			SSjob.forced_num++
+	..()
+
+/datum/round_aspect/key
+	name = "Key"
+	desc = "Ключевые события теперь подпитаны правдой."
+	weight = 4
+	forbidden = TRUE
+
+/datum/round_aspect/key/run_aspect()
+	SSjob.forced_name = "KEY"
+	spawn(5 SECONDS)
+		for(var/mob/living/carbon/human/H in GLOB.mob_list)
+			H.fully_replace_character_name(H.real_name, "[H.key]")
+			SSjob.forced_num++
+	..()
+
+/datum/round_aspect/rdmg
+	name = "Random DMG"
+	desc = "Везёт же некоторым, а может и не везёт. Наше восприятие искажено до такой степени, что мы можем прожечь себе руку холодным ножом."
+	weight = 15
+
+/datum/round_aspect/rdmg/run_aspect()
+	GLOB.random_damage_goes_on = TRUE
+	..()
+
+/datum/round_aspect/fireunlock
+	name = "Fireunlock"
+	desc = "Пожарные шлюзы украли!"
+	weight = 3
+	forbidden = TRUE
+
+/datum/round_aspect/fireunlock/run_aspect()
+	for(var/obj/machinery/door/firedoor/F in world)
+		qdel(F)
+	..()
+
+/datum/round_aspect/ihavetwobuttsbutimustseat
+	name = "I Have Two Butts But I must Seat"
+	desc = "Стулья украли!"
+	weight = 5
+
+/datum/round_aspect/ihavetwobuttsbutimustseat/run_aspect()
+	for(var/obj/structure/chair/C in world)
+		qdel(C)
+	..()
+
+/datum/round_aspect/hungry_bin
+	name = "Hungry Bin"
+	desc = "Мусорки проголодались!"
+	weight = 5
+	forbidden = TRUE
+
+/datum/round_aspect/hungry_bin/run_aspect()
+	GLOB.disposals_are_hungry = TRUE
+	..()
+
+/datum/round_aspect/stolen_floor
+	name = "Stolen Floor"
+	desc = "Рабочие забыли положить плитку при строительстве станции."
+	weight = 4
+
+/datum/round_aspect/stolen_floor/run_aspect()
+	for(var/turf/open/floor/P in world)
+		P.ChangeTurf(/turf/open/floor/plating, flags = CHANGETURF_DEFER_CHANGE)
+		CHECK_TICK
+	..()
+
+/datum/round_aspect/strong_floor
+	name = "Strong Floor"
+	desc = "Пол был кем-то укреплён."
+	weight = 3
+
+/datum/round_aspect/strong_floor/run_aspect()
+	for(var/turf/open/floor/P in world)
+		P.ChangeTurf(/turf/open/floor/engine, flags = CHANGETURF_DEFER_CHANGE)
+		CHECK_TICK
+	..()
+
+/datum/round_aspect/are_we_in_dungeon
+	name = "Are We In Dungeon"
+	desc = "В связи с невероятной хрупкостью окон было решено заменить их на стены."
+	weight = 3
+
+/datum/round_aspect/are_we_in_dungeon/run_aspect()
+	for(var/obj/structure/window/W in world)
+		var/turf/TT = get_turf(W)
+		if(TT)
+			if(istype(W, /obj/structure/window/reinforced))
+				TT.ChangeTurf(/turf/closed/wall/r_wall, flags = CHANGETURF_DEFER_CHANGE)
+			else
+				TT.ChangeTurf(/turf/closed/wall, flags = CHANGETURF_DEFER_CHANGE)
+			qdel(W)
+	for(var/obj/structure/grille/G in world)
+		qdel(G)
+		CHECK_TICK
 	..()

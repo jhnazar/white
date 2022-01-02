@@ -26,7 +26,6 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	requires_power = TRUE
 	always_unpowered = TRUE
 	static_lighting = FALSE
-	base_lighting_color = COLOR_WHITE
 	base_lighting_alpha = 255
 	power_light = FALSE
 	power_equip = FALSE
@@ -44,7 +43,6 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	icon_state = "space_near"
 	area_flags = UNIQUE_AREA | NO_ALERTS | AREA_USES_STARLIGHT
 	enabled_area_tension = FALSE
-	static_lighting = TRUE
 
 /area/start
 	name = "Лобби"
@@ -76,9 +74,7 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	sound_environment = SOUND_AREA_ASTEROID
 
 /area/asteroid/nearstation
-	static_lighting = FALSE
-	base_lighting_alpha = 255
-	base_lighting_color = COLOR_WHITE
+	static_lighting = TRUE
 	ambience_index = AMBIENCE_RUINS
 	ambientsounds = RUINS
 	always_unpowered = FALSE
@@ -383,6 +379,9 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	name = "Коридоры: Шаттл прибытия"
 	icon_state = "entry"
 
+/area/hallway/secondary/entry/south
+	name = "Коридоры: Южное прибытие"
+
 /area/hallway/secondary/service
 	name = "Коридоры: Обслуга"
 	icon_state = "hall_service"
@@ -469,6 +468,48 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	icon_state = "dorms"
 	area_flags = VALID_TERRITORY | BLOBS_ALLOWED | UNIQUE_AREA
 
+/area/commons/dorms/one
+	name = "Комната: Первая"
+
+/area/commons/dorms/two
+	name = "Комната: Вторая"
+
+/area/commons/dorms/three
+	name = "Комната: Третья"
+
+/area/commons/dorms/four
+	name = "Комната: Четвёртая"
+
+/area/commons/dorms/five
+	name = "Комната: Пятая"
+
+/area/commons/dorms/six
+	name = "Комната: Шестая"
+
+/area/commons/dorms/seven
+	name = "Комната: Седьмая"
+
+/area/commons/dorms/eight
+	name = "Комната: Восьмая"
+
+/area/commons/dorms/nine
+	name = "Комната: Девятая"
+
+/area/commons/dorms/ten
+	name = "Комната: Десятая"
+
+/area/commons/dorms/cabin/one
+	name = "Кабина дорм: Первая"
+
+/area/commons/dorms/cabin/two
+	name = "Кабина дорм: Вторая"
+
+/area/commons/dorms/cabin/three
+	name = "Кабина дорм: Третья"
+
+/area/commons/dorms/cabin/four
+	name = "Кабина дорм: Четвертая"
+
 /area/commons/dorms/barracks
 	name = "Зона отдыха: Бараки"
 
@@ -526,6 +567,10 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 /area/commons/fitness/recreation
 	name = "Зона отдыха"
 	icon_state = "rec"
+
+/area/commons/cryopods
+	name = "Криоподы"
+	icon_state = "cryopod"
 
 /area/service/cafeteria
 	name = "Зона отдыха: Кафетерий"
@@ -1001,6 +1046,8 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 /area/security/prison
 	name = "Тюрьма"
 	icon_state = "sec_prison"
+	mood_bonus = -16
+	mood_message = span_danger("Я здесь точно сгнию...\n")
 
 /area/security/prison/toilet //radproof
 	name = "Тюрьма: Туалет"
@@ -1303,6 +1350,10 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 	name = "Хранилище: Западное"
 	icon_state = "emergency_storage"
 
+/area/engineering/storage/backup
+	name = "Хранилище: Запасная техника"
+	icon_state = "aux_storage"
+
 /area/engineering/storage/tech
 	name = "Хранилище: Техника"
 	icon_state = "aux_storage"
@@ -1346,6 +1397,12 @@ NOTE: there are two lists of areas in the end of this file: centcom and station 
 
 /area/commons/vacant_room/commissary/second
 	name = "Нижний магазин"
+
+/area/commons/vacant_room/commissary/third
+	name = "Дополнительный магазин"
+
+/area/commons/vacant_room/commissary/fourth
+	name = "Интересный магазин"
 
 //AI
 

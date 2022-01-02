@@ -167,7 +167,7 @@
 					permitted = FALSE
 
 				if(!permitted)
-					to_chat(M, span_warning("Должность или раса не позволяют мне иметь [G.display_name]!"))
+					to_chat(M, span_warning("Не удалость пронести <b>[G.display_name]</b> на станцию!"))
 					continue
 
 				if(G.slot)
@@ -208,12 +208,19 @@
 
 			to_chat(M, span_danger("Что-то пришлось оставить..."))
 			qdel(item)
+	// новый год 2022
+	if(SSevents.holidays[NEW_YEAR])
+		var/obj/item/storage/backpack/b = locate() in H.contents
+		var/givegift = pick(/obj/item/storage/box/festive/cartonbox,
+							/obj/item/storage/box/festive/cartonbox/alt,
+							/obj/item/storage/box/festive/cartonbox/meshok)
+		if(b)
+			new givegift(b)
 
-	// новый год 2021
-	//var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
-	//H.put_in_hands(garl)
-	//H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
-
+	var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
+	H.put_in_hands(garl)
+	H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
+	// новый год 2022
 /datum/job/proc/announce(mob/living/carbon/human/H, announce_captaincy = FALSE)
 	if(head_announce)
 		announce_head(H, head_announce)
@@ -249,6 +256,8 @@
 		var/datum/bank_account/bank_account = new(H.real_name, src, H.dna.species.payday_modifier)
 		if(!latejoin)
 			bank_account.payday(STARTING_PAYCHECKS, TRUE)
+		else
+			bank_account.payday(1, TRUE)
 		H.account_id = bank_account.account_id
 
 	//Equip the rest of the gear
@@ -264,7 +273,10 @@
 	H.dna.species.after_equip_job(src, H, visualsOnly)
 
 	if(latejoin && SSjob.forced_name)
-		H.fully_replace_character_name(H.real_name, "[SSjob.forced_name] \Roman[SSjob.forced_num]")
+		if(SSjob.forced_name == "KEY")
+			H.fully_replace_character_name(H.real_name, "[H.key]")
+		else
+			H.fully_replace_character_name(H.real_name, "[SSjob.forced_name] \Roman[SSjob.forced_num]")
 		SSjob.forced_num++
 
 	if(!visualsOnly && announce)

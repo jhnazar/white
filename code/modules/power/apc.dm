@@ -233,10 +233,11 @@
 
 	if(malfai && operating)
 		malfai.malf_picker.processing_time = clamp(malfai.malf_picker.processing_time - 10,0,1000)
-	area.power_light = FALSE
-	area.power_equip = FALSE
-	area.power_environ = FALSE
-	area.power_change()
+	if(area)
+		area.power_light = FALSE
+		area.power_equip = FALSE
+		area.power_environ = FALSE
+		area.power_change()
 	QDEL_NULL(alarm_manager)
 	if(occupier)
 		malfvacate(1)
@@ -1556,6 +1557,6 @@
 
 /*Power module, used for APC construction*/
 /obj/item/electronics/apc
-	name = "power control module"
+	name = "контролер энергощитка"
 	icon_state = "power_mod"
 	desc = "Heavy-duty switching circuits for power control."

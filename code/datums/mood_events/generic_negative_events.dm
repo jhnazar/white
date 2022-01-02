@@ -33,9 +33,8 @@
 	timeout = 3 MINUTES
 
 /datum/mood_event/pooed
-	description = "<span class='warning'>Меня обмазали говном. На вкус как говно.</span>\n"
+	description = "<span class='warning'>Мы в дерьме!</span>\n"
 	mood_change = -25
-	timeout = 10 MINUTES
 
 /datum/mood_event/slipped
 	description = "<span class='warning'>Опять поскальзываюсь. Надо быть аккуратней.</span>\n"
@@ -279,6 +278,25 @@
 	mood_change *= people_laughing_at_you
 	return ..()
 
+/datum/mood_event/tail_lost
+	description = "<span class='boldwarning'>А-А-А-А! МОЙ ХВОСТ! ЗА ЧТО?!!</span>\n"
+	mood_change = -40
+	timeout = 120 MINUTES
+
+/datum/mood_event/tail_balance_lost
+	description = "<span class='warning'>Чувствую, что не могу держать баланс без своего хвостика...</span>\n"
+	mood_change = -4
+
+/datum/mood_event/tail_regained_right
+	description = "<span class='warning'>О-ох. Мой хвост возвращен, но это было больно!</span>\n"
+	mood_change = -4
+	timeout = 5 MINUTES
+
+/datum/mood_event/tail_regained_wrong
+	description = "<span class='boldwarning'>Это что, какая-то больная шутка?! Это не МОЙ хвост!!</span>\n"
+	mood_change = -40 // -8 for tail still missing + -4 bonus for being frakenstein's monster
+	timeout = 180 MINUTES
+
 //These are unused so far but I want to remember them to use them later
 /datum/mood_event/surgery
 	description = "<span class='boldwarning'>МЕНЯ РЕЖУТ НА КУСОЧКИ!!</span>\n"
@@ -305,34 +323,25 @@
 	mood_change = -10
 	timeout = 4 MINUTES
 
+/datum/mood_event/noogie
+	description = "<span class='warning'>Ow! This is like space high school all over again...</span>\n"
+	mood_change = -10
+	timeout = 60 SECONDS
+
+/datum/mood_event/noogie_harsh
+	description = "<span class='warning'>OW!! That was even worse than a regular noogie!</span>\n"
+	mood_change = -20
+	timeout = 60 SECONDS
+
 /datum/mood_event/aquarium_negative
 	description = "<span class='warning'>Жалко рыбок...</span>\n"
 	mood_change = -6
 	timeout = 90 SECONDS
 
-/datum/mood_event/tail_lost
-	description = "<span class='boldwarning'>My tail!! Why?!</span>\n"
-	mood_change = -16
-	timeout = 10 MINUTES
-
-/datum/mood_event/tail_balance_lost
-	description = "<span class='warning'>I feel off-balance without my tail.</span>\n"
-	mood_change = -4
-
-/datum/mood_event/tail_regained_right
-	description = "<span class='warning'>My tail is back, but that was traumatic...</span>\n"
-	mood_change = -4
-	timeout = 5 MINUTES
-
-/datum/mood_event/tail_regained_wrong
-	description = "<span class='boldwarning'>Is this some kind of sick joke?! This is NOT the right tail.</span>\n"
-	mood_change = -24 // -8 for tail still missing + -4 bonus for being frakenstein's monster
-	timeout = 5 MINUTES
-
 /datum/mood_event/burnt_wings
 	description = "<span class='boldwarning'>MY PRECIOUS WINGS!!</span>\n"
 	mood_change = -20
-	timeout = 10 MINUTES
+	timeout = 20 MINUTES
 
 /datum/mood_event/holy_smite //punished
 	description = "<span class='warning'>I have been punished by my deity!</span>\n"
@@ -345,6 +354,6 @@
 	timeout = 10 MINUTES
 
 /datum/mood_event/killed_innocent
-	description = "<span class='warning'>Пришлось убить невинового...</span>\n"
+	description = "<span class='warning'>Пришлось убить невиновного...</span>\n"
 	mood_change = -50
 	timeout = 30 MINUTES

@@ -19,7 +19,7 @@ GENE SCANNER
 #define SCANNER_VERBOSE 	1
 
 /obj/item/t_scanner
-	name = "анализатор Т-луч"
+	name = "терагерцовый сканер"
 	desc = "Терагерцовый излучатель лучей и просто сканнер, который подсвечивает провода и трубы под полом."
 	custom_price = PAYCHECK_ASSISTANT * 0.7
 	icon = 'white/valtos/icons/items.dmi'
@@ -216,6 +216,10 @@ GENE SCANNER
 			render_list += "<span class='alert ml-1'>Нет печени.</span>\n"
 		if (!(NOSTOMACH in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_STOMACH))
 			render_list += "<span class='alert ml-1'>Нет желудка.</span>\n"
+		if (!(NOKIDNEYS in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_KIDNEYS))
+			render_list += "<span class='alert ml-1'>Нет почек.</span>\n"
+		if (!(NOGUTS in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_GUTS))
+			render_list += "<span class='alert ml-1'>Нет кишок.</span>\n"
 
 	if(iscarbon(M))
 		var/mob/living/carbon/C = M
@@ -229,7 +233,7 @@ GENE SCANNER
 					if(TRAUMA_RESILIENCE_LOBOTOMY)
 						trauma_desc += "глубокого "
 					if(TRAUMA_RESILIENCE_WOUND)
-						trauma_desc += "переломов "
+						trauma_desc += "травматического "
 					if(TRAUMA_RESILIENCE_MAGIC, TRAUMA_RESILIENCE_ABSOLUTE)
 						trauma_desc += "вечного "
 				trauma_desc += B.scan_desc
@@ -383,10 +387,10 @@ GENE SCANNER
 		var/list/wounded_parts = C.get_wounded_bodyparts()
 		for(var/i in wounded_parts)
 			var/obj/item/bodypart/wounded_part = i
-			render_list += "<span class='alert ml-1'><b>Warning: Physical trauma[LAZYLEN(wounded_part.wounds) > 1? "s" : ""] detected in [wounded_part.name]</b>"
+			render_list += "<span class='alert ml-1'><b>Внимание: [LAZYLEN(wounded_part.wounds) > 1? "Обнаружены физические травмы" : "Обнаружена физическая травма"] в [wounded_part.name]</b>"
 			for(var/k in wounded_part.wounds)
 				var/datum/wound/W = k
-				render_list += "<div class='ml-2'>Type: [W.name]\nSeverity: [W.severity_text()]\nRecommended Treatment: [W.treat_text]</div>\n" // less lines than in woundscan() so we don't overload people trying to get basic med info
+				render_list += "<div class='ml-2'>Тип: [W.name]\nТяжесть: [W.severity_text()]</div>\n" // \nRecommended Treatment: [W.treat_text] выкинул рекомендованное лечение - слишком громоздко,less lines than in woundscan() so we don't overload people trying to get basic med info
 			render_list += "</span>"
 
 	for(var/thing in M.diseases)
@@ -559,7 +563,7 @@ GENE SCANNER
 
 /obj/item/analyzer
 	desc = "Ручной анализатор, который сканирует состояние воздуха в помещении. ПКМ, чтобы использовать барометр."
-	name = "анализатор"
+	name = "газоанализатор"
 	custom_price = PAYCHECK_ASSISTANT * 0.9
 	icon = 'white/valtos/icons/items.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
@@ -844,7 +848,7 @@ GENE SCANNER
 		to_chat(user, span_info("Не обнаружено нанитов в пациенте."))
 
 /obj/item/sequence_scanner
-	name = "анализатор генетического кода"
+	name = "анализатор ДНК"
 	icon = 'icons/obj/device.dmi'
 	icon_state = "gene"
 	inhand_icon_state = "healthanalyzer"

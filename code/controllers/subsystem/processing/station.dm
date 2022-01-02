@@ -19,12 +19,14 @@ PROCESSING_SUBSYSTEM_DEF(station)
 	SetupTraits()
 	#endif
 
-	if(prob(20))
+	if(prob(70))
 		announcer = new /datum/centcom_announcer/default
-	else if(prob(20))
-		announcer = new /datum/centcom_announcer/intern
+	else if(prob(70))
+		announcer = new /datum/centcom_announcer/va
+	else if(prob(1))
+		announcer = new /datum/centcom_announcer/xrenoid
 	else
-		announcer = new /datum/centcom_announcer/ru_default
+		announcer = new /datum/centcom_announcer/intern
 
 	return ..()
 

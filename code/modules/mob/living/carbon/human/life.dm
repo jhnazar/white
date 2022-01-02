@@ -54,13 +54,26 @@
 			if(nutrition < NUTRITION_LEVEL_STARVING)
 				to_chat(src, span_warning("[pick("Голодно...", "Кушать хочу...", "Вот бы что-нибудь съесть...", "Мой живот урчит...")]"))
 				take_overall_damage(stamina = 60)
-			switch(pooition)
-				if(75 to 100)
-					to_chat(src, span_warning("[pick("Где тут уборная?", "Хочу в туалет.", "Надо в туалет.")]"))
-				if(125 to 129)
-					to_chat(src, span_warning("[pick("СРОЧНО В ТУАЛЕТ!", "ЖОПНЫЙ КЛАПАН НА ПРЕДЕЛЕ!", "ХОЧУ В ТУАЛЕТ!")]"))
-				if(130 to INFINITY)
-					try_poo()
+			var/obj/item/organ/O = internal_organs_slot[ORGAN_SLOT_KIDNEYS]
+			if(O?.reagents.total_volume)
+				var/urine_amount = O.reagents.get_reagent_amount(/datum/reagent/toxin/urine)
+				switch(urine_amount)
+					if(75 to 85)
+						to_chat(src, span_warning("[pick("Где тут уборная?", "Хочу в туалет.", "Надо в туалет.")]"))
+					if(86 to 95)
+						to_chat(src, span_warning("[pick("СРОЧНО В ТУАЛЕТ!", "Я СЕЙЧАС ОПИСАЮСЬ!", "ХОЧУ В ТУАЛЕТ!")]"))
+					if(96 to INFINITY)
+						try_pee()
+			var/obj/item/organ/G = internal_organs_slot[ORGAN_SLOT_GUTS]
+			if(G?.reagents.total_volume)
+				var/poo_amount = G.reagents.get_reagent_amount(/datum/reagent/toxin/poo)
+				switch(poo_amount)
+					if(75 to 100)
+						to_chat(src, span_warning("[pick("Где тут уборная?", "Хочу в туалет.", "Надо в туалет.")]"))
+					if(101 to 129)
+						to_chat(src, span_warning("[pick("СРОЧНО В ТУАЛЕТ!", "ЖОПНЫЙ КЛАПАН НА ПРЕДЕЛЕ!", "ХОЧУ В ТУАЛЕТ!")]"))
+					if(130 to INFINITY)
+						try_poo()
 		return TRUE
 
 
@@ -359,20 +372,73 @@
 	..()
 	if(hydration >= HYDRATION_LEVEL_OVERHYDRATED)
 		if(DT_PROB(5, delta_time))
-			if(w_uniform)
-				Stun(4 SECONDS)
-				visible_message("<b>[capitalize(src.name)]</b> мочится себе в трусы!")
-				playsound(src, 'sound/effects/splat.ogg', 50, 1)
-				hydration -= 5
-				for(var/mob/M in viewers(src, 7))
-					if(ishuman(M) && M != src)
-						M.emote("laugh")
-			else
-				Stun(2 SECONDS)
-				visible_message("<b>[capitalize(src.name)]</b> обильно ссыт на пол!")
-				playsound(src, 'sound/effects/splat.ogg', 50, 1)
-				hydration -= 10
+			try_pee()
 
+/mob/living/proc/try_pee(forced_pee = FALSE)
+	return
+
+/mob/living/carbon/human/try_pee(forced_pee = FALSE)
+	var/obj/item/organ/O = internal_organs_slot[ORGAN_SLOT_KIDNEYS]
+	var/bloody = FALSE
+	var/peeed = FALSE // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	if(O.damage > 51)
+		bloody = TRUE
+	var/turf/T = get_turf(src)
+	var/atom/target = null
+	var/obj/effect/decal/cleanable/mocha = bloody ?  new /obj/effect/decal/cleanable/blood(get_turf(src)) : new /obj/effect/decal/cleanable/urine(get_turf(src))
+	for(var/atom/A in T)
+		if(istype(A, /obj/effect/decal/cleanable/urine))
+			mocha = A
+			break
+		if(istype(A, /obj/structure/toilet) || istype(A, /obj/item/reagent_containers))
+			target = A
+			break
+	if(target)
+		if(O.reagents.trans_to(target, 50, transfered_by = src) && !bloody)
+			peeed = TRUE
+		else if(forced_pee)
+			peeed = TRUE
+			O.setOrganDamage(1)
+			blood_volume -= 10
+		if(peeed)
+			visible_message(span_notice("<b>[src]</b> писает[bloody ? " кровью" : ""] в [target]!"), span_notice("Писаю[bloody ? " кровью" : ""] в [target]."))
+			playsound(src, 'sound/effects/splat.ogg', 50, 1)
+			qdel(mocha)
+	else
+		if(w_uniform)
+			if(O.reagents.trans_to(mocha, 25, transfered_by = src) && !bloody)
+				peeed = TRUE
+			else if(forced_pee)
+				peeed = TRUE
+				Stun(4 SECONDS)
+				add_blood_DNA(return_blood_DNA())
+				O.setOrganDamage(1)
+				blood_volume -= 50
+				mocha.reagents.add_reagent(/datum/reagent/blood, 50)
+			if(peeed)
+				extinguish_mob()
+				visible_message("<b>[capitalize(src.name)]</b> мочится себе в трусы[bloody ? " кровью" : ""]!")
+				playsound(src, 'sound/effects/splat.ogg', 50, 1)
+				if(!bloody)
+					for(var/mob/M in viewers(src, 7))
+						if(ishuman(M) && M != src)
+							M.emote("laugh")
+		else
+			if(O.reagents.trans_to(mocha, 50, transfered_by = src) && !bloody)
+				peeed = TRUE
+			else if(forced_pee)
+				Stun(2 SECONDS)
+				O.setOrganDamage(1)
+				blood_volume -= 50
+				mocha.reagents.add_reagent(/datum/reagent/blood, 50)
+			if(peeed)
+				visible_message("<b>[capitalize(src.name)]</b> обильно ссыт[bloody ? " кровью" : ""] на пол!")
+				playsound(src, 'sound/effects/splat.ogg', 50, 1)
+		if(!peeed)
+			qdel(mocha)
+	if(!peeed)
+		qdel(mocha) // this is how we deal bussines
+		to_chat(src, span_notice("Нечем мочиться!"))
 
 #undef THERMAL_PROTECTION_HEAD
 #undef THERMAL_PROTECTION_CHEST

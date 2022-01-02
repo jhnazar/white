@@ -1,6 +1,7 @@
 /mob/living/carbon/human/can_equip(obj/item/I, slot, disable_warning = FALSE, bypass_equip_delay_self = FALSE)
-	if(dna == null || !istype(dna))
-		stack_trace("Блядь! Хуман без днк! Хуман:[src], координаты: [COORD(src)], предмет:[I]")
+	if(!dna || !istype(dna))
+		return
+		//stack_trace("Блядь! Хуман без днк! Хуман:[src], координаты: [COORD(src)], предмет:[I]")
 	return dna.species.can_equip(I, slot, disable_warning, src, bypass_equip_delay_self)
 
 // Return the item currently in the slot ID
@@ -341,4 +342,3 @@
 		return
 	stored.attack_hand(src) // take out thing from item in storage slot
 	return
-

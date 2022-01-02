@@ -237,61 +237,37 @@ Turf and target are separate in case you want to teleport some distance from a t
 /proc/ionnum() //! is at the start to prevent us from changing say modes via get_message_mode()
 	return "![pick("!","@","#","$","%","^","&")][pick("!","@","#","$","%","^","&","*")][pick("!","@","#","$","%","^","&","*")][pick("!","@","#","$","%","^","&","*")]"
 
-//Returns a list of all items of interest with their name
-/proc/getpois(mobs_only = FALSE, skip_mindless = FALSE, specify_dead_role = TRUE)
-	var/list/mobs = sortmobs()
-	var/list/namecounts = list()
-	var/list/pois = list()
-	for(var/mob/M in mobs)
-		if(skip_mindless && (!M.mind && !M.ckey))
-			if(!isbot(M) && !iscameramob(M) && !ismegafauna(M))
-				continue
-		if(M.client && M.client.holder && M.client.holder.fakekey) //stealthmins
-			continue
-		var/name = avoid_assoc_duplicate_keys(M.name, namecounts) + M.get_realname_string()
-
-		if(M.stat == DEAD && specify_dead_role)
-			if(isobserver(M))
-				name += " \[ghost\]"
-			else
-				name += " \[dead\]"
-		pois[name] = M
-
-	if(!mobs_only)
-		for(var/atom/A in GLOB.poi_list)
-			if(!A || !A.loc)
-				continue
-			pois[avoid_assoc_duplicate_keys(A.name, namecounts)] = A
-
-	return pois
-//Orders mobs by type then by name
+/// Orders mobs by type then by name. Accepts optional arg to sort a custom list, otherwise copies GLOB.mob_list.
 /proc/sortmobs()
 	var/list/moblist = list()
 	var/list/sortmob = sortNames(GLOB.mob_list)
-	for(var/mob/living/silicon/ai/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/camera/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/silicon/pai/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/silicon/robot/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/carbon/human/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/brain/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/carbon/alien/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/dead/observer/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/dead/new_player/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/simple_animal/slime/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/simple_animal/M in sortmob)
-		moblist.Add(M)
-	for(var/mob/living/carbon/true_devil/M in sortmob)
-		moblist.Add(M)
+	for(var/mob/living/silicon/ai/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/camera/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/silicon/pai/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/silicon/robot/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/carbon/human/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/brain/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/carbon/alien/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/dead/observer/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/dead/new_player/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/simple_animal/slime/mob_to_sort in sortmob)
+		moblist += mob_to_sort
+	for(var/mob/living/simple_animal/mob_to_sort in sortmob)
+		// We've already added slimes.
+		if(isslime(mob_to_sort))
+			continue
+		moblist += mob_to_sort
+	for(var/mob/living/carbon/true_devil/mob_to_sort in sortmob)
+		moblist += mob_to_sort
 	return moblist
 
 // Format a power value in W, kW, MW, or GW.
@@ -563,7 +539,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 /proc/anyprob(value)
 	return (rand(1,value)==value)
 
-/proc/parse_zone(zone)
+/proc/parse_zone(zone)	// Именительный
 	if(zone == BODY_ZONE_PRECISE_R_HAND)
 		return "правая кисть"
 	else if (zone == BODY_ZONE_PRECISE_L_HAND)
@@ -593,7 +569,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else
 		return zone
 
-/proc/ru_parse_zone(zone)
+/proc/ru_parse_zone(zone)	// Винительный
 	if(zone == "правая кисть")
 		return "правую кисть"
 	else if (zone == "левая кисть")
@@ -621,7 +597,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else
 		return zone
 
-/proc/ru_gde_zone(zone)
+/proc/ru_gde_zone(zone)	// Дательный
 	if(zone == "правая кисть")
 		return "правой кисти"
 	else if (zone == "левая кисть")
@@ -649,7 +625,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else
 		return zone
 
-/proc/ru_otkuda_zone(zone)
+/proc/ru_otkuda_zone(zone)	// Родительный
 	if(zone == "правая кисть")
 		return "правой кисти"
 	else if (zone == "левая кисть")
@@ -702,7 +678,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else if (job == "Mechanic")
 		return "Механик"
 	else if (job == "Atmospheric Technician")
-		return "Атмостех"
+		return "Атмосферный Техник"
 	else if (job == "Chief Medical Officer")
 		return "Главный Врач"
 	else if (job == "Medical Doctor")
@@ -724,7 +700,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else if (job == "Roboticist")
 		return "Робототехник"
 	else if (job == "Hacker")
-		return "Взломщик"
+		return "Анальный хакир"
 	else if (job == "Head of Security")
 		return "Начальник Охраны"
 	else if (job == "Warden")
@@ -751,6 +727,8 @@ Turf and target are separate in case you want to teleport some distance from a t
 		return "Грузчик"
 	else if (job == "Shaft Miner")
 		return "Шахтёр"
+	else if (job == "Hunter")
+		return "Охотник"
 	else if (job == "Exploration Crew")
 		return "Рейнджер"
 	else if (job == "Trader")
@@ -784,6 +762,46 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else
 		return job
 
+/proc/jumpsuit_to_ru_conversion(jumpsuit)
+	switch(jumpsuit)
+		if("Jumpsuit")
+			return "Комбез"
+		if("Jumpskirt")
+			return "Юбкомбез"
+		else
+			return jumpsuit
+
+/proc/backpack_to_ru_conversion(backpack)
+	switch(backpack)
+		if("Grey Backpack")
+			return "Серый рюкзак"
+		if("Grey Satchel")
+			return "Серая сумка"
+		if("Grey Duffel Bag")
+			return "Серый вещмешок"
+		if("Leather Satchel")
+			return "Кожаная сумка"
+		if("Department Backpack")
+			return "Рюкзак отдела"
+		if("Department Satchel")
+			return "Сумка отдела"
+		if("Department Duffel Bag")
+			return "Вещмешок отдела"
+		else
+			return backpack
+
+/proc/uplink_to_ru_conversion(uplink)
+	switch(uplink)
+		if("PDA")
+			return "ПДА"
+		if("Radio")
+			return "Наушник"
+		if("Pen")
+			return "Ручка"
+		if("Implant")
+			return "Имплант"
+		else
+			return uplink
 
 /*
 
@@ -1366,6 +1384,22 @@ GLOBAL_REAL_VAR(list/stack_trace_storage)
 		else
 			. = ""
 
+/proc/weightclass2icon(w_class, user)
+	switch(w_class)
+		if(WEIGHT_CLASS_TINY)
+			w_class = "tiny"
+		if(WEIGHT_CLASS_SMALL)
+			w_class = "small"
+		if(WEIGHT_CLASS_NORMAL)
+			w_class = "normal"
+		if(WEIGHT_CLASS_BULKY)
+			w_class = "bulky"
+		if(WEIGHT_CLASS_HUGE)
+			w_class = "huge"
+		if(WEIGHT_CLASS_GIGANTIC)
+			w_class = "gigantic"
+	return icon2html(EMOJI_SET, user, w_class)
+
 GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 
 //Version of view() which ignores darkness, because BYOND doesn't have it (I actually suggested it but it was tagged redundant, BUT HEARERS IS A T- /rant).
@@ -1685,3 +1719,22 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 		if(-INFINITY to 0, 11 to INFINITY)
 			CRASH("Can't turn invalid directions!")
 	return turn(input_dir, 180)
+
+/proc/get_distant_turf(turf/T, direction, distance)
+	if(!T || !direction || !distance)
+		return
+
+	var/dest_x = T.x
+	var/dest_y = T.y
+	var/dest_z = T.z
+
+	if(direction & NORTH)
+		dest_y = min(world.maxy, dest_y + distance)
+	if(direction & SOUTH)
+		dest_y = max(0, dest_y - distance)
+	if(direction & EAST)
+		dest_x = min(world.maxy, dest_x + distance)
+	if(direction & WEST)
+		dest_x = max(0, dest_x - distance)
+
+	return locate(dest_x,dest_y, dest_z)

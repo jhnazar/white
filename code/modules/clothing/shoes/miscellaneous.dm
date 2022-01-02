@@ -16,6 +16,10 @@
 	pocket_storage_component_path = /datum/component/storage/concrete/pockets/shoes
 	lace_time = 12 SECONDS
 
+/obj/item/clothing/shoes/combat/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/squeak, list('white/valtos/sounds/suitstep1.ogg' = 1, 'white/valtos/sounds/suitstep2.ogg' = 1), 25, 75, falloff_exponent = 20)
+
 /obj/item/clothing/shoes/combat/sneakboots
 	name = "скрытные ботинки"
 	desc = "Это ботинки со специальной шумоподавляющей подошвой. Были бы идеальны для скрытного проникновения, если бы не их цветовая гамма."
@@ -145,6 +149,10 @@
 	permeability_coefficient = 0.05 //Thick soles, and covers the ankle
 	pocket_storage_component_path = /datum/component/storage/concrete/pockets/shoes
 	can_be_tied = FALSE
+
+/obj/item/clothing/shoes/jackboots/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/squeak, list('white/valtos/sounds/suitstep1.ogg' = 1, 'white/valtos/sounds/suitstep2.ogg' = 1), 25, 75, falloff_exponent = 20)
 
 /obj/item/clothing/shoes/jackboots/fast
 	slowdown = -1
@@ -527,3 +535,45 @@
 	desc = "For when you're stepping on up to the plate."
 	icon_state = "JackFrostShoes"
 	inhand_icon_state = "JackFrostShoes_worn"
+
+/obj/item/clothing/shoes/swagshoes
+	name = "swag shoes"
+	desc = "They got me for my foams!"
+	icon_state = "SwagShoes"
+	inhand_icon_state = "SwagShoes"
+
+/obj/item/clothing/shoes/phantom
+	name = "phantom shoes"
+	desc = "Excellent for when you need to do cool flashy flips."
+	icon_state = "phantom_shoes"
+	inhand_icon_state = "phantom_shoes"
+
+/obj/item/clothing/shoes/saints
+	name = "saints sneakers"
+	desc = "Officially branded Saints sneakers. Incredibly valuable!"
+	icon_state = "saints_shoes"
+	inhand_icon_state = "saints_shoes"
+
+/obj/item/clothing/shoes/morningstar
+	name = "morningstar boots"
+	desc = "The most expensive boots on this station. Wearing them dropped the value by about 50%."
+	icon_state = "morningstar_shoes"
+	inhand_icon_state = "morningstar_shoes"
+
+/obj/item/clothing/shoes/deckers
+	name = "deckers rollerskates"
+	desc = "t3h c00L3st sh03z j00'LL 3v3r f1nd."
+	icon_state = "decker_shoes"
+	inhand_icon_state = "decker_shoes"
+
+/obj/item/clothing/shoes/sybil_slickers
+	name = "sybil slickers shoes"
+	desc = "FOOTBALL! YEAH!"
+	icon_state = "sneakers_blue"
+	inhand_icon_state = "sneakers_blue"
+
+/obj/item/clothing/shoes/basil_boys
+	name = "basil boys shoes"
+	desc = "FOOTBALL! YEAH!"
+	icon_state = "sneakers_red"
+	inhand_icon_state = "sneakers_red"

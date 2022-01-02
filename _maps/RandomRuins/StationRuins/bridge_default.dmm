@@ -208,23 +208,14 @@
 	pixel_x = 5;
 	pixel_y = 30
 	},
-/turf/open/floor/plasteel,
-/area/hallway/primary/central)
-"ba" = (
 /obj/machinery/camera{
 	c_tag = "Central Hallway North-West"
-	},
-/obj/machinery/airalarm{
-	pixel_y = 23
 	},
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
 "bb" = (
-/obj/machinery/light{
-	dir = 1
-	},
-/obj/machinery/firealarm{
-	pixel_y = 24
+/obj/machinery/airalarm{
+	pixel_y = 23
 	},
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
@@ -338,10 +329,7 @@
 /turf/open/floor/plasteel,
 /area/hallway/primary/central)
 "bt" = (
-/obj/machinery/airalarm{
-	pixel_y = 23
-	},
-/turf/open/floor/plasteel,
+/turf/open/openspace,
 /area/hallway/primary/central)
 "bv" = (
 /obj/machinery/door/airlock/public/glass{
@@ -469,6 +457,12 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 10
+	},
+/obj/structure/railing/corner{
+	dir = 1
+	},
+/obj/machinery/door/firedoor/border_only{
+	dir = 1
 	},
 /turf/open/floor/plasteel/monofloor,
 /area/hallway/primary/central)
@@ -4542,6 +4536,18 @@
 	},
 /turf/open/floor/plasteel/monofloor,
 /area/hallway/primary/central)
+"oT" = (
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
+	dir = 4
+	},
+/obj/structure/railing/corner{
+	dir = 4
+	},
+/turf/open/floor/plasteel/monofloor,
+/area/hallway/primary/central)
 "oZ" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
@@ -4573,6 +4579,9 @@
 	},
 /turf/open/floor/plasteel/monofloor,
 /area/hallway/primary/central)
+"rt" = (
+/turf/template_noop,
+/area/commons/fitness/recreation)
 "rw" = (
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2{
@@ -4637,6 +4646,18 @@
 	},
 /obj/machinery/door/firedoor/border_only,
 /turf/open/floor/plasteel/monofloor,
+/area/hallway/primary/central)
+"vh" = (
+/obj/machinery/airalarm{
+	pixel_y = 23
+	},
+/obj/structure/railing{
+	dir = 4
+	},
+/obj/machinery/door/firedoor/border_only{
+	dir = 4
+	},
+/turf/open/floor/plasteel,
 /area/hallway/primary/central)
 "xa" = (
 /obj/structure/cable,
@@ -4731,6 +4752,12 @@
 	dir = 4
 	},
 /turf/open/floor/plasteel/monofloor,
+/area/hallway/primary/central)
+"JY" = (
+/obj/machinery/door/firedoor/border_only{
+	dir = 1
+	},
+/turf/open/floor/plasteel,
 /area/hallway/primary/central)
 "Kh" = (
 /obj/effect/turf_decal/stripes/line{
@@ -4995,7 +5022,7 @@ ab
 ab
 ab
 ab
-ba
+aH
 xf
 aH
 gd
@@ -5033,7 +5060,7 @@ aL
 ab
 ab
 ab
-bb
+br
 XI
 eC
 aD
@@ -5071,7 +5098,7 @@ aL
 ab
 ab
 ab
-gd
+bs
 XI
 eC
 aD
@@ -5109,7 +5136,7 @@ aL
 ab
 ab
 ab
-aJ
+bb
 XI
 eC
 aD
@@ -5147,7 +5174,7 @@ aL
 ab
 ab
 ab
-aJ
+aH
 XI
 bM
 aD
@@ -5185,7 +5212,7 @@ ad
 ab
 ab
 ab
-aJ
+aH
 XI
 eC
 aD
@@ -5223,7 +5250,7 @@ ad
 ab
 ab
 ab
-aG
+aH
 XI
 eC
 aD
@@ -5335,7 +5362,7 @@ ad
 "}
 (13,1,1) = {"
 ab
-ab
+rt
 Oe
 bd
 xR
@@ -5373,7 +5400,7 @@ ad
 "}
 (14,1,1) = {"
 ab
-ab
+rt
 Oe
 aH
 XI
@@ -6135,8 +6162,8 @@ ab
 ab
 ab
 ab
-aH
-jB
+vh
+oT
 aH
 aG
 aG
@@ -6211,8 +6238,8 @@ aW
 ab
 ab
 ab
-aH
-aH
+bt
+JY
 aH
 aH
 ci

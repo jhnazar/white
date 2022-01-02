@@ -32,7 +32,9 @@
 	toxpwr = 2.5
 	taste_description = "говно"
 
-/datum/reagent/toxin/poo/on_mob_life(mob/living/carbon/C)
+/datum/reagent/toxin/poo/on_mob_add(mob/living/C)
+	if(C?.client)
+		C.client.give_award(/datum/award/score/poo_eaten, C, 1)
 	SSblackbox.record_feedback("tally", "poo", 1, "Poo Eaten")
 	return ..()
 
@@ -49,13 +51,6 @@
 
 /datum/element/decal/poo
 	//dupe_mode = COMPONENT_DUPE_UNIQUE
-
-/datum/element/decal/poo/Attach(datum/target, _icon, _icon_state, _dir, _cleanable=CLEAN_TYPE_BLOOD, _color, _layer=ABOVE_OBJ_LAYER)
-	if(!isitem(target))
-		return ELEMENT_INCOMPATIBLE
-
-	. = ..()
-
 
 /datum/element/decal/poo/generate_appearance(_icon, _icon_state, _dir, _layer, _color, _alpha, source)
 	var/obj/item/I = source
@@ -116,6 +111,8 @@
 			H.pooed = TRUE
 			SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "pooed", /datum/mood_event/pooed)
 			SSblackbox.record_feedback("tally", "poo", 1, "Poo Splats")
+	if(isitem(hit_atom))
+		hit_atom.AddElement(/datum/element/decal/poo)
 	qdel(src)
 
 /datum/emote/living/poo
@@ -133,8 +130,10 @@
 	var/list/random_poo = list("покакунькивает", "срёт", "какает", "производит акт дефекации", "обсирается", "выдавливает какулину")
 	if(ishuman(src))
 		var/mob/living/carbon/human/H = src
+		var/obj/item/organ/guts = H.internal_organs_slot[ORGAN_SLOT_GUTS]
 		var/turf/T = get_turf(src)
-		if(H.pooition >= 25)
+		var/poo_amount = guts.reagents.get_reagent_amount(/datum/reagent/toxin/poo)
+		if(poo_amount >= 25)
 			if(HAS_TRAIT(H, TRAIT_LIGHT_POOER))
 				H.visible_message(span_notice("<b>[H]</b> [prob(75) ? pick(random_poo) : uppertext(pick(random_poo))] себе прямо в руку!") , \
 					span_notice("Выдавливаю какаху из своего тела."))
@@ -143,7 +142,7 @@
 				H.put_in_hands(P)
 				if(!H.throw_mode)
 					H.throw_mode_on(THROW_MODE_TOGGLE)
-				H.pooition -= 25
+				guts.reagents.remove_reagent(/datum/reagent/toxin/poo, 25)
 				SSblackbox.record_feedback("tally", "poo", 1, "Poo Created")
 				return
 			else
@@ -151,7 +150,7 @@
 					H.visible_message(span_notice("<b>[H]</b> [prob(75) ? pick(random_poo) : uppertext(pick(random_poo))] себе в штаны!") , \
 						span_notice("Сру себе в штаны."))
 					playsound(H, 'white/valtos/sounds/poo2.ogg', 50, 1)
-					H.pooition -= 25
+					guts.reagents.remove_reagent(/datum/reagent/toxin/poo, 25)
 					if(!H.pooed)
 						var/mutable_appearance/pooverlay = mutable_appearance('white/valtos/icons/poo.dmi')
 						pooverlay.icon_state = "uniformpoo"
@@ -166,7 +165,7 @@
 					H.visible_message(span_notice("<b>[H]</b> [prob(75) ? pick(random_poo) : uppertext(pick(random_poo))] в туалет!") , \
 						span_notice("Выдавливаю какаху прямиком в туалет."))
 					playsound(H, 'white/valtos/sounds/poo2.ogg', 50, 1)
-					H.pooition -= 25
+					guts.reagents.remove_reagent(/datum/reagent/toxin/poo, 25)
 					SSblackbox.record_feedback("tally", "poo", 1, "Poo Created")
 					return
 				else
@@ -174,7 +173,7 @@
 						span_notice("Выдавливаю какаху из своего тела."))
 					playsound(H, 'white/valtos/sounds/poo2.ogg', 50, 1)
 					new /obj/item/food/poo(T)
-					H.pooition -= 25
+					guts.reagents.remove_reagent(/datum/reagent/toxin/poo, 25)
 					SSblackbox.record_feedback("tally", "poo", 1, "Poo Created")
 					return
 		else if(H.stat == CONSCIOUS)
@@ -193,6 +192,7 @@
 		cut_overlay(mutable_appearance('white/valtos/icons/poo.dmi', "uniformpoo"))
 		cut_overlay(mutable_appearance('white/valtos/icons/poo.dmi', "suitpoo"))
 		pooed = FALSE
+		SEND_SIGNAL(src, COMSIG_CLEAR_MOOD_EVENT, "pooed")
 
 /datum/quirk/legkoserya
 	name = "Легкосеря"

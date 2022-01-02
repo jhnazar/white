@@ -173,7 +173,7 @@
 			span_notice("Загружаю руду под собой в [box]."))
 		else
 			user.visible_message(span_notice("[user] собирает руду под [user.ru_na()].") , \
-				span_notice("Собираю руду под собой в [sklonenie(name, VINITELNI, MALE)]."))
+				span_notice("Собираю руду под собой в [skloname(name, VINITELNI, MALE)]."))
 	spam_protection = FALSE
 
 /obj/item/storage/bag/ore/cyborg
@@ -322,8 +322,9 @@
 /obj/item/storage/bag/tray/ComponentInitialize()
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	STR.max_w_class = WEIGHT_CLASS_NORMAL //Allows stuff such as Bowls, and normal sized foods, to fit.
+	STR.max_w_class = WEIGHT_CLASS_BULKY //Plates are required bulky to keep them out of backpacks
 	STR.set_holdable(list(
+		/obj/item/plate,
 		/obj/item/reagent_containers/food,
 		/obj/item/reagent_containers/glass,
 		/obj/item/food,
@@ -387,8 +388,8 @@
 
 /obj/item/storage/bag/chemistry
 	name = "сумка для химии"
-	icon = 'icons/obj/chemical.dmi'
-	icon_state = "bag"
+	icon = 'white/Feline/icons/med_items.dmi'
+	icon_state = "bag_chem"
 	worn_icon_state = "chembag"
 	desc = "Сумка для хранения таблеток, пластырей и бутылочек."
 	resistance_flags = FLAMMABLE
@@ -397,7 +398,7 @@
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
 	STR.max_combined_w_class = 200
-	STR.max_items = 50
+	STR.max_items = 100
 	STR.insert_preposition = "в"
 	STR.set_holdable(list(
 		/obj/item/reagent_containers/pill,
@@ -406,6 +407,7 @@
 		/obj/item/reagent_containers/food/drinks/waterbottle,
 		/obj/item/reagent_containers/medigel,
 		/obj/item/reagent_containers/syringe,
+		/obj/item/reagent_containers/hypospray/medipen,
 		/obj/item/reagent_containers/dropper,
 		/obj/item/reagent_containers/chem_pack
 		))
@@ -416,8 +418,8 @@
 
 /obj/item/storage/bag/bio
 	name = "био сумка"
-	icon = 'icons/obj/chemical.dmi'
-	icon_state = "biobag"
+	icon = 'white/Feline/icons/med_items.dmi'
+	icon_state = "bag_bio"
 	worn_icon_state = "biobag"
 	desc = "Сумка для безопасной транспортировки и утилизации биоотходов и других биологических материалов."
 	resistance_flags = FLAMMABLE
@@ -426,7 +428,7 @@
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
 	STR.max_combined_w_class = 200
-	STR.max_items = 25
+	STR.max_items = 60
 	STR.insert_preposition = "в"
 	STR.set_holdable(list(
 		/obj/item/slime_extract,

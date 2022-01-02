@@ -332,22 +332,24 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 /obj/item/examine(mob/user) //This might be spammy. Remove?
 	. = ..()
 
+	. += "<hr>"
+
 	if(resistance_flags & INDESTRUCTIBLE)
-		. += "<hr><span class='smalldanger'>[capitalize(src.name)] выглядит сверхкрепким и практически неуязвимым!</span>"
+		. += span_smallnotice("<b>Защитные свойства:</b> [icon2html(EMOJI_SET, user, "indestructible")]\n")
 	else
 		var/list/rfm = list()
 		if(resistance_flags & LAVA_PROOF)
-			rfm += "сверхвысоким температурам"
+			rfm += icon2html(EMOJI_SET, user, "lava")
 		if(resistance_flags & (ACID_PROOF | UNACIDABLE))
-			rfm += "кислоте"
+			rfm += icon2html(EMOJI_SET, user, "acid")
 		if(resistance_flags & FREEZE_PROOF)
-			rfm += "холоду"
+			rfm += icon2html(EMOJI_SET, user, "cold")
 		if(resistance_flags & FIRE_PROOF)
-			rfm += "огню"
+			rfm += icon2html(EMOJI_SET, user, "fire")
 		if(rfm.len)
-			. += "<hr><span class='smalldanger'>[capitalize(src.name)] выглядит устойчивым к [english_list(rfm)].</span>"
+			. += span_smallnotice("<b>Защитные свойства:</b> [rfm.Join(" ")]\n")
 
-	. += "<hr><span class='smallnoticeital'>Это [weightclass2text(w_class)] размера предмет.</span>"
+	. += span_smallnotice("<b>Размер:</b> [weightclass2icon(w_class, user)]")
 
 	if(!user.research_scanner)
 		return
@@ -1113,3 +1115,28 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 /// Called on [/datum/element/openspace_item_click_handler/proc/on_afterattack]. Check the relative file for information.
 /obj/item/proc/handle_openspace_click(turf/target, mob/user, proximity_flag, click_parameters)
 	stack_trace("Undefined handle_openspace_click() behaviour. Ascertain the openspace_item_click_handler element has been attached to the right item and that its proc override doesn't call parent.")
+
+/**
+ * * An interrupt for offering an item to other people, called mainly from [/mob/living/carbon/proc/give], in case you want to run your own offer behavior instead.
+ *
+ * * Return TRUE if you want to interrupt the offer.
+ *
+ * * Arguments:
+ * * offerer - the person offering the item
+ */
+/obj/item/proc/on_offered(mob/living/carbon/offerer)
+	if(SEND_SIGNAL(src, COMSIG_ITEM_OFFERING, offerer) & COMPONENT_OFFER_INTERRUPT)
+		return TRUE
+
+/**
+ * * An interrupt for someone trying to accept an offered item, called mainly from [/mob/living/carbon/proc/take], in case you want to run your own take behavior instead.
+ *
+ * * Return TRUE if you want to interrupt the taking.
+ *
+ * * Arguments:
+ * * offerer - the person offering the item
+ * * taker - the person trying to accept the offer
+ */
+/obj/item/proc/on_offer_taken(mob/living/carbon/offerer, mob/living/carbon/taker)
+	if(SEND_SIGNAL(src, COMSIG_ITEM_OFFER_TAKEN, offerer, taker) & COMPONENT_OFFER_INTERRUPT)
+		return TRUE

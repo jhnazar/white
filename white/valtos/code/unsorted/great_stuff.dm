@@ -222,7 +222,7 @@
 	icon = 'white/valtos/icons/gun.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
-	worn_icon = 'white/valtos/icons/back.dmi'
+	worn_icon = 'white/valtos/icons/weapons/mob/back.dmi'
 	fire_sound = 'white/valtos/sounds/ak74_shot.ogg'
 	icon_state = "ak47"
 	inhand_icon_state = "ak47"
@@ -341,6 +341,8 @@
 	H.facial_hairstyle = "Beard (Very Long)"
 	H.update_hair()
 	H.fully_replace_character_name(H.real_name, "[pick("Джохар", "Аслан", "Абу", "Шамиль", "Усама", "Ахтар", "Кари")] Бомбаев")
+	H.grant_language(/datum/language/arab)
+	H.remove_language(/datum/language/common)
 
 /datum/outfit/terrorist_f/post_equip(mob/living/carbon/human/H, visualsOnly)
 	. = ..()
@@ -350,6 +352,8 @@
 	H.facial_hair_color = "000"
 	H.update_hair()
 	H.fully_replace_character_name(H.real_name, "[pick("Адиля", "Гульшат", "Динара", "Ляйсан", "Нарима", "Рахима", "Ширин")] Бомбаева")
+	H.grant_language(/datum/language/arab)
+	H.remove_language(/datum/language/common)
 
 /obj/effect/proc_holder/spell/self/his_wish
 	name = "Воззвать к Всевышнему"
@@ -363,6 +367,7 @@
 	school = "restoration"
 	sound = 'white/valtos/sounds/Alah.ogg'
 	action_icon_state = "spacetime"
+	stat_allowed = TRUE
 
 /obj/effect/proc_holder/spell/self/his_wish/cast(list/targets, mob/living/carbon/human/user)
 	user.adjustBruteLoss(-50)

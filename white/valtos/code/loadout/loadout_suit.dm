@@ -52,7 +52,7 @@
 /datum/gear/suit/wintercoat/miner
 	display_name = "шахтёрское зимнее пальто"
 	path = /obj/item/clothing/suit/hooded/wintercoat/miner
-	allowed_roles = list("Shaft Miner")
+	allowed_roles = list("Shaft Miner", "Hunter")
 
 /datum/gear/suit/karabakh
 	display_name = "куртка рейнджера Карабаха"
@@ -138,3 +138,8 @@
 /datum/gear/suit/poncho/red
 	display_name = "красный пончо"
 	path = /obj/item/clothing/suit/poncho/red
+
+/datum/gear/suit/samurai
+	display_name = "броня самурая"
+	path = /obj/item/clothing/suit/costume/samurai
+	cost = 1200

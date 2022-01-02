@@ -20,7 +20,7 @@
 	description = "<span class='nicegreen'>[friend.name] очень мило себя ведёт, рядом с [friend.ru_na()] так хорошо находиться!</span>\n"
 
 /datum/mood_event/warmhug
-	description = "<span class='nicegreen'>Warm cozy hugs are the best!</span>\n"
+	description = "<span class='nicegreen'Теплые обнимашки самые лучшие!</span>\n"
 	mood_change = 1
 	timeout = 2 MINUTES
 
@@ -71,7 +71,7 @@
 	timeout = 8 MINUTES
 
 /datum/mood_event/oblivious
-	description = "<span class='nicegreen'>Какой прекрасный день..</span>\n"
+	description = "<span class='nicegreen'>Какой прекрасный день...</span>\n"
 	mood_change = 3
 
 /datum/mood_event/jolly
@@ -85,7 +85,7 @@
 	hidden = TRUE
 
 /datum/mood_event/badass_antag
-	description = "<span class='greentext'>Так крут, и все это знают. Просто посмотри на них, они трясутся от одной мысли, что я рядом с ними.</span>\n"
+	description = "<span class='greentext'>Я такой крутой, и все это знают. Просто посмотри на них, они трясутся от одной мысли, что я рядом с ними.</span>\n"
 	mood_change = 7
 	hidden = TRUE
 	special_screen_obj = "badass_sun"
@@ -235,13 +235,17 @@
 	mood_change = 6
 
 /datum/mood_event/kiss
-	description = "<span class='nicegreen'>Someone blew a kiss at me, I must be a real catch!</span>\n"
+	description = "<span class='nicegreen'>Кто-то отправил мне воздушный поцелуй! Должно быть, я кому-то нравлюсь!</span>\n"
 	mood_change = 1.5
 	timeout = 2 MINUTES
 
-/datum/mood_event/kiss/add_effects(mob/beau)
-	if(beau)
-		description = "<span class='nicegreen'>[beau.name] blew a kiss at me, I must be a real catch!</span>\n"
+/datum/mood_event/kiss/add_effects(mob/beau, direct)
+	if(!beau)
+		return
+	if(direct)
+		description = "<span class='nicegreen'>[beau.name] поцеловал[beau.ru_a()] меня, а-х-х!!</span>\n"
+	else
+		description = "<span class='nicegreen'>[beau.name] отправил[beau.ru_a()] мне воздушный поцелуй! Это так мило!</span>\n"
 
 /datum/mood_event/honorbound
 	description = "<span class='nicegreen'>Following my honorbound code is fulfilling!</span>\n"

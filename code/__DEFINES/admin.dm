@@ -39,10 +39,11 @@
 #define R_AUTOADMIN		(1<<13)
 #define R_DBRANKS		(1<<14)
 #define R_SECURED		(1<<15)
+#define R_SDQL			(1<<16)
 
 #define R_DEFAULT R_AUTOADMIN
 
-#define R_EVERYTHING (1<<16)-1 //the sum of all other rank permissions, used for +EVERYTHING
+#define R_EVERYTHING (1<<17)-1 //the sum of all other rank permissions, used for +EVERYTHING
 
 #define ADMIN_QUE(user) 	"([ADMIN_QUE_NB(user)])"
 #define ADMIN_PP(user)  	"([ADMIN_PP_NB(user)])"
@@ -154,3 +155,9 @@ GLOBAL_VAR_INIT(ghost_role_flags, (~0))
 
 #define LIGHTNING_BOLT_DAMAGE 75
 #define LIGHTNING_BOLT_ELECTROCUTION_ANIMATION_LENGTH 40
+
+/// for asay pings, this is the index in the return list for [/proc/check_admin_pings] that contains the message modified with underlines for the spotted names
+#define ADMINSAY_PING_UNDERLINE_NAME_INDEX "!underlined_names"
+
+/// When passed in as the duration for ban_panel, will make the ban default to permanent
+#define BAN_PANEL_PERMANENT "permanent"

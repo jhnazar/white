@@ -943,7 +943,6 @@
 /obj/machinery/light/small{
 	dir = 1
 	},
-/obj/structure/closet/crate/secure/loot,
 /obj/structure/sign/warning/electricshock{
 	pixel_y = 32
 	},
@@ -956,6 +955,7 @@
 /turf/open/floor/plating,
 /area/mine/living_quarters)
 "cV" = (
+/obj/structure/closet/crate/secure/loot,
 /turf/open/floor/plating,
 /area/mine/living_quarters)
 "cW" = (
@@ -2083,6 +2083,7 @@
 /obj/effect/turf_decal/tile/bar{
 	dir = 1
 	},
+/obj/structure/reagent_dispensers/water_cooler,
 /turf/open/floor/plasteel,
 /area/mine/living_quarters)
 "fJ" = (
@@ -3672,6 +3673,9 @@
 	},
 /turf/open/floor/plasteel,
 /area/mine/laborcamp/security)
+"pY" = (
+/turf/open/floor/plating,
+/area/mine/living_quarters)
 "qk" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/machinery/door/airlock/public/glass{
@@ -4737,12 +4741,8 @@
 /turf/open/floor/plasteel,
 /area/mine/laborcamp)
 "Qo" = (
-/obj/structure/table,
 /obj/effect/decal/cleanable/dirt,
-/obj/item/book/manual/chef_recipes{
-	pixel_x = 2;
-	pixel_y = 6
-	},
+/obj/structure/reagent_dispensers/water_cooler,
 /turf/open/floor/plasteel,
 /area/mine/laborcamp)
 "QN" = (
@@ -15770,8 +15770,8 @@ aj
 aj
 cM
 cT
-cV
-cV
+pY
+pY
 cM
 ea
 YA

@@ -64,6 +64,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 /obj/effect/landmark/start/prisoner
 	name = "Prisoner"
 	icon_state = "Prisoner"
+	delete_after_roundstart = FALSE
 
 /obj/effect/landmark/start/bomj
 	name = "Bomj"
@@ -105,6 +106,9 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	name = "Shaft Miner"
 	icon_state = "Shaft Miner"
 
+/obj/effect/landmark/start/hunter
+	name = "Hunter"
+	icon_state = "Shaft Miner"
 
 /obj/effect/landmark/start/exploration
 	name = "Exploration Crew"

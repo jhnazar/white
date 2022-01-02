@@ -25,7 +25,7 @@
 				for(var/i=1 to log_amount)
 					new /obj/item/grown/log/tree(get_turf(src))
 				var/obj/structure/flora/stump/S = new(loc)
-				S.name = "пенёк [sklonenie(name, VINITELNI, gender)]"
+				S.name = "пенёк [skloname(name, VINITELNI, gender)]"
 				qdel(src)
 	else
 		return ..()
@@ -407,9 +407,12 @@
 	/// Amount of the itemstack to drop
 	var/mineAmount = 20
 
+	var/randomize_icon = TRUE
+
 /obj/structure/flora/rock/Initialize()
 	. = ..()
-	icon_state = "[icon_state][rand(1,3)]"
+	if(randomize_icon)
+		icon_state = "[icon_state][rand(1,3)]"
 
 /obj/structure/flora/rock/attackby(obj/item/W, mob/user, params)
 	if(!mineResult || W.tool_behaviour != TOOL_MINING)

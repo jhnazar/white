@@ -214,7 +214,7 @@
 				heirloom_type = pick(/obj/item/stamp, /obj/item/stamp/denied)
 			if("Cargo Technician")
 				heirloom_type = /obj/item/clipboard
-			if("Shaft Miner")
+			if("Shaft Miner" || "Hunter")
 				heirloom_type = pick(/obj/item/pickaxe/mini, /obj/item/shovel)
 
 	if(!heirloom_type)
@@ -356,6 +356,11 @@
 	lose_text = span_notice("Чувствую, что можно защитить себя вновь.")
 	medical_record_text = "Пациент является пацифистом и не может заставить себя причинить вред кому-либо."
 	hardcore_value = 6
+
+/datum/quirk/nonviolent/on_process()
+	if(quirk_holder.mind && LAZYLEN(quirk_holder.mind.antag_datums))
+		to_chat(quirk_holder, "<span class='boldannounce'>Моя антагонистическая натура заставила меня обдумать свой пацифизм...</span>")
+		qdel(src)
 
 /datum/quirk/paraplegic
 	name = "Инвалид"

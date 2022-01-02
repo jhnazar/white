@@ -278,6 +278,7 @@
 	icon = 'icons/mob/mob.dmi'
 	duration = 15
 
+
 /obj/effect/temp_visual/gib_animation/Initialize(mapload, gib_icon)
 	icon_state = gib_icon // Needs to be before ..() so icon is correct
 	. = ..()
@@ -331,10 +332,14 @@
 
 /obj/effect/temp_visual/blob
 	name = "blob"
-	icon_state = "blob_attack"
+	icon_state = "blob_act"
 	alpha = 140
 	randomdir = 0
 	duration = 6
+
+/obj/effect/temp_visual/blob/New(loc, ...)
+	icon = GLOB.blob_current_icon
+	. = ..()
 
 /obj/effect/temp_visual/desynchronizer
 	name = "desynchronizer field"

@@ -231,7 +231,7 @@
 	set_welding(!welding)
 	if(welding)
 		if(get_fuel() >= 1)
-			to_chat(user, span_notice("Включаю [sklonenie(src.name, VINITELNI, src.gender)]."))
+			to_chat(user, span_notice("Включаю [skloname(src.name, VINITELNI, src.gender)]."))
 			playsound(loc, acti_sound, 50, TRUE)
 			force = 15
 			damtype = BURN
@@ -242,7 +242,7 @@
 			to_chat(user, span_warning("Мало топлива!"))
 			switched_off(user)
 	else
-		to_chat(user, span_notice("Выключаю [sklonenie(src.name, VINITELNI, src.gender)]."))
+		to_chat(user, span_notice("Выключаю [skloname(src.name, VINITELNI, src.gender)]."))
 		playsound(loc, deac_sound, 50, TRUE)
 		switched_off(user)
 
@@ -271,7 +271,7 @@
 // If welding tool ran out of fuel during a construction task, construction fails.
 /obj/item/weldingtool/tool_use_check(mob/living/user, amount)
 	if(!isOn() || !check_fuel())
-		to_chat(user, span_warning("Надо бы включить [sklonenie(src.name, VINITELNI, src.gender)]!"))
+		to_chat(user, span_warning("Надо бы включить [skloname(src.name, VINITELNI, src.gender)]!"))
 		return FALSE
 
 	if(get_fuel() >= amount)
@@ -287,10 +287,10 @@
 		return
 	status = !status
 	if(status)
-		to_chat(user, span_notice("Собираю обратно [sklonenie(src.name, VINITELNI, src.gender)]."))
+		to_chat(user, span_notice("Собираю обратно [skloname(src.name, VINITELNI, src.gender)]."))
 		reagents.flags &= ~(OPENCONTAINER)
 	else
-		to_chat(user, span_notice("Теперь можно модифицировать [sklonenie(src.name, VINITELNI, src.gender)]."))
+		to_chat(user, span_notice("Теперь можно модифицировать [skloname(src.name, VINITELNI, src.gender)]."))
 		reagents.flags |= OPENCONTAINER
 	add_fingerprint(user)
 
@@ -310,12 +310,12 @@
 
 /obj/item/weldingtool/ignition_effect(atom/A, mob/user)
 	if(use_tool(A, user, 0, amount=1))
-		return span_notice("[user] классически поджигает [sklonenie(A.name, VINITELNI, A.gender)] используя [sklonenie(src.name, VINITELNI, src.gender)], какой крутой засранец.")
+		return span_notice("[user] классически поджигает [skloname(A.name, VINITELNI, A.gender)] используя [skloname(src.name, VINITELNI, src.gender)], какой крутой засранец.")
 	else
 		return ""
 
 /obj/item/weldingtool/largetank
-	name = "индустриальная сварка"
+	name = "индустриальный сварочный аппарат"
 	desc = "Сварочный аппарат немного большего размера с большим баком."
 	icon_state = "indwelder"
 	max_fuel = 40
@@ -325,9 +325,9 @@
 	return
 
 /obj/item/weldingtool/largetank/cyborg
-	name = "интегрированный сварочный инструмент"
+	name = "интегрированный сварочный аппарат"
 	desc = "Усовершенствованный сварочный аппарат, предназначенный для использования в роботизированных системах. Специальная рамка удваивает скорость сварки."
-	icon = 'icons/obj/items_cyborg.dmi'
+	icon = 'white/Feline/icons/cyber_arm_tools.dmi'
 	icon_state = "indwelder_cyborg"
 	toolspeed = 0.5
 
@@ -338,7 +338,7 @@
 
 
 /obj/item/weldingtool/mini
-	name = "аварийный сварочный инструмент"
+	name = "аварийный сварочный аппарат"
 	desc = "Миниатюрный сварочный аппарат, используемый в чрезвычайных ситуациях."
 	icon_state = "miniwelder"
 	inhand_icon_state = "miniwelder"
@@ -368,7 +368,7 @@
 	..()
 
 /obj/item/weldingtool/hugetank
-	name = "модернизированный сварочный инструмент"
+	name = "модернизированный сварочный аппарат"
 	desc = "Модернизированная сварка на базе промышленного сварщика."
 	icon_state = "upindwelder"
 	inhand_icon_state = "upindwelder"

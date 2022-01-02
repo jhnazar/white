@@ -28,7 +28,6 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	slot_flags = ITEM_SLOT_EARS
 	var/obj/item/encryptionkey/keyslot2 = null
 	dog_fashion = null
-	var/radiosound = 'white/valtos/sounds/radio/common.ogg'
 
 /obj/item/radio/headset/suicide_act(mob/living/carbon/user)
 	user.visible_message(span_suicide("[user] begins putting <b>[src.name]</b>'s antenna up [user.ru_ego()] nose! It looks like [user.p_theyre()] trying to give [user.ru_na()]self cancer!"))
@@ -39,16 +38,16 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 
 	if(item_flags & IN_INVENTORY && loc == user)
 		// construction of frequency description
-		var/list/avail_chans = list("Используй [RADIO_KEY_COMMON] для текущей настроенной частоты.")
+		var/list/avail_chans = list("[RADIO_KEY_COMMON] для текущей частоты.")
 		if(translate_binary)
-			avail_chans += "Используй [MODE_TOKEN_BINARY] для [MODE_BINARY]"
+			avail_chans += "[MODE_TOKEN_BINARY] для [MODE_BINARY]"
 		if(length(channels))
 			for(var/i in 1 to length(channels))
 				if(i == 1)
-					avail_chans += "Используй [MODE_TOKEN_DEPARTMENT] или [GLOB.channel_tokens[channels[i]]] для [lowertext(channels[i])]"
+					avail_chans += "[MODE_TOKEN_DEPARTMENT] или [GLOB.channel_tokens[channels[i]]] для [lowertext(ru_comms(channels[i]))]"
 				else
-					avail_chans += "Используй [GLOB.channel_tokens[channels[i]]] для [lowertext(channels[i])]"
-		. += "<hr><span class='notice'>На небольшом экране гарнитуры отображаются следующие доступные частоты:\n[english_list(avail_chans)].</span>"
+					avail_chans += "[GLOB.channel_tokens[channels[i]]] для [lowertext(ru_comms(channels[i]))]"
+		. += "<hr><span class='notice'>Дисплей показывает следующие частоты:\n[avail_chans.Join("\n")].</span>"
 
 		if(command)
 			. += "<hr><span class='info'>ПКМ для переключения режима высокой громкости вещания.</span>"
@@ -66,8 +65,6 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 /obj/item/radio/headset/talk_into(mob/living/M, message, channel, list/spans, datum/language/language, list/message_mods)
 	if (!listening)
 		return ITALICS | REDUCE_RANGE
-	if(ishuman(M) && radiosound)
-		playsound(M, radiosound, rand(10, 20), 0, 0, 0)
 	return ..()
 
 /obj/item/radio/headset/can_receive(freq, level, AIuser)

@@ -8,7 +8,6 @@ GLOBAL_LIST_INIT(ventcrawl_machinery, typecacheof(list(
 /mob/living/proc/handle_ventcrawl(atom/A)
 	if(!ventcrawler || !Adjacent(A))
 		return
-
 	if(stat)
 		to_chat(src, span_warning("Нужно быть в сознании для этого!"))
 		return

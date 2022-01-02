@@ -2331,6 +2331,7 @@
 	dir = 8
 	},
 /obj/machinery/chem_dispenser,
+/obj/machinery/light_switch/directional/west,
 /turf/open/floor/plasteel/white,
 /area/medical/chemistry)
 "yI" = (
@@ -2369,7 +2370,7 @@
 /area/medical/virology)
 "yM" = (
 /obj/machinery/light,
-/obj/machinery/rnd/production/techfab/department/medical,
+/obj/machinery/mecha_part_fabricator/med,
 /turf/open/floor/plasteel/monofloor/white,
 /area/medical/storage)
 "yR" = (
@@ -3032,6 +3033,7 @@
 "Eu" = (
 /obj/structure/table,
 /obj/machinery/light,
+/obj/item/stack/sheet/plastic/fifty,
 /obj/item/book/manual/wiki/medicine,
 /obj/item/clothing/glasses/hud/health,
 /obj/item/clothing/glasses/hud/health,
@@ -3916,6 +3918,7 @@
 /area/medical/medbay/lobby)
 "ND" = (
 /obj/structure/closet/l3closet,
+/obj/machinery/light_switch/directional/north,
 /turf/open/floor/plasteel/monofloor/white,
 /area/medical/storage)
 "NP" = (
@@ -4362,6 +4365,7 @@
 /obj/structure/table,
 /obj/item/surgical_drapes,
 /obj/item/razor,
+/obj/machinery/light_switch/directional/east,
 /turf/open/floor/plasteel/white/side{
 	dir = 8
 	},
@@ -4499,6 +4503,7 @@
 /obj/item/clothing/gloves/color/latex,
 /obj/item/clothing/mask/surgical,
 /obj/item/clothing/suit/apron/surgical,
+/obj/machinery/light_switch/directional/west,
 /turf/open/floor/plasteel/white/side{
 	dir = 4
 	},
@@ -4924,6 +4929,7 @@
 	name = "Connector Port (Air Supply)"
 	},
 /obj/machinery/portable_atmospherics/canister/oxygen,
+/obj/machinery/light_switch/directional/south,
 /turf/open/floor/plasteel,
 /area/medical/cryo)
 "WI" = (

@@ -220,8 +220,8 @@
 	layer = BELOW_MOB_LAYER
 	max_integrity = 100
 	use_power = ACTIVE_POWER_USE
-	idle_power_usage = 200
-	active_power_usage = 2000
+	idle_power_usage = 20
+	active_power_usage = 200
 	power_channel = AREA_USAGE_LIGHT //Lights are calc'd via area so they dont need to be in the machine list
 	var/on = FALSE					// 1 if on, 0 if off
 	var/on_gs = FALSE
@@ -443,7 +443,8 @@
 					burn_out()
 			else
 				update_use_power(ACTIVE_POWER_USE)
-				set_light(BR, PO, CO)
+				spawn(rand(0, 15))
+					set_light(BR, PO, CO)
 	else if(has_emergency_power(LIGHT_EMERGENCY_POWER_USE) && !turned_off())
 		update_use_power(IDLE_POWER_USE)
 		emergency_mode = TRUE
@@ -453,7 +454,7 @@
 		set_light(0)
 	update_icon()
 
-	active_power_usage = (brightness * 100)
+	active_power_usage = (brightness * 25)
 	if(on != on_gs)
 		on_gs = on
 		if(on)
@@ -826,7 +827,8 @@
 /obj/machinery/light/power_change()
 	SHOULD_CALL_PARENT(FALSE)
 	var/area/A = get_area(src)
-	seton(A.lightswitch && A.power_light)
+	if(A)
+		seton(A.lightswitch && A.power_light)
 
 // called when heated
 
@@ -884,7 +886,7 @@
 		return BRUTELOSS
 
 /obj/item/light/tube
-	name = "световая трубка"
+	name = "лампа дневного света"
 	desc = "Запасная, наверное."
 	icon_state = "ltube"
 	base_state = "ltube"

@@ -8,7 +8,7 @@
 	report_type = "wizard"
 	antag_flag = ROLE_WIZARD
 	false_report_weight = 10
-	required_players = 20
+	required_players = 30
 	required_enemies = 1
 	recommended_enemies = 1
 	enemy_minimum_age = 30
@@ -49,7 +49,7 @@
 		if(isliving(wizard.current) && wizard.current.stat!=DEAD)
 			return FALSE
 
-	for(var/obj/item/phylactery/P in GLOB.poi_list) //TODO : IsProperlyDead()
+	for(var/obj/item/phylactery/P in SSpoints_of_interest.other_points_of_interest) //TODO : IsProperlyDead()
 		if(P.mind && P.mind.has_antag_datum(/datum/antagonist/wizard))
 			return FALSE
 

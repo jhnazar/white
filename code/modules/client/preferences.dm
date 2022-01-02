@@ -77,10 +77,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/jumpsuit_style = PREF_SUIT		//suit/skirt
 	var/hairstyle = "Bald"				//Hair type
 	var/hair_color = "000"				//Hair color
-	var/grad_style = "None"
-	var/grad_color = "000"
+	var/hair_grad_style = "None"
+	var/hair_grad_color = "000"
 	var/facial_hairstyle = "Shaved"	//Face hair type
 	var/facial_hair_color = "000"		//Facial hair color
+	var/facial_grad_style = "None"
+	var/facial_grad_color = "000"
 	var/skin_tone = "caucasian1"		//Skin color
 	var/eye_color = "000"				//Eye color
 	var/datum/species/pref_species = new /datum/species/human()	//Mutant race
@@ -109,6 +111,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/list/ignoring = list()
 
 	var/clientfps = -1
+
+	var/widescreenwidth = 19
 
 	var/parallax
 
@@ -314,13 +318,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<tr><td><b>Носки:</b></td><td align='right'><a href='?_src_=prefs;preference=socks;task=input'>[socks]</a></td>"
 			dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_SOCKS]'>[(randomise[RANDOM_SOCKS]) ? "🔓" : "🔒"]</A></td></tr>"
 
-			dat += "<tr><td><b>Рюкзак:</b></td><td align='right'><a href='?_src_=prefs;preference=bag;task=input'>[backpack]</a>"
+			dat += "<tr><td><b>Рюкзак:</b></td><td align='right'><a href='?_src_=prefs;preference=bag;task=input'>[backpack_to_ru_conversion(backpack)]</a>"
 			dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_BACKPACK]'>[(randomise[RANDOM_BACKPACK]) ? "🔓" : "🔒"]</A></td></tr>"
 
-			dat += "<tr><td><b>Комбез:</b></td><td align='right'><a href='?_src_=prefs;preference=suit;task=input'>[jumpsuit_style]</a>"
+			dat += "<tr><td><b>Комбез:</b></td><td align='right'><a href='?_src_=prefs;preference=suit;task=input'>[jumpsuit_to_ru_conversion(jumpsuit_style)]</a>"
 			dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_JUMPSUIT_STYLE]'>[(randomise[RANDOM_JUMPSUIT_STYLE]) ? "🔓" : "🔒"]</A></td></tr>"
 
-			dat += "<tr><td><b>Аплинк:</b></td><td align='right'><a href='?_src_=prefs;preference=uplink_loc;task=input'>[uplink_spawn_loc]</a></td></tr>"
+			dat += "<tr><td><b>Аплинк:</b></td><td align='right'><a href='?_src_=prefs;preference=uplink_loc;task=input'>[uplink_to_ru_conversion(uplink_spawn_loc)]</a></td></tr>"
 
 			//Adds a thing to select which phobia because I can't be assed to put that in the quirks window
 			if("Phobia" in all_quirks)
@@ -372,8 +376,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				dat += "<a href='?_src_=prefs;preference=toggle_random;random_type=[RANDOM_HAIR_COLOR]'>[(randomise[RANDOM_HAIR_COLOR]) ? "🔓" : "🔒"]</A></td></tr>"
 
 				dat += "<tr><td><b>Градиент волос:</b></td><td align='right'>"
-				dat += "<a href='?_src_=prefs;preference=grad_style;task=input'>[grad_style]</a>"
-				dat += "<br><span style='border:1px solid #161616; background-color: #[grad_color];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=grad_color;task=input'>Изменить</a>"
+				dat += "<span style='border:1px solid #161616; background-color: #[hair_grad_color];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=hair_grad_color;task=input'>Изменить</a><a href='?_src_=prefs;preference=hair_grad_style;task=input'>[hair_grad_style]</a></td></tr>"
+
+				dat += "<tr><td><b>Градиент бороды:</b></td><td align='right'>"
+				dat += "<span style='border:1px solid #161616; background-color: #[facial_grad_color];'>&nbsp;&nbsp;&nbsp;</span> <a href='?_src_=prefs;preference=facial_grad_color;task=input'>Изменить</a><a href='?_src_=prefs;preference=facial_grad_style;task=input'>[facial_grad_style]</a></td></tr>"
 
 				dat += "<tr><td><b>Борода:</b></td><td align='right'>"
 
@@ -554,21 +560,17 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						dat += "<font size=2>Все</font>"
 					dat += "</td><td><font size=2><i>[G.description]</i></font></td></tr>"
 			else
-				var/line_num = 0
-				dat += "<tr class='metaitem buyed'><td>"
-				for(var/gear_name in purchased_gear)
-					var/datum/gear/G = GLOB.gear_datums[gear_name]
-					if(!G)
+				for(var/category in GLOB.loadout_categories)
+					if(category == "OOC" || category == "Роли")
 						continue
-					if(G.sort_category == "OOC" || G.sort_category == "Роли")
-						continue
-					var/ticked = (G.id in equipped_gear)
-					if(line_num == 25)
-						dat += "</td></tr><tr class='metaitem buyed'><td>"
-						line_num = 0
-					dat += "<a style='padding: 10px 2px;' [ticked ? "class='linkOn' " : ""]href='?_src_=prefs;preference=gear;toggle_gear=[G.id]'>[G.get_base64_icon_html()]</a>"
-					line_num++
-				dat += "</td></tr>"
+					dat += "<tr class='metaitem buyed'><td><b>[category]:</b></td><td>"
+					for(var/gear_name in purchased_gear)
+						var/datum/gear/G = GLOB.gear_datums[gear_name]
+						if(!G || category != G.sort_category)
+							continue
+						var/ticked = (G.id in equipped_gear)
+						dat += "<a class='tooltip[ticked ? " linkOn" : ""]' style='padding: 10px 2px;' href='?_src_=prefs;preference=gear;toggle_gear=[G.id]'>[G.get_base64_icon_html()]<span class='tooltiptext'>[G.display_name]</span></a>"
+					dat += "</td></tr>"
 			dat += "</table>"
 
 		if (2) // Game Preferences
@@ -646,6 +648,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "<tr><td><b>Полный экран:</b></td><td align='right'><a href='?_src_=prefs;preference=fullscreen'>[fullscreen ? "Вкл" : "Выкл"]</a></td></tr>"
 			if (CONFIG_GET(string/default_view) != CONFIG_GET(string/default_view_square))
 				dat += "<tr><td><b>Широкий экран:</b></td><td align='right'><a href='?_src_=prefs;preference=widescreenpref'>[widescreenpref ? "Вкл ([CONFIG_GET(string/default_view)])" : "Выкл ([CONFIG_GET(string/default_view_square)])"]</a></td></tr>"
+				if(widescreenpref)
+					dat += "<tr><td><b>Своя ширина экрана:</b></td><td align='right'><a href='?_src_=prefs;preference=widescreenwidth;task=input'>[widescreenwidth]</a></td></tr>"
 
 			dat += "<tr><td><b>Названия предметов:</b></td><td align='right'><a href='?_src_=prefs;preference=tooltip_user'>[(w_toggles & TOOLTIP_USER_UP) ? "Вкл" : "Выкл"]</a></td></tr>"
 			dat += "<tr><td><b>Позиция на экране:</b></td><td align='right'><a href='?_src_=prefs;preference=tooltip_pos'>[(w_toggles & TOOLTIP_USER_POS) ? "Низ" : "Верх"]</a></td></tr>"
@@ -1390,15 +1394,25 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					else
 						hairstyle = next_list_item(hairstyle, GLOB.hairstyles_list)
 
-				if("grad_style")
+				if("hair_grad_style")
 					var/new_grad_style = input(user, "Choose a color pattern for your hair:", "Character Preference")  as null|anything in GLOB.hair_gradients_list
 					if(new_grad_style)
-						grad_style = new_grad_style
+						hair_grad_style = new_grad_style
 
-				if("grad_color")
-					var/new_grad_color = input(user, "Choose your character's secondary hair color:", "Character Preference","#"+grad_color) as color|null
+				if("hair_grad_color")
+					var/new_grad_color = input(user, "Choose your character's secondary hair color:", "Character Preference","#"+hair_grad_color) as color|null
 					if(new_grad_color)
-						grad_color = sanitize_hexcolor(new_grad_color)
+						hair_grad_color = sanitize_hexcolor(new_grad_color)
+
+				if("facial_grad_style")
+					var/new_grad_style = input(user, "Choose a color pattern for your facial:", "Character Preference")  as null|anything in GLOB.facial_hair_gradients_list
+					if(new_grad_style)
+						facial_grad_style = new_grad_style
+
+				if("facial_grad_color")
+					var/new_grad_color = input(user, "Choose your character's secondary facial color:", "Character Preference","#"+facial_grad_color) as color|null
+					if(new_grad_color)
+						facial_grad_color = sanitize_hexcolor(new_grad_color)
 
 				if("previous_hairstyle")
 					if (gender == MALE)
@@ -1696,6 +1710,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					var/pickedmap = input(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference")  as null|anything in sortList(maplist)
 					if (pickedmap)
 						preferred_map = maplist[pickedmap]
+
+				if ("widescreenwidth")
+					var/desiredwidth = input(user, "Какую ширину выберем от до 15-31?", "ВЫБОР", widescreenwidth)  as null|num
+					if (!isnull(desiredwidth))
+						widescreenwidth = sanitize_integer(desiredwidth, 15, 31, widescreenwidth)
+						user.client.view_size.setDefault("[widescreenwidth]x15")
 
 				if ("clientfps")
 					var/desiredfps = input(user, "Choose your desired fps.\n-1 means recommended value (currently:[RECOMMENDED_FPS])\n0 means world fps (currently:[world.fps])", "Character Preference", clientfps)  as null|num
@@ -2005,6 +2025,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				if("widescreenpref")
 					widescreenpref = !widescreenpref
 					user.client.view_size.setDefault(getScreenSize(widescreenpref))
+					user.client.view = "[user.client.prefs.widescreenwidth]x15"
 
 				if("disabled_autocap")
 					disabled_autocap = !disabled_autocap
@@ -2114,8 +2135,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	character.hair_color = hair_color
 	character.facial_hair_color = facial_hair_color
 
-	character.grad_color = grad_color
-	character.grad_style = grad_style
+	LAZYSETLEN(character.grad_color, GRADIENTS_LEN)
+	character.grad_color[GRADIENT_HAIR_KEY] = hair_grad_color
+	character.grad_color[GRADIENT_FACIAL_HAIR_KEY] = facial_grad_color
+
+	LAZYSETLEN(character.grad_style, GRADIENTS_LEN)
+	character.grad_style[GRADIENT_HAIR_KEY] = hair_grad_style
+	character.grad_style[GRADIENT_FACIAL_HAIR_KEY] = facial_grad_style
 
 	character.skin_tone = skin_tone
 	character.hairstyle = hairstyle

@@ -56,6 +56,15 @@
 	static_lighting = TRUE
 	has_gravity = TRUE
 
+/area/centcom/office
+	name = "ЦК: Офис"
+
+/area/centcom/office/living
+	name = "ЦК: Жилое помещение"
+
+/area/centcom/officetwo
+	name = "ЦК: Офицерский кабинет"
+
 /area/centcom/supplypod/supplypod_temp_holding
 	name = "Дропподы ЦК: Канал полёта"
 	icon_state = "supplypod_flight"
@@ -74,7 +83,7 @@
 /area/centcom/supplypod/loading
 	name = "Дропподы ЦК: Загрузка"
 	icon_state = "supplypod_loading"
-	var/loading_id = ""
+	var/loading_id = "fuck"
 
 /area/centcom/supplypod/loading/Initialize()
 	. = ..()
@@ -232,6 +241,18 @@
 /area/ctf/flag_room2
 	name = "Захват флага: Флаг B"
 
+/area/ctf/warfare
+	name = "Астральный Забив"
+	static_lighting = TRUE
+	base_lighting_color = COLOR_WHITE
+	base_lighting_alpha = 0
+
+/area/ctf/warfare/indoors
+	name = "Астральный Забив: Помещения"
+	static_lighting = TRUE
+	base_lighting_color = COLOR_WHITE
+	base_lighting_alpha = 0
+
 // REEBE
 
 /area/reebe
@@ -250,28 +271,9 @@
 	icon_state = "purple"
 	area_flags = NOTELEPORT
 	var/playing_ambience = FALSE
+	ambientsounds = REEBE
 
 /area/reebe/Initialize(mapload)
 	. = ..()
 	spawn(5 SECONDS)
 		update_base_lighting()
-
-/area/reebe/city_of_cogs/Entered(atom/movable/AM)
-	. = ..()
-	if(ismob(AM))
-		var/mob/M = AM
-		if(M.client)
-			addtimer(CALLBACK(M.client, /client/proc/play_reebe_ambience), 900)
-
-//Reebe ambience replay
-
-/client/proc/play_reebe_ambience()
-	var/area/A = get_area(mob)
-	if(!istype(A, /area/reebe/city_of_cogs))
-		return
-	var/sound = pick(REEBE)
-	if(!played)
-		SEND_SOUND(src, sound(sound, repeat = 0, wait = 0, volume = 25, channel = CHANNEL_AMBIENCE))
-		played = TRUE
-		addtimer(CALLBACK(src, /client/proc/ResetAmbiencePlayed), 600)
-	addtimer(CALLBACK(src, /client/proc/play_reebe_ambience), 900)

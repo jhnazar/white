@@ -28,11 +28,9 @@
 		"doppler_array",
 		"experi_scanner",
 		"experimentor",
-		"handlabel",
 		"mechfab",
 		"micro_mani",
 		"packagewrap",
-		"paystand",
 		"plasmaglass",
 		"plasmareinforcedglass",
 		"plasteel",
@@ -59,6 +57,19 @@
 		"plasmaman_gas_filter",
 		"oven_tray"
 	)
+
+/datum/techweb_node/basic_medical
+	id = "basic_medical"
+	starting_node = TRUE
+	display_name = "Basic Medical Equipment"
+	description = "Basic medical tools and equipment."
+	design_ids = list("cybernetic_liver", "cybernetic_heart", "cybernetic_lungs","cybernetic_stomach", "cybernetic_kidneys", "cybernetic_guts", "scalpel", "circular_saw",
+					"hemostat", "retractor", "cautery", "bonesetter", "surgicaldrill", "blood_filter",
+					"beaker", "large_beaker", "xlarge_beaker", "syringe", "health_sensor", "portable_chem_mixer", "stethoscope", "surgical_drapes", "plumbing_rcd",
+					"dropper", "defibmountdefault", "surgical_tape", "glasses_prescription",
+					"robot_low_arm_left", "robot_low_arm_right", "robot_low_leg_left", "robot_low_leg_right", "teeth_box_32",
+					"body_bag", "fluid_ducts", "optable_folding", "pillbottle", "pill_bottle_big", "rollerbed",
+					"prox_sensor")
 
 /datum/techweb_node/mmi
 	id = "mmi"
@@ -96,17 +107,7 @@
 	display_name = "Basic Tools"
 	description = "Basic mechanical, electronic, surgical and botanical tools."
 	design_ids = list("screwdriver", "wrench", "wirecutters", "crowbar", "multitool", "welding_tool", "tscanner", "analyzer", "cable_coil", "pipe_painter", "airlock_painter", "decal_painter",
-					"cultivator", "plant_analyzer", "shovel", "spade", "floor_painter", "hatchet", "secateurs", "mop", "pushbroom", "plunger", "spraycan", "swab", "petri_dish", "normtrash")
-
-/datum/techweb_node/basic_medical
-	id = "basic_medical"
-	starting_node = TRUE
-	display_name = "Basic Medical Equipment"
-	description = "Basic medical tools and equipment."
-	design_ids = list("cybernetic_liver", "cybernetic_heart", "cybernetic_lungs","cybernetic_stomach", "scalpel",
-					"blood_filter", "circular_saw", "bonesetter", "surgicaldrill", "retractor", "cautery", "hemostat",
-					"stethoscope", "surgical_drapes", "syringe", "plumbing_rcd", "beaker", "large_beaker", "xlarge_beaker",
-					"dropper", "defibmountdefault", "surgical_tape", "portable_chem_mixer", "glasses_prescription")
+					"cultivator", "plant_analyzer", "shovel", "spade", "floor_painter", "hatchet", "secateurs", "mop", "pushbroom", "plunger", "spraycan", "swab", "petri_dish", "normtrash", "handlabel", "paystand")
 
 /datum/techweb_node/basic_circuitry
 	id = "basic_circuitry"
@@ -166,8 +167,8 @@
 
 /datum/techweb_node/biotech
 	id = "biotech"
-	display_name = "Biological Technology"
-	description = "What makes us tick."	//the MC, silly!
+	display_name = "Биотехнологии"
+	description = "То, что заставляет сердце биться."	//the MC, silly!
 	prereq_ids = list("base")
 	design_ids = list("chem_heater", "chem_master", "chem_dispenser", "pandemic", "defibrillator", "defibmount", "operating", "soda_dispenser", "beer_dispenser", "healthanalyzer", "medigel","genescanner", "med_spray_bottle", "chem_pack", "blood_pack", "medical_kiosk", "crewpinpointerprox", "medipen_refiller", "biopsy_tool", "plumbing_rcd_sci", "medbot_carrier")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
@@ -175,8 +176,8 @@
 
 /datum/techweb_node/adv_biotech
 	id = "adv_biotech"
-	display_name = "Advanced Biotechnology"
-	description = "Advanced Biotechnology"
+	display_name = "Продвинутые Биотехнологии"
+	description = "Расширят границы познания."
 	prereq_ids = list("biotech")
 	design_ids = list("piercesyringe", "crewpinpointer", "smoke_machine", "plasmarefiller", "limbgrower", "meta_beaker", "healthanalyzer_advanced", "harvester", "holobarrier_med", "detective_scanner", "defibrillator_compact", "ph_meter")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 5000)
@@ -185,9 +186,9 @@
 
 /datum/techweb_node/xenoorgan_biotech
 	id = "xenoorgan_bio"
-	display_name = "Xeno-organ Biology"
-	description = "Plasmaman, Ethereals, Lizardpeople... What makes our non-human crewmembers tick?"
-	prereq_ids = list("adv_biotech")
+	display_name = "Ксено-органы"
+	description = "Органы характерные для Фелинидов, Ящеров, Плазменов и Этериалов"
+	prereq_ids = list("biotech", "cyber_organs")
 	design_ids = list("limbdesign_felinid", "limbdesign_lizard", "limbdesign_plasmaman", "limbdesign_ethereal")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 6500)
 	discount_experiments = list(/datum/experiment/scanning/random/cytology/easy = 1000, /datum/experiment/scanning/points/slime/expert = 5000)
@@ -205,25 +206,25 @@
 
 /datum/techweb_node/imp_wt_surgery
 	id = "imp_wt_surgery"
-	display_name = "Improved Wound-Tending Surgery"
-	description = "Who would have known being more gentle with a hemostat decreases patient pain?"
+	display_name = "Улучшенная Травматологическая Хирургия"
+	description = "Удивительно, но оказывается, что надежно зафиксированный пациент более не нуждается в анестезии!"
 	prereq_ids = list("biotech")
-	design_ids = list("surgery_heal_brute_upgrade","surgery_heal_burn_upgrade")
+	design_ids = list("surgery_heal_brute_upgrade","surgery_heal_burn_upgrade","surgery_toxin_heal_toxin_upgrade")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 1000)
 
 
 /datum/techweb_node/adv_surgery
 	id = "adv_surgery"
-	display_name = "Advanced Surgery"
-	description = "When simple medicine doesn't cut it."
+	display_name = "Продвинутая Хирургия"
+	description = "Не бывает лишних органов, есть только их недостаточное количество..."
 	prereq_ids = list("imp_wt_surgery")
-	design_ids = list("surgery_lobotomy", "surgery_heal_brute_upgrade_femto", "surgery_heal_burn_upgrade_femto","surgery_heal_combo","surgery_wing_reconstruction")
+	design_ids = list("surgery_lobotomy", "surgery_heal_brute_upgrade_femto", "surgery_heal_burn_upgrade_femto","surgery_heal_combo", "surgery_toxin_heal_toxin_upgrade_femto","surgery_wing_reconstruction")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 1500)
 
 /datum/techweb_node/exp_surgery
 	id = "exp_surgery"
-	display_name = "Experimental Surgery"
-	description = "When evolution isn't fast enough."
+	display_name = "Экспериментальная Хирургия"
+	description = "Когда природная эволюция не поспевает за прогрессом."
 	prereq_ids = list("adv_surgery")
 	design_ids = list("surgery_pacify","surgery_vein_thread","surgery_muscled_veins","surgery_nerve_splice","surgery_nerve_ground","surgery_ligament_hook","surgery_ligament_reinforcement","surgery_cortex_imprint","surgery_cortex_folding","surgery_viral_bond", "surgery_heal_combo_upgrade", "organdoc")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 7500)
@@ -231,8 +232,8 @@
 
 /datum/techweb_node/alien_surgery
 	id = "alien_surgery"
-	display_name = "Alien Surgery"
-	description = "Abductors did nothing wrong."
+	display_name = "Инопланетная Хирургия"
+	description = "Похитители ни в чем не виноваты!"
 	prereq_ids = list("exp_surgery", "alientech")
 	design_ids = list("surgery_brainwashing","surgery_zombie","surgery_heal_combo_upgrade_femto")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 10000)
@@ -618,7 +619,7 @@
 	display_name = "Cybernetic Organs"
 	description = "We have the technology to rebuild him."
 	prereq_ids = list("biotech")
-	design_ids = list("cybernetic_ears", "cybernetic_heart_tier2", "cybernetic_liver_tier2", "cybernetic_lungs_tier2", "cybernetic_stomach_tier2")
+	design_ids = list("cybernetic_ears", "cybernetic_heart_tier2", "cybernetic_liver_tier2", "cybernetic_lungs_tier2", "cybernetic_stomach_tier2", "cybernetic_kidneys_tier2", "cybernetic_guts_tier2")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 1000)
 
 /datum/techweb_node/cyber_organs_upgraded
@@ -626,7 +627,7 @@
 	display_name = "Upgraded Cybernetic Organs"
 	description = "We have the technology to upgrade him."
 	prereq_ids = list("adv_biotech", "cyber_organs")
-	design_ids = list("cybernetic_ears_u", "cybernetic_heart_tier3", "cybernetic_liver_tier3", "cybernetic_lungs_tier3", "cybernetic_stomach_tier3")
+	design_ids = list("cybernetic_ears_u", "cybernetic_heart_tier3", "cybernetic_liver_tier3", "cybernetic_lungs_tier3", "cybernetic_stomach_tier3", "cybernetic_kidneys_tier3", "cybernetic_guts_tier3")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 1500)
 
 /datum/techweb_node/cyber_implants
