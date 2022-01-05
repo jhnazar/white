@@ -16,10 +16,10 @@
 
 	food_reagents = list(/datum/reagent/consumable/nutriment/organ_tissue = 5)
 
-	var/metabolism_efficiency = 0.05
+	var/metabolism_efficiency = 0.03
 	var/operated = FALSE
 
-	reagent_vol = 150
+	reagent_vol = 300
 
 /obj/item/organ/guts/Initialize()
 	. = ..()
@@ -30,7 +30,7 @@
 
 /obj/item/organ/guts/update_icon_state()
 	. = ..()
-	icon_state = "[base_icon_state][damage > 50 ? "damaged" : ""]"
+	icon_state = "[base_icon_state][damage > 50 ? "-damaged" : ""]"
 
 /obj/item/organ/guts/on_life(delta_time, times_fired)
 	. = ..()
@@ -41,7 +41,7 @@
 		body.try_poo()
 
 	if(body?.nutrition <= 50)
-		applyOrganDamage(1)
+		applyOrganDamage(0.1)
 		update_icon()
 
 	if(body?.nutrition)
@@ -52,8 +52,8 @@
 		return
 
 	if(damage > high_threshold && DT_PROB(0.5 * damage, delta_time))
-		to_chat(body, span_warning("В животе болит и больше не выходит сдерживаться!"))
-		body.try_poo()
+		to_chat(body, span_warning("В животе болит и голова кружится"))
+		body.adjustToxLoss(1)
 
 /obj/item/organ/guts/get_availability(datum/species/S)
 	return !(NOGUTS in S.inherent_traits)
@@ -71,7 +71,7 @@
 	organ_flags = ORGAN_SYNTHETIC
 	maxHealth = STANDARD_ORGAN_THRESHOLD * 0.5
 	var/emp_vulnerability = 80
-	metabolism_efficiency = 0.07
+	metabolism_efficiency = 0.05
 
 /obj/item/organ/guts/cybernetic/tier2
 	name = "кибернетические кишки"
@@ -80,7 +80,7 @@
 	desc = "Усовершенствованное устройство, превосходящее функции человеческих кишок."
 	maxHealth = 1.5 * STANDARD_ORGAN_THRESHOLD
 	emp_vulnerability = 40
-	metabolism_efficiency = 0.04
+	metabolism_efficiency = 0.02
 
 /obj/item/organ/guts/cybernetic/tier3
 	name = "продвинутые кибернетические кишки"
