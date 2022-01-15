@@ -73,6 +73,8 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	var/atom/movable/screen/tooltip
 	var/atom/movable/screen/wanted/wanted_lvl
 	var/atom/movable/screen/spacesuit
+	var/atom/movable/screen/station_height/station_height
+	var/atom/movable/screen/station_height_bg/station_height_bg
 	// subtypes can override this to force a specific UI style
 	var/ui_style
 
@@ -81,12 +83,12 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 
 	if (!ui_style)
 		// will fall back to the default if any of these are null
-		ui_style = ui_style2icon(owner.client && owner.client.prefs && owner.client.prefs.UI_style)
+		ui_style = ui_style2icon(owner?.client?.prefs?.UI_style)
 
 	hide_actions_toggle = new
 	hide_actions_toggle.InitialiseIcon(src)
-	if(mymob?.client)
-		hide_actions_toggle.locked = mymob.client.prefs.buttons_locked
+	if(mymob?.client && hide_actions_toggle)
+		hide_actions_toggle.locked = mymob.client.prefs?.buttons_locked
 
 	hand_slots = list()
 

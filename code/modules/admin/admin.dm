@@ -190,7 +190,7 @@
 				body += "<A href='?_src_=holder;[HrefToken()];makerobot=[REF(M)]'>Робот</A>"
 				body += "<A href='?_src_=holder;[HrefToken()];makealien=[REF(M)]'>Чужой</A>"
 				body += "<A href='?_src_=holder;[HrefToken()];makeslime=[REF(M)]'>Слайм</A>"
-				body += "<A href='?_src_=holder;[HrefToken()];makeblob=[REF(M)]'>Блоб</A>"
+				body += "<A href='?_src_=holder;[HrefToken()];makeblob=[REF(M)]'>Масса</A>"
 
 			//Simple Animals
 			if(isanimal(M))
@@ -759,15 +759,18 @@
 	var/chosen = pick_closest_path(object)
 	if(!chosen)
 		return
-	var/turf/T = get_turf(usr)
+	var/turf/target_turf = get_turf(usr)
 
 	if(ispath(chosen, /turf))
-		T.ChangeTurf(chosen)
+		target_turf.ChangeTurf(chosen)
 	else
-		var/obj/structure/closet/supplypod/centcompod/pod = new()
+		var/obj/structure/closet/supplypod/pod = podspawn(list(
+			"target" = target_turf,
+			"path" = /obj/structure/closet/supplypod/centcompod,
+		))
+		//we need to set the admin spawn flag for the spawned items so we do it outside of the podspawn proc
 		var/atom/A = new chosen(pod)
 		A.flags_1 |= ADMIN_SPAWNED_1
-		new /obj/effect/pod_landingzone(T, pod)
 
 	log_admin("[key_name(usr)] pod-spawned [chosen] at [AREACOORD(usr)]")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Podspawn Atom") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!

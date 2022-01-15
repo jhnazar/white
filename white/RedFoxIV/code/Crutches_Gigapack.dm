@@ -29,7 +29,8 @@
 	var/teamname_gc = copytext_char(sanitize(team_name_genitive_case), 1, MAX_MESSAGE_LEN)
 	var/teamname = copytext_char(sanitize(team_name), 1, MAX_MESSAGE_LEN)
 
-	message_admins("[Sender] собирается вызвать [teamname_gc] с миссией: [msg]")
+	if(Sender)
+		message_admins("[Sender] собирается вызвать [teamname_gc] с миссией: [msg]")
 	var/list/mob/dead/observer/candidates = poll_ghost_candidates("Хотите быть в специальном отряде быстрого реагирования?", "deathsquad", null)
 	var/teamSpawned = FALSE
 
@@ -81,7 +82,7 @@
 			numagents--
 			teamSpawned++
 
-		if (teamSpawned)
+		if (teamSpawned && Sender)
 			message_admins("[Sender] вызывает [teamname] с миссией: [msg]")
 
 		return TRUE
@@ -99,3 +100,19 @@
 
 /proc/deathsquad_request(input, cumshit)
 	general_ert_request(input, "Отряд смерти", "отряд смерти", new /datum/antagonist/ert/deathsquad/leader, new /datum/antagonist/ert/deathsquad, cumshit)
+
+
+
+/proc/getnoun(number, one, two, five)
+	var/n = abs(number)
+	n = n % 100
+	if (n >= 11 &&  n <= 19)
+		return five
+
+	n = n % 10
+	switch(n)
+		if(1)
+			return one
+		if(2 to 4)
+			return two
+	return five

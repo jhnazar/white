@@ -67,7 +67,7 @@
 
 /datum/round_aspect/weak_walls/run_aspect()
 	for(var/turf/closed/wall/r_wall/RW in world)
-		RW.ChangeTurf(/turf/closed/wall, flags = CHANGETURF_DEFER_CHANGE)
+		RW.ChangeTurf(/turf/closed/wall, flags = CHANGETURF_INHERIT_AIR)
 		CHECK_TICK
 	..()
 
@@ -190,7 +190,7 @@
 
 /datum/round_aspect/prikol/run_aspect()
 	for(var/turf/open/floor/plasteel/floor)
-		if(floor.x % 2 == 0 && floor.y % 2 == 0)
+		if(floor.y % 2 == 0)
 			floor.add_atom_colour(("#FFF200"), WASHABLE_COLOUR_PRIORITY)
 		else
 			floor.add_atom_colour(("#00B7EF"), WASHABLE_COLOUR_PRIORITY)
@@ -503,7 +503,9 @@
 
 /datum/round_aspect/stolen_floor/run_aspect()
 	for(var/turf/open/floor/P in world)
-		P.ChangeTurf(/turf/open/floor/plating, flags = CHANGETURF_DEFER_CHANGE)
+		if(!is_station_level(P.z))
+			continue
+		P.ChangeTurf(/turf/open/floor/plating, flags = CHANGETURF_INHERIT_AIR)
 		CHECK_TICK
 	..()
 
@@ -514,7 +516,9 @@
 
 /datum/round_aspect/strong_floor/run_aspect()
 	for(var/turf/open/floor/P in world)
-		P.ChangeTurf(/turf/open/floor/engine, flags = CHANGETURF_DEFER_CHANGE)
+		if(!is_station_level(P.z))
+			continue
+		P.PlaceOnTop(/turf/open/floor/engine)
 		CHECK_TICK
 	..()
 
@@ -525,14 +529,48 @@
 
 /datum/round_aspect/are_we_in_dungeon/run_aspect()
 	for(var/obj/structure/window/W in world)
+		if(!is_station_level(W.z))
+			continue
 		var/turf/TT = get_turf(W)
 		if(TT)
 			if(istype(W, /obj/structure/window/reinforced))
-				TT.ChangeTurf(/turf/closed/wall/r_wall, flags = CHANGETURF_DEFER_CHANGE)
+				TT.PlaceOnTop(/turf/closed/wall/r_wall)
 			else
-				TT.ChangeTurf(/turf/closed/wall, flags = CHANGETURF_DEFER_CHANGE)
+				TT.PlaceOnTop(/turf/closed/wall)
 			qdel(W)
 	for(var/obj/structure/grille/G in world)
+		if(!is_station_level(G.z))
+			continue
 		qdel(G)
 		CHECK_TICK
+	..()
+
+/datum/round_aspect/trash
+	name = "Trash"
+	desc = "Субботник начался!"
+	weight = 15
+
+/datum/round_aspect/trash/run_aspect()
+	for(var/turf/open/P in world)
+		if(!is_station_level(P.z))
+			continue
+		if(prob(5))
+			var/pickedtrash = pickweight(pickweight(GLOB.trash_loot))
+			new pickedtrash(P)
+		CHECK_TICK
+	..()
+
+/datum/round_aspect/traitored
+	name = "Traitored"
+	desc = "Кто-то сдал всех предателей!"
+	weight = 15
+
+/datum/round_aspect/traitored/run_aspect()
+	spawn(30 SECONDS)
+		var/list/our_pussies = list()
+		for(var/D in GLOB.antagonists)
+			var/datum/antagonist/A = D
+			if(A?.name && A?.owner)
+				our_pussies += "[A.name] - [A.owner.name] под видом [A.owner.assigned_role].[prob(1) ? " УБЕЙТЕ ЕГО НАХУЙ!" : ""]"
+		priority_announce("Прива, я тут немного собрал для вас имён интересных, надеюсь, они вам понадобятся! Список психов: [our_pussies.Join("\n")]", sender_override = "Апегио Крысус")
 	..()

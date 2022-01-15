@@ -223,16 +223,23 @@
 	if(HAS_TRAIT(src, TRAIT_RESTRAINED))
 		changeNext_move(CLICK_CD_BREAKOUT)
 		last_special = world.time + CLICK_CD_BREAKOUT
-		var/buckle_cd = 60 SECONDS
+		var/buckle_break_chance = 100
+		var/buckle_time = 1 SECONDS
+
+		var/obj/item/restraints/O
 		if(handcuffed)
-			var/obj/item/restraints/O = src.get_item_by_slot(ITEM_SLOT_HANDCUFFED)
-			buckle_cd = O.breakouttime
+			O = src.get_item_by_slot(ITEM_SLOT_HANDCUFFED)
+			buckle_break_chance = O.breakoutchance
+			buckle_time = O.breakouttime
 		visible_message(span_warning("[capitalize(src.name)] пытается выбраться из наручников!") , \
-					span_notice("Пытаюсь выбраться из наручников... (займёт примерно [round(buckle_cd/600,1)] минут, и надо не двигаться.)"))
-		if(do_after(src, buckle_cd, target = src, timed_action_flags = IGNORE_HELD_ITEM))
+					span_notice("Пытаюсь выбраться из наручников..."))
+		if(do_after(src, buckle_time, target = src, timed_action_flags = IGNORE_HELD_ITEM))
 			if(!buckled)
 				return
-			buckled.user_unbuckle_mob(src,src)
+			if(prob(buckle_break_chance))
+				buckled.user_unbuckle_mob(src,src)
+			else
+				to_chat(src, span_notice(pick("Ещё раз...", "Почти получилось...", "А ну-ка...", "А если так...", "Чёрт...", "Ну давай же...")))
 		else
 			if(src && buckled)
 				to_chat(src, span_warning("Не получилось выбраться из наручников!"))
@@ -271,31 +278,39 @@
 		cuff_resist(I)
 
 
-/mob/living/carbon/proc/cuff_resist(obj/item/I, breakouttime = 600, cuff_break = 0)
+/mob/living/carbon/proc/cuff_resist(obj/item/I, breakoutchance = 5, cuff_break = 0)
 	if(I.item_flags & BEING_REMOVED)
 		to_chat(src, span_warning("Уже пытаюсь снять [I]!"))
 		return
 	I.item_flags |= BEING_REMOVED
-	breakouttime = I.breakouttime
+	breakoutchance = I.breakoutchance
 	if(!cuff_break)
 		visible_message(span_warning("[capitalize(src.name)] пытается снять [I]!"))
-		to_chat(src, span_notice("Пытаюсь снять [I]... (это займёт примерно [DisplayTimeText(breakouttime)] и надо бы не двигаться.)"))
-		if(do_after(src, breakouttime, target = src, timed_action_flags = IGNORE_HELD_ITEM))
-			. = clear_cuffs(I, cuff_break)
+		to_chat(src, span_notice("Пытаюсь снять [I]..."))
+		if(do_after(src, I.breakouttime, target = src, timed_action_flags = IGNORE_HELD_ITEM))
+			if(prob(breakoutchance))
+				. = clear_cuffs(I, cuff_break)
+			else
+				//I.breakoutchance++
+				to_chat(src, span_notice(pick("Ещё раз...", "Почти получилось...", "А ну-ка...", "А если так...", "Чёрт...", "Ну давай же...")))
 		else
 			to_chat(src, span_warning("Не получилось снять [I]!"))
 
 	else if(cuff_break == FAST_CUFFBREAK)
-		breakouttime = 50
+		breakoutchance = 100 - 100 * (100-breakoutchance/100)**2 //equivalent to the chance of breaking the cuff in 2 tries or less. because fancy maths	// see https://www.desmos.com/calculator/gdlyhnente
 		visible_message(span_warning("[capitalize(src.name)] пытается разорвать [I]!"))
-		to_chat(src, span_notice("Пытаюсь разорвать [I]... (это займёт примерно 5 секунд, надо бы не двигаться.)"))
-		if(do_after(src, breakouttime, target = src, timed_action_flags = IGNORE_HELD_ITEM))
-			. = clear_cuffs(I, cuff_break)
+		to_chat(src, span_notice("Пытаюсь разорвать [I]..."))
+		if(do_after(src, 1 SECONDS, target = src, timed_action_flags = IGNORE_HELD_ITEM))
+			if(prob(breakoutchance))
+				. = clear_cuffs(I, cuff_break)
+			else
+				to_chat(src, span_alert(pick("СУКА!", "ДА БЛЯТЬ!", "ЧЁРТ!", "УКУСИ МЕНЯ ПЧЕЛА!", "ДО ЧЕГО ЖЕ КРЕПКИЕ, СУКА!", "УХ МЛЯ!")))
 		else
 			to_chat(src, span_warning("У меня не вышло разорвать [I]!"))
 
 	else if(cuff_break == INSTANT_CUFFBREAK)
 		. = clear_cuffs(I, cuff_break)
+		to_chat(src, span_alert("Опа!"))
 	I.item_flags &= ~BEING_REMOVED
 
 /mob/living/carbon/proc/uncuff()
@@ -343,6 +358,9 @@
 		return TRUE
 
 	else
+
+		I.breakoutchance = initial(I.breakoutchance)
+
 		if(I == handcuffed)
 			handcuffed.forceMove(drop_location())
 			set_handcuffed(null)
@@ -1283,3 +1301,21 @@
 /mob/living/carbon/proc/attach_rot(mapload)
 	SIGNAL_HANDLER
 	AddComponent(/datum/component/rot, 6 MINUTES, 10 MINUTES, 1)
+
+/**
+ * This proc is a helper for spraying blood for things like slashing/piercing wounds and dismemberment.
+ *
+ * The strength of the splatter in the second argument determines how much it can dirty and how far it can go
+ *
+ * Arguments:
+ * * splatter_direction: Which direction the blood is flying
+ * * splatter_strength: How many tiles it can go, and how many items it can pass over and dirty
+ */
+/mob/living/carbon/proc/spray_blood(splatter_direction, splatter_strength = 3)
+	if(!isturf(loc))
+		return
+	var/obj/effect/decal/cleanable/blood/hitsplatter/our_splatter = new(loc)
+	our_splatter.add_blood_DNA(return_blood_DNA())
+	our_splatter.blood_dna_info = get_blood_dna_list()
+	var/turf/targ = get_ranged_target_turf(src, splatter_direction, splatter_strength)
+	INVOKE_ASYNC(our_splatter, /obj/effect/decal/cleanable/blood/hitsplatter/.proc/fly_towards, targ, splatter_strength)

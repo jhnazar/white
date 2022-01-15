@@ -106,6 +106,11 @@
 	charge = 400
 	max_charge = 400
 
+/obj/item/shadowcloak/yohei/Initialize()
+	. = ..()
+	visible_message(span_clown("no fun allowed."))
+	qdel(src)
+
 /obj/item/shadowcloak/yohei/process(delta_time)
 	if(user.get_item_by_slot(ITEM_SLOT_BELT) != src || user.pooed)
 		Deactivate()
@@ -327,7 +332,7 @@
 			BT.tension = 80
 		to_chat(H, span_revenbignotice("Давно не виделись, а?"))
 		if(H?.hud_used)
-			H.hud_used.update_parallax_pref(H, TRUE)
+			H.hud_used.update_parallax_pref(H, 1)
 
 		H.mind.teach_crafting_recipe(/datum/crafting_recipe/hacker/head)
 		H.mind.teach_crafting_recipe(/datum/crafting_recipe/hacker/suit)

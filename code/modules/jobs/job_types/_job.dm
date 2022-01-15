@@ -208,19 +208,19 @@
 
 			to_chat(M, span_danger("Что-то пришлось оставить..."))
 			qdel(item)
-	// новый год 2022
-	if(SSevents.holidays[NEW_YEAR])
+	//// новый год 2022
+	if(SSevents.holidays && SSevents.holidays[NEW_YEAR])
 		var/obj/item/storage/backpack/b = locate() in H.contents
 		var/givegift = pick(/obj/item/storage/box/festive/cartonbox,
 							/obj/item/storage/box/festive/cartonbox/alt,
 							/obj/item/storage/box/festive/cartonbox/meshok)
+		var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
+
 		if(b)
 			new givegift(b)
-
-	var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
-	H.put_in_hands(garl)
-	H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
-	// новый год 2022
+		H.put_in_hands(garl)
+		H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
+	//// новый год 2022
 /datum/job/proc/announce(mob/living/carbon/human/H, announce_captaincy = FALSE)
 	if(head_announce)
 		announce_head(H, head_announce)

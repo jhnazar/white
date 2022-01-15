@@ -12,7 +12,8 @@
 #define CHANNEL_CUSTOM_JUKEBOX 1014
 #define CHANNEL_TTS_ANNOUNCER 1013
 #define CHANNEL_BATTLETENSION 1012
-#define CHANNEL_TTS_AVAILABLE 1011
+#define CHANNEL_RUINATION_OST 1011
+#define CHANNEL_TTS_AVAILABLE 1010
 #define CHANNEL_BOOMBOX_AVAILABLE 800
 #define CHANNEL_WIND_AVAILABLE 780
 #define CHANNEL_HIGHEST_AVAILABLE 770
@@ -127,6 +128,12 @@
 #define SOVIET_AMB list('white/valtos/sounds/prison/amb6.ogg',\
 						'white/valtos/sounds/prison/amb7.ogg',\
 						'white/valtos/sounds/prison/amb8.ogg')
+
+#define RANGERS_AMB list('white/valtos/sounds/rangers/1.ogg',\
+						'white/valtos/sounds/rangers/2.ogg',\
+						'white/valtos/sounds/rangers/3.ogg',\
+						'white/valtos/sounds/rangers/4.ogg',\
+						'white/valtos/sounds/rangers/5.ogg')
 
 #define SOVIET_AMB_CAVES list('white/valtos/sounds/prison/ambout1.ogg')
 
