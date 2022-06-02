@@ -32,3 +32,20 @@
 		return TRUE
 
 	return FALSE
+
+/datum/emote/living/carbon/pishanie
+	key = "pishat"
+	ru_name = "пищать"
+	key_third_person = "pishit"
+	message = "пищит."
+	emote_type = EMOTE_AUDIBLE
+
+/datum/emote/living/carbon/pishanie/get_sound(mob/living/carbon/user)
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(!H.mind || !H.mind.miming)
+			if(user.gender == FEMALE)
+				return pick('white/qwaszx000/loly/pisk.ogg',\
+							'white/jhnazar/misc/prikols/sjim1.ogg')
+			else
+				return 'white/jhnazar/misc/prikols/loly_male.ogg'

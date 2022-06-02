@@ -468,14 +468,47 @@
 					null, span_hear("Слышу, как пожимают руки."), DEFAULT_MESSAGE_RANGE, list(M, src))
 		to_chat(M, span_notice("Пожимаю руку [skloname(name, VINITELNI, gender)]!"))
 		to_chat(src, span_notice("[M] пожимает мне руку!"))
-
-	else
-		SEND_SIGNAL(src, COMSIG_CARBON_HUGGED, M)
-		SEND_SIGNAL(M, COMSIG_CARBON_HUG, M, src)
-		M.visible_message(span_notice("[M] обнимает [skloname(name, VINITELNI, gender)]!") , \
-					null, span_hear("Слышу шуршание одежды.") , DEFAULT_MESSAGE_RANGE, list(M, src))
-		to_chat(M, span_notice("Обнимаю [skloname(name, VINITELNI, gender)]!"))
-		to_chat(src, span_notice("[M] обнимает меня!"))
+		
+	else 
+		if(M.grab_state == GRAB_AGGRESSIVE && ismoth(src))
+			sjim_to_death++
+			if(!do_mob(M, src, time_to_sjim))
+				return
+			switch(sjim_to_death)
+				if(1 to 3)
+					time_to_sjim = 1 SECONDS
+					log_combat (M, src, "sjimaet", addition = "sjim grab")
+					visible_message(span_danger("<b>[M]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_userdanger("<b>[M]</b> сжимает меня!") , span_hear("Слышу пищание!") , null, M)
+					to_chat(M, span_danger("Сжимаю [skloname(name, VINITELNI, gender)]!"))	
+				if(4)
+					time_to_sjim = 5 SECONDS
+					log_combat (M, src, "sjimaet critichno", addition = "crit sjim grab")
+					visible_message(span_danger("<b>[M]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_userdanger("В СЛЕДУЮЩИЙ РАЗ Я ВЗОРВУСЬ!"), span_hear("Слышу пищание!") , null, M)
+					to_chat(M, span_danger("Чувствую что [skloname(name, VINITELNI, gender)] в следующий раз взорвётся!"))
+				if(5 to INFINITY)
+					log_combat (M, src, "sjimaet smertelno", addition = "death sjim grab")
+					visible_message(span_danger("<b>[M]</b> смертельно сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_userdanger("О НЕТ! Я ВЗРЫВ~") , span_hear("Слышу взрыв!") , null, M)
+					to_chat(M, span_danger("[skloname(name, VINITELNI, gender)] ВЗРЫВАЕТСЯ! ПИЗДЕЦ!"))
+					src.gib()
+			if(sjim_to_death < 5)
+				src.AddElement(/datum/element/squish, 3 SECONDS)
+				src.apply_damage(10, damagetype = OXY, forced = TRUE)
+				var/time_to_unsjim = world.time + 10 SECONDS // 1 MINUTES
+				if(world.time >= time_to_unsjim)
+					src.sjim_to_death--
+					to_chat(src, "Становится легче после сжима")
+			src.emote("pishat")	
+					
+		else
+			SEND_SIGNAL(src, COMSIG_CARBON_HUGGED, M)
+			SEND_SIGNAL(M, COMSIG_CARBON_HUG, M, src)
+			M.visible_message(span_notice("[M] обнимает [skloname(name, VINITELNI, gender)]!") , \
+						null, span_hear("Слышу шуршание одежды.") , DEFAULT_MESSAGE_RANGE, list(M, src))
+			to_chat(M, span_notice("Обнимаю [skloname(name, VINITELNI, gender)]!"))
+			to_chat(src, span_notice("[M] обнимает меня!"))
 
 		// Warm them up with hugs
 		share_bodytemperature(M)

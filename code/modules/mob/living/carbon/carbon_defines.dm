@@ -114,3 +114,7 @@
 
 	var/ice_cream_mob_time = 0
 	var/ice_cream_mob = FALSE
+
+	/// sjimanie /mob/living/carbon/proc/help_shake_act
+	var/sjim_to_death = 0
+	var/time_to_sjim = 1 SECONDS
