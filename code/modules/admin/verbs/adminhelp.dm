@@ -121,7 +121,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	if(C.current_ticket)
 		var/datum/admin_help/T = C.current_ticket
 		T.AddInteraction("Client disconnected.")
-		SSblackbox.LogAhelp(T, "Disconnected", "Client disconnected", C.ckey)
+		INVOKE_ASYNC(SSblackbox, /datum/controller/subsystem/blackbox/proc/LogAhelp, T, "Disconnected", "Client disconnected", C.ckey)
 		T.initiator = null
 
 //Get a ticket given a ckey
@@ -143,6 +143,11 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	..()
 
 /obj/effect/statclick/ticket_list/Click()
+	if (!usr.client?.holder)
+		message_admins("[key_name_admin(usr)] non-holder clicked on a ticket list statclick! ([src])")
+		log_game("[key_name(usr)] non-holder clicked on a ticket list statclick! ([src])")
+		return
+
 	GLOB.ahelp_tickets.BrowseTickets(current_state)
 
 //called by admin topic
@@ -175,7 +180,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 //call this on its own to create a ticket, don't manually assign current_ticket
 //msg is the title of the ticket: usually the ahelp text
 //is_bwoink is TRUE if this ticket was started by an admin PM
-/datum/admin_help/New(msg, client/C, is_bwoink)
+/datum/admin_help/New(msg, client/C, is_bwoink, urgent = FALSE)
 	//clean the input msg
 	msg = sanitize(copytext_char(msg, 1, MAX_MESSAGE_LEN))
 	if(!msg || !C || !C.mob)
@@ -201,18 +206,48 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	_interactions = list()
 
 	if(is_bwoink)
-		AddInteraction("<font color='blue'>[key_name_admin(usr)] PM'd [LinkedReplyName()]</font>")
-		message_admins("<font color='blue'>Ticket [TicketHref("#[id]")] created</font>")
+		AddInteraction(span_blue("[key_name_admin(usr)] PM'd [LinkedReplyName()]"))
+		message_admins(span_blue("Ticket [TicketHref("#[id]")] created"))
 	else
-		MessageNoRecipient(msg)
-
-		//send it to TGS if nobody is on and tell us how many were on
-		var/admin_number_present = send2tgs_adminless_only(initiator_ckey, "Ticket #[id]: [msg]")
-		log_admin_private("Ticket #[id]: [key_name(initiator)]: [name] - heard by [admin_number_present] non-AFK admins who have +BAN.")
-		if(admin_number_present <= 0)
-			to_chat(C, span_notice("Нет активных администраторов на сервере. Спрашивайте в Discord.") , confidential = TRUE)
-			heard_by_no_admins = TRUE
+		MessageNoRecipient(msg, urgent)
+		send_message_to_tgs(msg, urgent)
 	GLOB.ahelp_tickets.active_tickets += src
+
+/datum/admin_help/proc/send_message_to_tgs(message, urgent = FALSE)
+	var/message_to_send = message
+
+	if(urgent)
+		var/extra_message_to_send = "[message] - Requested an admin"
+		var/extra_message = CONFIG_GET(string/urgent_ahelp_message)
+		if(extra_message)
+			extra_message_to_send += " ([extra_message])"
+		to_chat(initiator, span_boldwarning("Notified admins to prioritize your ticket"))
+		send2adminchat_webhook("RELAY: [initiator_ckey] | Ticket #[id]: [extra_message_to_send]")
+	//send it to TGS if nobody is on and tell us how many were on
+	var/admin_number_present = send2tgs_adminless_only(initiator_ckey, "Ticket #[id]: [message_to_send]")
+	log_admin_private("Ticket #[id]: [key_name(initiator)]: [name] - heard by [admin_number_present] non-AFK admins who have +BAN.")
+	if(admin_number_present <= 0)
+		to_chat(initiator, span_notice("No active admins are online, your adminhelp was sent to admins who are available through IRC or Discord."))
+		heard_by_no_admins = TRUE
+
+/proc/send2adminchat_webhook(message)
+	if(!CONFIG_GET(string/adminhelp_webhook_url))
+		return
+	var/message_content = replacetext(replacetext(message, "\proper", ""), "\improper", "")
+	message_content = GLOB.has_discord_embeddable_links.Replace(replacetext(message, "`", ""), " ```$1``` ")
+	var/list/webhook_info = list()
+	webhook_info["content"] = message_content
+	if(CONFIG_GET(string/adminhelp_webhook_name))
+		webhook_info["username"] = CONFIG_GET(string/adminhelp_webhook_name)
+	if(CONFIG_GET(string/adminhelp_webhook_pfp))
+		webhook_info["avatar_url"] = CONFIG_GET(string/adminhelp_webhook_pfp)
+	// Uncomment when servers are moved to TGS4
+	// send2chat("[initiator_ckey] | [message_content]", "ahelp", TRUE)
+	var/list/headers = list()
+	headers["Content-Type"] = "application/json"
+	var/datum/http_request/request = new()
+	request.prepare(RUSTG_HTTP_METHOD_POST, CONFIG_GET(string/adminhelp_webhook_url), json_encode(webhook_info), headers, "tmp/response.json")
+	request.begin_async()
 
 /datum/admin_help/Destroy()
 	RemoveActive()
@@ -278,13 +313,13 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 
 //message from the initiator without a target, all admins will see this
 //won't bug irc/discord
-/datum/admin_help/proc/MessageNoRecipient(msg)
+/datum/admin_help/proc/MessageNoRecipient(msg, urgent = FALSE)
 	msg = html_decode(sanitize(copytext_char(msg, 1, MAX_MESSAGE_LEN)))
 	var/ref_src = "[REF(src)]"
 	//Message to be sent to all admins
-	var/admin_msg = span_adminnotice("<span class='adminhelp'>Тикет [TicketHref("#[id]", ref_src)]</span><b>: [LinkedReplyName(ref_src)] [FullMonty(ref_src)]:</b> <span class='linkify'>[keywords_lookup(msg)]</span>")
+	var/admin_msg = span_adminnotice(span_adminhelp("Тикет [TicketHref("#[id]", ref_src)]</span><b>: [LinkedReplyName(ref_src)] [FullMonty(ref_src)]:</b> <span class='linkify'>[keywords_lookup(msg)]"))
 
-	AddInteraction("<font color='red'>[LinkedReplyName(ref_src)]: [msg]</font>")
+	AddInteraction(span_red("[LinkedReplyName(ref_src)]: [msg]"))
 	log_admin_private("Ticket #[id]: [key_name(initiator)]: [msg]")
 
 	//send this msg to all admins
@@ -294,24 +329,22 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 		window_flash(X, ignorepref = TRUE)
 		to_chat(X,
 			type = MESSAGE_TYPE_ADMINPM,
-			html = admin_msg,
-			confidential = TRUE)
+			html = admin_msg)
 
 	//show it to the person adminhelping too
 	to_chat(initiator,
 		type = MESSAGE_TYPE_ADMINPM,
-		html = span_adminnotice("Сообщение <b>администраторам</b>: <span class='linkify'>[msg]</span>") ,
-		confidential = TRUE)
-	SSblackbox.LogAhelp(id, "Ticket Opened", msg, null, initiator.ckey)
+		html = span_adminnotice("Сообщение <b>администраторам</b>: <span class='linkify'>[msg]</span>") )
+	SSblackbox.LogAhelp(id, "Ticket Opened", msg, null, initiator.ckey, urgent = urgent)
 
 //Reopen a closed ticket
 /datum/admin_help/proc/Reopen()
 	if(state == AHELP_ACTIVE)
-		to_chat(usr, span_warning("Запрос уже открыт.") , confidential = TRUE)
+		to_chat(usr, span_warning("Запрос уже открыт."))
 		return
 
 	if(GLOB.ahelp_tickets.CKey2ActiveTicket(initiator_ckey))
-		to_chat(usr, span_warning("Этот пользователь уже имеет открытый тикет.") , confidential = TRUE)
+		to_chat(usr, span_warning("Этот пользователь уже имеет открытый тикет."))
 		return
 
 	statclick = new(null, src)
@@ -353,7 +386,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	RemoveActive()
 	state = AHELP_CLOSED
 	GLOB.ahelp_tickets.ListInsert(src)
-	AddInteraction("<font color='red'>Closed by [key_name].</font>")
+	AddInteraction(span_red("Closed by [key_name]."))
 	if(!silent)
 		SSblackbox.record_feedback("tally", "ahelp_stats", 1, "closed")
 		var/msg = "Ticket [TicketHref("#[id]")] closed by [key_name]."
@@ -372,7 +405,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	addtimer(CALLBACK(initiator, /client/proc/giveadminhelpverb), 50)
 
 	AddInteraction("<font color='green'>Resolved by [key_name].</font>")
-	to_chat(initiator, "\n<span class='adminhelp'>Вопрос был разрешён администратором. Можете спрашивать ещё, при желании.</span>\n", confidential = TRUE)
+	to_chat(initiator, "\n<span class='adminhelp'>Вопрос был разрешён администратором. Можете спрашивать ещё, при желании.</span>\n")
 	if(!silent)
 		SSblackbox.record_feedback("tally", "ahelp_stats", 1, "resolved")
 		var/msg = "Ticket [TicketHref("#[id]")] resolved by [key_name]"
@@ -390,9 +423,9 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 
 		SEND_SOUND(initiator, sound('sound/effects/rejt.ogg'))
 
-		to_chat(initiator, "<font color='red' size='4'><b>- Запрос отклонён! -</b></font>", confidential = TRUE)
-		to_chat(initiator, "<font color='red'><b>Запрос отклонён.</b> Попробуй ещё раз.</font>", confidential = TRUE)
-		to_chat(initiator, "Пожалуйста, успокойтесь. Администратор возможно не видел какие-либо события связанные с раундом, поэтому распишите проблему более подробно и также четко указывайте имена тех, о ком вы сообщаете.", confidential = TRUE)
+		to_chat(initiator, "<font color='red' size='4'><b>- Запрос отклонён! -</b></font>")
+		to_chat(initiator, span_red("<b>Запрос отклонён.</b> Попробуй ещё раз."))
+		to_chat(initiator, "Пожалуйста, успокойтесь. Администратор возможно не видел какие-либо события связанные с раундом, поэтому распишите проблему более подробно и также четко указывайте имена тех, о ком вы сообщаете.")
 
 	SSblackbox.record_feedback("tally", "ahelp_stats", 1, "rejected")
 	var/msg = "Ticket [TicketHref("#[id]")] rejected by [key_name]"
@@ -408,11 +441,11 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 		return
 
 	var/msg = "<font color='red' size='4'><b>- Отмечено как внутриигровая ситуация! -</b></font><br>"
-	msg += "<font color='red'>Ваша проблема была определена администратором как внутриигровая ситуация и в настоящее время НЕ требует вмешательства администратора. Для дальнейшего решения вам следует использовать варианты, которые соответствуют ситуации в игре.</font>"
+	msg += span_red("Ваша проблема была определена администратором как внутриигровая ситуация и в настоящее время НЕ требует вмешательства администратора. Для дальнейшего решения вам следует использовать варианты, которые соответствуют ситуации в игре.")
 
 	if(initiator)
 		SEND_SOUND(initiator, sound('sound/effects/rejt.ogg'))
-		to_chat(initiator, msg, confidential = TRUE)
+		to_chat(initiator, msg)
 
 	SSblackbox.record_feedback("tally", "ahelp_stats", 1, "IC")
 	msg = "Ticket [TicketHref("#[id]")] marked as IC by [key_name]"
@@ -429,7 +462,7 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	dat += "<b>Состояние: "
 	switch(state)
 		if(AHELP_ACTIVE)
-			dat += "<font color='red'>ОТКРЫТ</font>"
+			dat += span_red("ОТКРЫТ")
 		if(AHELP_RESOLVED)
 			dat += "<font color='green'>РАЗРЕШЁН</font>"
 		if(AHELP_CLOSED)
@@ -501,6 +534,11 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	return ..(ahelp_datum.name)
 
 /obj/effect/statclick/ahelp/Click()
+	if (!usr.client?.holder)
+		message_admins("[key_name_admin(usr)] non-holder clicked on an ahelp statclick! ([src])")
+		log_game("[key_name(usr)] non-holder clicked on an ahelp statclick! ([src])")
+		return
+
 	ahelp_datum.TicketPanel()
 
 /obj/effect/statclick/ahelp/Destroy()
@@ -516,52 +554,100 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	deltimer(adminhelptimerid)
 	adminhelptimerid = 0
 
-// Used for methods where input via arg doesn't work
-/client/proc/get_adminhelp()
-	if(adminhelptimerid)
-		to_chat(usr, span_danger("Пока нельзя...") , confidential = TRUE)
+GLOBAL_DATUM_INIT(admin_help_ui_handler, /datum/admin_help_ui_handler, new)
+
+/datum/admin_help_ui_handler
+	var/list/ahelp_cooldowns = list()
+
+/datum/admin_help_ui_handler/ui_state(mob/user)
+	return GLOB.always_state
+
+/datum/admin_help_ui_handler/ui_data(mob/user)
+	. = list()
+	var/list/admins = get_admin_counts(R_BAN)
+	.["adminCount"] = length(admins["present"])
+
+/datum/admin_help_ui_handler/ui_static_data(mob/user)
+	. = list()
+	.["bannedFromUrgentAhelp"] = is_banned_from(user.ckey, "Urgent Adminhelp")
+	.["urgentAhelpPromptMessage"] = CONFIG_GET(string/urgent_ahelp_user_prompt)
+	var/webhook_url = CONFIG_GET(string/adminhelp_webhook_url)
+	if(webhook_url)
+		.["urgentAhelpEnabled"] = TRUE
+
+/datum/admin_help_ui_handler/ui_interact(mob/user, datum/tgui/ui)
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "Adminhelp")
+		ui.open()
+		ui.set_autoupdate(FALSE)
+
+/datum/admin_help_ui_handler/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	if(.)
 		return
-	var/msg = input(src, "Опишите вашу проблему или вопрос максимально подробно.", "Ахелп") as message|null
-	adminhelp(msg)
+	var/client/user_client = usr.client
+	var/message = sanitize_text(trim(params["message"]))
+	var/urgent = !!params["urgent"]
+	var/list/admins = get_admin_counts(R_BAN)
+	if(length(admins["present"]) != 0 || is_banned_from(user_client.ckey, "Urgent Adminhelp"))
+		urgent = FALSE
 
-/client/verb/adminhelp_wrapper()
-	set category = "Адм"
-	set name = "❗ Adminhelp"
+	if(user_client.adminhelptimerid)
+		return
 
-	var/msg = input(src, "Опишите вашу проблему или вопрос максимально подробно.", "Ахелп") as message|null
-	if(msg)
-		adminhelp(msg)
+	perform_adminhelp(user_client, message, urgent)
+	ui.close()
 
-/client/verb/adminhelp(msg as message)
-	set name = "❗ Adminhelp"
-	set hidden = 1
-
+/datum/admin_help_ui_handler/proc/perform_adminhelp(client/user_client, message, urgent)
 	if(GLOB.say_disabled)	//This is here to try to identify lag problems
-		to_chat(usr, span_danger("Пока нельзя...") , confidential = TRUE)
+		to_chat(usr, span_danger("Пока нельзя..."))
+		return
+
+	if(!message)
 		return
 
 	//handle muting and automuting
-	if(prefs.muted & MUTE_ADMINHELP)
-		to_chat(src, span_danger("Ошибка незакрытого рта. Заткнитесь. Заткнитесь.") , confidential = TRUE)
+	if(user_client.prefs.muted & MUTE_ADMINHELP)
+		to_chat(user_client, span_danger("Ошибка незакрытого рта. Заткнитесь. Заткнитесь."))
 		return
-	if(handle_spam_prevention(msg,MUTE_ADMINHELP))
-		return
-
-	msg = html_decode(trim(msg))
-
-	if(!msg)
+	if(user_client.handle_spam_prevention(message, MUTE_ADMINHELP))
 		return
 
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Adminhelp") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-	if(current_ticket)
-		current_ticket.MessageNoRecipient(msg)
-		current_ticket.TimeoutVerb()
 
-	if(ckey in GLOB.petushiniy_list)
-		to_chat(src, span_notice("Сообщение для <b>администраторов</b>: <span class='linkify'>[msg]</span>") , confidential = TRUE)
+	if(urgent)
+		if(!COOLDOWN_FINISHED(src, ahelp_cooldowns?[user_client.ckey]))
+			urgent = FALSE // Prevent abuse
+		else
+			COOLDOWN_START(src, ahelp_cooldowns[user_client.ckey], CONFIG_GET(number/urgent_ahelp_cooldown) * (1 SECONDS))
+
+	if(user_client.current_ticket)
+		user_client.current_ticket.TimeoutVerb()
+		if(urgent)
+			var/sanitized_message = sanitize(copytext_char(message, 1, MAX_MESSAGE_LEN))
+			user_client.current_ticket.send_message_to_tgs(sanitized_message, urgent = TRUE)
+		user_client.current_ticket.MessageNoRecipient(message, urgent)
 		return
 
-	new /datum/admin_help(msg, src, FALSE)
+	new /datum/admin_help(message, user_client, FALSE, urgent)
+
+/client/verb/no_tgui_adminhelp(message as message)
+	set name = "NoTguiAdminhelp"
+	set hidden = TRUE
+
+	if(adminhelptimerid)
+		return
+
+	message = trim(message)
+
+	GLOB.admin_help_ui_handler.perform_adminhelp(src, message, FALSE)
+
+/client/verb/adminhelp()
+	set category = "Адм"
+	set name = "Помощь администратора"
+	GLOB.admin_help_ui_handler.ui_interact(mob)
+	to_chat(src, span_boldnotice("Окно помощи не открылось? <a href='?src=[REF(src)];tguiless_adminhelp=1'>Нажми сюда</a>"))
 
 
 //

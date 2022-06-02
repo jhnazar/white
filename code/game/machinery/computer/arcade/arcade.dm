@@ -54,6 +54,9 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 		/obj/item/storage/belt/military/snack = 2,
 		/obj/item/toy/brokenradio = 2,
 		/obj/item/toy/braintoy = 2,
+		/obj/item/toy/foamfinger = 2,
+		/obj/item/toy/eldritch_book = 2,
+		/obj/item/storage/box/heretic_box = 1,
 		/obj/item/clothing/glasses/trickblindfold = 2))
 
 /obj/machinery/computer/arcade
@@ -119,7 +122,7 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 		else
 			empprize = pickweight(GLOB.arcade_prize_pool)
 		new empprize(loc)
-	explosion(loc, -1, 0, 1+num_of_prizes, flame_range = 1+num_of_prizes)
+	explosion(src, devastation_range = -1, light_impact_range = 1+num_of_prizes, flame_range = 1+num_of_prizes)
 
 /obj/machinery/computer/arcade/attackby(obj/item/O, mob/user, params)
 	if(istype(O, /obj/item/stack/arcadeticket))
@@ -137,8 +140,8 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 
 // ** BATTLE ** //
 /obj/machinery/computer/arcade/battle
-	name = "arcade machine"
-	desc = "Does not support Pinball."
+	name = "аркадный автомат"
+	desc = "Не поддерживает Пинбол."
 	icon_state = "arcade"
 	circuit = /obj/item/circuitboard/computer/arcade/battle
 
@@ -589,12 +592,12 @@ GLOBAL_LIST_INIT(arcade_prize_pool, list(
 	return ..() //well boys we did it, lists are no more
 
 /obj/machinery/computer/arcade/battle/examine_more(mob/user)
-	var/list/msg = list("\n<span class='notice'><i>You notice some writing scribbled on the side of [src]...</i></span>")
-	msg += "\n<span class='info'>smart -> defend, defend, light attack</span>"
-	msg += "\n<span class='info'>shotgun -> defend, defend, power attack</span>"
-	msg += "\n<span class='info'>short temper -> counter, counter, counter</span>"
-	msg += "\n<span class='info'>poisonous -> light attack, light attack, light attack</span>"
-	msg += "\n<span class='info'>chonker -> power attack, power attack, power attack</span>"
+	var/list/msg = list(span_notice("\n<i>You notice some writing scribbled on the side of [src]...</i>"))
+	msg += span_info("\nsmart -> defend, defend, light attack")
+	msg += span_info("\nshotgun -> defend, defend, power attack")
+	msg += span_info("\nshort temper -> counter, counter, counter")
+	msg += span_info("\npoisonous -> light attack, light attack, light attack")
+	msg += span_info("\nchonker -> power attack, power attack, power attack")
 	return msg
 
 /obj/machinery/computer/arcade/battle/emag_act(mob/user)

@@ -1,6 +1,6 @@
 /obj/machinery/computer/launchpad
-	name = "launchpad control console"
-	desc = "Used to teleport objects to and from a launchpad."
+	name = "Консоль управления локального телепада"
+	desc = "Используется для калибровки и управления блюспейс телепадом. Не требует фактических координат, работает на смещении координат относительно консоли. Дальность работы зависит от деталей."
 	icon_screen = "teleport"
 	icon_keyboard = "teleport_key"
 	circuit = /obj/item/circuitboard/computer/launchpad_console
@@ -58,12 +58,12 @@
 	why_fail = add_output_port("Fail reason", PORT_TYPE_STRING)
 	on_fail = add_output_port("Failed", PORT_TYPE_SIGNAL)
 
-/obj/item/circuit_component/bluespace_launchpad/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/bluespace_launchpad/register_usb_parent(atom/movable/shell)
 	. = ..()
-	if(istype(parent, /obj/machinery/computer/launchpad))
-		attached_console = parent
+	if(istype(shell, /obj/machinery/computer/launchpad))
+		attached_console = shell
 
-/obj/item/circuit_component/bluespace_launchpad/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/bluespace_launchpad/unregister_usb_parent(atom/movable/shell)
 	attached_console = null
 	return ..()
 
@@ -151,6 +151,7 @@
 	return pad
 
 /obj/machinery/computer/launchpad/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "LaunchpadConsole", name)

@@ -88,7 +88,7 @@
 		else
 			. += "\nВ корпусе нет батарейки для резервного питания."
 	else
-		. += "\n<span class='danger'>Этот корпус не поддерживает батарейки для резервного питания.</span>"
+		. += span_danger("\nЭтот корпус не поддерживает батарейки для резервного питания.")
 
 /obj/structure/light_construct/attack_hand(mob/user)
 	if(cell)
@@ -217,16 +217,18 @@
 	var/base_state = "tube"		// base description and icon_state
 	icon_state = "tube"
 	desc = "Светится. Ммм."
-	layer = BELOW_MOB_LAYER
+	layer = WALL_OBJ_LAYER
+	plane = GAME_PLANE_UPPER
 	max_integrity = 100
 	use_power = ACTIVE_POWER_USE
-	idle_power_usage = 20
-	active_power_usage = 200
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.02
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.02
 	power_channel = AREA_USAGE_LIGHT //Lights are calc'd via area so they dont need to be in the machine list
+	always_area_sensitive = TRUE
 	var/on = FALSE					// 1 if on, 0 if off
 	var/on_gs = FALSE
 	var/static_power_used = 0
-	var/brightness = 8			// luminosity when on, also used in power calculation
+	var/brightness = 6			// luminosity when on, also used in power calculation
 	var/bulb_power = 1			// basically the alpha of the emitted light source
 	var/bulb_colour = "#f3fffa"	// befault colour of the light.
 	var/status = LIGHT_OK		// LIGHT_OK, _EMPTY, _BURNED or _BROKEN
@@ -243,7 +245,7 @@
 
 	var/nightshift_enabled = FALSE	//Currently in night shift mode?
 	var/nightshift_allowed = TRUE	//Set to FALSE to never let this light get switched to night mode.
-	var/nightshift_brightness = 8
+	var/nightshift_brightness = 6
 	var/nightshift_light_power = 0.45
 	var/nightshift_light_color = "#FFDDCC"
 
@@ -308,8 +310,8 @@
 	icon_state = "bulb"
 	base_state = "bulb"
 	fitting = "bulb"
-	brightness = 4
-	nightshift_brightness = 4
+	brightness = 3
+	nightshift_brightness = 3
 	bulb_colour = "#FFD6AA"
 	desc = "Тускло светится. Ах."
 	light_type = /obj/item/light/bulb
@@ -340,18 +342,13 @@
 	brightness = 1
 	bulb_power = 0.9
 
-/obj/machinery/light/Move()
-	if(status != LIGHT_BROKEN)
-		break_light_tube(1)
-	return ..()
-
 // create a new lighting fixture
 /obj/machinery/light/Initialize(mapload)
 	. = ..()
 
 	if(!mapload) //sync up nightshift lighting for player made lights
-		var/area/A = get_area(src)
-		var/obj/machinery/power/apc/temp_apc = A.get_apc()
+		var/area/our_area = get_area(src)
+		var/obj/machinery/power/apc/temp_apc = our_area.get_apc()
 		nightshift_enabled = temp_apc?.nightshift_lights
 
 	if(start_with_cell && !no_emergency)
@@ -364,11 +361,11 @@
 	. = ..()
 	switch(fitting)
 		if("tube")
-			brightness = 8
+			brightness = 6
 			if(prob(2))
 				break_light_tube(1)
 		if("bulb")
-			brightness = 4
+			brightness = 3
 			if(prob(5))
 				break_light_tube(1)
 	addtimer(CALLBACK(src, .proc/update, 0), 1)
@@ -402,15 +399,36 @@
 
 /obj/machinery/light/update_overlays()
 	. = ..()
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	if(on && status == LIGHT_OK)
 		var/area/A = get_area(src)
 		if(emergency_mode || (A?.fire))
-			SSvis_overlays.add_vis_overlay(src, overlayicon, "[base_state]_emergency", layer, plane, dir)
+			. += mutable_appearance(overlayicon, "[base_state]_emergency")
 		else if (nightshift_enabled)
-			SSvis_overlays.add_vis_overlay(src, overlayicon, "[base_state]_nightshift", layer, plane, dir)
+			. += mutable_appearance(overlayicon, "[base_state]_nightshift")
 		else
-			SSvis_overlays.add_vis_overlay(src, overlayicon, base_state, layer, plane, dir)
+			. += mutable_appearance(overlayicon, base_state)
+
+// Area sensitivity is traditionally tied directly to power use, as an optimization
+// But since we want it for fire reacting, we disregard that
+/obj/machinery/light/setup_area_power_relationship()
+	. = ..()
+	if(!.)
+		return
+	var/area/our_area = get_area(src)
+	RegisterSignal(our_area, COMSIG_AREA_FIRE_CHANGED, .proc/handle_fire)
+
+/obj/machinery/light/on_enter_area(datum/source, area/area_to_register)
+	..()
+	RegisterSignal(area_to_register, COMSIG_AREA_FIRE_CHANGED, .proc/handle_fire)
+	handle_fire(area_to_register, area_to_register.fire)
+
+/obj/machinery/light/on_exit_area(datum/source, area/area_to_unregister)
+	..()
+	UnregisterSignal(area_to_unregister, COMSIG_AREA_FIRE_CHANGED)
+
+/obj/machinery/light/proc/handle_fire(area/source, new_fire)
+	SIGNAL_HANDLER
+	update()
 
 // update the icon_state and luminosity of the light depending on its state
 /obj/machinery/light/proc/update(trigger = TRUE)
@@ -454,7 +472,6 @@
 		set_light(0)
 	update_icon()
 
-	active_power_usage = (brightness * 25)
 	if(on != on_gs)
 		on_gs = on
 		if(on)
@@ -820,7 +837,7 @@
 	zap_flags &= ~(ZAP_MACHINE_EXPLOSIVE | ZAP_OBJ_DAMAGE)
 	. = ..()
 	if(explosive)
-		explosion(src,0,0,0,flame_range = 5, adminlog = FALSE)
+		explosion(src, flame_range = 5, adminlog = FALSE)
 		qdel(src)
 
 // called when area power state changes
@@ -843,10 +860,9 @@
 
 /obj/machinery/light/proc/explode()
 	set waitfor = 0
-	var/turf/T = get_turf(src.loc)
 	break_light_tube()	// break it first to give a warning
 	sleep(2)
-	explosion(T, 0, 0, 2, 2)
+	explosion(src, light_impact_range = 2, flash_range = -1)
 	sleep(1)
 	qdel(src)
 
@@ -891,7 +907,7 @@
 	icon_state = "ltube"
 	base_state = "ltube"
 	inhand_icon_state = "c_tube"
-	brightness = 8
+	brightness = 6
 	custom_price = PAYCHECK_EASY * 0.5
 
 /obj/item/light/tube/broken
@@ -905,7 +921,7 @@
 	inhand_icon_state = "contvapour"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
-	brightness = 4
+	brightness = 3
 	custom_price = PAYCHECK_EASY * 0.4
 
 /obj/item/light/bulb/broken

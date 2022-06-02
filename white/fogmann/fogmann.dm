@@ -9,13 +9,14 @@
 	inhand_icon_state = "sniper"
 	w_class = WEIGHT_CLASS_BULKY
 	force = 4
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
 	slot_flags = ITEM_SLOT_BACK
 	mag_type = /obj/item/ammo_box/magazine/internal/shot
 	casing_ejector = FALSE
 	weapon_weight = WEAPON_MEDIUM
+
+/obj/item/gun/ballistic/shotgun/sniper/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2)
 
 /obj/item/ammo_casing/shotgun/dart/sleeping
 	name = "shotgun dart"
@@ -57,12 +58,6 @@
 
 /obj/item/book/ruchinese/suicide_act(mob/user)
 	user.visible_message(span_suicide("[user] бьет себя словарем по голове, кажется он чувствует себя хуево!"))
-	var/delay_offset = 0
-	for(var/mob/M in viewers(src, 7))
-		var/mob/living/carbon/human/C = M
-		if (ishuman(M))
-			addtimer(CALLBACK(C, /mob/.proc/emote, "blyadiada"), delay_offset * 0.3)
-			delay_offset++
 	return (BRUTELOSS)
 
 /datum/uplink_item/role_restricted/ruchinese
@@ -71,21 +66,6 @@
 	item = /obj/item/book/ruchinese
 	cost = 18
 	restricted_roles = list("Chaplain", "Curator", "Assistant")
-
-/datum/emote/living/carbon/blyad
-	key = "blyadiada"
-	ru_name = "блядиада"
-	key_third_person = "blyads"
-	message = "blyads."
-	muzzle_ignore = FALSE
-	hands_use_check = FALSE
-	emote_type = EMOTE_AUDIBLE
-
-/datum/emote/living/carbon/blyad/get_sound(mob/living/user)
-	if(ishuman(user))
-		var/mob/living/carbon/human/H = user
-		if(!H.mind || !H.mind.miming)
-			return 'white/fogmann/blyead.ogg'
 
 /area/commons/fitness/kachalka
 	name = "Техтоннели: Качалка"
@@ -398,14 +378,6 @@
 	inhand_icon_state = "greatcoat"
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 0, ACID = 0, WOUND = 0)
 	strip_delay = 80
-
-/obj/item/clothing/suit/armor/hos/ranger/Initialize()
-	. = ..()
-	AddComponent(/datum/component/armor_plate_plasteel)
-
-/obj/item/clothing/head/helmet/alt/ranger/Initialize()
-	. = ..()
-	AddComponent(/datum/component/armor_plate_plasteel)
 
 /datum/crafting_recipe/rangerhelm
 	name = "шлем рейнджера НКР"

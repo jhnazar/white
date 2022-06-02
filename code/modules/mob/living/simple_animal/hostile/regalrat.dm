@@ -129,7 +129,7 @@
 	button_icon_state = "coffer"
 	cooldown_time = 50
 
-/datum/action/cooldown/coffer/Trigger()
+/datum/action/cooldown/coffer/Trigger(trigger_flags)
 	. = ..()
 	if(!.)
 		return
@@ -174,7 +174,7 @@
 	cooldown_time = 80
 	///Checks to see if there are any nearby mice. Does not count Rats.
 
-/datum/action/cooldown/riot/Trigger()
+/datum/action/cooldown/riot/Trigger(trigger_flags)
 	. = ..()
 	if(!.)
 		return
@@ -205,10 +205,10 @@
 	icon_state = "mouse_gray"
 	icon_living = "mouse_gray"
 	icon_dead = "mouse_gray_dead"
-	speak = list("Skree!","SKREEE!","Squeak?")
-	speak_emote = list("squeaks")
-	emote_hear = list("Hisses.")
-	emote_see = list("runs in a circle.", "stands on its hind legs.")
+	speak = list("Скрии!","СКРИИИ!","Пи?")
+	speak_emote = list("пищит")
+	emote_hear = list("Шипит.")
+	emote_see = list("бегает по кругу.", "встаёт на свои задние лапы.")
 	melee_damage_lower = 3
 	melee_damage_upper = 5
 	obj_damage = 5

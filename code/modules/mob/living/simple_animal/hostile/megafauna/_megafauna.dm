@@ -25,6 +25,7 @@
 	pull_force = MOVE_FORCE_OVERPOWERING
 	mob_size = MOB_SIZE_HUGE
 	layer = LARGE_MOB_LAYER //Looks weird with them slipping under mineral walls and cameras and shit otherwise
+	plane = GAME_PLANE_UPPER_FOV_HIDDEN
 	mouse_opacity = MOUSE_OPACITY_OPAQUE // Easier to click on in melee, they're giant targets anyway
 	flags_1 = PREVENT_CONTENTS_EXPLOSION_1
 	discovery_points = 10000
@@ -77,7 +78,7 @@
 		for(var/i = 1 to nest_range)
 			closest = get_step(closest, get_dir(closest, src))
 		forceMove(closest) // someone teleported out probably and the megafauna kept chasing them
-		target = null
+		LoseTarget()
 		return
 	return ..()
 
@@ -193,11 +194,11 @@
 	var/chosen_attack_num = 0
 
 /datum/action/innate/megafauna_attack/Grant(mob/living/L)
-	if(istype(L, /mob/living/simple_animal/hostile/megafauna))
-		M = L
-		return ..()
-	return FALSE
+	if(!ismegafauna(L))
+		return FALSE
+	return ..()
 
 /datum/action/innate/megafauna_attack/Activate()
-	M.chosen_attack = chosen_attack_num
-	to_chat(M, chosen_message)
+	var/mob/living/simple_animal/hostile/megafauna/fauna = owner
+	fauna.chosen_attack = chosen_attack_num
+	to_chat(fauna, chosen_message)

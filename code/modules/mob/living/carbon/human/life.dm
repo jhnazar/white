@@ -39,6 +39,15 @@
 			//heart attack stuff
 			handle_heart(delta_time, times_fired)
 			handle_liver(delta_time, times_fired)
+			if(dancing_period)
+				dancing_period--
+			if(prob(2))
+				if(nutrition < NUTRITION_LEVEL_STARVING)
+					to_chat(src, span_warning("[pick("Голодно...", "Кушать хочу...", "Вот бы что-нибудь съесть...", "Мой живот урчит...")]"))
+					take_overall_damage(stamina = 60)
+				if(hydration <= HYDRATION_LEVEL_DEHYDRATED)
+					to_chat(src, span_warning("[pick("Пить хочется...", "В горле пересохло...", "Водички бы сейчас...")]"))
+					take_overall_damage(stamina = 60)
 
 		dna.species.spec_life(src, delta_time, times_fired) // for mutantraces
 	else
@@ -49,33 +58,15 @@
 	//Update our name based on whether our face is obscured/disfigured
 	name = get_visible_name()
 
-	if(stat != DEAD)
-		if(prob(2))
-			if(nutrition < NUTRITION_LEVEL_STARVING)
-				to_chat(src, span_warning("[pick("Голодно...", "Кушать хочу...", "Вот бы что-нибудь съесть...", "Мой живот урчит...")]"))
-				take_overall_damage(stamina = 60)
-			var/obj/item/organ/O = internal_organs_slot[ORGAN_SLOT_KIDNEYS]
-			if(O?.reagents.total_volume)
-				var/urine_amount = O.reagents.get_reagent_amount(/datum/reagent/toxin/urine)
-				switch(urine_amount)
-					if(260 to 269)
-						to_chat(src, span_warning("[pick("Где тут уборная?", "Хочу в туалет.", "Надо в туалет.")]"))
-					if(270 to 289)
-						to_chat(src, span_warning("[pick("СРОЧНО В ТУАЛЕТ!", "Я СЕЙЧАС ОПИСАЮСЬ!", "ХОЧУ В ТУАЛЕТ!")]"))
-					if(290 to INFINITY)
-						try_pee()
-			var/obj/item/organ/G = internal_organs_slot[ORGAN_SLOT_GUTS]
-			if(G?.reagents.total_volume)
-				var/poo_amount = G.reagents.get_reagent_amount(/datum/reagent/toxin/poo)
-				switch(poo_amount)
-					if(260 to 269)
-						to_chat(src, span_warning("[pick("Где тут уборная?", "Хочу в туалет.", "Надо в туалет.")]"))
-					if(270 to 289)
-						to_chat(src, span_warning("[pick("СРОЧНО В ТУАЛЕТ!", "ЖОПНЫЙ КЛАПАН НА ПРЕДЕЛЕ!", "ХОЧУ В ТУАЛЕТ!")]"))
-					if(290 to INFINITY)
-						try_poo()
-		return TRUE
+	if(!stat && mind && client)
+		var/ourtext = get_input_text()
+		if(ourtext && ourtext[1] != "*")
+			create_typing_indicator()
+		else
+			remove_typing_indicator()
 
+	if(stat != DEAD)
+		return TRUE
 
 /mob/living/carbon/human/calculate_affecting_pressure(pressure)
 	var/chest_covered = FALSE
@@ -141,6 +132,11 @@
 
 /// Environment handlers for species
 /mob/living/carbon/human/handle_environment(datum/gas_mixture/environment, delta_time, times_fired)
+
+	if(client)
+		var/areatemp = get_temperature(environment)
+		handle_temp_color(areatemp)
+
 	// If we are in a cryo bed do not process life functions
 	if(istype(loc, /obj/machinery/atmospherics/components/unary/cryo_cell))
 		return
@@ -172,22 +168,6 @@
 		return dna.species.bodytemp_normal
 	return dna.species.bodytemp_normal + get_body_temp_normal_change()
 
-///FIRE CODE
-/mob/living/carbon/human/handle_fire(delta_time, times_fired)
-	. = ..()
-	if(.) //if the mob isn't on fire anymore
-		return
-
-	if(dna)
-		. = dna.species.handle_fire(src, delta_time, times_fired) //do special handling based on the mob's species. TRUE = they are immune to the effects of the fire.
-
-	if(!last_fire_update)
-		last_fire_update = fire_stacks
-	if((fire_stacks > HUMAN_FIRE_STACK_ICON_NUM && last_fire_update <= HUMAN_FIRE_STACK_ICON_NUM) || (fire_stacks <= HUMAN_FIRE_STACK_ICON_NUM && last_fire_update > HUMAN_FIRE_STACK_ICON_NUM))
-		last_fire_update = fire_stacks
-		update_fire()
-
-
 /mob/living/carbon/human/proc/get_thermal_protection()
 	var/thermal_protection = 0 //Simple check to estimate how protected we are against multiple temperatures
 	if(wear_suit)
@@ -198,20 +178,6 @@
 			thermal_protection += (head.max_heat_protection_temperature*THERMAL_PROTECTION_HEAD)
 	thermal_protection = round(thermal_protection)
 	return thermal_protection
-
-/mob/living/carbon/human/IgniteMob()
-	//If have no DNA or can be Ignited, call parent handling to light user
-	//If firestacks are high enough
-	if(!dna || dna.species.CanIgniteMob(src))
-		return ..()
-	. = FALSE //No ignition
-
-/mob/living/carbon/human/extinguish_mob()
-	if(!dna || !dna.species.extinguish_mob(src))
-		last_fire_update = null
-		..()
-//END FIRE CODE
-
 
 //This proc returns a number made up of the flags for body parts which you are protected on. (such as HEAD, CHEST, GROIN, etc. See setup.dm for the full list)
 /mob/living/carbon/human/proc/get_heat_protection_flags(temperature) //Temperature is the temperature you're being exposed to.
@@ -367,89 +333,6 @@
 		Unconscious(80)
 	// Tissues die without blood circulation
 	adjustBruteLoss(1 * delta_time)
-
-/mob/living/carbon/human/handle_hydration(delta_time, times_fired)
-	..()
-	if(hydration >= HYDRATION_LEVEL_OVERHYDRATED)
-		if(DT_PROB(5, delta_time))
-			try_pee()
-			hydration -= 25
-
-/mob/living/proc/try_pee(forced_pee = FALSE)
-	return
-
-/mob/living/carbon/human/try_pee(forced_pee = FALSE)
-	var/obj/item/organ/O = internal_organs_slot[ORGAN_SLOT_KIDNEYS]
-	var/bloody = FALSE
-	var/peeed = FALSE // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	if(O.damage > 51)
-		bloody = TRUE
-	var/turf/T = get_turf(src)
-	var/atom/target = null
-	var/obj/effect/decal/cleanable/mocha = bloody ?  new /obj/effect/decal/cleanable/blood(get_turf(src)) : new /obj/effect/decal/cleanable/urine(get_turf(src))
-	for(var/atom/A in T)
-		if(istype(A, /obj/effect/decal/cleanable/urine))
-			mocha = A
-			break
-		if(istype(A, /obj/structure/toilet) || istype(A, /obj/item/reagent_containers))
-			target = A
-			break
-	if(target)
-		if(O.reagents.trans_to(target, 50, transfered_by = src) && !bloody)
-			peeed = TRUE
-		else if(forced_pee)
-			peeed = TRUE
-			O.setOrganDamage(1)
-			blood_volume -= 10
-		if(peeed)
-			var/mob/living/M = locate(/mob/living) in T
-			if(M && M != src)
-				visible_message(span_notice("<b>[src]</b> ссыт на лицо [M][bloody ? " кровью" : ""]!"), span_notice("Писаю на лицо [M][bloody ? " кровью" : ""]."))
-				M.extinguish_mob()
-			else
-				visible_message(span_notice("<b>[src]</b> писает[bloody ? " кровью" : ""] в [target]!"), span_notice("Писаю[bloody ? " кровью" : ""] в [target]."))
-			playsound(src, 'sound/effects/splat.ogg', 50, 1)
-			qdel(mocha)
-	else
-		if(w_uniform)
-			if(O.reagents.trans_to(mocha, 25, transfered_by = src) && !bloody)
-				peeed = TRUE
-			else if(forced_pee)
-				peeed = TRUE
-				Stun(4 SECONDS)
-				add_blood_DNA(return_blood_DNA())
-				O.setOrganDamage(1)
-				blood_volume -= 50
-				mocha.reagents.add_reagent(/datum/reagent/blood, 50)
-			if(peeed)
-				extinguish_mob()
-				visible_message("<b>[capitalize(src.name)]</b> мочится себе в трусы[bloody ? " кровью" : ""]!")
-				playsound(src, 'sound/effects/splat.ogg', 50, 1)
-				if(!bloody)
-					for(var/mob/M in viewers(src, 7))
-						if(ishuman(M) && M != src)
-							M.emote("laugh")
-		else
-			if(O.reagents.trans_to(mocha, 50, transfered_by = src) && !bloody)
-				peeed = TRUE
-			else if(forced_pee)
-				Stun(2 SECONDS)
-				O.setOrganDamage(1)
-				blood_volume -= 50
-				mocha.reagents.add_reagent(/datum/reagent/blood, 50)
-			if(peeed)
-				var/mob/living/M = locate(/mob/living) in T
-				if(M && M != src)
-					visible_message(span_notice("<b>[src]</b> обильно ссыт на лицо [M][bloody ? " кровью" : ""]!"), span_notice("Обильно писаю на лицо [M][bloody ? " кровью" : ""]."))
-					M.extinguish_mob()
-				else
-					visible_message("<b>[capitalize(src.name)]</b> обильно ссыт[bloody ? " кровью" : ""] на пол!")
-				playsound(src, 'sound/effects/splat.ogg', 50, 1)
-		if(!peeed)
-			qdel(mocha)
-	if(!peeed)
-		qdel(mocha) // this is how we deal bussines
-		to_chat(src, span_notice("Нечем мочиться!"))
 
 #undef THERMAL_PROTECTION_HEAD
 #undef THERMAL_PROTECTION_CHEST

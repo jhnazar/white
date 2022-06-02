@@ -28,8 +28,7 @@
 	install_component(hard_drive)
 	install_component(new /obj/item/computer_hardware/card_slot)
 	install_component(new /obj/item/computer_hardware/network_card)
-	install_component(new /obj/item/computer_hardware/radio_card)
-	hard_drive.store_file(new /datum/computer_file/program/signaler)
+	hard_drive.store_file(new /datum/computer_file/program/signal_commander)
 
 /obj/item/modular_computer/tablet/preset/cargo/Initialize()
 	. = ..()
@@ -105,6 +104,5 @@
 /obj/item/modular_computer/tablet/integrated/Initialize()
 	. = ..()
 	install_component(new /obj/item/computer_hardware/processor_unit/small)
-	install_component(new /obj/item/computer_hardware/hard_drive/small/integrated)
 	install_component(new /obj/item/computer_hardware/recharger/cyborg)
 	install_component(new /obj/item/computer_hardware/network_card/integrated)

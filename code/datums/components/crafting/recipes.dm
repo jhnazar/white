@@ -106,17 +106,6 @@
 	category = CAT_WEAPONRY
 	subcategory = CAT_WEAPON
 
-/datum/crafting_recipe/butterfly
-	name = "Butterfly Knife"
-	result = /obj/item/melee/butterfly
-	reqs = list(/obj/item/restraints/handcuffs/cable = 1,
-				/obj/item/scalpel = 1,
-				/obj/item/stack/sheet/plasteel = 6)
-	tool_paths = list(/obj/item/weldingtool, /obj/item/screwdriver, /obj/item/wirecutters)
-	time = 100
-	category = CAT_WEAPONRY
-	subcategory = CAT_WEAPON
-
 /datum/crafting_recipe/teleprod
 	name = "Teleprod"
 	result = /obj/item/melee/baton/cattleprod/teleprod
@@ -926,6 +915,17 @@
 	time = 30
 	reqs = list(/obj/item/stack/sheet/mineral/wood = 3)
 	result = /obj/item/reagent_containers/glass/bucket/wooden
+	category = CAT_PRIMAL
+
+/datum/crafting_recipe/ore_sensor
+	name = "Ore Sensor"
+	time = 3 SECONDS
+	reqs = list(
+		/datum/reagent/brimdust = 15,
+		/obj/item/stack/sheet/bone = 1,
+		/obj/item/stack/sheet/sinew = 1,
+	)
+	result = /obj/item/ore_sensor
 	category = CAT_PRIMAL
 
 /datum/crafting_recipe/headpike

@@ -30,7 +30,7 @@
 	dat += "Locked on<BR>"
 	dat += "<B>Charge progress: [reload]/[reload_cooldown]:</B><BR>"
 	dat += "<A href='byond://?src=[REF(src)];fire=1'>Open Fire</A><BR>"
-	dat += "Запуск оружия авторизирован <br>Командованием Флота Нанотрейзен<br><br>Помните, дружественный огонь будет стоить вам контракта и жизни.<HR>"
+	dat += "Запуск оружия авторизирован <br>Командованием Флота NanoTrasen<br><br>Помните, дружественный огонь будет стоить вам контракта и жизни.<HR>"
 	user << browse(dat, "window=scroll")
 	onclose(user, "scroll")
 
@@ -45,11 +45,11 @@
 	if(reload < reload_cooldown)
 		return
 	if(usr.contents.Find(src) || (in_range(src, usr) && isturf(loc)) || issilicon(usr))
-		priority_announce("Bluespace artillery fire detected. Brace for impact.")
+		priority_announce("Обнаружен выстрел из блюспейс-артиллерии. Приготовьтесь к удару.")
 		message_admins("[ADMIN_LOOKUPFLW(usr)] has launched an artillery strike.")
 		var/list/L = list()
 		for(var/turf/T in get_area_turfs(thearea.type))
 			L+=T
 		var/loc = pick(L)
-		explosion(loc,explosiondev,explosionmed,explosionlight)
+		explosion(loc, explosiondev, explosionmed, explosionlight, explosion_cause = src)
 		reload = 0

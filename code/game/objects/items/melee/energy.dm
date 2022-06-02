@@ -50,8 +50,8 @@
 		sharpness_on = active_sharpness, \
 		hitsound_on = active_hitsound, \
 		w_class_on = active_w_class, \
-		attack_verb_continuous_on = list("attacks", "slashes", "stabs", "slices", "tears", "lacerates", "rips", "dices", "cuts"), \
-		attack_verb_simple_on = list("attack", "slash", "stab", "slice", "tear", "lacerate", "rip", "dice", "cut"))
+		attack_verb_continuous_on = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает"), \
+		attack_verb_simple_on = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает"))
 	RegisterSignal(src, COMSIG_TRANSFORMING_ON_TRANSFORM, .proc/on_transform)
 
 /obj/item/melee/energy/suicide_act(mob/user)
@@ -114,14 +114,14 @@
 
 /// Energy axe - extremely strong.
 /obj/item/melee/energy/axe
-	name = "energy axe"
-	desc = "An energized battle axe."
+	name = "энергетический топор"
+	desc = "Энергетический боевой топор."
 	icon_state = "axe"
 	lefthand_file = 'icons/mob/inhands/weapons/axes_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/axes_righthand.dmi'
 	hitsound = 'sound/weapons/bladeslice.ogg'
-	attack_verb_continuous = list("attacks", "chops", "cleaves", "tears", "lacerates", "cuts")
-	attack_verb_simple = list("attack", "chop", "cleave", "tear", "lacerate", "cut")
+	attack_verb_continuous = list("атакует", "рубит", "рассекает", "рвет", "разрывает", "нарезает")
+	attack_verb_simple = list("атакует", "рубит", "рассекает", "рвет", "разрывает", "нарезает")
 	force = 40
 	throwforce = 25
 	throw_speed = 3
@@ -151,8 +151,8 @@
 
 /// Energy swords.
 /obj/item/melee/energy/sword
-	name = "energy sword"
-	desc = "May the force be within you."
+	name = "энергетический меч"
+	desc = "Да прибудет с тобой сила."
 	icon_state = "e_sword"
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
@@ -164,6 +164,7 @@
 	armour_penetration = 35
 	block_chance = 50
 	embedding = list("embed_chance" = 75, "impact_pain_mult" = 10)
+	block_sounds = list('sound/weapons/bladeb.ogg')
 
 /obj/item/melee/energy/sword/hit_reaction(mob/living/carbon/human/owner, atom/movable/hitby, attack_text = "the attack", final_block_chance = 0, damage = 0, attack_type = MELEE_ATTACK)
 	if(blade_active)
@@ -264,8 +265,8 @@
 		return ..()
 
 /obj/item/melee/energy/sword/pirate
-	name = "energy cutlass"
-	desc = "Arrrr matey."
+	name = "энергетическая сабля"
+	desc = "Арррр, дружище."
 	icon_state = "e_cutlass"
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
@@ -279,8 +280,8 @@
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
 	hitsound = 'sound/weapons/blade1.ogg'
-	attack_verb_continuous = list("attacks", "slashes", "stabs", "slices", "tears", "lacerates", "rips", "dices", "cuts")
-	attack_verb_simple = list("attack", "slash", "stab", "slice", "tear", "lacerate", "rip", "dice", "cut")
+	attack_verb_continuous = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает")
+	attack_verb_simple = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает")
 	force = 30
 	throwforce = 1 // Throwing or dropping the item deletes it.
 	throw_speed = 3

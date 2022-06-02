@@ -18,7 +18,7 @@
 	name = "Роевик"
 	icon = 'icons/mob/swarmer.dmi'
 	desc = "Роботизированные конструкции неизвестного дизайна, роевики стремятся только потреблять материалы и бесконечно воспроизводить себя."
-	speak_emote = list("tones")
+	speak_emote = list("тонирует")
 	initial_language_holder = /datum/language_holder/swarmer
 	bubble_icon = "swarmer"
 	mob_biotypes = MOB_ROBOTIC
@@ -78,7 +78,7 @@
 /mob/living/simple_animal/hostile/swarmer/Initialize()
 	. = ..()
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.add_to_hud(src)
+		diag_hud.add_atom_to_hud(src)
 
 /mob/living/simple_animal/hostile/swarmer/Move()
 	. = ..()

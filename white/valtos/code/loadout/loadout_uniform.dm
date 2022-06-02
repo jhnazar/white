@@ -183,6 +183,7 @@
 
 //ASSISTANTS FORMALS
 
+
 /datum/gear/uniform/rank/assistant
 	subtype_path = /datum/gear/uniform/rank/assistant
 	allowed_roles = list("Assistant")
@@ -211,10 +212,11 @@
 
 /datum/gear/uniform/rank/cargo/mining_classic
 	display_name = "старый комбинезон шахтера"
-	description = "Пурпурный, грязный комбинезон. Стандартная одежда шахтера шахт Нанотразен, когда Лаваленд еще не был открыт и использован для плазмы."
+	description = "Пурпурный, грязный комбинезон. Стандартная одежда шахтера шахт NanoTrasen, когда Лаваленд еще не был открыт и использован для плазмы."
 	path = /obj/item/clothing/under/rank/cargo/miner
 	allowed_roles = list ("Shaft Miner", "Hunter")
 	cost = 100
+
 
 //MEDICAL ALT UNIS
 
@@ -235,6 +237,7 @@
 	display_name = "фиолетовый медицинский халат"
 	path = /obj/item/clothing/under/rank/medical/doctor/purple
 
+
 //ENGINEERING ALT UNIS
 
 /datum/gear/uniform/rank/engineering
@@ -245,13 +248,21 @@
 	display_name = "комбинезон инженера"
 	path = /obj/item/clothing/under/rank/engineering/engineer/hazard
 
+
+//RND
+
+/datum/gear/uniform/rank/science
+	allowed_roles = list("Scientist", "Roboticist", "Research Director")
+
+
+
+
 //SECURITY ALT UNIS
 
 /datum/gear/uniform/sharovari
 	display_name = "шаровары"
 	path = /obj/item/clothing/under/costume/sharovari
-	cost = 500
-
+	cost = 5000
 /datum/gear/uniform/wizgirl
 	display_name = "костюм волшебницы"
 	path = /obj/item/clothing/under/costume/wizgirl
@@ -283,3 +294,10 @@
 	display_name = "халат"
 	path = /obj/item/clothing/under/costume/bathrobe
 	cost = 600
+
+//
+
+/datum/gear/uniform/chronos
+	display_name = "Военный костюм Новой Мекки"
+	path = /obj/item/clothing/under/chronos
+	cost = 7500

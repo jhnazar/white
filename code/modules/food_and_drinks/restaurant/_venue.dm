@@ -102,15 +102,12 @@
 		robot_customer.ai_controller.blackboard[BB_CUSTOMER_LEAVING] = TRUE //LEAVEEEEEE
 
 /obj/machinery/restaurant_portal
-	name = "restaurant portal"
-	desc = "A robot-only gate into the wonders of Space Station cuisine!"
+	name = "портал ресторана"
+	desc = "Портал от Всемирной Организации Роботов-Гурманов!"
 	icon = 'icons/obj/machines/restaurant_portal.dmi'
 	icon_state = "portal"
 	anchored = TRUE
 	density = FALSE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 10
-	active_power_usage = 100
 	circuit = /obj/item/circuitboard/machine/restaurant_portal
 	layer = BELOW_OBJ_LAYER
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | UNACIDABLE | ACID_PROOF
@@ -198,7 +195,7 @@
 	icon_state = "signmaker_service"
 	creation_time = 1 SECONDS
 	holosign_type = /obj/structure/holosign/robot_seat
-	desc = "Use this to place seats for your restaurant guests!"
+	desc = "Используйте это, чтобы пометить места для гостей ресторана!"
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 
 /obj/item/holosign_creator/robot_seat/attack_self(mob/user)

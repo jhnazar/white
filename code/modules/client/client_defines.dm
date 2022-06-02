@@ -32,6 +32,10 @@
 	var/externalreplyamount = 0
 	///When was the last time we warned them about not cryoing without an ahelp, set to -5 minutes so that rounstart cryo still warns
 	COOLDOWN_DECLARE(cryo_warned)
+	///Tracks say() usage for ic/dchat while slowmode is enabled
+	COOLDOWN_DECLARE(say_slowmode)
+	/// The last urgent ahelp that this player sent
+	COOLDOWN_DECLARE(urgent_ahelp_cooldown)
 
 		/////////
 		//OTHER//
@@ -40,8 +44,10 @@
 	var/datum/preferences/prefs = null
 	///last turn of the controlled mob, I think this is only used by mechs?
 	var/last_turn = 0
-	///Move delay of controlled mob, related to input handling
+	///Move delay of controlled mob, any keypresses inside this period will persist until the next proper move
 	var/move_delay = 0
+	///The visual delay to use for the current client.Move(), mostly used for making a client based move look like it came from some other slower source
+	var/visual_delay = 0
 	///Current area of the controlled mob
 	var/area = null
 
@@ -121,8 +127,6 @@
 	var/keysend_tripped = FALSE
 	///custom movement keys for this client
 	var/list/movement_keys = list()
-	//respawns -- white
-	var/is_respawned = TRUE
 
 	///Autoclick list of two elements, first being the clicked thing, second being the parameters.
 	var/list/atom/selected_target[2]
@@ -148,9 +152,6 @@
 	/// our current tab
 	var/stat_tab
 
-	/// whether our browser is ready or not yet
-	var/statbrowser_ready = FALSE
-
 	/// list of all tabs
 	var/list/panel_tabs = list()
 	/// list of tabs containing spells and abilities
@@ -167,13 +168,15 @@
 	var/turf/previous_turf
 	///world.time of when we can state animate()ing parallax again
 	var/dont_animate_parallax
-	///world.time of last parallax update
-	var/last_parallax_shift
-	///ds between parallax updates
-	var/parallax_throttle = 0
+	/// Direction our current area wants to move parallax
 	var/parallax_movedir = 0
+	/// How many parallax layers to show our client
 	var/parallax_layers_max = 4
+	/// Timer for the area directional animation
 	var/parallax_animate_timer
+	/// Do we want to do parallax animations at all?
+	/// Exists to prevent laptop fires
+	var/do_parallax_animations = TRUE
 	///Are we locking our movement input?
 	var/movement_locked = FALSE
 
@@ -214,3 +217,14 @@
 	var/interviewee = FALSE
 	// Ambients
 	var/played = FALSE
+
+	var/datum/mentors/mentor_datum
+
+	/// If this client has been fully initialized or not
+	var/fully_created = FALSE
+
+	/// Whether or not this client has standard hotkeys enabled
+	var/hotkeys = TRUE
+
+	/// Whether or not this client has the combo HUD enabled
+	var/combo_hud_enabled = FALSE

@@ -1,6 +1,7 @@
 /obj/item/mecha_parts/mecha_equipment/weapon
 	name = "mecha weapon"
 	range = MECHA_RANGED
+	equipment_slot = MECHA_WEAPON
 	destroy_sound = 'sound/mecha/weapdestr.ogg'
 	var/projectile
 	var/fire_sound
@@ -12,12 +13,10 @@
 	var/kickback = TRUE //Will using this weapon in no grav push mecha back.
 	mech_flags = EXOSUIT_MODULE_COMBAT
 
-/obj/item/mecha_parts/mecha_equipment/weapon/can_attach(obj/vehicle/sealed/mecha/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/can_attach(obj/vehicle/sealed/mecha/M, attach_right = FALSE)
 	if(!..())
 		return FALSE
 	if(istype(M, /obj/vehicle/sealed/mecha/combat))
-		return TRUE
-	if((locate(/obj/item/mecha_parts/concealed_weapon_bay) in M.contents) && !(locate(/obj/item/mecha_parts/mecha_equipment/weapon) in M.equipment))
 		return TRUE
 	return FALSE
 
@@ -36,11 +35,16 @@
 			else
 				spread = round((i / projectiles_per_shot - 0.5) * variance)
 
-		var/obj/projectile/A = new projectile(get_turf(src))
-		A.preparePixelProjectile(target, source, params, spread)
+		var/obj/projectile/projectile_obj = new projectile(get_turf(src))
+		var/modifiers = params2list(params)
+		projectile_obj.preparePixelProjectile(target, source, modifiers, spread)
 
-		A.fire()
-		if(!A.suppressed && firing_effect_type)
+		if(source.client && isliving(source)) //dont want it to happen from syndie mecha npc mobs, they do direct fire anyways
+			var/mob/living/shooter = source
+			projectile_obj.hit_prone_targets = shooter.a_intent != INTENT_HELP
+
+		projectile_obj.fire()
+		if(!projectile_obj.suppressed && firing_effect_type)
 			new firing_effect_type(get_turf(src), chassis.dir)
 		playsound(chassis, fire_sound, 50, TRUE)
 
@@ -57,8 +61,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/laser
 	equip_cooldown = 8
-	name = "\improper CH-PS \"Immolator\" laser"
-	desc = "A weapon for combat exosuits. Shoots basic lasers."
+	name = "Легкий лазер ЭВ-ЛЛ \"Выжигатель\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет слабыми лазерами."
 	icon_state = "mecha_laser"
 	energy_drain = 30
 	projectile = /obj/projectile/beam/laser
@@ -67,8 +71,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/disabler
 	equip_cooldown = 8
-	name = "\improper CH-DS \"Peacemaker\" disabler"
-	desc = "A weapon for combat exosuits. Shoots basic disablers."
+	name = "Усмиритель ЭВ-УЛ \"Миротворец\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет слабыми парализующими лучами."
 	icon_state = "mecha_disabler"
 	energy_drain = 30
 	projectile = /obj/projectile/beam/disabler
@@ -76,8 +80,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/laser/heavy
 	equip_cooldown = 15
-	name = "\improper CH-LC \"Solaris\" laser cannon"
-	desc = "A weapon for combat exosuits. Shoots heavy lasers."
+	name = "Тяжелый лазер ЭВ-ТЛ \"Солярис\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет мощными лазерами."
 	icon_state = "mecha_laser"
 	energy_drain = 60
 	projectile = /obj/projectile/beam/laser/heavylaser
@@ -85,8 +89,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/ion
 	equip_cooldown = 20
-	name = "\improper MKIV ion heavy cannon"
-	desc = "A weapon for combat exosuits. Shoots technology-disabling ion beams. Don't catch yourself in the blast!"
+	name = "Тяжелое ионное орудие МК-4"
+	desc = "Оружие для боевых экзокостюмов. Стреляет эми импульсами повреждающими технику. Не попадите под собственный выстрел!"
 	icon_state = "mecha_ion"
 	energy_drain = 120
 	projectile = /obj/projectile/ion
@@ -94,8 +98,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/tesla
 	equip_cooldown = 35
-	name = "\improper MKI Tesla Cannon"
-	desc = "A weapon for combat exosuits. Fires bolts of electricity similar to the experimental tesla engine."
+	name = "Орудие Теслы МК-1"
+	desc = "Оружие для боевых экзокостюмов. Стреляет разветвленными разрядами электричества, прицельный огонь невозможен."
 	icon_state = "mecha_ion"
 	energy_drain = 500
 	projectile = /obj/projectile/energy/tesla/cannon
@@ -104,8 +108,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/pulse
 	equip_cooldown = 30
-	name = "eZ-13 MK2 heavy pulse rifle"
-	desc = "A weapon for combat exosuits. Shoots powerful destructive blasts capable of demolishing obstacles."
+	name = "Сверхтяжелый импульсный лазер ГГ-13"
+	desc = "Оружие для боевых экзокостюмов. Стреляет мощными разрушительными взрывами, способными разрушать препятствия."
 	icon_state = "mecha_pulse"
 	energy_drain = 120
 	projectile = /obj/projectile/beam/pulse/heavy
@@ -114,8 +118,8 @@
 
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/plasma
 	equip_cooldown = 10
-	name = "217-D Heavy Plasma Cutter"
-	desc = "A device that shoots resonant plasma bursts at extreme velocity. The blasts are capable of crushing rock and demolishing solid obstacles."
+	name = "Тяжелый плазменный резак 217-Д"
+	desc = "Устройство, которое стреляет резонансными плазменными вспышками с предельной скоростью. Взрывы способны дробить скалы и разрушать твердые препятствия."
 	icon_state = "mecha_plasmacutter"
 	inhand_icon_state = "plasmacutter"
 	lefthand_file = 'icons/mob/inhands/weapons/guns_lefthand.dmi'
@@ -125,16 +129,35 @@
 	fire_sound = 'sound/weapons/plasma_cutter.ogg'
 	harmful = TRUE
 
-/obj/item/mecha_parts/mecha_equipment/weapon/energy/plasma/can_attach(obj/vehicle/sealed/mecha/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/plasma/can_attach(obj/vehicle/sealed/mecha/M, attach_right = FALSE)
 	if(..()) //combat mech
 		return TRUE
-	else if(LAZYLEN(M.equipment) < M.max_equip)
+	else if(default_can_attach(M, attach_right))
 		return TRUE
 	return FALSE
 
+//Exosuit-mounted kinetic accelerator
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/mecha_kineticgun
+	equip_cooldown = 10
+	name = "Тяжелый прото-кинетический аксселератор"
+	desc = "Установленный на экзокостюме аксселератор, наносящий повышенный урон при низком давлении. Питание от бортового источника позволяет ему проецироваться дальше, чем ручная версия."
+	icon_state = "mecha_kineticgun"
+	energy_drain = 30
+	projectile = /obj/projectile/kinetic/mech
+	fire_sound = 'sound/weapons/kenetic_accel.ogg'
+	harmful = TRUE
+
+//attachable to all mechas, like the plasma cutter
+/obj/item/mecha_parts/mecha_equipment/weapon/energy/mecha_kineticgun/can_attach(obj/vehicle/sealed/mecha/M, attach_right = FALSE)
+	. = ..()
+	if(.) //combat mech
+		return
+	if(default_can_attach(M, attach_right))
+		return TRUE
+
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/taser
-	name = "\improper PBT \"Pacifier\" mounted taser"
-	desc = "A weapon for combat exosuits. Shoots non-lethal stunning electrodes."
+	name = "Тяжелый парализатор ЭВ-ТП \"Судья\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет несмертельными оглушающими электродами."
 	icon_state = "mecha_taser"
 	energy_drain = 20
 	equip_cooldown = 8
@@ -143,8 +166,8 @@
 
 
 /obj/item/mecha_parts/mecha_equipment/weapon/honker
-	name = "\improper HoNkER BlAsT 5000"
-	desc = "Equipment for clown exosuits. Spreads fun and joy to everyone around. Honk!"
+	name = "ХоНкЕР БлАсТ 5000"
+	desc = "Оборудование для клоунских экзокостюмов. Распространяет веселье и радость среди всех окружающих. Хонк!"
 	icon_state = "mecha_honker"
 	energy_drain = 200
 	equip_cooldown = 150
@@ -152,7 +175,7 @@
 	kickback = FALSE
 	mech_flags = EXOSUIT_MODULE_HONK
 
-/obj/item/mecha_parts/mecha_equipment/weapon/honker/can_attach(obj/vehicle/sealed/mecha/mecha)
+/obj/item/mecha_parts/mecha_equipment/weapon/honker/can_attach(obj/vehicle/sealed/mecha/mecha, attach_right = FALSE)
 	. = ..()
 	if(!.)
 		return
@@ -198,7 +221,6 @@
 	var/projectiles
 	var/projectiles_cache //ammo to be loaded in, if possible.
 	var/projectiles_cache_max
-	var/projectile_energy_cost
 	var/disabledreload //For weapons with no cache (like the rockets) which are reloaded by hand
 	var/ammo_type
 
@@ -209,56 +231,39 @@
 		return FALSE
 	return TRUE
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/get_equip_info()
-	return "[..()] \[[src.projectiles][projectiles_cache_max &&!projectile_energy_cost?"/[projectiles_cache]":""]\][!disabledreload &&(src.projectiles < initial(src.projectiles))?" - <a href='?src=[REF(src)];rearm=1'>Rearm</a>":null]"
-
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+	. = ..()
+	if(action == "reload")
+		rearm()
+		return TRUE
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/rearm()
 	if(projectiles < initial(projectiles))
 		var/projectiles_to_add = initial(projectiles) - projectiles
-
-		if(projectile_energy_cost)
-			while(chassis.get_charge() >= projectile_energy_cost && projectiles_to_add)
-				projectiles++
-				projectiles_to_add--
-				chassis.use_power(projectile_energy_cost)
-
+		if(!projectiles_cache)
+			return FALSE
+		if(projectiles_to_add <= projectiles_cache)
+			projectiles = projectiles + projectiles_to_add
+			projectiles_cache = projectiles_cache - projectiles_to_add
 		else
-			if(!projectiles_cache)
-				return FALSE
-			if(projectiles_to_add <= projectiles_cache)
-				projectiles = projectiles + projectiles_to_add
-				projectiles_cache = projectiles_cache - projectiles_to_add
-			else
-				projectiles = projectiles + projectiles_cache
-				projectiles_cache = 0
-
-		send_byjax(chassis.occupants,"exosuit.browser","[REF(src)]",src.get_equip_info())
-		log_message("Rearmed [src.name].", LOG_MECHA)
+			projectiles = projectiles + projectiles_cache
+			projectiles_cache = 0
+		log_message("Rearmed [src].", LOG_MECHA)
 		return TRUE
-
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/needs_rearm()
 	. = !(projectiles > 0)
 
 
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/Topic(href, href_list)
-	..()
-	if (href_list["rearm"])
-		src.rearm()
-	return
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/action(mob/source, atom/target, params)
-	if(..())
-		projectiles -= projectiles_per_shot
-		send_byjax(chassis.occupants,"exosuit.browser","[REF(src)]",src.get_equip_info())
-		return ..()
-
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/action(mob/source, atom/target, list/modifiers)
+	. = ..()
+	if(!.)
+		return
+	projectiles -= projectiles_per_shot
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/carbine
-	name = "\improper FNX-99 \"Hades\" Carbine"
-	desc = "A weapon for combat exosuits. Shoots поджигающая пуляs."
+	name = "Легкий зажигательный карабин БК-БЗ \"Аид\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет зажигательными пулями."
 	icon_state = "mecha_carbine"
 	equip_cooldown = 10
 	projectile = /obj/projectile/bullet/incendiary/fnx99
@@ -269,19 +274,19 @@
 	ammo_type = "incendiary"
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/silenced
-	name = "\improper S.H.H. \"Quietus\" Carbine"
-	desc = "A weapon for combat exosuits. A mime invention, field tests have shown that targets cannot even scream before going down."
+	name = "Тяжелый бесшумный карабин \"Тишина\""
+	desc = "Оружие для боевых экзокостюмов. Изобретение мимов, полевые испытания показали, что цели не успеют даже закричать, прежде чем упасть мертвыми наземь."
 	fire_sound = 'sound/weapons/gun/general/heavy_shot_suppressed.ogg'
 	icon_state = "mecha_mime"
 	equip_cooldown = 30
 	projectile = /obj/projectile/bullet/mime
 	projectiles = 6
-	projectile_energy_cost = 50
+	projectiles_cache = 999
 	harmful = TRUE
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/scattershot
-	name = "\improper LBX AC 10 \"Scattershot\""
-	desc = "A weapon for combat exosuits. Shoots a spread of pellets."
+	name = "Тяжелая картечница \"Дуплет\""
+	desc = "Оружие для боевых экзокостюмов. Стреляет шквалом крупной картечи."
 	icon_state = "mecha_scatter"
 	equip_cooldown = 20
 	projectile = /obj/projectile/bullet/scattershot
@@ -294,8 +299,8 @@
 	ammo_type = "scattershot"
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/lmg
-	name = "\improper Ultra AC 2"
-	desc = "A weapon for combat exosuits. Shoots a rapid, three shot burst."
+	name = "Легкий пулемет Ультра АК-2"
+	desc = "Оружие для боевых экзокостюмов. Стреляет короткой очередью из трех выстрелов."
 	icon_state = "mecha_uac2"
 	equip_cooldown = 10
 	projectile = /obj/projectile/bullet/lmg
@@ -310,8 +315,8 @@
 	ammo_type = "lmg"
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack
-	name = "\improper SRM-8 missile rack"
-	desc = "A weapon for combat exosuits. Launches light explosive missiles."
+	name = "Ракетная установка РСЗО \"Шторм-8\""
+	desc = "Оружие для боевых экзокостюмов. Запускает легкие фугасные ракеты."
 	icon_state = "mecha_missilerack"
 	projectile = /obj/projectile/bullet/a84mm_he
 	fire_sound = 'sound/weapons/gun/general/rocket_launch.ogg'
@@ -324,8 +329,8 @@
 	ammo_type = "missiles_he"
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/breaching
-	name = "\improper BRM-6 missile rack"
-	desc = "A weapon for combat exosuits. Launches low-explosive breaching missiles designed to explode only when striking a sturdy target."
+	name = "Легкая ракетная установка РСЗО \"Пробой-6\""
+	desc = "Оружие для боевых экзокостюмов. Запускает маловзрывоопасные разрывные ракеты, предназначенные для взрыва только при попадании в прочную цель."
 	icon_state = "mecha_missilerack_six"
 	projectile = /obj/projectile/bullet/a84mm_br
 	fire_sound = 'sound/weapons/gun/general/rocket_launch.ogg'
@@ -360,8 +365,8 @@
 
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/flashbang
-	name = "\improper SGL-6 grenade launcher"
-	desc = "A weapon for combat exosuits. Launches primed flashbangs."
+	name = "Автоматический гранатомет АГС \"Заря\""
+	desc = "Оружие для боевых экзокостюмов. Автоматическая гранатометная система запускающая светошумовые гранаты."
 	icon_state = "mecha_grenadelnchr"
 	projectile = /obj/item/grenade/flashbang
 	fire_sound = 'sound/weapons/gun/general/grenade_launch.ogg'
@@ -380,8 +385,8 @@
 	addtimer(CALLBACK(F, /obj/item/grenade/flashbang.proc/detonate), det_time)
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/flashbang/clusterbang //Because I am a heartless bastard -Sieve //Heartless? for making the poor man's honkblast? - Kaze
-	name = "\improper SOB-3 grenade launcher"
-	desc = "A weapon for combat exosuits. Launches primed clusterbangs. You monster."
+	name = "Касетный гранатомет АГС \"Матрёшка\""
+	desc = "Оружие для боевых экзокостюмов. Запускает кластерные гранаты. Ты чудовище."
 	projectiles = 3
 	projectiles_cache = 0
 	projectiles_cache_max = 0
@@ -391,36 +396,36 @@
 	ammo_type = "clusterbang"
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar
-	name = "banana mortar"
-	desc = "Equipment for clown exosuits. Launches banana peels."
+	name = "Бананомет"
+	desc = "Оборудование для клоунских экзокостюмов. Запускает банановую кожуру."
 	icon_state = "mecha_bananamrtr"
 	projectile = /obj/item/grown/bananapeel
 	fire_sound = 'sound/items/bikehorn.ogg'
 	projectiles = 15
 	missile_speed = 1.5
-	projectile_energy_cost = 100
+	projectiles_cache = 999
 	equip_cooldown = 20
 	mech_flags = EXOSUIT_MODULE_HONK
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar/can_attach(obj/vehicle/sealed/mecha/combat/honker/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar/can_attach(obj/vehicle/sealed/mecha/combat/honker/M, attach_right = FALSE)
 	if(..())
 		if(istype(M))
 			return 1
 	return 0
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/mousetrap_mortar
-	name = "mousetrap mortar"
-	desc = "Equipment for clown exosuits. Launches armed mousetraps."
+	name = "Мышеловкометатель"
+	desc = "Оборудование для клоунских экзокостюмов. Запускает заряженные мышеловки."
 	icon_state = "mecha_mousetrapmrtr"
 	projectile = /obj/item/assembly/mousetrap/armed
 	fire_sound = 'sound/items/bikehorn.ogg'
 	projectiles = 15
 	missile_speed = 1.5
-	projectile_energy_cost = 100
+	projectiles_cache = 999
 	equip_cooldown = 10
 	mech_flags = EXOSUIT_MODULE_HONK
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/mousetrap_mortar/can_attach(obj/vehicle/sealed/mecha/combat/honker/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/mousetrap_mortar/can_attach(obj/vehicle/sealed/mecha/combat/honker/M, attach_right = FALSE)
 	if(..())
 		if(istype(M))
 			return 1
@@ -432,8 +437,8 @@
 
 //Classic extending punching glove, but weaponised!
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove
-	name = "\improper Oingo Boingo Punch-face"
-	desc = "Equipment for clown exosuits. Delivers fun right to your face!"
+	name = "Оинго-Боинго-Лице-Ломатель"
+	desc = "Оборудование для клоунских экзокостюмов. Доставляет удовольствие прямо вам в лицо!"
 	icon_state = "mecha_punching_glove"
 	energy_drain = 250
 	equip_cooldown = 20
@@ -442,38 +447,34 @@
 	projectile = /obj/item/punching_glove
 	fire_sound = 'sound/items/bikehorn.ogg'
 	projectiles = 10
-	projectile_energy_cost = 500
+	projectiles_cache = 999
 	harmful = TRUE
 	diags_first = TRUE
 	/// Damage done by the glove on contact. Also used to determine throw distance (damage / 5)
 	var/punch_damage = 35
-	/// TRUE - Can toggle between lethal and non-lethal || FALSE - Cannot toggle
-	var/can_toggle_lethal = TRUE
 	mech_flags = EXOSUIT_MODULE_HONK
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/can_attach(obj/vehicle/sealed/mecha/combat/honker/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/can_attach(obj/vehicle/sealed/mecha/combat/honker/M, attach_right = FALSE)
 	if(..())
 		if(istype(M))
 			return 1
 	return 0
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/get_equip_info()
-	if(!chassis)
-		return
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/get_snowflake_data()
+	return list(
+		"snowflake_id" = MECHA_SNOWFLAKE_ID_MODE,
+		"mode" = harmful ? "LETHAL FISTING" : "Cuddles",
+	)
 
-	if(can_toggle_lethal)
-		return "[..()] &nbsp; <a href='?src=[REF(src)];lethalPunch=1'>[harmful?"Punch":"Pat"] mode</a>"
-	else
-		return ..()
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/Topic(href, href_list)
-	..()
-	if(href_list["lethalPunch"])
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/ui_act(action, list/params)
+	. = ..()
+	if(action == "toggle")
 		harmful = !harmful
 		if(harmful)
 			to_chat(usr, "[icon2html(src, usr)]<span class='warning'>Lethal Fisting Enabled.</span>")
 		else
-			to_chat(usr, "[icon2html(src, usr)]<span class='warning'>Lethal Fisting Disabled.</span>")
+			to_chat(usr, "[icon2html(src, usr)][span_warning("Lethal Fisting Disabled.")]")
+		return TRUE
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/punching_glove/action(mob/source, atom/target, params)
 	. = ..()
@@ -507,32 +508,32 @@
 ///dark honk weapons
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar/bombanana
-	name = "bombanana mortar"
-	desc = "Equipment for clown exosuits. Launches exploding banana peels."
+	name = "Банановзрыв"
+	desc = "Оборудование для клоунских экзокостюмов. Запускает взрывающиеся банановые кожуры."
 	icon_state = "mecha_bananamrtr"
 	projectile = /obj/item/grown/bananapeel/bombanana
 	projectiles = 8
-	projectile_energy_cost = 1000
+	projectiles_cache = 999
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar/bombanana/can_attach(obj/vehicle/sealed/mecha/combat/honker/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/banana_mortar/bombanana/can_attach(obj/vehicle/sealed/mecha/combat/honker/M, attach_right = FALSE)
 	if(..())
 		if(istype(M))
 			return TRUE
 	return FALSE
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/flashbang/tearstache
-	name = "\improper HONKeR-6 grenade launcher"
-	desc = "A weapon for combat exosuits. Launches primed tear-stache grenades."
+	name = "Автоматический гранатомет АГС \"ХОНКеР-6\""
+	desc = "Оружие для боевых экзокостюмов. Запускает заряженные гранаты со слезоточивым газом."
 	icon_state = "mecha_grenadelnchr"
 	projectile = /obj/item/grenade/chem_grenade/teargas/moustache
 	fire_sound = 'sound/weapons/gun/general/grenade_launch.ogg'
 	projectiles = 6
 	missile_speed = 1.5
-	projectile_energy_cost = 800
+	projectiles_cache = 999
 	equip_cooldown = 60
 	det_time = 20
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/flashbang/tearstache/can_attach(obj/vehicle/sealed/mecha/combat/honker/M)
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/flashbang/tearstache/can_attach(obj/vehicle/sealed/mecha/combat/honker/M, attach_right = FALSE)
 	if(..())
 		if(istype(M))
 			return TRUE

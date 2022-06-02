@@ -60,7 +60,7 @@
 		state = RWINDOW_SECURE
 
 	ini_dir = dir
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 
 	if(fulltile)
 		setDir()
@@ -77,7 +77,7 @@
 	)
 
 	if (flags_1 & ON_BORDER_1)
-		AddElement(/datum/element/connect_loc, loc_connections)
+		AddComponent(/datum/component/connect_loc_behalf, src, loc_connections)
 
 /obj/structure/window/ComponentInitialize()
 	. = ..()
@@ -219,7 +219,8 @@
 			to_chat(user, span_notice("Начинаю разбирать [src.name]..."))
 			if(I.use_tool(src, user, decon_speed, volume = 75, extra_checks = CALLBACK(src, .proc/check_state_and_anchored, state, anchored)))
 				var/obj/item/stack/sheet/G = new glass_type(user.loc, glass_amount)
-				G.add_fingerprint(user)
+				if (!QDELETED(G))
+					G.add_fingerprint(user)
 				playsound(src, 'sound/items/Deconstruct.ogg', 50, TRUE)
 				to_chat(user, span_notice("Разбираю [src.name]."))
 				qdel(src)
@@ -235,7 +236,7 @@
 
 /obj/structure/window/set_anchored(anchorvalue)
 	..()
-	air_update_turf(TRUE, anchorvalue)
+	air_update_turf(anchorvalue)
 	update_nearby_icons()
 
 /obj/structure/window/proc/check_state(checked_state)
@@ -312,7 +313,7 @@
 	return TRUE
 
 /obj/structure/window/proc/after_rotation(mob/user,rotation_type)
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	ini_dir = dir
 	add_fingerprint(user)
 
@@ -326,7 +327,7 @@
 
 /obj/structure/window/Destroy()
 	set_density(FALSE)
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	update_nearby_icons()
 	return ..()
 
@@ -473,15 +474,15 @@
 	. = ..()
 	switch(state)
 		if(RWINDOW_SECURE)
-			. += "<span class='notice'>Окно прикручено одноразовыми винтами. Придётся <b>нагреть их</b>, чтобы получить хоть какой-то шанс выкрутить их обратно.</span>"
+			. += span_notice("Окно прикручено одноразовыми винтами. Придётся <b>нагреть их</b>, чтобы получить хоть какой-то шанс выкрутить их обратно.")
 		if(RWINDOW_BOLTS_HEATED)
-			. += "<span class='notice'>Винтики раскалены до бела, похоже можно <b>открутить их</b> прямо сейчас.</span>"
+			. += span_notice("Винтики раскалены до бела, похоже можно <b>открутить их</b> прямо сейчас.")
 		if(RWINDOW_BOLTS_OUT)
-			. += "<span class='notice'>Винтики удалены и теперь окно можно <b>подпереть</b> сквозь доступную щель.</span>"
+			. += span_notice("Винтики удалены и теперь окно можно <b>подпереть</b> сквозь доступную щель.")
 		if(RWINDOW_POPPED)
-			. += "<span class='notice'>Основная плита вышла из рамки и стали видны прутья, которые можно <b>откусить</b>.</span>"
+			. += span_notice("Основная плита вышла из рамки и стали видны прутья, которые можно <b>откусить</b>.")
 		if(RWINDOW_BARS_CUT)
-			. += "<span class='notice'>Основная плита отделена от рамки и теперь её удерживает только несколько <b>болтов</b>.</span>"
+			. += span_notice("Основная плита отделена от рамки и теперь её удерживает только несколько <b>болтов</b>.")
 
 /obj/structure/window/reinforced/spawner/east
 	dir = EAST
@@ -643,31 +644,6 @@
 	canSmoothWith = list(SMOOTH_GROUP_WINDOW_FULLTILE, SMOOTH_GROUP_WALLS)
 	glass_amount = 2
 
-/obj/structure/window/fulltile/attackby(obj/item/W, mob/user, params)
-	if(is_glass_sheet(W))
-		var/obj/item/stack/ST = W
-		if (ST.get_amount() < 2)
-			to_chat(user, span_warning("Надо бы хотя бы парочку листов стекла!"))
-			return
-		if(!anchored)
-			to_chat(user, span_warning("Надо бы прикрутить [src] к полу!"))
-			return
-		for(var/obj/machinery/door/firedoor/window/FD in loc)
-			to_chat(user, span_warning("Здесь уже есть окно!"))
-			return
-		to_chat(user, span_notice("Начинаю ставить запасное окно..."))
-		if(do_after(user,30, target = src))
-			if(!src.loc || !anchored)
-				return
-			for(var/obj/machinery/door/firedoor/window/FD in loc)
-				to_chat(user, span_warning("Здесь уже есть запасное окно!"))
-				return
-			new/obj/machinery/door/firedoor/window(drop_location())
-			ST.use(2)
-			to_chat(user, span_notice("Ставлю запасное окно на [src]."))
-		return
-	. = ..()
-
 /obj/structure/window/fulltile/unanchored
 	anchored = FALSE
 
@@ -701,31 +677,6 @@
 	canSmoothWith = list(SMOOTH_GROUP_WINDOW_FULLTILE, SMOOTH_GROUP_WALLS)
 	glass_amount = 2
 
-/obj/structure/window/plasma/reinforced/fulltile/attackby(obj/item/W, mob/user, params)
-	if(is_glass_sheet(W))
-		var/obj/item/stack/ST = W
-		if (ST.get_amount() < 2)
-			to_chat(user, span_warning("Надо бы хотя бы парочку листов стекла!"))
-			return
-		if(!anchored)
-			to_chat(user, span_warning("Надо бы прикрутить [src] к полу!"))
-			return
-		for(var/obj/machinery/door/firedoor/window/FD in loc)
-			to_chat(user, span_warning("Здесь уже есть окно!"))
-			return
-		to_chat(user, span_notice("Начинаю ставить запасное окно..."))
-		if(do_after(user,30, target = src))
-			if(!src.loc || !anchored)
-				return
-			for(var/obj/machinery/door/firedoor/window/FD in loc)
-				to_chat(user, span_warning("Здесь уже есть запасное окно!"))
-				return
-			new/obj/machinery/door/firedoor/window(drop_location())
-			ST.use(2)
-			to_chat(user, span_notice("Ставлю запасное окно на [src]."))
-		return
-	. = ..()
-
 /obj/structure/window/plasma/reinforced/fulltile/unanchored
 	anchored = FALSE
 	state = WINDOW_OUT_OF_FRAME
@@ -743,31 +694,6 @@
 	smoothing_groups = list(SMOOTH_GROUP_WINDOW_FULLTILE)
 	canSmoothWith = list(SMOOTH_GROUP_WINDOW_FULLTILE, SMOOTH_GROUP_WALLS)
 	glass_amount = 2
-
-/obj/structure/window/reinforced/fulltile/attackby(obj/item/W, mob/user, params)
-	if(is_glass_sheet(W))
-		var/obj/item/stack/ST = W
-		if (ST.get_amount() < 2)
-			to_chat(user, span_warning("Надо бы хотя бы парочку листов стекла!"))
-			return
-		if(!anchored)
-			to_chat(user, span_warning("Надо бы прикрутить [src] к полу!"))
-			return
-		for(var/obj/machinery/door/firedoor/window/FD in loc)
-			to_chat(user, span_warning("Здесь уже есть окно!"))
-			return
-		to_chat(user, span_notice("Начинаю ставить запасное окно..."))
-		if(do_after(user,30, target = src))
-			if(!src.loc || !anchored)
-				return
-			for(var/obj/machinery/door/firedoor/window/FD in loc)
-				to_chat(user, span_warning("Здесь уже есть запасное окно!"))
-				return
-			new/obj/machinery/door/firedoor/window(drop_location())
-			ST.use(2)
-			to_chat(user, span_notice("Ставлю запасное окно на [src]."))
-		return
-	. = ..()
 
 /obj/structure/window/reinforced/fulltile/unanchored
 	anchored = FALSE

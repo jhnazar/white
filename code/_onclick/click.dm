@@ -97,10 +97,13 @@
 			AltClickOn(A)
 		return
 	if(LAZYACCESS(modifiers, CTRL_CLICK))
-		CtrlClickOn(A)
+		if(LAZYACCESS(modifiers, RIGHT_CLICK))
+			ctrl_click_on_secondary(A)
+		else
+			CtrlClickOn(A)
 		return
 
-	if(incapacitated(ignore_restraints = TRUE, ignore_stasis = TRUE))
+	if(incapacitated(IGNORE_RESTRAINTS|IGNORE_STASIS))
 		return
 
 	face_atom(A)
@@ -231,7 +234,7 @@
 	return ..() + contents
 
 /mob/living/DirectAccess(atom/target)
-	return ..() + GetAllContents()
+	return ..() + get_all_contents()
 
 /atom/proc/AllowClick()
 	return FALSE
@@ -405,14 +408,14 @@
 	var/turf/T = get_turf(src)
 	if(T && (isturf(loc) || isturf(src)) && user.TurfAdjacent(T))
 		user.listed_turf = T
-		user.client << output("[url_encode(json_encode(T.name))];", "statbrowser:create_listedturf")
+		user.client.stat_panel.send_message("create_listedturf", T.name)
 
 /// Use this instead of [/mob/proc/AltClickOn] where you only want turf content listing without additional atom alt-click interaction
 /atom/proc/AltClickNoInteract(mob/user, atom/A)
 	var/turf/T = get_turf(A)
 	if(T && user.TurfAdjacent(T))
 		user.listed_turf = T
-		user.client << output("[url_encode(json_encode(T.name))];", "statbrowser:create_listedturf")
+		user.client.stat_panel.send_message("create_listedturf", T.name)
 
 /mob/proc/TurfAdjacent(turf/T)
 	return T.Adjacent(src)
@@ -505,10 +508,10 @@
 		var/mob/living/carbon/C = usr
 		C.swap_hand()
 	else
-		var/turf/T = params2turf(LAZYACCESS(modifiers, SCREEN_LOC), get_turf(usr.client ? usr.client.eye : usr), usr.client)
-		params += "&catcher=1"
-		if(T)
-			T.Click(location, control, params)
+		var/turf/click_turf = parse_caught_click_modifiers(modifiers, get_turf(usr.client ? usr.client.eye : usr), usr.client)
+		if (click_turf)
+			modifiers["catcher"] = TRUE
+			click_turf.Click(click_turf, control, list2params(modifiers))
 	. = 1
 
 /// MouseWheelOn
@@ -537,3 +540,6 @@
 			return TRUE
 
 	return FALSE
+
+/mob/proc/ctrl_click_on_secondary(atom/A, params)
+	return look_into_distance(A, params)

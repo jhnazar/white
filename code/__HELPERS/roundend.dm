@@ -121,12 +121,18 @@
 
 	var/list/greentexters = list()
 	var/list/antag_coins = list()
+	var/list/client_antags = list() //amount of antags a client had
+	var/max_antags = 5 //if a client has more than this it will not reward him with metacoins
 
 	for(var/datum/antagonist/A in GLOB.antagonists)
 		if(!A.owner)
 			continue
 		var/ckey = ckey(A.owner?.key)
 		var/client/C = GLOB.directory[ckey]
+		if(!(C in client_antags))
+			client_antags[C] = 1
+		else
+			client_antags[C]++
 		if(!(C in antag_coins))
 			antag_coins[C] = list("reward"=5, "completed"=0)
 
@@ -152,16 +158,15 @@
 				var/result = O.check_completion() ? "SUCCESS" : "FAIL"
 				if (result == "FAIL")
 					greentexted = FALSE
-				else
+				else if(client_antags[C] <= max_antags)
 					antag_coins[C]["reward"]+=O.reward
 					antag_coins[C]["completed"]++
 				antag_info["objectives"] += list(list("objective_type"=O.type,"text"=O.explanation_text,"result"=result))
 		SSblackbox.record_feedback("associative", "antagonists", 1, antag_info)
 
 		if (greentexted)
-			if(!(C in greentexters))
+			if(client_antags[C] <= max_antags)
 				antag_coins[C]["reward"]+=A.greentext_reward
-				antag_coins[C]["completed"]++
 			if (A.owner && A.owner.key)
 				if (A.type != /datum/antagonist/custom)
 					if (C)
@@ -195,27 +200,27 @@
 	var/list/file_data = list()
 	var/pos = 1
 	for(var/V in GLOB.news_network.network_channels)
-		var/datum/newscaster/feed_channel/channel = V
+		var/datum/feed_channel/channel = V
 		if(!istype(channel))
 			stack_trace("Non-channel in newscaster channel list")
 			continue
-		file_data["[pos]"] = list("channel name" = "[channel.channel_name]", "author" = "[channel.author]", "censored" = channel.censored ? 1 : 0, "author censored" = channel.authorCensor ? 1 : 0, "messages" = list())
+		file_data["[pos]"] = list("channel name" = "[channel.channel_name]", "author" = "[channel.author]", "censored" = channel.censored ? 1 : 0, "author censored" = channel.author_censor ? 1 : 0, "messages" = list())
 		for(var/M in channel.messages)
-			var/datum/newscaster/feed_message/message = M
+			var/datum/feed_message/message = M
 			if(!istype(message))
 				stack_trace("Non-message in newscaster channel messages list")
 				continue
 			var/list/comment_data = list()
 			for(var/C in message.comments)
-				var/datum/newscaster/feed_comment/comment = C
+				var/datum/feed_comment/comment = C
 				if(!istype(comment))
 					stack_trace("Non-message in newscaster message comments list")
 					continue
 				comment_data += list(list("author" = "[comment.author]", "time stamp" = "[comment.time_stamp]", "body" = "[comment.body]"))
-			file_data["[pos]"]["messages"] += list(list("author" = "[message.author]", "time stamp" = "[message.time_stamp]", "censored" = message.bodyCensor ? 1 : 0, "author censored" = message.authorCensor ? 1 : 0, "photo file" = "[message.photo_file]", "photo caption" = "[message.caption]", "body" = "[message.body]", "comments" = comment_data))
+			file_data["[pos]"]["messages"] += list(list("author" = "[message.author]", "time stamp" = "[message.time_stamp]", "censored" = message.body_censor ? 1 : 0, "author censored" = message.author_censor ? 1 : 0, "photo file" = "[message.photo_file]", "photo caption" = "[message.caption]", "body" = "[message.body]", "comments" = comment_data))
 		pos++
 	if(GLOB.news_network.wanted_issue.active)
-		file_data["wanted"] = list("author" = "[GLOB.news_network.wanted_issue.scannedUser]", "criminal" = "[GLOB.news_network.wanted_issue.criminal]", "description" = "[GLOB.news_network.wanted_issue.body]", "photo file" = "[GLOB.news_network.wanted_issue.photo_file]")
+		file_data["wanted"] = list("author" = "[GLOB.news_network.wanted_issue.scanned_user]", "criminal" = "[GLOB.news_network.wanted_issue.criminal]", "description" = "[GLOB.news_network.wanted_issue.body]", "photo file" = "[GLOB.news_network.wanted_issue.photo_file]")
 	WRITE_FILE(json_file, json_encode(file_data))
 
 ///Handles random hardcore point rewarding if it applies.
@@ -265,7 +270,8 @@
 			C.RollCredits()
 		C.playtitlemusic(5)
 
-		C.process_endround_metacoin()
+		spawn(-1) // do it async
+			C.process_endround_metacoin()
 
 		if(speed_round)
 			C.give_award(/datum/award/achievement/misc/speed_round, C.mob)
@@ -277,10 +283,9 @@
 	CHECK_TICK
 
 	// Add AntagHUD to everyone, see who was really evil the whole time!
-	for(var/datum/atom_hud/antag/H in GLOB.huds)
-		for(var/m in GLOB.player_list)
-			var/mob/M = m
-			H.add_hud_to(M)
+	for(var/datum/atom_hud/alternate_appearance/basic/antagonist_hud/antagonist_hud in GLOB.active_alternate_appearances)
+		for(var/mob/player as anything in GLOB.player_list)
+			antagonist_hud.show_to(player)
 
 	CHECK_TICK
 
@@ -329,6 +334,7 @@
 	//stop collecting feedback during grifftime
 	SSblackbox.Seal()
 
+	sleep(50)
 	ready_for_reboot = TRUE
 	standard_reboot()
 
@@ -336,6 +342,8 @@
 	if(ready_for_reboot)
 		if(mode.station_was_nuked)
 			Reboot("Станция уничтожена Ядерной бомбой.", "nuke")
+		else if (GLOB.violence_mode_activated)
+			Reboot("КОНЕЦ!", "proper completion", 3 SECONDS)
 		else
 			Reboot("Конец раунда.", "proper completion")
 	else
@@ -386,7 +394,6 @@
 	parts += "[FOURSPACES]└ Длительность смены: <b>[DisplayTimeText(world.time - SSticker.round_start_time)]</b>"
 
 	parts += "<hr><b><font color=\"#60b6ff\">ИНФОРМАЦИЯ О СТАНЦИИ //</font></b>"
-	parts += "[FOURSPACES]├ Система ядерного самоуничтожения: <b>[mode.station_was_nuked ? span_redtext("была активирована")  : span_greentext("не была активирована") ]</b>"
 	parts += "[FOURSPACES]└ Состояние станции: <b>[mode.station_was_nuked ? span_redtext("уничтожена системой ядерного самоуничтожения")  : "[popcount["station_integrity"] == 100 ? span_greentext("нетронута")  : "[popcount["station_integrity"]]%"]"]</b>"
 
 	parts += "<hr><b><font color=\"#60b6ff\">ИНФОРМАЦИЯ О ПЕРСОНАЛЕ //</font></b>"
@@ -417,8 +424,8 @@
 	else
 		parts += "[FOURSPACES]└ <i><span class='redtext'>Персонал станции отсутствует. Кто вызвал шаттл и закончил раунд</span>?</i>"
 
-	parts += "<hr><b><font color=\"#60b6ff\">ИНФОРМАЦИЯ О ДИНАМИЧЕСКОМ РЕЖИМЕ //</font></b>"
 	if(istype(SSticker.mode, /datum/game_mode/dynamic))
+		parts += "<hr><b><font color=\"#60b6ff\">ИНФОРМАЦИЯ О ДИНАМИЧЕСКОМ РЕЖИМЕ //</font></b>"
 		var/datum/game_mode/dynamic/mode = SSticker.mode
 		parts += "[FOURSPACES]├ Уровень угрозы: [mode.threat_level]"
 		parts += "[FOURSPACES]├ Оставшаяся угроза: [mode.mid_round_budget]"
@@ -427,8 +434,6 @@
 			parts += "[FOURSPACES]─ [rule.ruletype] - <b>[rule.name]</b>: -[rule.cost + rule.scaled_times * rule.scaling_cost] очков угрозы"
 		if(!mode.executed_rules.len)
 			parts += "[FOURSPACES]└ <i>Вычиты очков угрозы отсутствуют</i>."
-	else
-		parts += "[FOURSPACES]└ <i>Текущий режим не динамический</i>."
 	return parts.Join("<br>")
 
 /client/proc/roundend_report_file()
@@ -484,8 +489,6 @@
 /datum/controller/subsystem/ticker/proc/personal_report(client/C, popcount)
 	var/list/parts = list()
 	var/mob/M = C.mob
-	//parts += "<span class='header'>Конец раунда</span><br>"
-	//parts += "Подсчитываем выживших…"
 	parts += "<br><center><span class='big bold'>Конец раунда</span></center>"
 	parts += "<center>Подсчитываем выживших…</center><br>"
 	if(M.mind && !isnewplayer(M))
@@ -538,9 +541,11 @@
 				count_ai++
 				parts += "▶ \[[count_ai]/[total_ai]\] <b><font color=\"#60b6ff\">[aiPlayer.name]</font></b> (игрок: <b>[aiPlayer.mind.key]</b>)"
 				parts += "[FOURSPACES]├ Статус: [aiPlayer.stat != DEAD ? "<b>активен</b>" : span_redtext("деактивирован") ]"
-				parts += "[FOURSPACES]├ Суммарное кол-во сменов набора законов: <b>[aiPlayer.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("aiPlayer.law_change_counter") ]</b>"
+				parts += "[FOURSPACES]├ Суммарное кол-во сменов набора законов: <b>[aiPlayer.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("[aiPlayer.law_change_counter]") ]</b>"
 				parts += "[FOURSPACES]└ <font color=\"#60b6ff\">ЗАКОНЫ ИИ //</font>"
-				parts += "[FOURSPACES][FOURSPACES] " + aiPlayer.laws.get_law_list(include_zeroth = TRUE)
+				var/list/temp_law_list = aiPlayer.laws.get_law_list(include_zeroth = TRUE)
+				for(var/law in temp_law_list)
+					parts += "[FOURSPACES][FOURSPACES] [law]"
 
 			var/count_minion = 0
 			var/total_ai_minion = aiPlayer.connected_robots.len
@@ -558,8 +563,6 @@
 
 			if(!minion_spacer)
 				minion_spacer = TRUE
-	else
-		parts += "[FOURSPACES]└ <i>ИИ отсутствовали в эту смену</i>."
 
 	parts += "<hr><b><font color=\"#60b6ff\">ИНФОРМАЦИЯ О САМОСТОЯТЕЛЬНЫХ КИБОРГАХ //</font></b>"
 	var/count_silicon = 0
@@ -575,14 +578,14 @@
 				parts += "[FOURSPACES]└ <font color=\"#60b6ff\">ЗАКОНЫ КИБОРГА //</font>"
 
 				if(standalone_silicon) //How the hell do we lose standalone_silicon between here and the world messages directly above this?
-					parts += "[FOURSPACES][FOURSPACES] " + standalone_silicon.laws.get_law_list(include_zeroth = TRUE)
+					var/list/temp_law_list = standalone_silicon.laws.get_law_list(include_zeroth = TRUE)
+					for(var/law in temp_law_list)
+						parts += "[FOURSPACES][FOURSPACES] [law]"
 
 				if(!minion_spacer)
 					minion_spacer = TRUE
-	else
-		parts += "[FOURSPACES]└ <i>Самостоятельные киборги без связи с ИИ отсутствовали в эту смену</i>."
 
-	if(parts.len)
+	if(parts.len && (count_silicon || count_ai))
 		return "<div class='panel stationborder'>[parts.Join("<br>")]</div>"
 	else
 		return ""
@@ -627,7 +630,7 @@
 		if(0)
 			parts += "<span class='redtext'>Обслуга была абсолютно бесполезна для экономики...</span><br>"
 		if(1 to 2000)
-			parts += "<span class='redtext'>Центральное командование не радо. Вы можете и лучше!</span><br>"
+			parts += "<span class='redtext'>Центральное командование не радо. Можно и лучше!</span><br>"
 			award_service(/datum/award/achievement/jobs/service_bad)
 		if(2001 to 4999)
 			parts += "<span class='greentext'>Центральное командование удовлетворено.</span><br>"
@@ -772,7 +775,7 @@
 	name = "Показать результаты раунда"
 	button_icon_state = "round_end"
 
-/datum/action/report/Trigger()
+/datum/action/report/Trigger(trigger_flags)
 	if(owner && GLOB.common_report && SSticker.current_state == GAME_STATE_FINISHED)
 		SSticker.show_roundend_report(owner.client)
 

@@ -8,8 +8,6 @@
 	can_buckle = TRUE
 	buckle_lying = 90
 	circuit = /obj/item/circuitboard/machine/stasis
-	idle_power_usage = 4000
-	active_power_usage = 34000
 	fair_market_price = 0
 	payment_department = ACCOUNT_MED
 	var/stasis_enabled = TRUE
@@ -19,8 +17,16 @@
 	var/obj/effect/overlay/vis/mattress_on
 	var/obj/machinery/computer/operating/op_computer
 
+	//	Модификация ремнями
+	var/handbeltsmod = FALSE
+	var/handbeltsmod_active = FALSE
+	var/static/mutable_appearance/handbeltsmod_overlay = mutable_appearance('white/Feline/icons/stasis.dmi', "mark", LYING_MOB_LAYER)
+	var/static/mutable_appearance/handbeltsmod_active_overlay = mutable_appearance('white/Feline/icons/stasis.dmi', "belts", LYING_MOB_LAYER)
+
 /obj/machinery/stasis/Initialize()
 	. = ..()
+	if(handbeltsmod)
+		add_overlay(handbeltsmod_overlay)
 	for(var/direction in GLOB.alldirs)
 		op_computer = locate(/obj/machinery/computer/operating) in get_step(src, direction)
 		if(op_computer)
@@ -34,8 +40,10 @@
 
 /obj/machinery/stasis/examine(mob/user)
 	. = ..()
-	. += "<hr><span class='notice'>ПКМ to [stasis_enabled ? "turn off" : "turn on"] the machine.</span>"
-	. += span_notice("\n<b>[src.name]</b> is [op_computer ? "linked" : "<b>NOT</b> linked"] to a nearby operating computer.")
+	. += "<hr><span class='notice'>Alt + Клик для [stasis_enabled ? "<b>выключения</b>" : "<b>включения</b>"] машины.</span>"
+	if(handbeltsmod)
+		. += "<hr><span class='notice'>ПКМ для активации <b>энергетических ремней</b>, ЛКМ для отстегивания.</span>"
+	. += span_notice("\n<b>[src.name]</b> [op_computer ? "синхронизирована" : "<b>НЕ</b> синхронизирована"] с операционным компьютером.")
 
 /obj/machinery/stasis/proc/play_power_sound()
 	var/_running = stasis_running()
@@ -52,9 +60,9 @@
 		stasis_enabled = !stasis_enabled
 		stasis_can_toggle = world.time + STASIS_TOGGLE_COOLDOWN
 		playsound(src, 'sound/machines/click.ogg', 60, TRUE)
-		user.visible_message(span_notice("<b>[src.name]</b> [stasis_enabled ? "powers on" : "shuts down"].") , \
-					span_notice("You [stasis_enabled ? "power on" : "shut down"] <b>[src.name]</b>.") , \
-					span_hear("You hear a nearby machine [stasis_enabled ? "power on" : "shut down"]."))
+		user.visible_message(span_notice("<b>[src.name]</b> [stasis_enabled ? "включается" : "выключается"].") , \
+					span_notice("[stasis_enabled ? "Включаю" : "Выключаю"] <b>[src.name]</b>.") , \
+					span_hear("Слышу звук [stasis_enabled ? "включения" : "выключения"] машины."))
 		play_power_sound()
 		update_icon()
 
@@ -158,3 +166,4 @@
 	unbuckle_mob(violator, TRUE)
 
 #undef STASIS_TOGGLE_COOLDOWN
+

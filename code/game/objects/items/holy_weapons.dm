@@ -48,7 +48,7 @@
 	if(user.mind && user.mind.holy_role)
 		return ..()
 	else
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 40, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 40, TRUE)
 		return FALSE
 
 /obj/item/choice_beacon/holy/generate_display_names()
@@ -277,7 +277,7 @@
 			display_names[initial(rodtype.name)] = rodtype
 			nullrod_icons += list(initial(rodtype.name) = image(icon = initial(rodtype.icon), icon_state = initial(rodtype.icon_state)))
 
-	nullrod_icons = sortList(nullrod_icons)
+	nullrod_icons = sort_list(nullrod_icons)
 	var/choice = show_radial_menu(M, src , nullrod_icons, custom_check = CALLBACK(src, .proc/check_menu, M), radius = 42, require_near = TRUE)
 	if(!choice || !check_menu(M))
 		return
@@ -364,6 +364,7 @@
 	block_chance = 30
 	sharpness = SHARP_EDGED
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	attack_verb_continuous = list("атакует", "рубит", "кромсает", "разрывает", "протыкает", "колбасит", "делит", "режет")
 	attack_verb_simple = list("атакует", "рубит", "кромсает", "разрывает", "протыкает", "колбасит", "делит", "режет")
 
@@ -538,7 +539,7 @@
 
 	possessed = TRUE
 
-	var/list/mob/dead/observer/candidates = poll_ghost_candidates("Хочешь быть духом меча [user.real_name]?", ROLE_PAI, null, FALSE, 100, POLL_IGNORE_POSSESSED_BLADE)
+	var/list/mob/dead/observer/candidates = poll_ghost_candidates("Хочешь быть духом меча [user.real_name]?", ROLE_PAI, FALSE, 100, POLL_IGNORE_POSSESSED_BLADE)
 
 	if(LAZYLEN(candidates))
 		var/mob/dead/observer/C = pick(candidates)
@@ -821,9 +822,6 @@
 	attack_verb_simple = list("пульсирует", "спаивает", "режет")
 	hitsound = 'sound/effects/sparks4.ogg'
 
-/obj/item/nullrod/hypertool/attack(mob/living/M, mob/living/user)
-	. = ..()
-	user.adjustOrganLoss(ORGAN_SLOT_BRAIN, rand(7,14), BRAIN_DAMAGE_DEATH-1)
 /obj/item/nullrod/spear
 	name = "ancient spear"
 	desc = "An ancient spear made of brass, I mean gold, I mean bronze. It looks highly mechanical."

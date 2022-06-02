@@ -10,8 +10,6 @@
 	circuit = /obj/item/circuitboard/machine/emitter
 
 	use_power = NO_POWER_USE
-	idle_power_usage = 100
-	active_power_usage = 3000
 
 	var/icon_state_on = "emitter_+a"
 	var/icon_state_underpowered = "emitter_+u"
@@ -77,6 +75,7 @@
 		welded = FALSE
 
 /obj/machinery/power/emitter/RefreshParts()
+	. = ..()
 	var/max_fire_delay = 12 SECONDS
 	var/fire_shoot_delay = 12 SECONDS
 	var/min_fire_delay = 2.4 SECONDS
@@ -104,12 +103,12 @@
 
 	if(in_range(user, src) || isobserver(user))
 		if(!active)
-			. += "\n<span class='notice'>Его индикатор состояния в настоящее время выключен.</span>"
+			. += span_notice("\nЕго индикатор состояния в настоящее время выключен.")
 		else if(!powered)
-			. += "\n<span class='notice'>Его индикатор состояния слабо светится.</span>"
+			. += span_notice("\nЕго индикатор состояния слабо светится.")
 		else
-			. += "\n<span class='notice'>Его индикатор состояния показывает: излучение каждые <b>[DisplayTimeText(fire_delay)]</b>.</span>"
-			. += "\n<span class='notice'>Потребление энергии: <b>[DisplayPower(active_power_usage)]</b>.</span>"
+			. += span_notice("\nЕго индикатор состояния показывает: излучение каждые <b>[DisplayTimeText(fire_delay)]</b>.")
+			. += span_notice("\nПотребление энергии: <b>[DisplayPower(active_power_usage)]</b>.")
 
 /obj/machinery/power/emitter/ComponentInitialize()
 	. = ..()
@@ -157,7 +156,7 @@
 
 			message_admins("Emitter turned [active ? "ON" : "OFF"] by [ADMIN_LOOKUPFLW(user)] in [ADMIN_VERBOSEJMP(src)]")
 			log_game("Emitter turned [active ? "ON" : "OFF"] by [key_name(user)] in [AREACOORD(src)]")
-			investigate_log("turned [active ? "<font color='green'>ON</font>" : "<font color='red'>OFF</font>"] by [key_name(user)] at [AREACOORD(src)]", INVESTIGATE_SINGULO)
+			investigate_log("turned [active ? "<font color='green'>ON</font>" : span_red("OFF")] by [key_name(user)] at [AREACOORD(src)]", INVESTIGATE_SINGULO)
 
 			update_icon()
 
@@ -510,12 +509,12 @@
 			user.pixel_x = 8
 			user.pixel_y = -12
 
-	E.last_projectile_params = calculate_projectile_angle_and_pixel_offsets(user, clickparams)
+	E.last_projectile_params = calculate_projectile_angle_and_pixel_offsets(user, null, clickparams)
 
 	if(E.charge >= 10 && world.time > delay)
 		E.charge -= 10
 		E.fire_beam(user)
 		delay = world.time + 10
 	else if (E.charge < 10)
-		playsound(src,'sound/machines/buzz-sigh.ogg', 50, TRUE)
+		playsound(src,'white/valtos/sounds/error1.ogg', 50, TRUE)
 

@@ -32,15 +32,15 @@
 	name = "Mime"
 	jobtype = /datum/job/mime
 
-	belt = /obj/item/pda/mime
+	belt = /obj/item/modular_computer/tablet/pda/mime
 	ears = /obj/item/radio/headset/headset_srv
 	uniform = /obj/item/clothing/under/rank/civilian/mime
 	mask = /obj/item/clothing/mask/gas/mime
+	shoes = /obj/item/clothing/shoes/laceup
 	gloves = /obj/item/clothing/gloves/color/white
 	head = /obj/item/clothing/head/frenchberet
 	suit = /obj/item/clothing/suit/toggle/suspenders
 	backpack_contents = list(
-		/obj/item/modular_computer/tablet/preset/cheap=1,
 		/obj/item/stamp/mime = 1,
 		/obj/item/book/mimery = 1,
 		/obj/item/reagent_containers/food/drinks/bottle/bottleofnothing = 1
@@ -64,7 +64,7 @@
 		H.mind.miming = TRUE
 
 	var/datum/atom_hud/fan = GLOB.huds[DATA_HUD_FAN]
-	fan.add_hud_to(H)
+	fan.show_to(H)
 
 /obj/item/book/mimery
 	name = "Guide to Dank Mimery"

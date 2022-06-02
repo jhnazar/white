@@ -1,6 +1,7 @@
 /mob/living/carbon/human/Initialize()
 	add_verb(src, /mob/living/proc/mob_sleep)
 	add_verb(src, /mob/living/proc/toggle_resting)
+	AddComponent(/datum/component/fixeye)
 
 	icon_state = ""		//Remove the inherent human icon that is visible on the map editor. We're rendering ourselves limb by limb, having it still be there results in a bug where the basic human icon appears below as south in all directions and generally looks nasty.
 
@@ -77,8 +78,9 @@
 
 /mob/living/carbon/human/get_status_tab_items()
 	. = ..()
-	. += "Взаимодействие: [a_intent]"
-	. += "Режим перемещения: [m_intent]"
+	. += ""
+	. += "Взаимодействие: [capitalize(ru_intent(a_intent))]"
+	. += "Режим перемещения: [m_intent == MOVE_INTENT_RUN ? "Бег" : "Шаг"]"
 	if (internal)
 		if (!internal.air_contents)
 			qdel(internal)
@@ -291,14 +293,14 @@
 				fine = min(fine, maxFine)
 
 				var/crime = GLOB.data_core.createCrimeEntry(t1, "", allowed_access, station_time_timestamp(), fine)
-				for (var/obj/item/pda/P in GLOB.PDAs)
-					if(P.owner == R.fields["name"])
+				for (var/obj/item/modular_computer/tablet in GLOB.TabletMessengers)
+					if(tablet.saved_identification == R.fields["name"])
 						var/message = "You have been fined [fine] credits for '[t1]'. Fines may be paid at security."
-						var/datum/signal/subspace/messaging/pda/signal = new(src, list(
+						var/datum/signal/subspace/messaging/tablet_msg/signal = new(src, list(
 							"name" = "Security Citation",
 							"job" = "Citation Server",
 							"message" = message,
-							"targets" = list("[P.owner] ([P.ownjob])"),
+							"targets" = list(tablet),
 							"automated" = 1
 						))
 						signal.send_to_receivers()
@@ -688,8 +690,7 @@
 		return
 	else
 		if(hud_used.healths)
-			var/health_amount = min(health, maxHealth - getStaminaLoss())
-			if(..(health_amount)) //not dead
+			if(..()) //not dead
 				switch(hal_screwyhud)
 					if(SCREWYHUD_CRIT)
 						hud_used.healths.icon_state = "health6"
@@ -794,7 +795,7 @@
 			var/name = initial(mut.name)
 			options[dna.check_mutation(mut) ? "[name] (Remove)" : "[name] (Add)"] = mut
 
-		var/result = input(usr, "Choose mutation to add/remove","Mutation Mod") as null|anything in sortList(options)
+		var/result = input(usr, "Choose mutation to add/remove","Mutation Mod") as null|anything in sort_list(options)
 		if(result)
 			if(result == "Clear")
 				dna.remove_all_mutations()
@@ -814,7 +815,7 @@
 			var/qname = initial(T.name)
 			options[has_quirk(T) ? "[qname] (Remove)" : "[qname] (Add)"] = T
 
-		var/result = input(usr, "Choose quirk to add/remove","Quirk Mod") as null|anything in sortList(options)
+		var/result = input(usr, "Choose quirk to add/remove","Quirk Mod") as null|anything in sort_list(options)
 		if(result)
 			if(result == "Clear")
 				for(var/datum/quirk/q in roundstart_quirks)
@@ -908,7 +909,7 @@
 	return ishuman(target) && target.body_position == LYING_DOWN
 
 /mob/living/carbon/human/proc/fireman_carry(mob/living/carbon/target)
-	if(!can_be_firemanned(target) || incapacitated(FALSE, TRUE))
+	if(!can_be_firemanned(target) || incapacitated(IGNORE_GRAB))
 		to_chat(src, span_warning("You can't fireman carry [target] while [target.p_they()] [target.p_are()] standing!"))
 		return
 
@@ -930,7 +931,7 @@
 		return
 
 	//Second check to make sure they're still valid to be carried
-	if(!can_be_firemanned(target) || incapacitated(FALSE, TRUE) || target.buckled)
+	if(!can_be_firemanned(target) || incapacitated(IGNORE_GRAB) || target.buckled)
 		visible_message(span_warning("<b>[src]</b> проваливает попытку поднять <b>[target]</b>!"))
 		return
 
@@ -953,7 +954,7 @@
 		visible_message(span_warning("<b>[target]</b> не может залезть на <b>[src]</b>!"))
 		return
 
-	if(target.incapacitated(FALSE, TRUE) || incapacitated(FALSE, TRUE))
+	if(target.incapacitated(IGNORE_GRAB) || incapacitated(IGNORE_GRAB))
 		target.visible_message(span_warning("<b>[target]</b> не может залезть на <b>[src]</b>"))
 		return
 
@@ -987,17 +988,13 @@
 /mob/living/carbon/human/adjust_nutrition(change) //Honestly FUCK the oldcoders for putting nutrition on /mob someone else can move it up because holy hell I'd have to fix SO many typechecks
 	if(HAS_TRAIT(src, TRAIT_NOHUNGER))
 		return FALSE
-	if((NOGUTS in dna.species.species_traits) || (NOBLOOD in dna.species.species_traits) || (NOKIDNEYS in dna.species.species_traits))
-		nutrition = NUTRITION_LEVEL_START_MAX
-		return FALSE
-	if(!getorganslot(ORGAN_SLOT_GUTS))
+	if((NOBLOOD in dna.species.species_traits))
+		nutrition = NUTRITION_LEVEL_FED
 		return FALSE
 	return ..()
 
 /mob/living/carbon/human/set_nutrition(change) //Seriously fuck you oldcoders.
 	if(HAS_TRAIT(src, TRAIT_NOHUNGER))
-		return FALSE
-	if(!getorganslot(ORGAN_SLOT_GUTS))
 		return FALSE
 	return ..()
 

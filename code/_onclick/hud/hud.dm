@@ -6,8 +6,9 @@
 
 // The default UI style is the first one in the list
 GLOBAL_LIST_INIT(available_ui_styles, list(
-	"Glory" = 'icons/hud/screen_glory.dmi',
 	"Oxide" = 'icons/hud/screen_oxide.dmi',
+	"Rexide" = 'icons/hud/screen_rexide.dmi',
+	"Glory" = 'icons/hud/screen_glory.dmi',
 	"Cyberspess" = 'icons/hud/screen_cyberspess.dmi',
 	"Tetramon" = 'icons/hud/screen_tetramon.dmi',
 	"Bassboosted" = 'icons/hud/screen_bassboosted.dmi',
@@ -45,6 +46,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 
 	var/atom/movable/screen/devil/soul_counter/devilsouldisplay
 
+	var/atom/movable/screen/fixeye/fixeye
 
 	var/atom/movable/screen/action_intent
 	var/atom/movable/screen/zone_select
@@ -68,9 +70,11 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	var/action_buttons_hidden = FALSE
 
 	var/atom/movable/screen/healths
+	var/atom/movable/screen/stamina
 	var/atom/movable/screen/healthdoll
 	var/atom/movable/screen/internals
 	var/atom/movable/screen/tooltip
+	var/atom/movable/screen/timelimit/timelimit
 	var/atom/movable/screen/wanted/wanted_lvl
 	var/atom/movable/screen/spacesuit
 	var/atom/movable/screen/station_height/station_height
@@ -87,10 +91,15 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 
 	hide_actions_toggle = new
 	hide_actions_toggle.InitialiseIcon(src)
-	if(mymob?.client && hide_actions_toggle)
-		hide_actions_toggle.locked = mymob.client.prefs?.buttons_locked
+	if(mymob?.client?.prefs && hide_actions_toggle)
+		hide_actions_toggle.locked = mymob.client.prefs.buttons_locked
 
 	hand_slots = list()
+
+	for(var/mytype in subtypesof(/atom/movable/screen/plane_master) - /atom/movable/screen/plane_master/rendering_plate)
+		var/atom/movable/screen/plane_master/instance = new mytype()
+		plane_masters["[instance.plane]"] = instance
+		instance.backdrop(mymob)
 
 	tooltip = new /atom/movable/screen/tooltip()
 	tooltip?.hud = src
@@ -98,16 +107,20 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 		tooltip?.screen_loc = "SOUTH+1,CENTER-4:16"
 	infodisplay += tooltip
 
-	for(var/mytype in subtypesof(/atom/movable/screen/plane_master))
-		var/atom/movable/screen/plane_master/instance = new mytype()
-		plane_masters["[instance.plane]"] = instance
-		instance.backdrop(mymob)
+	if(GLOB.violence_mode_activated)
+		timelimit = new /atom/movable/screen/timelimit()
+		timelimit?.hud = src
+		infodisplay += timelimit
+
+	add_multiz_buttons(owner)
 
 	for(var/mytype in subtypesof(/atom/movable/plane_master_controller))
-		var/atom/movable/plane_master_controller/controller_instance = new mytype(src)
+		var/atom/movable/plane_master_controller/controller_instance = new mytype(null, src)
 		plane_master_controllers[controller_instance.name] = controller_instance
 
 	owner.overlay_fullscreen("see_through_darkness", /atom/movable/screen/fullscreen/see_through_darkness)
+
+	AddComponent(/datum/component/zparallax, owner.client)
 
 /datum/hud/Destroy()
 	if(mymob.hud_used == src)
@@ -116,6 +129,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	QDEL_NULL(hide_actions_toggle)
 	QDEL_NULL(module_store_icon)
 	QDEL_LIST(static_inventory)
+	QDEL_NULL(fixeye)
 
 	inv_slots.Cut()
 	action_intent = null
@@ -128,6 +142,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	QDEL_LIST(infodisplay)
 
 	healths = null
+	stamina = null
 	healthdoll = null
 	wanted_lvl = null
 	internals = null

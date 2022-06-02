@@ -40,8 +40,10 @@
 
 /obj/effect/abstract/television
 	name = "Телевизор"
-	appearance_flags = KEEP_TOGETHER|TILE_BOUND
+	appearance_flags = KEEP_TOGETHER | TILE_BOUND
 	layer = TURF_LAYER
+	pixel_x = -64
+	pixel_y = -64
 
 /obj/effect/abstract/television/New()
 	. = ..()

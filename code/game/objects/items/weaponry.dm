@@ -68,6 +68,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	attack_verb_continuous = list("атакует", "рубит", "втыкает", "прорезает", "кромсает", "подрезает", "нарезает", "режет")
 	attack_verb_simple = list("атакует", "рубит", "втыкает", "прорезает", "кромсает", "подрезает", "нарезает", "режет")
 	block_chance = 50
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	sharpness = SHARP_EDGED
 	max_integrity = 200
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 100, ACID = 50)
@@ -123,7 +124,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 /obj/item/claymore/highlander/process()
 	if(ishuman(loc))
 		var/mob/living/carbon/human/H = loc
-		loc.layer = LARGE_MOB_LAYER //NO HIDING BEHIND PLANTS FOR YOU, DICKWEED (HA GET IT, BECAUSE WEEDS ARE PLANTS)
+		loc.plane = GAME_PLANE_UPPER_FOV_HIDDEN //NO HIDING BEHIND PLANTS FOR YOU, DICKWEED (HA GET IT, BECAUSE WEEDS ARE PLANTS)
 		ADD_TRAIT(H, TRAIT_NOBLEED, HIGHLANDER) //AND WE WON'T BLEED OUT LIKE COWARDS
 	else
 		if(!(flags_1 & ADMIN_SPAWNED_1))
@@ -144,7 +145,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	. = ..()
 	. += "<hr>It has [!notches ? "nothing" : "[notches] notches"] scratched into the blade."
 	if(nuke_disk)
-		. += "\n<span class='boldwarning'>It's holding the nuke disk!</span>"
+		. += span_boldwarning("\nIt's holding the nuke disk!")
 
 /obj/item/claymore/highlander/attack(mob/living/target, mob/living/user)
 	. = ..()
@@ -238,7 +239,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	return ..()
 
 /obj/item/claymore/highlander/robot/process()
-	loc.layer = LARGE_MOB_LAYER
+	loc.plane = GAME_PLANE_UPPER_FOV_HIDDEN
 
 /obj/item/katana
 	name = "катана"
@@ -254,6 +255,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	throwforce = 10
 	w_class = WEIGHT_CLASS_HUGE
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	attack_verb_continuous = list("атакует", "рубит", "втыкает", "разрубает", "кромсает", "разрывает", "нарезает", "режет")
 	attack_verb_simple = list("атакует", "рубит", "втыкает", "разрубает", "кромсает", "разрывает", "нарезает", "режет")
 	block_chance = 50
@@ -607,6 +609,9 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	inhand_icon_state = "hoverboard_nt"
 	board_item_type = /obj/vehicle/ridden/scooter/skateboard/hoverboard/admin
 
+#define DRILLED_BAT 1
+#define CHARGED_BAT 2
+
 /obj/item/melee/baseball_bat
 	name = "бейсбольная бита"
 	desc = "There ain't a skull in the league that can withstand a swatter."
@@ -625,6 +630,54 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	w_class = WEIGHT_CLASS_HUGE
 	var/homerun_ready = 0
 	var/homerun_able = 0
+	var/explosive = FALSE
+
+/obj/item/melee/baseball_bat/attackby(obj/item/attacking_item, mob/user, params)
+	if(attacking_item.tool_behaviour == TOOL_DRILL)
+		if(explosive == CHARGED_BAT)
+			attacking_item.play_tool_sound(get_turf(src), 100)
+			to_chat(user, span_userdanger("Совершаю глупость!"))
+			do_boom(user, user)
+			return
+		if(explosive == FALSE && do_after(user, (5 SECONDS * attacking_item.toolspeed), src))
+			attacking_item.play_tool_sound(get_turf(src), 100)
+			to_chat(user, span_info("Делаю идеальное отверстие в бите."))
+			visible_message(span_info("<b>[user]</b> сверлит биту."))
+			explosive = DRILLED_BAT
+			return
+	else if (istype(attacking_item, /obj/item/ammo_casing) && explosive == DRILLED_BAT)
+		var/obj/item/ammo_casing/AC = attacking_item
+		if(AC.loaded_projectile)
+			playsound(get_turf(src), 'sound/weapons/gun/general/mag_bullet_insert.ogg', 100)
+			AC.forceMove(src)
+			to_chat(user, span_info("Вставляю патрон в биту. Гениально."))
+			explosive = CHARGED_BAT
+			return
+	else
+		return ..()
+
+/obj/item/melee/baseball_bat/proc/do_boom(mob/user, mob/target)
+	if(explosive == CHARGED_BAT)
+		var/obj/item/ammo_casing/AC = locate(/obj/item/ammo_casing) in src
+		if(AC)
+			AC.fire_casing(target, user, fired_from = src)
+			explosive = FALSE
+			qdel(AC)
+			return TRUE
+	return FALSE
+
+/obj/item/melee/baseball_bat/attack(mob/living/target, mob/living/user)
+	. = ..()
+	if(do_boom(user, target))
+		playsound(get_turf(src), 'sound/weapons/gun/pistol/shot.ogg', 100)
+		user.dropItemToGround(src)
+		throw_at(get_edge_target_turf(target, REVERSE_DIR(user.dir)), rand(8,10), 14, user)
+		if(prob(25))
+			var/obj/item/bodypart/cute = user.get_active_hand()
+			cute.dismember(BRUTE, FALSE, TRUE)
+
+#undef DRILLED_BAT
+#undef CHARGED_BAT
 
 /obj/item/melee/baseball_bat/Initialize()
 	. = ..()
@@ -789,6 +842,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	w_class = WEIGHT_CLASS_BULKY
 	slot_flags = ITEM_SLOT_BACK
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	var/wielded = FALSE // track wielded status on item
 
 /obj/item/vibro_weapon/Initialize()
@@ -845,6 +899,7 @@ for further reading, please see: https://github.com/tgstation/tgstation/pull/301
 	force = 14
 	throwforce = 12
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	attack_verb_continuous = list("attacks", "slashes", "stabs", "slices", "tears", "lacerates", "rips", "dices", "cuts")
 	attack_verb_simple = list("attack", "slash", "stab", "slice", "tear", "lacerate", "rip", "dice", "cut")
 

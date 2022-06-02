@@ -54,6 +54,10 @@
 	var/last_special = 0 ///Used by the resist verb, likely used to prevent players from bypassing next_move by logging in/out.
 	var/timeofdeath = 0
 
+	/// Helper vars for quick access to firestacks, these should be updated every time firestacks are adjusted
+	var/on_fire = FALSE
+	var/fire_stacks = 0
+
 	/**
 	  * Allows mobs to move through dense areas without restriction. For instance, in space or out of holder objects.
 	  *
@@ -73,11 +77,6 @@
 	var/cameraFollow = null
 
 	var/tod = null /// Time of death
-
-	var/on_fire = FALSE ///The "Are we on fire?" var
-	var/fire_stacks = 0 ///Tracks how many stacks of fire we have on, max is usually 20
-
-
 
 	var/ventcrawler = 0 //0 No vent crawling, 1 vent crawling in the nude, 2 vent crawling always
 	var/limb_destroyer = 0 //1 Sets AI behavior that allows mobs to target and dismember limbs with their basic attack.
@@ -137,6 +136,7 @@
 	var/cultslurring = 0
 	var/derpspeech = 0
 	var/lisp = 0
+	var/fucking_anime_girl_noises_oh_nya = 0
 
 	var/list/implants = null
 
@@ -182,3 +182,12 @@
 	var/body_position_pixel_y_offset = 0
 
 	var/list/known_reagent_sounds = list()
+
+	/// FOV view that is applied from either nativeness or traits
+	var/fov_view
+	/// Native FOV that will be applied if a config is enabled
+	var/native_fov = FOV_90_DEGREES
+	/// Lazy list of FOV traits that will apply a FOV view when handled.
+	var/list/fov_traits
+	/// Последние температурные ощущения
+	var/last_temp_status = "normal"

@@ -37,6 +37,10 @@
 			reagents.clear_reagents()
 		else
 			if(M != user)
+				if(M.hydration >= HYDRATION_LEVEL_OVERHYDRATED)
+					M.visible_message(span_danger("[user] не может больше напоить [M] содержимым [src.name]."), \
+					span_userdanger("[user] больше не может напоить меня содержимым [src.name]."))
+					return
 				M.visible_message(span_danger("[user] пытается напоить [M] из [src].") , \
 							span_userdanger("[user] пытается напоить меня из [src]."))
 				if(!do_mob(user, M))
@@ -47,6 +51,9 @@
 							span_userdanger("[user] поит меня чем-то из [src]."))
 				log_combat(user, M, "fed", reagents.log_list())
 			else
+				if(user.hydration >= HYDRATION_LEVEL_OVERHYDRATED)
+					to_chat(M, span_warning("В меня больше не лезет содержимое [src.name]!"))
+					return
 				to_chat(user, span_notice("Делаю глоток из [src]."))
 
 			for(var/datum/reagent/R in reagents.reagent_list)
@@ -91,6 +98,8 @@
 		var/trans = reagents.trans_to(target, amount_per_transfer_from_this, transfered_by = user)
 		to_chat(user, span_notice("Переливаю [trans] единиц в [target]."))
 
+		playsound(get_turf(user), pick(WATER_FLOW_MINI), 50, TRUE)
+
 	else if(target.is_drainable()) //A dispenser. Transfer FROM it TO us.
 		if(!target.reagents.total_volume)
 			to_chat(user, span_warning("[target] пуст и не может быть заполнен!"))
@@ -102,6 +111,8 @@
 
 		var/trans = target.reagents.trans_to(src, amount_per_transfer_from_this, transfered_by = user)
 		to_chat(user, span_notice("Наполняю [src] [trans] единицами из [target]."))
+
+		playsound(get_turf(user), pick(WATER_FLOW_MINI), 50, TRUE)
 
 	else if(reagents.total_volume)
 		if(user.a_intent == INTENT_HARM)
@@ -252,7 +263,7 @@
 
 /obj/item/reagent_containers/glass/bucket
 	name = "ведро"
-	desc = "Это ведро."
+	desc = "Просто ведро."
 	icon = 'icons/obj/janitor.dmi'
 	icon_state = "bucket"
 	inhand_icon_state = "bucket"

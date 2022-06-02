@@ -1,12 +1,15 @@
 /datum/job/doctor/field_medic
 	title = "Field Medic"
-	ru_title = "Полевой Врач"
+	ru_title = "Полевой Медик"
 	total_positions = 1
 	spawn_positions = 1
 	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/field_medic
+
+	skills = list(/datum/skill/surgery = SKILL_EXP_EXPERT, /datum/skill/ranged = SKILL_EXP_JOURNEYMAN)
+	minimal_skills = list(/datum/skill/surgery = SKILL_EXP_EXPERT, /datum/skill/ranged = SKILL_EXP_JOURNEYMAN)
 
 	paycheck = PAYCHECK_HARD
 	metalocked = TRUE
@@ -24,22 +27,23 @@
 	name = "Полевой медик"
 	jobtype = /datum/job/doctor/field_medic
 
-	head = /obj/item/clothing/head/soft/sec/fieldmedic
+	head = /obj/item/clothing/head/helmet
 	belt = /obj/item/defibrillator/compact/loaded
 	ears = /obj/item/radio/headset/headset_medsec
 	uniform = /obj/item/clothing/under/rank/medical/brigphys
+	gloves = /obj/item/clothing/gloves/color/latex/nitrile
 	shoes = /obj/item/clothing/shoes/jackboots
 	suit = /obj/item/clothing/suit/armor/vest/fieldmedic
-	l_hand = /obj/item/storage/backpack/duffelbag/med/surgery
-	backpack_contents = list(/obj/item/storage/box/trackimp = 1, /obj/item/storage/firstaid/medical = 1, /obj/item/optable = 1, /obj/item/modular_computer/tablet/preset/cheap = 1, /obj/item/flashlight = 1)
+	suit_store = /obj/item/gun/energy/disabler
+	backpack_contents = list(/obj/item/storage/box/trackimp = 1, /obj/item/storage/firstaid/medical/field_surgery = 1, /obj/item/optable = 1, /obj/item/modular_computer/laptop/preset/medical = 1, /obj/item/storage/pill_bottle/soldier = 1, /obj/item/flashlight = 1)
 
 	backpack = /obj/item/storage/backpack/medic
 	satchel = /obj/item/storage/backpack/satchel/med
 	duffelbag = /obj/item/storage/backpack/duffelbag/med
 	box = /obj/item/storage/box/survival/medical
 
-	r_pocket = /obj/item/storage/pill_bottle/soldier
-	l_pocket = /obj/item/pda/medical
+	r_pocket = /obj/item/storage/belt/medipenal/field_med
+	l_pocket = /obj/item/modular_computer/tablet/pda/medical
 
 	implants = list(/obj/item/implant/mindshield)
 
@@ -48,3 +52,11 @@
 	chameleon_extras = /obj/item/gun/syringe
 
 	id_trim = /datum/id_trim/job/field_medic
+
+/datum/outfit/job/field_medic/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	. = ..()
+	if(visualsOnly)
+		return
+	var/datum/atom_hud/hud = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
+	hud.show_to(H)
+	ADD_TRAIT(H, TRAIT_MEDICAL_HUD, ORGAN_TRAIT)

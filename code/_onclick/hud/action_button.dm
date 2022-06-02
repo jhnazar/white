@@ -25,7 +25,7 @@
 		return
 	if((istype(over_object, /atom/movable/screen/movable/action_button) && !istype(over_object, /atom/movable/screen/movable/action_button/hide_toggle)))
 		if(locked)
-			to_chat(usr, span_warning("Action button \"[name]\" is locked, unlock it first."))
+			to_chat(usr, span_warning("Кнопка действия \"[name]\" заблокирована, нужно её разблокировать."))
 			return
 		var/atom/movable/screen/movable/action_button/B = over_object
 		var/list/actions = usr.actions
@@ -45,27 +45,30 @@
 	var/list/modifiers = params2list(params)
 	if(modifiers["shift"])
 		if(locked)
-			to_chat(usr, span_warning("Action button \"[name]\" is locked, unlock it first."))
+			to_chat(usr, span_warning("Кнопка действия \"[name]\" заблокирована, нужно её разблокировать."))
 			return TRUE
 		moved = 0
 		usr.update_action_buttons() //redraw buttons that are no longer considered "moved"
 		return TRUE
 	if(modifiers["ctrl"])
 		locked = !locked
-		to_chat(usr, span_notice("Action button \"[name]\" [locked ? "" : "un"]locked."))
+		to_chat(usr, span_notice("Кнопка действия \"[name]\" [locked ? "" : "раз"]блокирована."))
 		if(id && usr.client) //try to (un)remember position
 			usr.client.prefs.action_buttons_screen_locs["[name]_[id]"] = locked ? moved : null
 		return TRUE
 	if(usr.next_click > world.time)
 		return
 	usr.next_click = world.time + 1
-	linked_action.Trigger()
+	var/trigger_flags
+	if(LAZYACCESS(modifiers, RIGHT_CLICK))
+		trigger_flags |= TRIGGER_SECONDARY_ACTION
+	linked_action.Trigger(trigger_flags = trigger_flags)
 	return TRUE
 
 //Hide/Show Action Buttons ... Button
 /atom/movable/screen/movable/action_button/hide_toggle
-	name = "Hide Buttons"
-	desc = "Shift-click any button to reset its position, and Control-click it to lock it in place. ПКМ this button to reset all buttons to their default positions."
+	name = "Спрятать кнопки"
+	desc = "Shift-клик по любой кнопке для сброса и CTRL-Клик, чтобы закрепить её. ПКМ по кнопке для сброса всех кнопок."
 	icon = 'icons/hud/actions.dmi'
 	icon_state = "bg_default"
 	var/hidden = FALSE
@@ -97,14 +100,14 @@
 	var/list/modifiers = params2list(params)
 	if(modifiers["shift"])
 		if(locked)
-			to_chat(usr, span_warning("Action button \"[name]\" is locked, unlock it first."))
+			to_chat(usr, span_warning("Кнопка действия \"[name]\" заблокирована, нужно её разблокировать."))
 			return TRUE
 		moved = FALSE
 		usr.update_action_buttons(TRUE)
 		return TRUE
 	if(modifiers["ctrl"])
 		locked = !locked
-		to_chat(usr, span_notice("Action button \"[name]\" [locked ? "" : "un"]locked."))
+		to_chat(usr, span_notice("Кнопка действия \"[name]\" [locked ? "" : "раз"]блокирована."))
 		if(id && usr.client) //try to (un)remember position
 			usr.client.prefs.action_buttons_screen_locs["[name]_[id]"] = locked ? moved : null
 		return TRUE
@@ -121,15 +124,15 @@
 		if(id && usr.client)
 			usr.client.prefs.action_buttons_screen_locs["[name]_[id]"] = null
 		usr.update_action_buttons(TRUE)
-		to_chat(usr, span_notice("Action button positions have been reset."))
+		to_chat(usr, span_notice("Кнопки действий сброшены."))
 		return TRUE
 	usr.hud_used.action_buttons_hidden = !usr.hud_used.action_buttons_hidden
 
 	hidden = usr.hud_used.action_buttons_hidden
 	if(hidden)
-		name = "Show Buttons"
+		name = "Показать кнопки"
 	else
-		name = "Hide Buttons"
+		name = "Спрятать кнопки"
 	update_icon()
 	usr.update_action_buttons()
 
@@ -141,7 +144,7 @@
 	if(moved)
 		moved = FALSE
 	user.update_action_buttons(TRUE)
-	to_chat(user, span_notice("Action button positions have been reset."))
+	to_chat(user, span_notice("Кнопки действий сброшены."))
 
 
 /atom/movable/screen/movable/action_button/hide_toggle/proc/InitialiseIcon(datum/hud/owner_hud)

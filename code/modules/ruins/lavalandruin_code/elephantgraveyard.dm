@@ -5,6 +5,7 @@
 	max_integrity = 120
 	impressiveness = 18 // Carved from the bones of a massive creature, it's going to be a specticle to say the least
 	layer = ABOVE_ALL_MOB_LAYER
+	plane = ABOVE_GAME_PLANE
 	custom_materials = list(/datum/material/bone=MINERAL_MATERIAL_AMOUNT*5)
 	abstract_type = /obj/structure/statue/bone
 
@@ -44,7 +45,7 @@
 	return list("wasteland")
 
 /turf/open/floor/plating/asteroid/basalt/wasteland/Initialize()
-	.=..()
+	. = ..()
 	if(prob(floor_variance))
 		icon_state = "[base_icon_state][rand(0,6)]"
 
@@ -75,7 +76,7 @@
 	dispensedreagent = /datum/reagent/fuel/oil
 
 /obj/structure/sink/oil_well/Initialize()
-	.=..()
+	. = ..()
 	create_reagents(20)
 	reagents.add_reagent(dispensedreagent, 20)
 
@@ -131,7 +132,7 @@
 /obj/structure/closet/crate/grave/PopulateContents()  //GRAVEROBBING IS NOW A FEATURE
 	..()
 	new /obj/effect/decal/remains/human/grave(src)
-	switch(rand(1,8))
+	switch(rand(1,7))
 		if(1)
 			new /obj/item/coin/gold(src)
 			new /obj/item/storage/wallet(src)

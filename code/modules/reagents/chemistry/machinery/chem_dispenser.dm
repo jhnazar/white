@@ -17,8 +17,6 @@
 	density = TRUE
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "dispenser"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 40
 	interaction_flags_machine = INTERACT_MACHINE_OPEN | INTERACT_MACHINE_ALLOW_SILICON | INTERACT_MACHINE_OFFLINE
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	circuit = /obj/item/circuitboard/machine/chem_dispenser
@@ -89,11 +87,11 @@
 
 /obj/machinery/chem_dispenser/Initialize()
 	. = ..()
-	dispensable_reagents = sortList(dispensable_reagents, /proc/cmp_reagents_asc)
+	dispensable_reagents = sort_list(dispensable_reagents, /proc/cmp_reagents_asc)
 	if(emagged_reagents)
-		emagged_reagents = sortList(emagged_reagents, /proc/cmp_reagents_asc)
+		emagged_reagents = sort_list(emagged_reagents, /proc/cmp_reagents_asc)
 	if(upgrade_reagents)
-		upgrade_reagents = sortList(upgrade_reagents, /proc/cmp_reagents_asc)
+		upgrade_reagents = sort_list(upgrade_reagents, /proc/cmp_reagents_asc)
 	if(is_operational)
 		begin_processing()
 	update_icon()
@@ -124,7 +122,7 @@
 	if (recharge_counter >= 8)
 		var/usedpower = cell.give(recharge_amount)
 		if(usedpower)
-			use_power(250*recharge_amount)
+			use_power(active_power_usage + recharge_amount)
 		recharge_counter = 0
 		return
 	recharge_counter += delta_time
@@ -335,7 +333,7 @@
 					if(!dispensable_reagents.Find(reagent_id))
 						visible_message(span_warning("[capitalize(src.name)] гудит.") , span_hear("Слышу слабое гудение."))
 						to_chat(usr, "<span class ='danger'>[capitalize(src.name)] не может найти <b>[reagent]</b>!</span>")
-						playsound(src, 'sound/machines/buzz-two.ogg', 50, TRUE)
+						playsound(src, 'white/valtos/sounds/error2.ogg', 50, TRUE)
 						return
 				saved_recipes[name] = recording_recipe
 				recording_recipe = null
@@ -397,6 +395,7 @@
 	visible_message(span_danger("[capitalize(src.name)] неисправен и забрызгивает всё химикатами!"))
 
 /obj/machinery/chem_dispenser/RefreshParts()
+	. = ..()
 	recharge_amount = initial(recharge_amount)
 	var/newpowereff = 0.0666666
 	for(var/obj/item/stock_parts/cell/P in component_parts)
@@ -470,10 +469,10 @@
 	dispensed_temperature = (T0C + 0.85) // cold enough that ice won't melt
 	amount = 10
 	pixel_y = 6
-	layer = WALL_OBJ_LAYER
 	circuit = /obj/item/circuitboard/machine/chem_dispenser/drinks
 	working_state = null
 	nopower_state = null
+	use_power = NO_POWER_USE
 	pass_flags = PASSTABLE
 	show_ph = FALSE
 	dispensable_reagents = list(

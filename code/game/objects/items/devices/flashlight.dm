@@ -271,7 +271,7 @@
 
 /obj/item/flashlight/flare
 	name = "сигнальная шашка"
-	desc = "Собственность Нанотрейзен. Сбоку есть инструкция: \"потяни за шнур, зажги\"."
+	desc = "Собственность NanoTrasen. Сбоку есть инструкция: \"потяни за шнур, зажги\"."
 	w_class = WEIGHT_CLASS_SMALL
 	light_range = 7 // Pretty bright.
 	icon_state = "flare"
@@ -578,7 +578,7 @@
 	light_range = 4
 	light_power = 10
 	alpha = 0
-	layer = 0
+	plane = FLOOR_PLANE
 	on = TRUE
 	anchored = TRUE
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF

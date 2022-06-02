@@ -4,8 +4,8 @@
 	//The blackbox required to recover.
 	var/obj/item/blackbox/objective/linked_blackbox
 	//Relatively easy mission.
-	min_payout = 5 * CARGO_CRATE_VALUE
-	max_payout = 10 * CARGO_CRATE_VALUE
+	min_payout = 10 * CARGO_CRATE_VALUE
+	max_payout = 50 * CARGO_CRATE_VALUE
 
 /datum/orbital_objective/recover_blackbox/generate_objective_stuff(turf/chosen_turf)
 	generated = TRUE
@@ -41,7 +41,7 @@
 
 /obj/item/blackbox/objective/examine(mob/user)
 	. = ..()
-	. += "<hr><span class='notice'>Активируй это в руке <b>на мостике</b> станции, чтобы отправить Нанотрейзен нужные данные и завершить контракт.</span>"
+	. += "<hr><span class='notice'>Нажмите кнопку экстренной эвакуации когда доставите его в <b>зону доставки рейнджеров</b>, чтобы отправить NanoTrasen нужные данные и завершить контракт.</span>"
 
 /datum/component/recoverable
 	var/recovered = FALSE
@@ -58,10 +58,10 @@
 	var/atom/movable/pA = parent
 	var/turf/T = get_turf(parent)
 	var/area/A = T.loc
-	if(istype(A, /area/command) && is_station_level(T.z))
+	if(istype(A, /area/cargo/exploration_mission) && is_station_level(T.z))
 		INVOKE_ASYNC(src, .proc/initiate_recovery)
 	else
-		pA.say("Чёрный ящик должен быть активирован на мостике.")
+		pA.say("Чёрный ящик должен быть активирован в специальной зоне доставки рейнджеров.")
 
 /datum/component/recoverable/proc/initiate_recovery()
 	var/atom/movable/parentobj = parent

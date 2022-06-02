@@ -1,6 +1,6 @@
 /obj/machinery/nanite_program_hub
-	name = "nanite program hub"
-	desc = "Compiles nanite programs from the techweb servers and downloads them into disks."
+	name = "программный центр нанитов"
+	desc = "Компилирует нанитные программы с веб-серверов и записывает их на диски."
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "nanite_program_hub"
 	use_power = IDLE_POWER_USE
@@ -13,13 +13,14 @@
 	var/current_category = "Main"
 	var/detail_view = TRUE
 	var/categories = list(
-		list(name = "Utility Nanites"),
-		list(name = "Medical Nanites"),
-		list(name = "Sensor Nanites"),
-		list(name = "Augmentation Nanites"),
-		list(name = "Suppression Nanites"),
-		list(name = "Weaponized Nanites"),
-		list(name = "Protocols"),
+		list(name = "Сервисные программы"),
+		list(name = "Медицинские программы"),
+		list(name = "Сенсорные программы"),
+		list(name = "Программы аугментации"),
+		list(name = "Программы подавления"),
+		list(name = "Военные программы"),
+		list(name = "Протоколы репликации"),
+		list(name = "Протоколы хранения"),
 	)
 
 /obj/machinery/nanite_program_hub/Initialize()
@@ -28,17 +29,16 @@
 
 /obj/machinery/nanite_program_hub/update_overlays()
 	. = ..()
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	if((machine_stat & (NOPOWER|MAINT|BROKEN)) || panel_open)
 		return
-	SSvis_overlays.add_vis_overlay(src, icon, "nanite_program_hub_on", layer, plane)
-	SSvis_overlays.add_vis_overlay(src, icon, "nanite_program_hub_on", EMISSIVE_LAYER, EMISSIVE_PLANE)
+	. += mutable_appearance(icon, "nanite_program_hub_on", layer, plane)
+	. += mutable_appearance(icon, "nanite_program_hub_on", 0, EMISSIVE_PLANE)
 
 /obj/machinery/nanite_program_hub/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
 		var/obj/item/disk/nanite_program/N = I
 		if(user.transferItemToLoc(N, src))
-			to_chat(user, span_notice("You insert [N] into [src]."))
+			to_chat(user, span_notice("Вставляю [N] в [src]."))
 			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, FALSE)
 			if(disk)
 				eject(user)
@@ -67,7 +67,7 @@
 
 /obj/machinery/nanite_program_hub/AltClick(mob/user)
 	if(disk && user.canUseTopic(src, !issilicon(user)))
-		to_chat(user, span_notice("You take out [disk] from [src]."))
+		to_chat(user, span_notice("Извлекаю [disk] из [src]."))
 		eject(user)
 	return
 

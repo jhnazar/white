@@ -18,6 +18,7 @@
 	harm_intent_damage = 0 //Punching elites gets you nowhere
 	stat_attack = HARD_CRIT
 	layer = LARGE_MOB_LAYER
+	plane = GAME_PLANE_UPPER_FOV_HIDDEN
 	sentience_type = SENTIENCE_BOSS
 	var/chosen_attack = 1
 	var/list/attack_action_types = list()
@@ -52,7 +53,7 @@
 	. = ..()
 	if(ismineralturf(target))
 		var/turf/closed/mineral/M = target
-		M.gets_drilled()
+		M.attempt_drill()
 	if(istype(target, /obj/vehicle/sealed/mecha))
 		var/obj/vehicle/sealed/mecha/M = target
 		M.take_damage(50, BRUTE, MELEE, 1)
@@ -334,6 +335,7 @@ While using this makes the system rely on OnFire, it still gives options for tim
 	canSmoothWith = list(SMOOTH_GROUP_HIERO_WALL)
 	duration = 50
 	layer = BELOW_MOB_LAYER
+	plane = GAME_PLANE
 	color = rgb(255,0,0)
 	light_range = MINIMUM_USEFUL_LIGHT_RANGE
 	light_color = COLOR_SOFT_RED

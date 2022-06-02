@@ -11,8 +11,7 @@
 	var/id = null
 	var/initialized_button = 0
 	armor = list(MELEE = 50, BULLET = 50, LASER = 50, ENERGY = 50, BOMB = 10, BIO = 100, RAD = 100, FIRE = 90, ACID = 70)
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 2
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.02
 	resistance_flags = LAVA_PROOF | FIRE_PROOF
 
 /obj/machinery/button/indestructible
@@ -335,7 +334,7 @@
 /obj/machinery/button/elevator/examine(mob/user)
 	. = ..()
 	. += "<hr><span class='notice'>There's a small inscription on the button...</span>"
-	. += "\n<span class='notice'>THIS CALLS THE ELEVATOR! IT DOES NOT OPERATE IT! Interact with the elevator itself to use it!</span>"
+	. += span_notice("\nTHIS CALLS THE ELEVATOR! IT DOES NOT OPERATE IT! Interact with the elevator itself to use it!")
 
 /obj/machinery/button/tram
 	name = "вызов трамвая"
@@ -354,4 +353,4 @@
 /obj/machinery/button/elevator/examine(mob/user)
 	. = ..()
 	. += "<hr><span class='notice'>Здесь есть закорючки на кнопке...</span>"
-	. += "\n<span class='notice'>ЭТО ВЫЗЫВАЕТ ТРАМВАЙ! ЭТО НЕ УПРАВЛЯЕТ ИМ! Управляйте трамваем изнутри, если хотите!</span>"
+	. += span_notice("\nЭТО ВЫЗЫВАЕТ ТРАМВАЙ! ЭТО НЕ УПРАВЛЯЕТ ИМ! Управляйте трамваем изнутри, если хотите!")

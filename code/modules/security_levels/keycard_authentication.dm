@@ -1,18 +1,15 @@
 GLOBAL_DATUM_INIT(keycard_events, /datum/events, new)
 
-#define KEYCARD_RED_ALERT "Red Alert"
-#define KEYCARD_EMERGENCY_MAINTENANCE_ACCESS "Emergency Maintenance Access"
+#define KEYCARD_RED_ALERT "Красный Код"
+#define KEYCARD_EMERGENCY_MAINTENANCE_ACCESS "Аварийный доступ к техтоннелям"
 #define KEYCARD_MIGGER_ALARM "Иммиграционная политика"
-#define KEYCARD_BSA_UNLOCK "Bluespace Artillery Unlock"
+#define KEYCARD_BSA_UNLOCK "Разблокировка Блюспейс Артиллерии"
 
 /obj/machinery/keycard_auth
-	name = "устройство активации функций"
-	desc = "Это устройство используется для запуска функций станции, для аутентификации которых требуется более одной идентификационной карты."
+	name = "Устройство аутентификации"
+	desc = "Используется для запуска функций станции, для аутентификации которых требуется более одной идентификационной карты."
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "auth_off"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 20
-	active_power_usage = 600
 	power_channel = AREA_USAGE_ENVIRON
 	req_access = list(ACCESS_KEYCARD_AUTH)
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF

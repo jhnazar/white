@@ -19,19 +19,19 @@
 /obj/item/gun/energy/laser/retro
 	name ="ретро-лазерная пушка"
 	icon_state = "retro"
-	desc = "Старая модель основного лазерного оружия, более не используемая частной службой безопасности или вооруженными силами Нанотрейзена. Тем не менее, он все еще довольно смертоносен и прост в обслуживании, что делает его фаворитом среди пиратов и других преступников."
+	desc = "Старая модель основного лазерного оружия, более не используемая частной службой безопасности или вооруженными силами NanoTrasen. Тем не менее, он все еще довольно смертоносен и прост в обслуживании, что делает его фаворитом среди пиратов и других преступников."
 	ammo_x_offset = 3
 
 /obj/item/gun/energy/laser/retro/old
 	name ="лазерная пушка"
 	icon_state = "retro"
-	desc = "Лазерное ружье первого поколения, разработанное Нанотрейзеном. Страдает от проблем с боеприпасами, но его уникальная способность заряжать боеприпасы без необходимости в заряднике помогает компенсировать это. Вы действительно надеетесь, что кто-то разработал лучшую лазерную пушку, пока вы были в крио."
+	desc = "Лазерное ружье первого поколения, разработанное NanoTrasen. Страдает от проблем с боеприпасами, но его уникальная способность заряжать боеприпасы без необходимости в заряднике помогает компенсировать это. Вы действительно надеетесь, что кто-то разработал лучшую лазерную пушку, пока вы были в крио."
 	ammo_type = list(/obj/item/ammo_casing/energy/lasergun/old)
 	ammo_x_offset = 3
 
 /obj/item/gun/energy/laser/hellgun
 	name ="лазерная пушка адского огня"
-	desc = "Реликвия, построенная до того, как НТ начала устанавливать регуляторы на свое лазерное оружие. Этот образец лазерного оружия стал печально известным из-за ужасных ожоговых ран, которые он вызвал, и был тихо прекращен, как только это начало влиять на репутацию NT."
+	desc = "Реликвия, построенная до того, как NanoTrasen начала устанавливать регуляторы на свое лазерное оружие. Этот образец лазерного оружия стал печально известным из-за ужасных ожоговых ран, которые он вызвал, и был тихо прекращен, как только это начало влиять на репутацию NT."
 	icon_state = "hellgun"
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/hellfire)
 
@@ -40,7 +40,7 @@
 	icon_state = "caplaser"
 	w_class = WEIGHT_CLASS_NORMAL
 	inhand_icon_state = null
-	desc = "Это антикварный лазерный пистолет. Ручной работы высшего качества. Декорирован кожей ассистента и хромом. Всплески энергии пронизывают его насквозь. На пистолете есть изображение Космической Станции 13. А точнее взрывающейся Космической Станции 13."
+	desc = "Антикварный лазерный пистолет, полностью выполненный с высочайшим качеством. Декорирован кожей ассистента и хромом. Всплески энергии пронизывают его насквозь. На пистолете есть изображение Космической Станции 13. А точнее взрывающейся Космической Станции 13."
 	force = 10
 	ammo_x_offset = 3
 	selfcharge = 1
@@ -61,7 +61,7 @@
 	desc = "Основанная на энергии лазерная пушка, которая получает энергию непосредственно от внутренней энергетической ячейки киборга. Так вот как выглядит свобода?"
 	use_cyborg_cell = TRUE
 
-/obj/item/gun/energy/laser/cyborg/makeJamming()
+/obj/item/gun/energy/laser/cyborg/make_jamming()
 	return
 
 /obj/item/gun/energy/laser/cyborg/emp_act()
@@ -81,6 +81,7 @@
 	shaded_charge = 0
 	pin = /obj/item/firing_pin/implant/mindshield
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/scatter/disabler, /obj/item/ammo_casing/energy/electrode)
+	automatic_charge_overlays = FALSE
 
 ///Laser Cannon
 
@@ -125,6 +126,9 @@
 	ammo_type = list(/obj/item/ammo_casing/energy/xray)
 	ammo_x_offset = 3
 
+/obj/item/gun/energy/xray/violence
+	extra_damage = 15
+
 ////////Laser Tag////////////////////
 
 /obj/item/gun/energy/laser/bluetag
@@ -154,3 +158,36 @@
 
 /obj/item/gun/energy/laser/redtag/hitscan
 	ammo_type = list(/obj/item/ammo_casing/energy/laser/redtag/hitscan)
+
+//Inferno and Cryo Pistols
+
+/obj/item/gun/energy/laser/thermal //the common parent of these guns, it just shoots hard bullets, somoene might like that?
+	name = "нанопистолет"
+	desc = "Модифицированная версия термолучевого пистолета стреляющего списанными боевыми нанитами."
+	icon_state = "infernopistol"
+	inhand_icon_state = null
+	ammo_type = list(/obj/item/ammo_casing/energy/nanite)
+	shaded_charge = TRUE
+	ammo_x_offset = 1
+	can_flashlight = TRUE
+	flight_x_offset = 15
+	flight_y_offset = 9
+	can_bayonet = TRUE
+	knife_x_offset = 19
+	knife_y_offset = 13
+	w_class = WEIGHT_CLASS_NORMAL
+	dual_wield_spread = 10 //as intended by the coders
+
+/obj/item/gun/energy/laser/thermal/ComponentInitialize()
+	. = ..()
+	AddElement(/datum/element/empprotection, EMP_PROTECT_SELF|EMP_PROTECT_CONTENTS)
+
+/obj/item/gun/energy/laser/thermal/inferno //the magma gun
+	name = "пиролучевой пистолет"
+	icon_state = "infernopistol"
+	ammo_type = list(/obj/item/ammo_casing/energy/nanite/inferno)
+
+/obj/item/gun/energy/laser/thermal/cryo //the ice gun
+	name = "криолучевой пистолет"
+	icon_state = "cryopistol"
+	ammo_type = list(/obj/item/ammo_casing/energy/nanite/cryo)

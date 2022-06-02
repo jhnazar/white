@@ -40,6 +40,19 @@
 	if(charges <= 0)
 		qdel(src)
 
+/obj/item/melee/touch_attack/proc/use_charge(mob/living/user, whisper = FALSE)
+	if(QDELETED(src))
+		return
+
+	if(catchphrase)
+		if(whisper)
+			user.say("#[catchphrase]", forced = "spell")
+		else
+			user.say(catchphrase, forced = "spell")
+	playsound(get_turf(user), on_use_sound, 50, TRUE)
+	if(--charges <= 0)
+		qdel(src)
+
 /obj/item/melee/touch_attack/Destroy()
 	if(attached_spell)
 		attached_spell.on_hand_destroy(src)
@@ -112,7 +125,7 @@
 
 /obj/item/melee/touch_attack/fleshtostone/midas
 	name = "рука мидаса"
-	desc = "Это то, что превратит существо в золото!"
+	desc = "То, что превратит существо в золото!"
 	catchphrase = "PO F'ARM'U CH'EMP'ION!!"
 	on_use_sound = 'white/valtos/sounds/midas.ogg'
 	icon_state = "fleshtostone"

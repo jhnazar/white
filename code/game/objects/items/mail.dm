@@ -119,6 +119,9 @@
 		return
 	user.temporarilyRemoveItemFromInventory(src, TRUE)
 	if(contents.len)
+		var/obj/item/paper/fluff/junkmail_generic/J = locate(/obj/item/paper/fluff/junkmail_generic) in src
+		if(J)
+			J.generate_info()
 		user.put_in_hands(contents[1])
 	playsound(loc, 'sound/items/poster_ripped.ogg', 50, TRUE)
 	qdel(src)
@@ -127,10 +130,10 @@
 	. = ..()
 	var/list/msg = list(span_notice("<i>Замечаю почтовый штемпель на лицевой стороне письма...</i>"))
 	if(recipient)
-		msg += "\t<span class='info'>Сертифицированная Нанотрейзен посылка для [recipient].</span>"
+		msg += "\t<span class='info'>Сертифицированная NanoTrasen посылка для [recipient].</span>"
 	else
 		msg += "\t<span class='info'>Сертифицированная посылка для [GLOB.station_name].</span>"
-	msg += "\t<span class='info'>Для распространения вручную или через метки назначения с использованием сертифицированной системы мусоропровода Нанотрейзен.</span>"
+	msg += "\t<span class='info'>Для распространения вручную или через метки назначения с использованием сертифицированной системы мусоропровода NanoTrasen.</span>"
 	return msg
 
 /// Accepts a mob to initialize goodies for a piece of mail.
@@ -179,12 +182,12 @@
 	var/list/junk_names = list(
 		/obj/item/paper/pamphlet/gateway = "[initial(name)] для [pick(GLOB.adjectives)] приключенцев",
 		/obj/item/paper/pamphlet/violent_video_games = "[initial(name)] за правду об аркадных автоматах, которую центком не хочет слышать",
-		/obj/item/paper/fluff/junkmail_redpill = "[initial(name)] для [pick(GLOB.adjectives)] работяг Нанотрейзен",
+		/obj/item/paper/fluff/junkmail_redpill = "[initial(name)] для [pick(GLOB.adjectives)] работяг NanoTrasen",
 		/obj/effect/decal/cleanable/ash = "[initial(name)] с НЕВЕРОЯТНО ВАЖНЫМ АРТЕФАКТОМ - ДОСТАВИТЬ В НАУЧНЫЙ ОТДЕЛ. ОЧЕНЬ ХРУПКОЕ СОДЕРЖИМОЕ.",
 	)
 
 	color = pick(department_colors) //eh, who gives a shit.
-	name = special_name ? junk_names[junk] : "ВАЖНАЯ [initial(name)]"
+	name = special_name ? junk_names[junk] : "ВАЖНО! [capitalize(initial(name))]"
 
 	junk = new junk(src)
 	return TRUE
@@ -244,9 +247,9 @@
 /obj/item/storage/bag/mail
 	name = "мешок с почтой"
 	desc = "Сумка для писем, конвертов и других почтовых отправлений."
-	icon = 'icons/obj/library.dmi'
-	icon_state = "bookbag"
-	worn_icon_state = "bookbag"
+	icon = 'icons/obj/bureaucracy.dmi'
+	icon_state = "mailbag"
+	worn_icon_state = "mailbag"
 	resistance_flags = FLAMMABLE
 
 /obj/item/storage/bag/mail/ComponentInitialize()
@@ -285,6 +288,22 @@
 	name = "важный документ"
 	icon_state = "paper_words"
 
-/obj/item/paper/fluff/junkmail_generic/Initialize()
-	. = ..()
-	info = pick(GLOB.junkmail_messages)
+/obj/item/paper/fluff/junkmail_generic/proc/generate_info()
+	if(!info)
+		var/anek = get_random_anek()
+		info = anek?["content"] ? parsemarkdown(anek["content"]) : pick(GLOB.junkmail_messages)
+
+// bash.im is dead at this moment
+/proc/get_random_anek()
+	var/datum/http_request/request = new()
+	request.prepare(RUSTG_HTTP_METHOD_GET, "http://rzhunemogu.ru/RandJSON.aspx?CType=1", "", "", null)
+	request.begin_async()
+	UNTIL(request.is_complete())
+	var/datum/http_response/response = request.into_response()
+
+	if(response.errored || response.status_code != 200)
+		return FALSE
+
+	if (response.body)
+		return json_decode(response.body)
+	return FALSE

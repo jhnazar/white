@@ -105,19 +105,20 @@
 
 
 /obj/item/clothing/suit/space/hardsuit
-	name = "герметичный шлем"
+	name = "герметичный скафандр"
 	desc = "Специальный костюм позволит работать в опасных условиях космоса."
 	icon_state = "hardsuit-engineering"
 	inhand_icon_state = "eng_hardsuit"
 	max_integrity = 300
 	armor = list(MELEE = 10, BULLET = 5, LASER = 10, ENERGY = 20, BOMB = 10, BIO = 100, RAD = 75, FIRE = 50, ACID = 75, WOUND = 10)
-	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/t_scanner, /obj/item/construction/rcd, /obj/item/pipe_dispenser)
+	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/t_scanner, /obj/item/construction/rcd, /obj/item/pipe_dispenser, /obj/item/watertank)
 	siemens_coefficient = 0
 	var/obj/item/clothing/head/helmet/space/hardsuit/helmet
 	actions_types = list(/datum/action/item_action/toggle_spacesuit, /datum/action/item_action/toggle_helmet)
 	var/helmettype = /obj/item/clothing/head/helmet/space/hardsuit
 	var/obj/item/tank/jetpack/suit/jetpack = null
 	var/hardsuit_type
+	var/armor_plate_amount = 0
 
 /obj/item/clothing/suit/space/hardsuit/Initialize()
 	if(jetpack && ispath(jetpack))
@@ -131,9 +132,41 @@
 /obj/item/clothing/suit/space/hardsuit/examine(mob/user)
 	. = ..()
 	if(!helmet && helmettype)
-		. += "\n<span class='notice'>Шлем [src] кажется неисправным. На нем нужно заменить лампочку.</span>"
+		. += span_notice("\nШлем [src] кажется неисправным. На нем нужно заменить лампочку.")
 
 /obj/item/clothing/suit/space/hardsuit/attackby(obj/item/I, mob/user, params)
+	. = ..()
+// 	Модернизация бронепластинами
+	if(istype(I, /obj/item/stack/sheet/armor_plate))
+		if(armor_plate_amount < 3)
+			var/obj/item/stack/sheet/armor_plate/S = I
+			if(armor.getRating(S.armor_type) >= 70)
+				to_chat(user, span_warning("Все уязвимые места уже перекрыты, я не представляю как это можно дополнительно укрепить!"))
+				return
+			else
+				if(armor.getRating(S.armor_type) >= 20)
+					src.armor = src.armor.attachArmor(I.armor)
+					to_chat(user, span_notice("Закрепляю дополнительную бронепластину на [src]."))
+				else
+					if(armor.getRating(S.armor_type) >= 10)
+						src.armor = src.armor.attachArmor(I.armor)
+						src.armor = src.armor.attachArmor(I.armor)
+					else
+						src.armor = src.armor.attachArmor(I.armor)
+						src.armor = src.armor.attachArmor(I.armor)
+						src.armor = src.armor.attachArmor(I.armor)
+					to_chat(user, span_notice("Закрепляю основную бронепластину на груди [src]."))
+			armor_plate_amount = armor_plate_amount + 1
+			playsound(get_turf(src), 'white/Feline/sounds/molnia.ogg', 80)
+
+			if(S.amount > 1)
+				S.amount = S.amount - 1
+				S.update_icon()
+			else
+				qdel(I)
+		else
+			to_chat(user, span_warning("Все слоты дополнительного бронирования заняты!"))
+
 	if(istype(I, /obj/item/tank/jetpack/suit))
 		if(jetpack)
 			to_chat(user, span_warning("Джетпак [src] уже установлен."))
@@ -239,7 +272,7 @@
 	max_heat_protection_temperature = FIRE_IMMUNITY_MAX_TEMP_PROTECT
 
 /obj/item/clothing/suit/space/hardsuit/engine/atmos
-	name = "скафандр атмостеха"
+	name = "скафандр атмотеха"
 	desc = "Разработан для работы в условиях космоса. Имеет защиту от температурных воздействий."
 	icon_state = "hardsuit-atmospherics"
 	inhand_icon_state = "atmo_hardsuit"
@@ -289,13 +322,13 @@
 /obj/item/clothing/head/helmet/space/hardsuit/mining/Initialize()
 	. = ..()
 	AddComponent(/datum/component/armor_plate)
-	RegisterSignal(src, COMSIG_ARMOR_PLATED, .proc/upgrade_icon)
+	RegisterSignal(src, COMSIG_ARMOR_PLATED, .proc/upgrade_icon_mining)
 
-/obj/item/clothing/head/helmet/space/hardsuit/mining/proc/upgrade_icon(datum/source, amount, maxamount)
+/obj/item/clothing/head/helmet/space/hardsuit/mining/proc/upgrade_icon_mining(datum/source, amount, maxamount)
 	SIGNAL_HANDLER
 
 	if(amount)
-		name = "reinforced [initial(name)]"
+		name = "бронированный [initial(name)]"
 		hardsuit_type = "mining_goliath"
 		if(amount == maxamount)
 			hardsuit_type = "mining_goliath_full"
@@ -321,13 +354,13 @@
 /obj/item/clothing/suit/space/hardsuit/mining/Initialize()
 	. = ..()
 	AddComponent(/datum/component/armor_plate)
-	RegisterSignal(src, COMSIG_ARMOR_PLATED, .proc/upgrade_icon)
+	RegisterSignal(src, COMSIG_ARMOR_PLATED, .proc/upgrade_icon_mining)
 
-/obj/item/clothing/suit/space/hardsuit/mining/proc/upgrade_icon(datum/source, amount, maxamount)
+/obj/item/clothing/suit/space/hardsuit/mining/proc/upgrade_icon_mining(datum/source, amount, maxamount)
 	SIGNAL_HANDLER
 
 	if(amount)
-		name = "reinforced [initial(name)]"
+		name = "бронированный [initial(name)]"
 		hardsuit_type = "mining_goliath"
 		if(amount == maxamount)
 			hardsuit_type = "mining_goliath_full"
@@ -570,7 +603,7 @@
 	desc = "Сделан для работы в условиях низкого давления из светоотражающих материалов"
 	icon_state = "hardsuit-medical"
 	inhand_icon_state = "medical_hardsuit"
-	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/storage/firstaid, /obj/item/healthanalyzer, /obj/item/stack/medical)
+	allowed = list(/obj/item/flashlight, /obj/item/tank/internals, /obj/item/storage/firstaid, /obj/item/healthanalyzer, /obj/item/stack/medical, /obj/item/medbot_carrier)
 	armor = list(MELEE = 30, BULLET = 5, LASER = 10, ENERGY = 20, BOMB = 10, BIO = 100, RAD = 60, FIRE = 60, ACID = 75, WOUND = 10)
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/medical
 	slowdown = 0.5
@@ -596,13 +629,13 @@
 	..()
 	if (slot == ITEM_SLOT_HEAD)
 		var/datum/atom_hud/DHUD = GLOB.huds[DATA_HUD_DIAGNOSTIC_BASIC]
-		DHUD.add_hud_to(user)
+		DHUD.show_to(user)
 
 /obj/item/clothing/head/helmet/space/hardsuit/rd/dropped(mob/living/carbon/human/user)
 	..()
 	if (user.head == src)
 		var/datum/atom_hud/DHUD = GLOB.huds[DATA_HUD_DIAGNOSTIC_BASIC]
-		DHUD.remove_hud_from(user)
+		DHUD.hide_from(user)
 
 /obj/item/clothing/head/helmet/space/hardsuit/rd/proc/sense_explosion(datum/source, turf/epicenter, devastation_range, heavy_impact_range,
 		light_impact_range, took, orig_dev_range, orig_heavy_range, orig_light_range)
@@ -747,6 +780,8 @@
 	armor = list(MELEE = 30, BULLET = 5, LASER = 5, ENERGY = 15, BOMB = 50, BIO = 100, RAD = 100, FIRE = 100, ACID = 75)
 	hardsuit_type = "ancient"
 	resistance_flags = FIRE_PROOF
+	heat_protection = HEAD
+	max_heat_protection_temperature = FIRE_IMMUNITY_MAX_TEMP_PROTECT
 
 /obj/item/clothing/suit/space/hardsuit/ancient
 	name = "прототип RIG скафандра"
@@ -757,6 +792,8 @@
 	slowdown = 3
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/ancient
 	resistance_flags = FIRE_PROOF
+	heat_protection = CHEST|GROIN|LEGS|FEET|ARMS|HANDS
+	max_heat_protection_temperature = FIRE_IMMUNITY_MAX_TEMP_PROTECT
 	var/footstep = 1
 	var/mob/listeningTo
 
@@ -825,9 +862,9 @@
 /obj/item/clothing/suit/space/hardsuit/shielded/ctf
 	name = "белый силовой костюм"
 	desc = "Стандартный предмет для игры в захват флага."
-	icon_state = "ert_medical"
+	icon_state = "ctf_white"
 	inhand_icon_state = "ert_medical"
-	hardsuit_type = "ert_medical"
+	hardsuit_type = "ctf_white"
 	// Adding TRAIT_NODROP is done when the CTF spawner equips people
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf
 	armor = list(MELEE = 0, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 50, BIO = 100, RAD = 100, FIRE = 95, ACID = 95)
@@ -836,32 +873,32 @@
 
 /obj/item/clothing/suit/space/hardsuit/shielded/ctf/red
 	name = "красный силовой костюм"
-	icon_state = "ert_security"
+	icon_state = "ctf_red"
 	inhand_icon_state = "ert_security"
-	hardsuit_type = "ert_security"
+	hardsuit_type = "ctf_red"
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/red
 	shield_icon = "shield-red"
 
 /obj/item/clothing/suit/space/hardsuit/shielded/ctf/blue
 	name = "синий силовой костюм"
 	desc = "Стандартный предмет для игры в захват флага."
-	icon_state = "ert_command"
+	icon_state = "ctf_blue"
 	inhand_icon_state = "ert_command"
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/blue
 
 /obj/item/clothing/suit/space/hardsuit/shielded/ctf/green
 	name = "green shielded hardsuit"
-	icon_state = "ert_green"
+	icon_state = "ctf_green"
 	inhand_icon_state = "ert_green"
-	hardsuit_type = "ert_green"
+	hardsuit_type = "ctf_green"
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/green
 	shield_icon = "shield-green"
 
 /obj/item/clothing/suit/space/hardsuit/shielded/ctf/yellow
 	name = "yellow shielded hardsuit"
-	icon_state = "ert_engineer"
+	icon_state = "ctf_yellow"
 	inhand_icon_state = "ert_engineer"
-	hardsuit_type = "ert_engineer"
+	hardsuit_type = "ctf_yellow"
 	helmettype = /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/yellow
 	shield_icon = "shield-yellow"
 
@@ -869,35 +906,33 @@
 /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf
 	name = "экранированый герметичный шлем"
 	desc = "Стандартный предмет для игры в захват флага."
-	icon_state = "hardsuit0-ert_medical"
+	icon_state = "hardsuit0-ctf_white"
 	inhand_icon_state = "hardsuit0-ert_medical"
-	hardsuit_type = "ert_medical"
+	hardsuit_type = "ctf_white"
 	armor = list(MELEE = 0, BULLET = 30, LASER = 30, ENERGY = 40, BOMB = 50, BIO = 100, RAD = 100, FIRE = 95, ACID = 95)
 
 
 /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/red
-	icon_state = "hardsuit0-ert_security"
+	icon_state = "hardsuit0-ctf_red"
 	inhand_icon_state = "hardsuit0-ert_security"
-	hardsuit_type = "ert_security"
+	hardsuit_type = "ctf_red"
 
 /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/blue
 	name = "экранированый герметичный шлем"
 	desc = "Стандартный предмет для игры в захват флага."
-	icon_state = "hardsuit0-ert_commander"
+	icon_state = "hardsuit0-ctf_blue"
 	inhand_icon_state = "hardsuit0-ert_commander"
-	hardsuit_type = "ert_commander"
+	hardsuit_type = "ctf_blue"
 
 /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/green
-	icon_state = "hardsuit0-ert_green"
+	icon_state = "hardsuit0-ctf_green"
 	inhand_icon_state = "hardsuit0-ert_green"
-	hardsuit_type = "ert_green"
+	hardsuit_type = "ctf_green"
 
 /obj/item/clothing/head/helmet/space/hardsuit/shielded/ctf/yellow
-	icon_state = "hardsuit0-ert_engineer"
+	icon_state = "hardsuit0-ctf_yellow"
 	inhand_icon_state = "hardsuit0-ert_engineer"
-	hardsuit_type = "ert_engineer"
-
-
+	hardsuit_type = "ctf_yellow"
 
 //////Syndicate Version
 

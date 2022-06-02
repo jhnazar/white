@@ -21,7 +21,7 @@
 	if(!..())
 		return
 	var/mob/living/silicon/pai/pAI = usr
-	pAI.paiInterface()
+	pAI.ui_interact(pAI)
 
 /atom/movable/screen/pai/shell
 	name = "Toggle Holoform"
@@ -119,27 +119,30 @@
 	var/mob/living/silicon/pai/pAI = usr
 	pAI.checklaws()
 
-/atom/movable/screen/pai/pda_msg_send
-	name = "PDA - Send Message"
+/atom/movable/screen/pai/modpc
+	name = "Messenger"
 	icon_state = "pda_send"
-	required_software = "digital messenger"
+	var/mob/living/silicon/pai/pAI
 
-/atom/movable/screen/pai/pda_msg_send/Click()
-	if(!..())
+/atom/movable/screen/pai/modpc/Click()
+	. = ..()
+	if(!.) // this works for some reason.
+		return
+	pAI.modularInterface?.interact(pAI)
+
+/atom/movable/screen/pai/internal_gps
+	name = "Internal GPS"
+	icon_state = "internal_gps"
+	required_software = "internal gps"
+
+/atom/movable/screen/pai/internal_gps/Click()
+	. = ..()
+	if(!.)
 		return
 	var/mob/living/silicon/pai/pAI = usr
-	pAI.cmd_send_pdamesg(usr)
-
-/atom/movable/screen/pai/pda_msg_show
-	name = "PDA - Show Message Log"
-	icon_state = "pda_receive"
-	required_software = "digital messenger"
-
-/atom/movable/screen/pai/pda_msg_show/Click()
-	if(!..())
-		return
-	var/mob/living/silicon/pai/pAI = usr
-	pAI.cmd_show_message_log(usr)
+	if(!pAI.internal_gps)
+		pAI.internal_gps = new(pAI)
+	pAI.internal_gps.attack_self(pAI)
 
 /atom/movable/screen/pai/image_take
 	name = "Take Image"
@@ -177,6 +180,7 @@
 /datum/hud/pai/New(mob/living/silicon/pai/owner)
 	..()
 	var/atom/movable/screen/using
+	var/mob/living/silicon/pai/mypai = mymob
 
 // Software menu
 	using = new /atom/movable/screen/pai/software
@@ -228,14 +232,17 @@
 	using.screen_loc = ui_pai_state_laws
 	static_inventory += using
 
-// PDA message
-	using = new /atom/movable/screen/pai/pda_msg_send()
-	using.screen_loc = ui_pai_pda_send
+// Modular Interface
+	using = new /atom/movable/screen/pai/modpc()
+	using.screen_loc = ui_pai_mod_int
 	static_inventory += using
+	mypai.interfaceButton = using
+	var/atom/movable/screen/pai/modpc/tabletbutton = using
+	tabletbutton.pAI = mypai
 
-// PDA log
-	using = new /atom/movable/screen/pai/pda_msg_show()
-	using.screen_loc = ui_pai_pda_log
+// Internal GPS
+	using = new /atom/movable/screen/pai/internal_gps()
+	using.screen_loc = ui_pai_internal_gps
 	static_inventory += using
 
 // Take image

@@ -12,58 +12,20 @@
 		var/mob/living/L = user
 		if(HAS_TRAIT(L, TRAIT_PROSOPAGNOSIA) || HAS_TRAIT(L, TRAIT_INVISIBLE_MAN))
 			obscure_name = TRUE
-		if(ishuman(user))
-			var/mob/living/carbon/human/H = user
-			if(H.glasses && H.glasses.type == /obj/item/clothing/glasses/hud/hacker_rig)
-				true_info = TRUE
+
+	if(IS_DREAMER(user) && user != src)
+		true_info = TRUE
 
 	. = list("")
 
 	if(true_info)
-		if(!client?.holder)
-			. += "<span class='info'>ОБЪЕКТ: <EM>[name]</EM>.<hr>"
-			SEND_SOUND(user, sound('sound/ai/hacker/scanned.ogg'))
-			var/is_weapon = FALSE
-			for(var/I in get_contents())
-				if(istype(I, /obj/item/gun) || istype(I, /obj/item/melee))
-					hud_list[HACKER_HUD].add_overlay("node_weapon")
-					is_weapon = TRUE
-					break
-			if(is_weapon)
-				spawn(15)
-					SEND_SOUND(user, sound('sound/ai/hacker/weapon.ogg'))
-				. += span_warning("<big>Обнаружено оружие.</big>")
-			else
-				hud_list[HACKER_HUD].cut_overlay("node_weapon")
-
-			if(!mind?.antag_datums)
-				spawn(30)
-					SEND_SOUND(user, sound('sound/ai/hacker/neutral.ogg'))
-				hud_list[HACKER_HUD].cut_overlay("node_enemy")
-				hud_list[HACKER_HUD].add_overlay("node_neutral")
-			else
-				spawn(30)
-					SEND_SOUND(user, sound('sound/ai/hacker/enemy.ogg'))
-				hud_list[HACKER_HUD].cut_overlay("node_neutral")
-				hud_list[HACKER_HUD].add_overlay("node_enemy")
-
-			if(stat == DEAD)
-				spawn(45)
-					SEND_SOUND(user, sound('sound/ai/hacker/dead.ogg'))
-				hud_list[HACKER_HUD].add_overlay("node_dead")
-			else
-				hud_list[HACKER_HUD].cut_overlay("node_dead")
-		else
-			. += "<span class='info'>ОБЪЕКТ: <EM>[name]</EM>.<hr>"
-			SEND_SOUND(user, sound('sound/ai/hacker/na.ogg'))
-			hud_list[HACKER_HUD].cut_overlay("node_na")
-			hud_list[HACKER_HUD].add_overlay("node_na")
+		. += "<span class='info'>Это же <EM>отвратительная свинья</EM>.<hr>"
 	else
 		var/racetext = get_race_text()
 		. += "<span class='info'>Это же <EM>[!obscure_name ? name : "Неизвестный"]</EM>, [racetext ? "<big class='interface'>[racetext]</big>" : "[get_age_text()]"]!<hr>"
 
 	if(user?.stat == CONSCIOUS && ishuman(user))
-		user.visible_message(span_small("<b>[user]</b> смотрит на <b>[!obscure_name ? name : "Неизвестный"]</b>.") , span_small("Смотрю на <b>[!obscure_name ? name : "Неизвестный"]</b>.") , null, COMBAT_MESSAGE_RANGE)
+		user.visible_message(span_small("<b>[user]</b> смотрит на <b>[!obscure_name ? name : "Неизвестного"]</b>.") , span_small("Смотрю на <b>[!obscure_name ? name : "Неизвестного"]</b>.") , null, COMBAT_MESSAGE_RANGE)
 
 	var/obscured = check_obscured_slots()
 	var/skipface = (wear_mask && (wear_mask.flags_inv & HIDEFACE)) || (head && (head.flags_inv & HIDEFACE))
@@ -73,9 +35,6 @@
 		if(O)
 			if(O.get_teeth() < O.max_teeth)
 				. += "<span class='warning'>Не хватает [O.max_teeth - O.get_teeth()] зубов!</span>\n"
-
-	if(pooed)
-		. += "<big><b>Невероятно, но [t_ego] одежда <font color='pink'>ВСЯ В ГОВНЕ</font>.</b></big>\n"
 
 	if(headstamp && !(obscured & ITEM_SLOT_HEAD))
 		. += "У н[t_ego] на лбу написано <b>[headstamp]</b>. Круто.\n"
@@ -88,7 +47,7 @@
 	if(!(obscured & ITEM_SLOT_EYES) )
 		if(glasses  && !(glasses.item_flags & EXAMINE_SKIP))
 			. += "Также на [t_na] [glasses.get_examine_string(user)].\n"
-		else if(eye_color == BLOODCULT_EYE)
+		else if(eye_color_left == BLOODCULT_EYE)
 			if(IS_CULTIST(src) && HAS_TRAIT(src, TRAIT_CULT_EYES))
 				. += "<span class='warning'><B>[ru_ego(TRUE)] глаза ярко-красные и они горят!</B></span>\n"
 			else if(HAS_TRAIT(src, TRAIT_BLOODSHOT_EYES))
@@ -278,9 +237,9 @@
 				msg += "<b>[t_on] имеет тело состоящее из кусков свисающей плоти!</b>\n"
 
 
-	if(fire_stacks > 0)
+	if(has_status_effect(/datum/status_effect/fire_handler/fire_stacks))
 		msg += "[t_on] в чем-то горючем.\n"
-	if(fire_stacks < 0)
+	if(has_status_effect(/datum/status_effect/fire_handler/wet_stacks))
 		msg += "[t_on] выглядит мокро.\n"
 
 
@@ -378,26 +337,28 @@
 			return
 
 		if(src != user)
+			if (a_intent != INTENT_HELP)
+				msg += "[t_on] выглядит на готове.\n"
+			if (getOxyLoss() >= 10)
+				msg += "[t_on] выглядит измотанно.\n"
+			if (getToxLoss() >= 10)
+				msg += "[t_on] выглядит болезненно.\n"
+			var/datum/component/mood/mood = src.GetComponent(/datum/component/mood)
+			if(mood.sanity <= SANITY_DISTURBED)
+				msg += "[t_on] выглядит расстроено.\n"
+			if (bodytemperature > dna.species.bodytemp_heat_damage_limit)
+				msg += "[t_on] краснеет и хрипит.\n"
+			if (bodytemperature < dna.species.bodytemp_cold_damage_limit)
+				msg += "[t_on] дрожит.\n"
+			if (HAS_TRAIT(src, TRAIT_BLIND))
+				msg += "[t_on] смотрит в пустоту.\n"
+			if (HAS_TRAIT(src, TRAIT_DEAF))
+				msg += "[t_on] не реагирует на шум.\n"
 			if(HAS_TRAIT(user, TRAIT_EMPATH))
-				if (a_intent != INTENT_HELP)
-					msg += "[t_on] выглядит на готове.\n"
-				if (getOxyLoss() >= 10)
-					msg += "[t_on] выглядит измотанно.\n"
-				if (getToxLoss() >= 10)
-					msg += "[t_on] выглядит болезненно.\n"
-				var/datum/component/mood/mood = src.GetComponent(/datum/component/mood)
 				if(mood.sanity <= SANITY_DISTURBED)
-					msg += "[t_on] выглядит расстроено.\n"
 					SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empath", /datum/mood_event/sad_empath, src)
-				if (HAS_TRAIT(src, TRAIT_BLIND))
-					msg += "[t_on] смотрит в пустоту.\n"
-				if (HAS_TRAIT(src, TRAIT_DEAF))
-					msg += "[t_on] не реагирует на шум.\n"
-				if (bodytemperature > dna.species.bodytemp_heat_damage_limit)
-					msg += "[t_on] краснеет и хрипит.\n"
-				if (bodytemperature < dna.species.bodytemp_cold_damage_limit)
-					msg += "[t_on] дрожит.\n"
-
+				if(mood.sanity >= SANITY_GREAT)
+					SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "empath", /datum/mood_event/not_sad_empath, src)
 			if(HAS_TRAIT(user, TRAIT_SPIRITUAL) && mind?.holy_role)
 				msg += "От н[t_ego] веет святым духом.\n"
 				SEND_SIGNAL(user, COMSIG_ADD_MOOD_EVENT, "religious_comfort", /datum/mood_event/religiously_comforted)
@@ -430,13 +391,13 @@
 
 	switch(scar_severity)
 		if(1 to 4)
-			msg += "\n<span class='smallnoticeital'>[t_on] похоже имеет шрамы... Стоит присмотреться, чтобы разглядеть ещё.</span>"
+			msg += span_smallnoticeital("\n[t_on] похоже имеет шрамы... Стоит присмотреться, чтобы разглядеть ещё.")
 		if(5 to 8)
-			msg += "\n<span class='notice'><i>[t_on] имеет несколько серьёзных шрамов... Стоит присмотреться, чтобы разглядеть ещё.</i></span>"
+			msg += span_notice("\n<i>[t_on] имеет несколько серьёзных шрамов... Стоит присмотреться, чтобы разглядеть ещё.</i>")
 		if(9 to 11)
-			msg += "\n<span class='notice'><b><i>[t_on] имеет множество ужасных шрамов... Стоит присмотреться, чтобы разглядеть ещё.</i></b></span>"
+			msg += span_notice("\n<b><i>[t_on] имеет множество ужасных шрамов... Стоит присмотреться, чтобы разглядеть ещё.</i></b>")
 		if(12 to INFINITY)
-			msg += "\n<span class='notice'><b><i>[t_on] имеет разорванное в хлам тело состоящее из шрамов... Стоит присмотреться, чтобы разглядеть ещё?</i></b></span>"
+			msg += span_notice("\n<b><i>[t_on] имеет разорванное в хлам тело состоящее из шрамов... Стоит присмотреться, чтобы разглядеть ещё?</i></b>")
 
 	if (length(msg))
 		. += span_warning("[msg.Join("")]")
@@ -483,6 +444,11 @@
 		. += "<hr><span class='info'><b>Черты:</b> [get_quirk_string()]</span>"
 		if(HAS_TRAIT(src, TRAIT_CLIENT_LEAVED))
 			. += "<hr><span class='boldnotice'>Это тело можно занять!</span>"
+
+	if(true_info)
+		var/obj/item/organ/heart/heart = getorganslot(ORGAN_SLOT_HEART)
+		if(heart?.key_for_dreamer)
+			. += span_revenbignotice("<hr>Оно ЗНАЕТ ключ [heart.key_for_dreamer]!")
 
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
 

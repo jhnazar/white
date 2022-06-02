@@ -138,7 +138,7 @@
 //GREY TIDE
 /obj/item/spear/grey_tide
 	name = "Grey Tide"
-	desc = "Оправившийся от последствий восстания на борту оборонительного поста Theta Aegis, в котором, казалось бы, нескончаемый поток ассистентов привел к большим потерям среди вооруженных сил НаноТрейсена."
+	desc = "Оправившийся от последствий восстания на борту оборонительного поста Theta Aegis, в котором, казалось бы, нескончаемый поток ассистентов привел к большим потерям среди вооруженных сил NanoTrasen."
 	attack_verb_continuous = list("gores")
 	attack_verb_simple = list("gore")
 	force=15
@@ -191,6 +191,6 @@
 	desc = "Бамбуковая палка с острым концом. Невероятно смертельное оружие."
 	throwforce = 22	//Better to throw
 
-/obj/item/spear/bonespear/ComponentInitialize()
+/obj/item/spear/bamboospear/ComponentInitialize()
 	. = ..()
 	AddComponent(/datum/component/two_handed, force_unwielded=10, force_wielded=18, icon_wielded="[icon_prefix]1")

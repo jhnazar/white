@@ -11,6 +11,9 @@
 
 	outfit = /datum/outfit/job/exploration
 
+	skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/surgery = SKILL_EXP_JOURNEYMAN, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_JOURNEYMAN, /datum/skill/surgery = SKILL_EXP_APPRENTICE, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
+
 	paycheck = PAYCHECK_HARD
 	paycheck_department = ACCOUNT_CAR
 
@@ -23,7 +26,7 @@
 	name = "Exploration Crew"
 	jobtype = /datum/job/exploration
 
-	belt = /obj/item/pda/exploration
+	belt = /obj/item/modular_computer/tablet/pda/exploration
 	ears = /obj/item/radio/headset/headset_exploration
 	shoes = /obj/item/clothing/shoes/jackboots
 	gloves = /obj/item/clothing/gloves/color/black
@@ -41,6 +44,7 @@
 	duffelbag = /obj/item/storage/backpack/duffelbag/rangers
 
 	id_trim = /datum/id_trim/job/exploration
+	implants = list(/obj/item/implant/mindshield)
 
 	chameleon_extras = /obj/item/gun/energy/e_gun/mini/exploration
 

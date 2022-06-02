@@ -12,7 +12,7 @@
 	return
 /atom/movable/butt_storage/blob_act()
 	return
-/atom/movable/butt_storage/onTransitZ()
+/atom/movable/butt_storage/on_changed_z_level(turf/old_turf, turf/new_turf)
 	return
 /atom/movable/butt_storage/movable/forceMove(atom/destination, no_tp=FALSE, harderforce = FALSE)
 	return
@@ -52,8 +52,8 @@
 	. = ..()
 
 /obj/item/organ/butt/bluebutt // bluespace butts, science
-	name = "жопа хранения"
-	desc = "Эта блюспейс жопа позвляет хранить огромное количество предметов в себе."
+	name = "блюспейс задница"
+	desc = "Высокотехнологичный протез задницы с подпространственным карманом для хранения предметов."
 	icon_state = "bluebutt"
 	worn_icon_state = "bluebutt"
 	status = ORGAN_ROBOTIC
@@ -191,7 +191,7 @@
 		if(STR)
 			STR.close_all()
 
-/atom/GetAllContents(var/T)
+/atom/get_all_contents(ignore_flag_1)
 	. = ..()
 	if (istype(src, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = src
@@ -288,7 +288,7 @@
 		/obj/item/organ/butt = 1
 	)
 	result = /obj/item/food/kebab/butt
-	category = CAT_MEAT
+	subcategory = CAT_MEAT
 
 /obj/item/food/kebab/butt
 	name = "butt-kebab"
@@ -359,15 +359,6 @@
 /obj/item/clothing/shoes/buttshoes/Initialize()
 	. = ..()
 	AddComponent(/datum/component/squeak, list('white/valtos/sounds/poo2.ogg'), 50)
-
-/datum/design/bluebutt
-	name = "Butt Of Holding"
-	desc = "This butt has bluespace properties, letting you store more items in it. Four tiny items, or two small ones, or one normal one can fit."
-	id = "bluebutt"
-	build_type = PROTOLATHE
-	materials = list(MAT_GOLD = 500, MAT_SILVER = 500) //quite cheap, for more convenience
-	build_path = /obj/item/organ/butt/bluebutt
-	category = list("Блюспейс разработки")
 
 /mob/living/carbon/human/create_internal_organs()
 	internal_organs += new /obj/item/organ/butt

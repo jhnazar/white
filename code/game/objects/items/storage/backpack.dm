@@ -49,6 +49,20 @@
 	resistance_flags = FIRE_PROOF
 	item_flags = NO_MAT_REDEMPTION
 
+/obj/item/bag_of_holding_inert/attackby(obj/item/W, mob/user, params)
+	. = ..()
+	if(istype(W, /obj/item/assembly/signaler/anomaly/bluespace))
+		var/obj/item/assembly/signaler/anomaly/bluespace/S = W
+		to_chat(user, span_notice("Закрепляю ядро блюспейс аномалии в блюспейс сумке."))
+		playsound(user, 'sound/items/handling/component_pickup.ogg', 100, TRUE)
+		if(!do_after(user, 2 SECONDS, src))
+			return TRUE
+		playsound(user, 'sound/items/handling/cloth_pickup.ogg', 100, TRUE)
+		qdel(S)
+		var/obj/item/storage/backpack/holding/I = new()
+		user.put_in_hands(I)
+		qdel(src)
+
 /obj/item/storage/backpack/holding
 	name = "блюспейс сумка"
 	desc = "Рюкзак, который открывает портал в локализованный карман блюспейс пространства."
@@ -113,13 +127,13 @@
 
 /obj/item/storage/backpack/cultpack
 	name = "рюкзак для трофеев"
-	desc = "Он полезен как для переноски дополнительного снаряжения, так и для гордого декларирования вашего безумия."
+	desc = "Он полезен как для переноски дополнительного снаряжения, так и для гордого декларирования безумия."
 	icon_state = "cultpack"
 	inhand_icon_state = "backpack"
 
 /obj/item/storage/backpack/clown
 	name = "Giggles von Honkerton"
-	desc = "Это рюкзак, сделанный Хонком!."
+	desc = "Рюкзак, сделанный Хонком!"
 	icon_state = "clownpack"
 	inhand_icon_state = "clownpack"
 
@@ -137,32 +151,32 @@
 
 /obj/item/storage/backpack/medic
 	name = "медицинский рюкзак"
-	desc = "Это рюкзак, специально разработанный для использования в стерильных условиях."
+	desc = "Рюкзак, специально разработанный для использования в стерильных условиях."
 	icon_state = "medicalpack"
 	inhand_icon_state = "medicalpack"
 
 /obj/item/storage/backpack/security
 	name = "рюкзак офицера"
-	desc = "Это очень прочный рюкзак."
+	desc = "Очень прочный рюкзак."
 	icon_state = "securitypack"
 	inhand_icon_state = "securitypack"
 
 /obj/item/storage/backpack/captain
 	name = "капитанский рюкзак"
-	desc = "Это специальный рюкзак, сделанный исключительно для офицеров Нанотрейзена."
+	desc = "Специальный рюкзак, сделанный исключительно для офицеров NanoTrasen."
 	icon_state = "captainpack"
 	inhand_icon_state = "captainpack"
 
 /obj/item/storage/backpack/industrial
 	name = "промышленный рюкзак"
-	desc = "Это жесткий рюкзак для повседневной работы на станции."
+	desc = "Жесткий рюкзак для повседневной работы на станции."
 	icon_state = "engiepack"
 	inhand_icon_state = "engiepack"
 	resistance_flags = FIRE_PROOF
 
 /obj/item/storage/backpack/botany
 	name = "ботанический рюкзак"
-	desc = "Это рюкзак из натуральных волокон."
+	desc = "Рюкзак из натуральных волокон."
 	icon_state = "botpack"
 	inhand_icon_state = "botpack"
 
@@ -234,7 +248,7 @@
 
 /obj/item/storage/backpack/satchel/leather
 	name = "кожаная сумка"
-	desc = "Это очень модная сумка из тонкой кожи."
+	desc = "Очень модная сумка из тонкой кожи."
 	icon_state = "satchel"
 	inhand_icon_state = "satchel"
 
@@ -301,7 +315,7 @@
 
 /obj/item/storage/backpack/satchel/cap
 	name = "сумка капитана"
-	desc = "Эксклюзивная сумка для офицеров Нанотрейзена."
+	desc = "Эксклюзивная сумка для офицеров NanoTrasen."
 	icon_state = "satchel-cap"
 	inhand_icon_state = "satchel-cap"
 
@@ -345,15 +359,62 @@
 	icon_state = "duffel"
 	inhand_icon_state = "duffel"
 	slowdown = 1
+	var/static/mutable_appearance/duffel_anti_slow_overlay = mutable_appearance('white/Feline/icons/duffel_anti_slow.dmi', "duffel_overlay", LYING_MOB_LAYER)
 
 /obj/item/storage/backpack/duffelbag/ComponentInitialize()
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
 	STR.max_combined_w_class = 30
 
+////	Модернизация дюфелей	////
+
+/obj/item/storage/backpack/duffelbag/attackby(obj/item/W, mob/user, params)
+	if(istype(W, /obj/item/duffel_anti_slow) && slowdown > 0)
+		if(slowdown > 0)
+			slowdown = 0
+			playsound(user, 'sound/items/equip/toolbelt_equip.ogg', 100, TRUE)
+			to_chat(user, span_notice("Прикрепляю разгрузочно-подвесную систему к [src]."))
+			add_overlay(duffel_anti_slow_overlay)
+			qdel(W)
+		else
+			to_chat(user, span_warning("[src] уже достаточно удобно сидит на спине и не нуждается в модернизации."))
+	else
+		. = ..()
+/obj/item/duffel_anti_slow
+	name = "разгрузочная система для сумок"
+	desc = "Разгрузочно-подвесная система для больших вещмешков, равномерно распределяющая вес и тем самым снижая нагрузку на пользователя."
+	icon = 'white/Feline/icons/duffel_anti_slow.dmi'
+	icon_state = "duffel_upgrade"
+
+/datum/crafting_recipe/duffel_anti_slow
+	name = "Разгрузочная система для сумок"
+	result =  /obj/item/duffel_anti_slow
+	time = 80
+	reqs = list(/obj/item/stack/sheet/durathread = 2, /obj/item/stack/sheet/cloth = 4, /obj/item/stack/cable_coil = 10)
+	tool_behaviors = list(TOOL_WIRECUTTER, TOOL_SCREWDRIVER)
+	category = CAT_CLOTHING
+
+/obj/item/storage/backpack/duffelbag/c4_no_slowdown
+	name = "удобная сумка"
+	desc = "Это очень большая и удобная сумка для хранения вещей, в нее явно влезет больше вещей чем в обычную, и это не замедлит меня."
+	icon_state = "duffel-drone"
+	inhand_icon_state = "duffel-drone"
+	slowdown = 0
+
+/obj/item/storage/backpack/duffelbag/c4_no_slowdown/Initialize()
+	. = ..()
+	add_overlay(duffel_anti_slow_overlay)
+
+
+/obj/item/storage/backpack/duffelbag/c4_no_slowdown/PopulateContents()
+	for(var/i in 1 to 3)
+		new /obj/item/grenade/c4/x4(src)
+
+////	////	////	////	////
+
 /obj/item/storage/backpack/duffelbag/cursed
-	name = "living duffel bag"
-	desc = "A cursed clown duffel bag that hungers for food of any kind. Putting some food for it to eat inside of it should distract it from eating you for a while. A warning label on one of the duffel bag's sides cautions against feeding your \"new pet\" anything poisonous..."
+	name = "живая сумка"
+	desc = "Огромная, проклятая, всеядная и весьма голодная сумка. Если такая цапнет то уже не отпустит. Кажется если ее кормить то она ненадолго успокаивается. Тут сбоку есть этикетка и на ней написано \"Не смейте кормить мою прелесть всякой гадостью, ее от этого тошнит. Она предпочитает мясные блюда, желательно из ассистентов.\""
 	icon_state = "duffel-curse"
 	inhand_icon_state = "duffel-curse"
 	slowdown = 1.3
@@ -668,7 +729,7 @@
 	STR.silent = TRUE
 
 /obj/item/storage/backpack/duffelbag/clown/syndie/PopulateContents()
-	new /obj/item/pda/clown(src)
+	new /obj/item/modular_computer/tablet/pda/clown(src)
 	new /obj/item/clothing/under/rank/civilian/clown(src)
 	new /obj/item/clothing/shoes/clown_shoes(src)
 	new /obj/item/clothing/mask/gas/clown_hat(src)

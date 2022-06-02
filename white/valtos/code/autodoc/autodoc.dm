@@ -5,33 +5,6 @@
 	. /= length(L)
 	LAZYCLEARLIST(L)
 
-GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
-	/datum/surgery_step/incise,
-	/datum/surgery_step/clamp_bleeders,
-	/datum/surgery_step/close,
-	/datum/surgery_step/saw,
-	/datum/surgery_step/sever_limb,
-	/datum/surgery_step/heal,
-	/datum/surgery_step/extract_implant,
-	/datum/surgery_step/remove_fat,
-	/datum/surgery_step/drill,
-	/datum/surgery_step/retract_skin,
-	/datum/surgery_step/fix_eyes,
-	/datum/surgery_step/pacify,
-	/datum/surgery_step/thread_veins,
-	/datum/surgery_step/splice_nerves,
-	/datum/surgery_step/ground_nerves,
-	/datum/surgery_step/muscled_veins,
-	/datum/surgery_step/reinforce_ligaments,
-	/datum/surgery_step/reshape_ligaments,
-	/datum/surgery_step/mechanic_open,
-	/datum/surgery_step/mechanic_unwrench,
-	/datum/surgery_step/prepare_electronics,
-	/datum/surgery_step/mechanic_wrench,
-	/datum/surgery_step/open_hatch,
-	/datum/surgery_step/mechanic_close
-)))
-
 /obj/machinery/autodoc
 	name = "Авто-Док МК IX"
 	desc = "Автоматический хирургически комплекс специализированный на восстановительных и модернизирующих операциях."
@@ -41,9 +14,7 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 	density = FALSE
 	anchored = TRUE
 	layer = ABOVE_WINDOW_LAYER
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 5000
-	active_power_usage = 300000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 10
 	pixel_x = -16
 	var/speed_mult = 1
 	var/list/valid_surgeries = list()
@@ -86,6 +57,7 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 			valid_surgeries += S
 
 /obj/machinery/autodoc/RefreshParts()
+	. = ..()
 	var/list/P = list()
 	var/avg = 1
 	for(var/obj/item/stock_parts/manipulator/M in component_parts)
@@ -102,11 +74,11 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 			speed_mult = 0.1
 
 /obj/machinery/autodoc/CtrlClick(mob/user)
-	playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+	playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 
 /obj/machinery/autodoc/attack_hand_secondary(mob/user, list/modifiers)
 	. = ..()
-	playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+	playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 	active_surgery.complete()
 	active_surgery = null
 	active_step = null
@@ -169,11 +141,11 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 	var/mob/living/carbon/patient
 	if(in_use)
 		say("Авто-Док уже используется!")
-		playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 		return
 	if(!target_surgery || !target_zone)
 		say("Неверные настройки!")
-		playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 		if(!state_open)
 			open_machine()
 		return
@@ -185,30 +157,30 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 		break
 	if(!patient)
 		say("Не обнаружен пациент!")
-		playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 		if(!state_open)
 			open_machine()
 		return
 	var/obj/item/bodypart/affecting = patient.get_bodypart(check_zone(target_zone))
 	if(affecting)
 		if(!target_surgery.requires_bodypart)
-			playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 			if(!state_open)
 				open_machine()
 			return
 		if(target_surgery.requires_bodypart_type && affecting.status != target_surgery.requires_bodypart_type)
 			say("Авто-Док не умеет работать с этой частью тела!")
-			playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 			if(!state_open)
 				open_machine()
 			return
 		if(target_surgery.requires_real_bodypart && affecting.is_pseudopart)
-			playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 			if(!state_open)
 				open_machine()
 			return
 	else if(patient && target_surgery.requires_bodypart) //mob with no limb in surgery zone when we need a limb
-		playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 		if(!state_open)
 			open_machine()
 		return
@@ -217,7 +189,7 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 		var/datum/surgery_step/SS = new surgery_type
 		if(!SS.autodoc_check(target_zone, src, FALSE, patient))
 			qdel(SS)
-			playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 			if(!state_open)
 				open_machine()
 			return
@@ -256,6 +228,7 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 	if(!state_open)
 		open_machine()
 	update_icon()
+	use_power(active_power_usage)
 
 /obj/machinery/autodoc/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
@@ -350,6 +323,8 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 
 /obj/item/circuitboard/machine/autodoc
 	name = "Плата Авто-Дока МК IX"
+	desc = "Автоматический хирургически комплекс специализированный на восстановительных и модернизирующих операциях."
+	icon_state = "medical"
 	build_path = /obj/machinery/autodoc
 	req_components = list(
 							/obj/item/stock_parts/capacitor = 5,
@@ -374,10 +349,10 @@ GLOBAL_LIST_INIT(autodoc_supported_surgery_steps, typecacheof(list(
 
 /datum/techweb_node/autodoc
 	id = "autodoc"
-	display_name = "Авто-Док МК IX"
-	description = "Автоматический хирургически комплекс специализированный на восстановительных и модернизирующих операциях."
+	display_name = "Автоматические медицинские комплексы"
+	description = "\"Авто-Док МК IX\" - автоматический хирургически комплекс специализированный на восстановительных и модернизирующих операциях. Многофункциональный медицинский комплекс \"Солнце\" - передовая военная разработка в области экстренной полевой медицины."
 	prereq_ids = list("exp_surgery", "bio_process", "adv_datatheory", "adv_engi", "high_efficiency")
-	design_ids = list("autodoc")
+	design_ids = list("autodoc", "solnce")
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 15000)
 
 /datum/surgery_step/incise/autodoc_success(mob/living/carbon/target, target_zone, datum/surgery/surgery, obj/machinery/autodoc/autodoc)

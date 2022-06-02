@@ -79,10 +79,10 @@ SUBSYSTEM_DEF(spm)
 	if(contents.len)
 		. += "<hr><span class='notice'>Внутри можно заметить:</span>"
 		for(var/obj/item/mining_thing/MT in contents)
-			. += "\n<span class='notice'>[icon2html(MT, user)] [MT.tech_name] \[[MT.hashrate + MT.overclock] Sols/s]</span>"
+			. += span_notice("\n[icon2html(MT, user)] [MT.tech_name] \[[MT.hashrate + MT.overclock] Sols/s]")
 	. += "<hr><span class='notice'>Общая скорость: <b>[hashrate_total] Sols/s</b>.</span>"
-	. += "\n<span class='notice'>Сложность сети: <b>[SSspm.diff]</b>.</span>"
-	. += "\n<span class='notice'>Привязанный аккаунт: <b>[linked_account.account_holder]</b>.</span>"
+	. += span_notice("\nСложность сети: <b>[SSspm.diff]</b>.")
+	. += span_notice("\nПривязанный аккаунт: <b>[linked_account.account_holder]</b>.")
 
 /obj/machinery/power/mining_rack/proc/get_env_temp()
 	var/datum/gas_mixture/env = loc.return_air()
@@ -177,7 +177,7 @@ SUBSYSTEM_DEF(spm)
 		if(!hashrate_total * 10 || surplus() >= hashrate_total * 10)
 			add_load(hashrate_total * 10)
 		else
-			idle_power_usage = 40
+			idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION
 			mining = FALSE
 			return
 
@@ -201,13 +201,13 @@ SUBSYSTEM_DEF(spm)
 				add_overlay("onfire")
 				mining = FALSE
 				spawn(1 SECONDS)
-					explosion(1, 2, 3, 4, 5)
+					explosion(src, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 3, flame_range = 7)
 					if(src)
 						QDEL_IN(src, 1 SECONDS)
 				return
 
 		if(linked_account)
-			linked_account.adjust_money(max((hashrate_total/SSspm.diff)/1000, 1))
+			linked_account.adjust_money(max((hashrate_total/SSspm.diff)/100, 1))
 
 		if(istype(linked_techweb))
 			linked_techweb.add_point_list(list(TECHWEB_POINT_TYPE_DEFAULT = max(hashrate_total/SSspm.diff, 1)))
@@ -310,10 +310,12 @@ SUBSYSTEM_DEF(spm)
 	name = "GT9600x8"
 	desc = "Самая слабая карточка из всей доступная линейки."
 	id = "nvidia"
-	build_type = PROTOLATHE
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
 	materials = list(/datum/material/iron = 500, /datum/material/silver = 300, /datum/material/gold = 300)
 	build_path = /obj/item/mining_thing/nvidia
-	category = list("Электроника")
+	category = list("Электроника", "Научное оборудование")
+	sub_category = list("Майнеры")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/mining_thing/nvidia/ntx420

@@ -18,9 +18,10 @@
 	icon_state = "scoped_hunting"
 	inhand_icon_state = "scoped_hunting"
 	extra_penetration = 20
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
+
+/obj/item/gun/ballistic/rifle/fallout/hunting/scoped/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2)
 
 /obj/item/gun/ballistic/rifle/fallout/varmint
 	name = "varmint rifle"
@@ -43,11 +44,12 @@
 	extra_damage = 35
 	extra_penetration = 10
 	fire_sound = 'sound/weapons/gun/smg/shot_suppressed.ogg'
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
 	suppressed = TRUE
 	can_unsuppress = FALSE
+
+/obj/item/gun/ballistic/rifle/fallout/varmint/ratslayer/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2)
 
 /obj/item/gun/ballistic/rifle/fallout/hunting/scoped/amr
 	name = "anti-material rifle"
@@ -74,11 +76,19 @@
 /obj/item/ammo_box/magazine/fallout/r308
 	name = "5 round magazine (.308)"
 	icon = 'white/valtos/icons/fallout/ammo.dmi'
-	icon_state = "r308"
+	icon_state = "r308-5"
 	ammo_type = /obj/item/ammo_casing/fallout/a308
 	caliber = "a308"
 	max_ammo = 5
 	multiple_sprites = 2
+
+/obj/item/ammo_box/magazine/fallout/r308/update_icon()
+	..()
+	if(ammo_count())
+		icon_state = "r308-5"
+	else
+		icon_state = "r308-0"
+
 /*
 /obj/item/ammo_box/magazine/fallout/amr
 	name = "6 round magazine (.50)"

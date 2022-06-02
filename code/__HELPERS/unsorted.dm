@@ -17,7 +17,7 @@
 	var/textb = copytext(HTMLstring, 6, 8)
 	return rgb(255 - hex2num(textr), 255 - hex2num(textg), 255 - hex2num(textb))
 
-/proc/Get_Angle(atom/movable/start,atom/movable/end)//For beams.
+/proc/get_angle(atom/movable/start,atom/movable/end)//For beams.
 	if(!start || !end)
 		return 0
 	var/dy
@@ -146,35 +146,45 @@ Turf and target are separate in case you want to teleport some distance from a t
  *
  * Uses the ultra-fast [Bresenham Line-Drawing Algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm).
  */
-/proc/getline(atom/M,atom/N)
-	var/px=M.x		//starting x
-	var/py=M.y
-	var/line[] = list(locate(px,py,M.z))
-	var/dx=N.x-px	//x distance
-	var/dy=N.y-py
-	var/dxabs = abs(dx)//Absolute value of x distance
-	var/dyabs = abs(dy)
-	var/sdx = SIGN(dx)	//Sign of x distance (+ or -)
-	var/sdy = SIGN(dy)
-	var/x=dxabs>>1	//Counters for steps taken, setting to distance/2
-	var/y=dyabs>>1	//Bit-shifting makes me l33t.  It also makes getline() unnessecarrily fast.
-	var/j			//Generic integer for counting
-	if(dxabs>=dyabs)	//x distance is greater than y
-		for(j=0;j<dxabs;j++)//It'll take dxabs steps to get there
-			y+=dyabs
-			if(y>=dxabs)	//Every dyabs steps, step once in y direction
-				y-=dxabs
-				py+=sdy
-			px+=sdx		//Step on in x direction
-			line+=locate(px,py,M.z)//Add the turf to the list
+/proc/get_line(atom/starting_atom, atom/ending_atom)
+	var/current_x_step = starting_atom.x//start at x and y, then add 1 or -1 to these to get every turf from starting_atom to ending_atom
+	var/current_y_step = starting_atom.y
+	var/starting_z = starting_atom.z
+
+	var/list/line = list(get_turf(starting_atom))//get_turf(atom) is faster than locate(x, y, z)
+
+	var/x_distance = ending_atom.x - current_x_step //x distance
+	var/y_distance = ending_atom.y - current_y_step
+
+	var/abs_x_distance = abs(x_distance)//Absolute value of x distance
+	var/abs_y_distance = abs(y_distance)
+
+	var/x_distance_sign = SIGN(x_distance) //Sign of x distance (+ or -)
+	var/y_distance_sign = SIGN(y_distance)
+
+	var/x = abs_x_distance >> 1 //Counters for steps taken, setting to distance/2
+	var/y = abs_y_distance >> 1 //Bit-shifting makes me l33t.  It also makes get_line() unnessecarrily fast.
+
+	if(abs_x_distance >= abs_y_distance) //x distance is greater than y
+		for(var/distance_counter in 0 to (abs_x_distance - 1))//It'll take abs_x_distance steps to get there
+			y += abs_y_distance
+
+			if(y >= abs_x_distance) //Every abs_y_distance steps, step once in y direction
+				y -= abs_x_distance
+				current_y_step += y_distance_sign
+
+			current_x_step += x_distance_sign //Step on in x direction
+			line += locate(current_x_step, current_y_step, starting_z)//Add the turf to the list
 	else
-		for(j=0;j<dyabs;j++)
-			x+=dxabs
-			if(x>=dyabs)
-				x-=dyabs
-				px+=sdx
-			py+=sdy
-			line+=locate(px,py,M.z)
+		for(var/distance_counter in 0 to (abs_y_distance - 1))
+			x += abs_x_distance
+
+			if(x >= abs_y_distance)
+				x -= abs_y_distance
+				current_x_step += x_distance_sign
+
+			current_y_step += y_distance_sign
+			line += locate(current_x_step, current_y_step, starting_z)
 	return line
 
 //Returns whether or not a player is a guest using their ckey as an input
@@ -306,16 +316,26 @@ Turf and target are separate in case you want to teleport some distance from a t
 		if(M.ckey == key)
 			return M
 
-//Returns the atom sitting on the turf.
-//For example, using this on a disk, which is in a bag, on a mob, will return the mob because it's on the turf.
-//Optional arg 'type' to stop once it reaches a specific type instead of a turf.
-/proc/get_atom_on_turf(atom/movable/M, stop_type)
-	var/atom/turf_to_check = M
-	while(turf_to_check?.loc && !isturf(turf_to_check.loc))
-		turf_to_check = turf_to_check.loc
-		if(stop_type && istype(turf_to_check, stop_type))
+/**
+ * Returns the top-most atom sitting on the turf.
+ * For example, using this on a disk, which is in a bag, on a mob,
+ * will return the mob because it's on the turf.
+ *
+ * Arguments
+ * * something_in_turf - a movable within the turf, somewhere.
+ * * stop_type - optional - stops looking if stop_type is found in the turf, returning that type (if found).
+ **/
+/proc/get_atom_on_turf(atom/movable/something_in_turf, stop_type)
+	if(!istype(something_in_turf))
+		CRASH("get_atom_on_turf was not passed an /atom/movable! Got [isnull(something_in_turf) ? "null":"type: [something_in_turf.type]"]")
+
+	var/atom/movable/topmost_thing = something_in_turf
+
+	while(topmost_thing?.loc && !isturf(topmost_thing.loc))
+		topmost_thing = topmost_thing.loc
+		if(stop_type && istype(topmost_thing, stop_type))
 			break
-	return turf_to_check
+	return topmost_thing
 
 //Returns a list of all locations (except the area) the movable is within.
 /proc/get_nested_locs(atom/movable/AM, include_turf = FALSE)
@@ -405,14 +425,16 @@ Turf and target are separate in case you want to teleport some distance from a t
 
 
 ///Returns the src and all recursive contents as a list.
-/atom/proc/GetAllContents()
+/atom/proc/get_all_contents(ignore_flag_1)
 	. = list(src)
 	var/i = 0
 	while(i < length(.))
-		var/atom/A = .[++i]
-		. += A.contents
+		var/atom/checked_atom = .[++i]
+		if(checked_atom.flags_1 & ignore_flag_1)
+			continue
+		. += checked_atom.contents
 
-///identical to getallcontents but returns a list of atoms of the type passed in the argument.
+///identical to get_all_contents but returns a list of atoms of the type passed in the argument.
 /atom/proc/get_all_contents_type(type)
 	var/list/processing_list = list(src)
 	. = list()
@@ -423,9 +445,9 @@ Turf and target are separate in case you want to teleport some distance from a t
 		if(istype(A, type))
 			. += A
 
-/atom/proc/GetAllContentsIgnoring(list/ignore_typecache)
+/atom/proc/get_all_contents_ignoring(list/ignore_typecache)
 	if(!length(ignore_typecache))
-		return GetAllContents()
+		return get_all_contents()
 	var/list/processing = list(src)
 	. = list()
 	var/i = 0
@@ -538,6 +560,12 @@ Turf and target are separate in case you want to teleport some distance from a t
 //chances are 1:value. anyprob(1) will always return true
 /proc/anyprob(value)
 	return (rand(1,value)==value)
+
+///counts the number of bits in Byond's 16-bit width field, in constant time and memory!
+/proc/bit_count(bit_field)
+	var/temp = bit_field - ((bit_field >> 1) & 46811) - ((bit_field >> 2) & 37449) //0133333 and 0111111 respectively
+	temp = ((temp + (temp >> 3)) & 29127) % 63 //070707
+	return temp
 
 /proc/parse_zone(zone)	// Именительный
 	if(zone == BODY_ZONE_PRECISE_R_HAND)
@@ -653,6 +681,34 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else
 		return zone
 
+/proc/ru_chem_zone(zone)	// Творительный
+	if(zone == "правая кисть")
+		return "правой кистью"
+	else if (zone == "левая кисть")
+		return "левой кистью"
+	else if (zone == "левая рука")
+		return "левой рукой"
+	else if (zone == "правая рука")
+		return "правой рукой"
+	else if (zone == "левая нога")
+		return "левой ногой"
+	else if (zone == "правая нога")
+		return "правой ногой"
+	else if (zone == "левая ступня")
+		return "левой ступней"
+	else if (zone == "правая ступня")
+		return "правой ступней"
+	else if (zone == "грудь")
+		return "грудью"
+	else if (zone == "рот")
+		return "ртом"
+	else if (zone == "пах")
+		return "пахом"
+	else if (zone == "голова")
+		return "головой"
+	else
+		return zone
+
 /proc/ru_exam_parse_zone(zone)
 	if (zone == "chest")
 		return "грудь"
@@ -664,6 +720,19 @@ Turf and target are separate in case you want to teleport some distance from a t
 		return "голова"
 	else
 		return zone
+
+/proc/ru_intent(intent)
+	switch(intent)
+		if (INTENT_HELP)
+			return "помогать"
+		if (INTENT_GRAB)
+			return "хватать"
+		if (INTENT_DISARM)
+			return "толкать"
+		if (INTENT_HARM)
+			return "вредить"
+		else
+			return intent
 
 // FUCK?
 /proc/ru_job_parse(job)
@@ -690,7 +759,7 @@ Turf and target are separate in case you want to teleport some distance from a t
 	else if (job == "Chemist")
 		return "Химик"
 	else if (job == "Field Medic")
-		return "Полевой Врач"
+		return "Полевой Медик"
 	else if (job == "Research Director")
 		return "Научный Руководитель"
 	else if (job == "Scientist")
@@ -759,6 +828,14 @@ Turf and target are separate in case you want to teleport some distance from a t
 		return "Заключённый"
 	else if (job == "Bomj")
 		return "Бомж"
+	else if (job == "Combantant: Red")
+		return "комбатанта красных"
+	else if (job == "Combantant: Blue")
+		return "комбатанта синих"
+	else if (job == "red")
+		return "Красный"
+	else if (job == "blue")
+		return "Синий"
 	else
 		return job
 
@@ -880,7 +957,7 @@ GLOBAL_LIST_INIT(WALLITEMS, typecacheof(list(
 	/obj/machinery/computer/security/telescreen, /obj/machinery/embedded_controller/radio/simple_vent_controller,
 	/obj/item/storage/secure/safe, /obj/machinery/door_timer, /obj/machinery/flasher, /obj/machinery/keycard_auth,
 	/obj/structure/mirror, /obj/structure/fireaxecabinet, /obj/machinery/computer/security/telescreen/entertainment,
-	/obj/structure/sign/picture_frame, /obj/machinery/bounty_board
+	/obj/structure/sign/picture_frame
 	)))
 
 GLOBAL_LIST_INIT(WALLITEMS_EXTERNAL, typecacheof(list(
@@ -964,19 +1041,24 @@ GLOBAL_LIST_INIT(WALLITEMS_INVERSE, typecacheof(list(
 		else
 			return "white"
 
-/proc/params2turf(scr_loc, turf/origin, client/C)
-	if(!scr_loc)
+/proc/parse_caught_click_modifiers(list/modifiers, turf/origin, client/viewing_client)
+	if(!modifiers)
 		return null
-	var/tX = splittext(scr_loc, ",")
-	var/tY = splittext(tX[2], ":")
-	var/tZ = origin.z
-	tY = tY[1]
-	tX = splittext(tX[1], ":")
-	tX = tX[1]
-	var/list/actual_view = getviewsize(C ? C.view : world.view)
-	tX = clamp(origin.x + text2num(tX) - round(actual_view[1] / 2) - 1, 1, world.maxx)
-	tY = clamp(origin.y + text2num(tY) - round(actual_view[2] / 2) - 1, 1, world.maxy)
-	return locate(tX, tY, tZ)
+	var/screen_loc = splittext(LAZYACCESS(modifiers, SCREEN_LOC), ",")
+	var/list/actual_view = getviewsize(viewing_client ? viewing_client.view : world.view)
+	var/click_turf_x = splittext(screen_loc[1], ":")
+	var/click_turf_y = splittext(screen_loc[2], ":")
+	var/click_turf_z = origin.z
+
+	var/click_turf_px = text2num(click_turf_x[2])
+	var/click_turf_py = text2num(click_turf_y[2])
+	click_turf_x = origin.x + text2num(click_turf_x[1]) - round(actual_view[1] / 2) - 1
+	click_turf_y = origin.y + text2num(click_turf_y[1]) - round(actual_view[2] / 2) - 1
+
+	var/turf/click_turf = locate(clamp(click_turf_x, 1, world.maxx), clamp(click_turf_y, 1, world.maxy), click_turf_z)
+	LAZYSET(modifiers, ICON_X, "[(click_turf_px - click_turf.pixel_x) + ((click_turf_x - click_turf.x) * world.icon_size)]")
+	LAZYSET(modifiers, ICON_Y, "[(click_turf_py - click_turf.pixel_y) + ((click_turf_y - click_turf.y) * world.icon_size)]")
+	return click_turf
 
 /proc/screen_loc2turf(text, turf/origin, client/C)
 	if(!text)
@@ -1286,8 +1368,8 @@ rough example of the "cone" made by the 3 dirs checked
 	else if(random)
 		chosen = pick(matches) || null
 	else
-		chosen = tgui_input_list(usr, "Select a type", "Pick Type", sortList(matches))
-		//chosen = input("Select a type", "Pick Type", matches[1]) as null|anything in sortList(matches)
+		chosen = tgui_input_list(usr, "Select a type", "Pick Type", sort_list(matches))
+		//chosen = input("Select a type", "Pick Type", matches[1]) as null|anything in sort_list(matches)
 	if(!chosen)
 		return
 	chosen = matches[chosen]
@@ -1384,20 +1466,29 @@ GLOBAL_REAL_VAR(list/stack_trace_storage)
 		else
 			. = ""
 
-/proc/weightclass2icon(w_class, user)
+/proc/weightclass2icon(w_class, user, actually_readable = FALSE)
+	var/translation
 	switch(w_class)
 		if(WEIGHT_CLASS_TINY)
 			w_class = "tiny"
+			translation = "крошечный"
 		if(WEIGHT_CLASS_SMALL)
 			w_class = "small"
+			translation = "маленький"
 		if(WEIGHT_CLASS_NORMAL)
 			w_class = "normal"
+			translation = "средний"
 		if(WEIGHT_CLASS_BULKY)
 			w_class = "bulky"
+			translation = "громоздкий"
 		if(WEIGHT_CLASS_HUGE)
 			w_class = "huge"
+			translation = "огромный"
 		if(WEIGHT_CLASS_GIGANTIC)
 			w_class = "gigantic"
+			translation = "гигантский"
+	if(actually_readable)
+		return "[icon2html(EMOJI_SET, user, w_class)] [translation]."
 	return icon2html(EMOJI_SET, user, w_class)
 
 GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
@@ -1553,11 +1644,11 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 	if(length(list_or_datum))
 		list_or_datum[var_name] = var_value
 		return
-	var/datum/D = list_or_datum
+	var/datum/datum = list_or_datum
 	if(IsAdminAdvancedProcCall())
-		D.vv_edit_var(var_name, var_value)	//same result generally, unless badmemes
+		datum.vv_edit_var(var_name, var_value) //same result generally, unless badmemes
 	else
-		D.vars[var_name] = var_value
+		datum.vars[var_name] = var_value
 
 #define	TRAIT_CALLBACK_ADD(target, trait, source) CALLBACK(GLOBAL_PROC, /proc/___TraitAdd, ##target, ##trait, ##source)
 #define	TRAIT_CALLBACK_REMOVE(target, trait, source) CALLBACK(GLOBAL_PROC, /proc/___TraitRemove, ##target, ##trait, ##source)
@@ -1738,3 +1829,7 @@ GLOBAL_DATUM_INIT(dview_mob, /mob/dview, new)
 		dest_x = max(0, dest_x - distance)
 
 	return locate(dest_x,dest_y, dest_z)
+
+/// Returns if the given client is an admin, REGARDLESS of if they're deadminned or not.
+/proc/is_admin(client/client)
+	return !isnull(GLOB.admin_datums[client.ckey]) || !isnull(GLOB.deadmins[client.ckey])

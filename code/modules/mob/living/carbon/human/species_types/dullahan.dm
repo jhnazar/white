@@ -3,7 +3,7 @@
 	id = "dullahan"
 	default_color = "FFFFFF"
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS, HAS_FLESH, HAS_BONE)
-	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP)
+	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP,TRAIT_NOHYDRATION)
 	mutant_bodyparts = list("tail_human" = "None", "ears" = "None", "wings" = "None")
 	use_skintones = TRUE
 	mutantbrain = /obj/item/organ/brain/dullahan
@@ -24,7 +24,7 @@
 
 /datum/species/dullahan/on_species_gain(mob/living/carbon/human/H, datum/species/old_species)
 	. = ..()
-	REMOVE_TRAIT(src, TRAIT_HEARING_SENSITIVE, TRAIT_GENERIC)
+	H.lose_hearing_sensitivity(TRAIT_GENERIC)
 	var/obj/item/bodypart/head/head = H.get_bodypart(BODY_ZONE_HEAD)
 	if(head)
 		head.drop_limb()
@@ -96,9 +96,9 @@
 
 /datum/action/item_action/organ_action/dullahan
 	name = "Переключить перспективу"
-	desc = "Переключиться между зрением головы, или слепым вашего тела."
+	desc = "Переключиться между зрением головы, или слепым тела."
 
-/datum/action/item_action/organ_action/dullahan/Trigger()
+/datum/action/item_action/organ_action/dullahan/Trigger(trigger_flags)
 	. = ..()
 	var/obj/item/organ/eyes/dullahan/DE = target
 	if(DE.tint)
@@ -123,10 +123,12 @@
 	owner = new_owner
 	START_PROCESSING(SSobj, src)
 	RegisterSignal(owner, COMSIG_CLICK_SHIFT, .proc/examinate_check)
-	RegisterSignal(src, COMSIG_ATOM_HEARER_IN_VIEW, .proc/include_owner)
 	RegisterSignal(owner, COMSIG_LIVING_REGENERATE_LIMBS, .proc/unlist_head)
 	RegisterSignal(owner, COMSIG_LIVING_REVIVE, .proc/retrieve_head)
 	become_hearing_sensitive(ROUNDSTART_TRAIT)
+
+/obj/item/dullahan_relay/Hear(message, atom/movable/speaker, message_language, raw_message, radio_freq, list/spans, list/message_mods = list())
+	owner.Hear(arglist(args))
 
 /obj/item/dullahan_relay/process()
 	if(!istype(loc, /obj/item/bodypart/head) || QDELETED(owner))
@@ -152,7 +154,7 @@
 	if(admin_revive)
 		var/obj/item/bodypart/head/H = loc
 		var/turf/T = get_turf(owner)
-		if(H && istype(H) && T && !(H in owner.GetAllContents()))
+		if(H && istype(H) && T && !(H in owner.get_all_contents()))
 			H.forceMove(T)
 
 /obj/item/dullahan_relay/Destroy()

@@ -111,9 +111,39 @@
 	else
 		return null
 
+/obj/assume_air_moles(datum/gas_mixture/giver, moles)
+	if(loc)
+		return loc.assume_air_moles(giver, moles)
+	else
+		return null
+
+/obj/assume_air_ratio(datum/gas_mixture/giver, ratio)
+	if(loc)
+		return loc.assume_air_ratio(giver, ratio)
+	else
+		return null
+
+/obj/transfer_air(datum/gas_mixture/taker, moles)
+	if(loc)
+		return loc.transfer_air(taker, moles)
+	else
+		return null
+
+/obj/transfer_air_ratio(datum/gas_mixture/taker, ratio)
+	if(loc)
+		return loc.transfer_air_ratio(taker, ratio)
+	else
+		return null
+
 /obj/remove_air(amount)
 	if(loc)
 		return loc.remove_air(amount)
+	else
+		return null
+
+/obj/remove_air_ratio(ratio)
+	if(loc)
+		return loc.remove_air_ratio(ratio)
 	else
 		return null
 
@@ -220,22 +250,6 @@
 /obj/get_dumping_location(datum/component/storage/source,mob/user)
 	return get_turf(src)
 
-/**
- * This proc is used for telling whether something can pass by this object in a given direction, for use by the pathfinding system.
- *
- * Trying to generate one long path across the station will call this proc on every single object on every single tile that we're seeing if we can move through, likely
- * multiple times per tile since we're likely checking if we can access said tile from multiple directions, so keep these as lightweight as possible.
- *
- * Arguments:
- * * ID- An ID card representing what access we have (and thus if we can open things like airlocks or windows to pass through them). The ID card's physical location does not matter, just the reference
- * * to_dir- What direction we're trying to move in, relevant for things like directional windows that only block movement in certain directions
- * * caller- The movable we're checking pass flags for, if we're making any such checks
- **/
-/obj/proc/CanAStarPass(obj/item/card/id/ID, to_dir, atom/movable/caller)
-	if(istype(caller) && (caller.pass_flags & pass_flags_self))
-		return TRUE
-	. = !density
-
 /obj/proc/check_uplink_validity()
 	return 1
 
@@ -340,7 +354,7 @@
 	for(var/reskin_option in unique_reskin)
 		var/image/item_image = image(icon = src.icon, icon_state = unique_reskin[reskin_option])
 		items += list("[reskin_option]" = item_image)
-	sortList(items)
+	sort_list(items)
 
 	var/pick = show_radial_menu(M, src, items, custom_check = CALLBACK(src, .proc/check_reskin_menu, M), radius = 38, require_near = TRUE)
 	if(!pick)

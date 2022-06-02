@@ -4,9 +4,10 @@
  * It's basically an immovable rod launcher.
  */
 /obj/item/gun/blastcannon
-	name = "трубопистолет"
+	name = "бомбастер"
 	desc = "Труба приваренная к прикладу пистолета с механическим курком. Сверху на трубе есть отверстие и если в него заглянуть, то можно увидеть подпружиненное колесо. Довольно небольшой, можно таскать в сумке."
 	icon = 'icons/obj/guns/wide_guns.dmi'
+	base_icon_state = "blastcannon"
 	icon_state = "blastcannon_empty"
 	lefthand_file = 'icons/mob/inhands/weapons/64x_guns_left.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/64x_guns_right.dmi'
@@ -130,7 +131,8 @@
 	message_admins("Blast wave fired from [ADMIN_VERBOSEJMP(starting)] at [ADMIN_VERBOSEJMP(targturf)] ([target.name]) by [ADMIN_LOOKUPFLW(user)] with power [heavy]/[medium]/[light].")
 	log_game("Blast wave fired from [AREACOORD(starting)] at [AREACOORD(targturf)] ([target.name]) by [key_name(user)] with power [heavy]/[medium]/[light].")
 	var/obj/projectile/blastwave/BW = new(loc, heavy, medium, light)
-	BW.preparePixelProjectile(target, get_turf(src), params, 0)
+	var/modifiers = params2list(params)
+	BW.preparePixelProjectile(target, get_turf(src), modifiers, 0)
 	BW.fire()
 	name = initial(name)
 	desc = initial(desc)

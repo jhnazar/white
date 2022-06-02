@@ -1,6 +1,6 @@
 /obj/machinery/computer/camera_advanced
-	name = "advanced camera console"
-	desc = "Used to access the various cameras on the station."
+	name = "Продвинутая консоль управления камер"
+	desc = "Используется для доступа к различным камерам на станции. Продвинутая версия обладает более удобным интерфейсом."
 	icon_screen = "cameras"
 	icon_keyboard = "security_key"
 	light_color = COLOR_SOFT_RED
@@ -137,7 +137,7 @@
 	if(!eyeobj.eye_initialized)
 		var/camera_location
 		var/turf/myturf = get_turf(src)
-		if(eyeobj.use_static != USE_STATIC_NONE)
+		if(eyeobj.use_static != FALSE)
 			if((!z_lock.len || (myturf.z in z_lock)) && GLOB.cameranet.checkTurfVis(myturf))
 				camera_location = myturf
 			else
@@ -226,7 +226,8 @@
 		if(visible_icon)
 			if(eye_user.client)
 				eye_user.client.images -= user_image
-				user_image = image(icon,loc,icon_state,FLY_LAYER)
+				user_image = image(icon,loc,icon_state, FLY_LAYER)
+				user_image.plane = ABOVE_GAME_PLANE
 				eye_user.client.images += user_image
 
 /mob/camera/ai_eye/remote/relaymove(mob/living/user, direction)

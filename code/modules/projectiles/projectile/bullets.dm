@@ -13,6 +13,7 @@
 	wound_falloff_tile = -5
 	embed_falloff_tile = -3
 
+
 /obj/projectile/bullet/smite
 	name = "божественное воздаяние"
 	damage = 10

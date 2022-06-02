@@ -19,7 +19,8 @@ GLOBAL_LIST_INIT(freqtospan, list(
 	"[FREQ_CTF_BLUE]" = "blueteamradio",
 	"[FREQ_CTF_GREEN]" = "greenteamradio",
 	"[FREQ_CTF_YELLOW]" = "yellowteamradio",
-	"[FREQ_YOHEI]" = "yoheiradio"
+	"[FREQ_YOHEI]" = "yoheiradio",
+	"[FREQ_FACTION]" = "suppradio",
 	))
 
 /atom/movable/proc/say(message, bubble_type, list/spans = list(), sanitize = TRUE, datum/language/language = null, ignore_spam = FALSE, forced = null)
@@ -40,16 +41,14 @@ GLOBAL_LIST_INIT(freqtospan, list(
 	//SHOULD_BE_PURE(TRUE)
 	return 1
 
-/atom/movable/proc/send_speech(message, range = 7, obj/source = src, bubble_type, list/spans, datum/language/message_language = null, list/message_mods = list())
+/atom/movable/proc/send_speech(message, range = 7, obj/source = src, bubble_type, list/spans, datum/language/message_language, list/message_mods = list())
 	var/rendered = compose_message(src, message_language, message, , spans, message_mods)
 	var/list/hearers_in_view = get_hearers_in_view(range, source)
-	for(var/_AM in hearers_in_view)
-		if(ismob(_AM))
-			var/mob/M = _AM
-			if(M.client)
-				hearers_in_view.Add(M.client)
-		var/atom/movable/AM = _AM
-		AM.Hear(rendered, src, message_language, message, , spans, message_mods)
+	for(var/atom/movable/hearing_movable as anything in hearers_in_view)
+		if(!hearing_movable)//theoretically this should use as anything because it shouldnt be able to get nulls but there are reports that it does.
+			stack_trace("somehow theres a null returned from get_hearers_in_view() in send_speech!")
+			continue
+		hearing_movable.Hear(rendered, src, message_language, message, , spans, message_mods)
 
 	INVOKE_ASYNC(GLOBAL_PROC, /proc/flick_overlay, image('icons/mob/talk.dmi', src, "machine[say_test(message)]",MOB_LAYER+1), hearers_in_view, 30)
 
@@ -178,7 +177,7 @@ GLOBAL_LIST_INIT(freqtospan, list(
 	return capitalize("[src]")	//Returns the atom's name, prepended with 'The' if it's not a proper noun
 
 /atom/movable/proc/IsVocal()
-	return 1
+	return TRUE
 
 /atom/movable/proc/get_alt_name()
 
@@ -226,7 +225,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/virtualspeaker)
 		var/mob/living/silicon/robot/B = M
 		job = "[B.designation] Cyborg"
 	else if(istype(M, /mob/living/silicon/pai))  // Personal AI (pAI)
-		job = "Personal AI"
+		job = "Персональный ИИ"
 	else if(isobj(M))  // Cold, emotionless machines
 		job = "Machine"
 	else  // Unidentifiable mob

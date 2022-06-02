@@ -1,6 +1,6 @@
 /obj/item/reagent_containers/glass/maunamug
-	name = "mauna mug"
-	desc = "A drink served in a classy mug. Now with built-in heating!"
+	name = "кружка с подогревом"
+	desc = "Напиток становится намного вкуснее когда подается в стильной кружке. А эта еще и с подогревом!"
 	icon = 'icons/obj/mauna_mug.dmi'
 	icon_state = "maunamug"
 	spillable = TRUE
@@ -22,7 +22,7 @@
 	. = ..()
 	. += "<hr><span class='notice'>Дисплей: Current temperature: <b>[reagents.chem_temp]K</b> Current Charge:[cell ? "[cell.charge / cell.maxcharge * 100]%" : "No cell found"].</span>"
 	if(open)
-		. += "\n<span class='notice'>The battery case is open.</span>"
+		. += span_notice("\nThe battery case is open.")
 
 /obj/item/reagent_containers/glass/maunamug/process(delta_time)
 	..()

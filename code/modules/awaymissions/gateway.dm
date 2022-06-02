@@ -159,9 +159,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	bound_y = 0
 	density = TRUE
 
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 100
-	active_power_usage = 5000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 5
 
 	var/calibrated = TRUE
 	/// Type of instanced gateway destination, needs to be subtype of /datum/gateway_destination/gateway
@@ -176,6 +174,17 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	var/obj/effect/gateway_portal_bumper/portal
 	/// Visual object for handling the viscontents
 	var/obj/effect/gateway_portal_effect/portal_visuals
+
+	var/requires_key = FALSE
+	var/key_used = FALSE
+
+/obj/machinery/gateway/attacked_by(obj/item/I, mob/living/user)
+	. = ..()
+	if(istype(I, /obj/item/key/gateway) && requires_key)
+		to_chat(user, "<span class='notice'>Вставляю [src] в замочную скважину, врата разблокированы!</span>")
+		key_used = TRUE
+		qdel(I)
+		return
 
 /obj/machinery/gateway/Initialize()
 	generate_destination()
@@ -220,6 +229,8 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 /obj/machinery/gateway/proc/activate(datum/gateway_destination/D)
 	if(!powered() || target)
 		return
+	if(requires_key && !key_used)
+		return
 	target = D
 	target.activate(destination)
 	portal_visuals.setup_visuals(target)
@@ -252,7 +263,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	if(calibrated)
 		to_chat(user, span_alert("Врата откалиброваны, больше ничего делать не нужно."))
 	else
-		to_chat(user, "<span class='boldnotice'>Успешная рекалибровка!</span>: \black Системы врат налажены. Теперь через них можно проходить.")
+		to_chat(user, "<span class='boldnotice'>Успешная рекалибровка!</span>: Системы врат налажены. Теперь через них можно проходить.")
 		calibrated = TRUE
 	return TRUE
 
@@ -283,6 +294,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	try_to_linkup()
 
 /obj/machinery/computer/gateway_control/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Gateway", name)
@@ -322,7 +334,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 			if(!GLOB.isGatewayLoaded)
 				message_admins("[ADMIN_LOOKUPFLW(usr)] активирует врата.")
 				log_game("[key_name(usr)] активирует врата.")
-				priority_announce("Началась операция по поиску новых врат в отдалённых секторах. Это займёт некоторое время.", "Звёздные врата", 'sound/misc/announce_dig.ogg')
+				priority_announce("Началась операция по поиску новых врат в отдалённых секторах. Это займёт некоторое время.", "Звёздные врата", sound('white/valtos/sounds/trevoga4.ogg'))
 				GLOB.isGatewayLoaded = TRUE
 				createRandomZlevel()
 			return TRUE
@@ -338,7 +350,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	G.activate(D)
 
 /obj/item/paper/fluff/gateway
-	info = "Поздравляем,<br><br>Ваша станция была выбрана для нашего проекта \"Врата\".<br><br>Мы пришлем вам оборудование в следующем квартале.<br> Оборудуйте защищенное помещение по требованиям, приведенным в прикрепленных документах.<br><br>--Исследовательский Центр Блюспейса Нанотрейзен"
+	info = "Поздравляем,<br><br>Ваша станция была выбрана для нашего проекта \"Врата\".<br><br>Мы пришлем вам оборудование в следующем квартале.<br> Оборудуйте защищенное помещение по требованиям, приведенным в прикрепленных документах.<br><br>--Исследовательский Центр Блюспейса NanoTrasen"
 	name = "Конфиденциальная переписка, стр 1"
 
 /obj/effect/gateway_portal_effect
@@ -373,4 +385,5 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	animate(get_filter("portal_ripple"), time = 1.3 SECONDS, loop = -1, easing = LINEAR_EASING, radius = 32)
 
 	var/turf/center_turf = our_destination.get_target_turf()
-	vis_contents += block(locate(center_turf.x - 1, center_turf.y - 1, center_turf.z), locate(center_turf.x + 1, center_turf.y + 1, center_turf.z))
+	if(center_turf)
+		vis_contents += block(locate(center_turf.x - 1, center_turf.y - 1, center_turf.z), locate(center_turf.x + 1, center_turf.y + 1, center_turf.z))

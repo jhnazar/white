@@ -21,7 +21,7 @@
 	startWhen = 60 //2 minutes to answer
 	var/datum/comm_message/threat
 	var/payoff = 0
-	var/payoff_min = 5000
+	var/payoff_min = 500000
 	var/paid_off = FALSE
 	var/pirate_type
 	var/ship_template
@@ -126,7 +126,7 @@
 	density = TRUE
 	var/active = FALSE
 	var/credits_stored = 0
-	var/siphon_per_tick = 5
+	var/siphon_per_tick = 50
 
 /obj/machinery/shuttle_scrambler/Initialize(mapload)
 	. = ..()
@@ -277,6 +277,7 @@
 	var/datum/export_report/total_report
 	var/sending_timer
 	var/cargo_hold_id
+	var/interface_name = "CargoHoldTerminal"
 
 /obj/machinery/computer/piratepad_control/Initialize()
 	..()
@@ -300,9 +301,10 @@
 		pad = locate() in range(4,src)
 
 /obj/machinery/computer/piratepad_control/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "CargoHoldTerminal", name)
+		ui = new(user, src, interface_name, name)
 		ui.open()
 
 /obj/machinery/computer/piratepad_control/ui_data(mob/user)
@@ -416,7 +418,7 @@
 	return
 
 /datum/export/pirate/ransom
-	cost = 300
+	cost = CARGO_CRATE_VALUE * 300
 	unit_name = "hostage"
 	export_types = list(/mob/living/carbon/human)
 
@@ -441,7 +443,7 @@
 			return 1000
 
 /datum/export/pirate/parrot
-	cost = 200
+	cost = CARGO_CRATE_VALUE * 200
 	unit_name = "alive parrot"
 	export_types = list(/mob/living/simple_animal/parrot)
 

@@ -1,5 +1,3 @@
-GLOBAL_LIST_INIT(thrall_spell_types, typecacheof(list(/obj/effect/proc_holder/spell/self/lesser_shadowling_hivemind, /obj/effect/proc_holder/spell/targeted/lesser_glare, /obj/effect/proc_holder/spell/self/lesser_shadow_walk, /obj/effect/proc_holder/spell/self/thrall_night_vision)))
-
 /datum/antagonist/thrall
 	name = "Shadowling Thrall"
 	job_rank = ROLE_SHADOWLING
@@ -10,7 +8,6 @@ GLOBAL_LIST_INIT(thrall_spell_types, typecacheof(list(/obj/effect/proc_holder/sp
 
 /datum/antagonist/thrall/on_gain()
 	. = ..()
-	SSticker.mode.update_shadow_icons_added(owner)
 	SSticker.mode.thralls += owner
 	owner.special_role = "thrall"
 	message_admins("[key_name_admin(owner.current)] was enthralled by a shadowling!")
@@ -21,7 +18,6 @@ GLOBAL_LIST_INIT(thrall_spell_types, typecacheof(list(/obj/effect/proc_holder/sp
 	owner.AddSpell(new /obj/effect/proc_holder/spell/self/thrall_night_vision(null))
 
 /datum/antagonist/thrall/on_removal()
-	SSticker.mode.update_shadow_icons_removed(owner)
 	SSticker.mode.thralls -= owner
 	message_admins("[key_name_admin(owner.current)] was dethralled!")
 	log_game("[key_name(owner.current)] was dethralled!")

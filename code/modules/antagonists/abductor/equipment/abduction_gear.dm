@@ -281,14 +281,12 @@
 		radio_off_mob(M)
 
 /obj/item/abductor/silencer/proc/radio_off_mob(mob/living/carbon/human/M)
-	var/list/all_items = M.GetAllContents()
+	var/list/all_items = M.get_all_contents()
 
-	for(var/obj/I in all_items)
-		if(istype(I, /obj/item/radio/))
-			var/obj/item/radio/r = I
-			r.listening = 0
-			if(!istype(I, /obj/item/radio/headset))
-				r.broadcasting = 0 //goddamned headset hacks
+	for(var/obj/item/radio/radio in all_items)
+		radio.set_listening(FALSE)
+		if(!istype(radio, /obj/item/radio/headset))
+			radio.set_broadcasting(FALSE) //goddamned headset hacks
 
 /obj/item/abductor/mind_device
 	name = "mental interface device"
@@ -559,7 +557,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 
 /obj/item/melee/baton/abductor/proc/SleepAttack(mob/living/L,mob/living/user)
 	playsound(src, stun_sound, 50, TRUE, -1)
-	if(L.incapacitated(TRUE, TRUE))
+	if(L.incapacitated(IGNORE_RESTRAINTS|IGNORE_GRAB))
 		if(L.anti_magic_check(FALSE, FALSE, TRUE))
 			to_chat(user, span_warning("The specimen's tinfoil protection is interfering with the sleep inducement!"))
 			L.visible_message(span_danger("[user] tried to induced sleep in [L] with [src], but [L.ru_ego()] tinfoil protection [L.ru_na()]!") , \
@@ -631,8 +629,6 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	icon_state = "cuff" // Needs sprite
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/security_righthand.dmi'
-	breakoutchance = 60 //хз
-	breakouttime 20
 	trashtype = /obj/item/restraints/handcuffs/energy/used
 	flags_1 = NONE
 
@@ -711,7 +707,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 		visible_message(span_notice("[new_machine] warps on top of the beacon!"))
 		qdel(src)
 	else
-		playsound(src, 'sound/machines/buzz-two.ogg', 50)
+		playsound(src, 'white/valtos/sounds/error2.ogg', 50)
 
 /obj/item/abductor_machine_beacon/chem_dispenser
 	name = "beacon - Reagent Synthesizer"
@@ -871,6 +867,7 @@ Congratulations! You are now trained for invasive xenobiology research!"}
 	icon_state = "abductor"
 	icon_door = "abductor"
 	can_weld_shut = FALSE
+	door_anim_time = 0
 	material_drop = /obj/item/stack/sheet/mineral/abductor
 
 /obj/structure/door_assembly/door_assembly_abductor

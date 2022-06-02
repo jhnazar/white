@@ -63,15 +63,14 @@
 		forbearance = mutable_appearance('icons/effects/genetics.dmi', "servitude", -MUTATIONS_LAYER)
 		owner_mob.add_overlay(forbearance)
 	owner.current.throw_alert("clockinfo", /atom/movable/screen/alert/clockwork/clocksense)
-	SSticker.mode.update_clockcult_icons_added(owner)
 	var/datum/language_holder/LH = owner.current.get_language_holder()
 	LH.grant_language(/datum/language/ratvar, TRUE, TRUE, LANGUAGE_CULTIST)
+	add_team_hud(owner.current)
 
 /datum/antagonist/servant_of_ratvar/remove_innate_effects(mob/living/M)
 	owner.current.faction -= "ratvar"
 	owner.current.clear_alert("clockinfo")
 	transmit_spell.Remove(transmit_spell.owner)
-	SSticker.mode.update_clockcult_icons_removed(owner)
 	if(forbearance && ishuman(owner.current))
 		var/mob/living/carbon/owner_mob = owner.current
 		owner_mob.remove_overlay(forbearance)

@@ -9,12 +9,12 @@
 	name = "gondola"
 	real_name = "gondola"
 	desc = "Gondola is the silent walker. Having no hands he embodies the Taoist principle of wu-wei (non-action) while his smiling facial expression shows his utter and complete acceptance of the world as it is. Its hide is extremely valuable."
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
 	response_disarm_continuous = "bops"
 	response_disarm_simple = "bop"
-	response_harm_continuous = "kicks"
-	response_harm_simple = "kick"
+	response_harm_continuous = "пинает"
+	response_harm_simple = "пинает"
 	faction = list("gondola")
 	turns_per_move = 10
 	icon = 'icons/mob/gondolas.dmi'

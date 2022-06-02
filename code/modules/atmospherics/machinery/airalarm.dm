@@ -67,9 +67,8 @@
 	desc = "Устройство, которое управляет атмосферой в отсеке."
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "alarm0"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 400
-	active_power_usage = 8000
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.05
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.02
 	power_channel = AREA_USAGE_ENVIRON
 	req_access = list(ACCESS_ATMOSPHERICS)
 	max_integrity = 250
@@ -79,6 +78,8 @@
 
 	var/danger_level = 0
 	var/mode = AALARM_MODE_CONTAMINATED
+	///A reference to the area we are in
+	var/area/my_area
 
 	var/locked = TRUE
 	var/aidisabled = 0
@@ -96,27 +97,27 @@
 	var/list/TLV = list( // Breathable air.
 		"pressure" = new/datum/tlv(HAZARD_LOW_PRESSURE, WARNING_LOW_PRESSURE, WARNING_HIGH_PRESSURE, HAZARD_HIGH_PRESSURE), // kPa. Values are hazard_min, warning_min, warning_max, hazard_max
 		"temperature" = new/datum/tlv(BODYTEMP_COLD_WARNING_1, BODYTEMP_COLD_WARNING_1+10, BODYTEMP_HEAT_WARNING_1-27, BODYTEMP_HEAT_WARNING_1),
-		/datum/gas/oxygen = new/datum/tlv(16, 19, 135, 140), // Partial pressure, kpa
-		/datum/gas/nitrogen = new/datum/tlv(-1, -1, 1000, 1000),
-		/datum/gas/carbon_dioxide = new/datum/tlv(-1, -1, 5, 10),
-		/datum/gas/miasma = new/datum/tlv/(-1, -1, 15, 30),
-		/datum/gas/plasma = new/datum/tlv/dangerous,
-		/datum/gas/nitrous_oxide = new/datum/tlv/dangerous,
-		/datum/gas/bz = new/datum/tlv/dangerous,
-		/datum/gas/hypernoblium = new/datum/tlv(-1, -1, 1000, 1000), // Hyper-Noblium is inert and nontoxic
-		/datum/gas/water_vapor = new/datum/tlv/dangerous,
-		/datum/gas/tritium = new/datum/tlv/dangerous,
-		/datum/gas/stimulum = new/datum/tlv/dangerous,
-		/datum/gas/nitryl = new/datum/tlv/dangerous,
-		/datum/gas/pluoxium = new/datum/tlv(-1, -1, 1000, 1000), // Unlike oxygen, pluoxium does not fuel plasma/tritium fires
-		/datum/gas/freon = new/datum/tlv/dangerous,
-		/datum/gas/hydrogen = new/datum/tlv/dangerous,
-		/datum/gas/healium = new/datum/tlv/dangerous,
-		/datum/gas/proto_nitrate = new/datum/tlv/dangerous,
-		/datum/gas/zauker = new/datum/tlv/dangerous,
-		/datum/gas/helium = new/datum/tlv/dangerous,
-		/datum/gas/antinoblium = new/datum/tlv/dangerous,
-		/datum/gas/halon = new/datum/tlv/dangerous
+		GAS_O2 = new/datum/tlv(16, 19, 135, 140), // Partial pressure, kpa
+		GAS_N2 = new/datum/tlv(-1, -1, 1000, 1000),
+		GAS_CO2 = new/datum/tlv(-1, -1, 5, 10),
+		GAS_MIASMA = new/datum/tlv/(-1, -1, 15, 30),
+		GAS_PLASMA = new/datum/tlv/dangerous,
+		GAS_NITROUS = new/datum/tlv/dangerous,
+		GAS_BZ = new/datum/tlv/dangerous,
+		GAS_HYPERNOB = new/datum/tlv(-1, -1, 1000, 1000), // Hyper-Noblium is inert and nontoxic
+		GAS_H2O = new/datum/tlv/dangerous,
+		GAS_TRITIUM = new/datum/tlv/dangerous,
+		GAS_STIMULUM = new/datum/tlv/dangerous,
+		GAS_NITRYL = new/datum/tlv/dangerous,
+		GAS_PLUOXIUM = new/datum/tlv(-1, -1, 1000, 1000), // Unlike oxygen, pluoxium does not fuel plasma/tritium fires
+		GAS_FREON = new/datum/tlv/dangerous,
+		GAS_HYDROGEN = new/datum/tlv/dangerous,
+		GAS_HEALIUM = new/datum/tlv/dangerous,
+		GAS_PROTO_NITRATE = new/datum/tlv/dangerous,
+		GAS_ZAUKER = new/datum/tlv/dangerous,
+		GAS_HELIUM = new/datum/tlv/dangerous,
+		GAS_ANTINOBLIUM = new/datum/tlv/dangerous,
+		GAS_HALON = new/datum/tlv/dangerous
 	)
 
 /obj/machinery/airalarm/New(loc, ndir, nbuild)
@@ -134,9 +135,12 @@
 	update_icon()
 
 	alarm_manager = new(src)
+	my_area = get_area(src)
 	update_icon()
 
 /obj/machinery/airalarm/Destroy()
+	if(my_area)
+		my_area = null
 	SSradio.remove_object(src, frequency)
 	QDEL_NULL(wires)
 	QDEL_NULL(alarm_manager)
@@ -185,9 +189,8 @@
 		"danger_level" = danger_level,
 	)
 
-	var/area/A = get_area(src)
-	data["atmos_alarm"] = !!A.active_alarms[ALARM_ATMOS]
-	data["fire_alarm"] = A.fire
+	data["atmos_alarm"] = !!my_area.active_alarms[ALARM_ATMOS]
+	data["fire_alarm"] = my_area.fire
 
 	var/turf/T = get_turf(src)
 	var/datum/gas_mixture/environment = T.return_air()
@@ -199,7 +202,7 @@
 	data["environment_data"] += list(list(
 							"name" = "Давление",
 							"value" = pressure,
-							"unit" = "kPa",
+							"unit" = "кПа",
 							"danger_level" = cur_tlv.get_danger_level(pressure)
 	))
 	var/temperature = environment.return_temperature()
@@ -217,7 +220,7 @@
 			continue
 		cur_tlv = TLV[gas_id]
 		data["environment_data"] += list(list(
-								"name" = GLOB.meta_gas_info[gas_id][META_GAS_NAME],
+								"name" = GLOB.gas_data.names[gas_id],
 								"value" = environment.get_moles(gas_id) / total_moles * 100,
 								"unit" = "%",
 								"danger_level" = cur_tlv.get_danger_level(environment.get_moles(gas_id) * partial_pressure)
@@ -225,9 +228,9 @@
 
 	if(!locked || user.has_unlimited_silicon_privilege)
 		data["vents"] = list()
-		for(var/id_tag in A.air_vent_info)
+		for(var/id_tag in my_area.air_vent_info)
 			var/long_name = GLOB.air_vent_names[id_tag]
-			var/list/info = A.air_vent_info[id_tag]
+			var/list/info = my_area.air_vent_info[id_tag]
 			if(!info || info["frequency"] != frequency)
 				continue
 			data["vents"] += list(list(
@@ -244,9 +247,9 @@
 					"intdefault"= (info["internal"] == 0)
 				))
 		data["scrubbers"] = list()
-		for(var/id_tag in A.air_scrub_info)
+		for(var/id_tag in my_area.air_scrub_info)
 			var/long_name = GLOB.air_scrub_names[id_tag]
-			var/list/info = A.air_scrub_info[id_tag]
+			var/list/info = my_area.air_scrub_info[id_tag]
 			if(!info || info["frequency"] != frequency)
 				continue
 			data["scrubbers"] += list(list(
@@ -287,11 +290,11 @@
 		thresholds[thresholds.len]["settings"] += list(list("env" = "temperature", "val" = "warning_max", "selected" = selected.warning_max))
 		thresholds[thresholds.len]["settings"] += list(list("env" = "temperature", "val" = "hazard_max", "selected" = selected.hazard_max))
 
-		for(var/gas_id in GLOB.meta_gas_info)
+		for(var/gas_id in GLOB.gas_data.names)
 			if(!(gas_id in TLV)) // We're not interested in this gas, it seems.
 				continue
 			selected = TLV[gas_id]
-			thresholds += list(list("name" = GLOB.meta_gas_info[gas_id][META_GAS_NAME], "settings" = list()))
+			thresholds += list(list("name" = GLOB.gas_data.names[gas_id], "settings" = list()))
 			thresholds[thresholds.len]["settings"] += list(list("env" = gas_id, "val" = "hazard_min", "selected" = selected.hazard_min))
 			thresholds[thresholds.len]["settings"] += list(list("env" = gas_id, "val" = "warning_min", "selected" = selected.warning_min))
 			thresholds[thresholds.len]["settings"] += list(list("env" = gas_id, "val" = "warning_max", "selected" = selected.warning_max))
@@ -432,78 +435,77 @@
 			return "Flood"
 
 /obj/machinery/airalarm/proc/apply_mode(atom/signal_source)
-	var/area/A = get_area(src)
 	switch(mode)
 		if(AALARM_MODE_SCRUBBING)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
-					"set_filters" = list(/datum/gas/carbon_dioxide),
+					"set_filters" = list(GAS_CO2, GAS_BZ),
 					"scrubbing" = 1,
 					"widenet" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"checks" = 1,
 					"set_external_pressure" = ONE_ATMOSPHERE
 				), signal_source)
 		if(AALARM_MODE_CONTAMINATED)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"set_filters" = list(
-						/datum/gas/carbon_dioxide,
-						/datum/gas/miasma,
-						/datum/gas/plasma,
-						/datum/gas/water_vapor,
-						/datum/gas/hypernoblium,
-						/datum/gas/nitrous_oxide,
-						/datum/gas/nitryl,
-						/datum/gas/tritium,
-						/datum/gas/bz,
-						/datum/gas/stimulum,
-						/datum/gas/pluoxium,
-						/datum/gas/freon,
-						/datum/gas/hydrogen,
-						/datum/gas/healium,
-						/datum/gas/proto_nitrate,
-						/datum/gas/zauker,
-						/datum/gas/helium,
-						/datum/gas/antinoblium,
-						/datum/gas/halon,
+						GAS_CO2,
+						GAS_MIASMA,
+						GAS_PLASMA,
+						GAS_H2O,
+						GAS_HYPERNOB,
+						GAS_NITROUS,
+						GAS_NITRYL,
+						GAS_TRITIUM,
+						GAS_BZ,
+						GAS_STIMULUM,
+						GAS_PLUOXIUM,
+						GAS_FREON,
+						GAS_HYDROGEN,
+						GAS_HEALIUM,
+						GAS_PROTO_NITRATE,
+						GAS_ZAUKER,
+						GAS_HELIUM,
+						GAS_ANTINOBLIUM,
+						GAS_HALON
 					),
 					"scrubbing" = 1,
 					"widenet" = 1
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"checks" = 1,
 					"set_external_pressure" = ONE_ATMOSPHERE
 				), signal_source)
 		if(AALARM_MODE_VENTING)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"widenet" = 0,
 					"scrubbing" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"checks" = 1,
 					"set_external_pressure" = ONE_ATMOSPHERE*2
 				), signal_source)
 		if(AALARM_MODE_REFILL)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
-					"set_filters" = list(/datum/gas/carbon_dioxide),
+					"set_filters" = list(GAS_CO2),
 					"scrubbing" = 1,
 					"widenet" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"checks" = 1,
@@ -511,43 +513,43 @@
 				), signal_source)
 		if(AALARM_MODE_PANIC,
 			AALARM_MODE_REPLACEMENT)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"widenet" = 1,
 					"scrubbing" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 0
 				), signal_source)
 		if(AALARM_MODE_SIPHON)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"widenet" = 0,
 					"scrubbing" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 0
 				), signal_source)
 
 		if(AALARM_MODE_OFF)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 0
 				), signal_source)
 		if(AALARM_MODE_FLOOD)
-			for(var/device_id in A.air_scrub_info)
+			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 0
 				), signal_source)
-			for(var/device_id in A.air_vent_info)
+			for(var/device_id in my_area.air_vent_info)
 				send_signal(device_id, list(
 					"power" = 1,
 					"checks" = 2,
@@ -638,10 +640,8 @@
 	frequency.post_signal(src, alert_signal, range = -1)
 
 /obj/machinery/airalarm/proc/apply_danger_level()
-	var/area/A = get_area(src)
-
 	var/new_area_danger_level = 0
-	for(var/obj/machinery/airalarm/AA in A)
+	for(var/obj/machinery/airalarm/AA in my_area)
 		if (!(AA.machine_stat & (NOPOWER|BROKEN)) && !AA.shorted)
 			new_area_danger_level = clamp(max(new_area_danger_level, AA.danger_level), 0, 1)
 
@@ -793,54 +793,54 @@
 	TLV = list(
 		"pressure" = new/datum/tlv/no_checks,
 		"temperature" = new/datum/tlv/no_checks,
-		/datum/gas/oxygen = new/datum/tlv/no_checks,
-		/datum/gas/nitrogen = new/datum/tlv/no_checks,
-		/datum/gas/carbon_dioxide = new/datum/tlv/no_checks,
-		/datum/gas/miasma = new/datum/tlv/no_checks,
-		/datum/gas/plasma = new/datum/tlv/no_checks,
-		/datum/gas/nitrous_oxide = new/datum/tlv/no_checks,
-		/datum/gas/bz = new/datum/tlv/no_checks,
-		/datum/gas/hypernoblium = new/datum/tlv/no_checks,
-		/datum/gas/water_vapor = new/datum/tlv/no_checks,
-		/datum/gas/tritium = new/datum/tlv/no_checks,
-		/datum/gas/stimulum = new/datum/tlv/no_checks,
-		/datum/gas/nitryl = new/datum/tlv/no_checks,
-		/datum/gas/pluoxium = new/datum/tlv/no_checks,
-		/datum/gas/freon = new/datum/tlv/no_checks,
-		/datum/gas/hydrogen = new/datum/tlv/no_checks,
-		/datum/gas/healium = new/datum/tlv/dangerous,
-		/datum/gas/proto_nitrate = new/datum/tlv/dangerous,
-		/datum/gas/zauker = new/datum/tlv/dangerous,
-		/datum/gas/helium = new/datum/tlv/dangerous,
-		/datum/gas/antinoblium = new/datum/tlv/dangerous,
-		/datum/gas/halon = new/datum/tlv/dangerous,
+		GAS_O2 = new/datum/tlv/no_checks,
+		GAS_N2 = new/datum/tlv/no_checks,
+		GAS_CO2 = new/datum/tlv/no_checks,
+		GAS_MIASMA = new/datum/tlv/no_checks,
+		GAS_PLASMA = new/datum/tlv/no_checks,
+		GAS_NITROUS = new/datum/tlv/no_checks,
+		GAS_BZ = new/datum/tlv/no_checks,
+		GAS_HYPERNOB = new/datum/tlv/no_checks,
+		GAS_H2O = new/datum/tlv/no_checks,
+		GAS_TRITIUM = new/datum/tlv/no_checks,
+		GAS_STIMULUM = new/datum/tlv/no_checks,
+		GAS_NITRYL = new/datum/tlv/no_checks,
+		GAS_PLUOXIUM = new/datum/tlv/no_checks,
+		GAS_FREON = new/datum/tlv/no_checks,
+		GAS_HYDROGEN = new/datum/tlv/no_checks,
+		GAS_HEALIUM = new/datum/tlv/dangerous,
+		GAS_PROTO_NITRATE = new/datum/tlv/dangerous,
+		GAS_ZAUKER = new/datum/tlv/dangerous,
+		GAS_HELIUM = new/datum/tlv/dangerous,
+		GAS_ANTINOBLIUM = new/datum/tlv/dangerous,
+		GAS_HALON = new/datum/tlv/dangerous
 	)
 
 /obj/machinery/airalarm/kitchen_cold_room // Kitchen cold rooms start off at -14°C or 259.15K.
 	TLV = list(
 		"pressure" = new/datum/tlv(ONE_ATMOSPHERE * 0.8, ONE_ATMOSPHERE *  0.9, ONE_ATMOSPHERE * 1.1, ONE_ATMOSPHERE * 1.2), // kPa
 		"temperature" = new/datum/tlv(COLD_ROOM_TEMP-40, COLD_ROOM_TEMP-20, COLD_ROOM_TEMP+20, COLD_ROOM_TEMP+40),
-		/datum/gas/oxygen = new/datum/tlv(16, 19, 135, 140), // Partial pressure, kpa
-		/datum/gas/nitrogen = new/datum/tlv(-1, -1, 1000, 1000),
-		/datum/gas/carbon_dioxide = new/datum/tlv(-1, -1, 5, 10),
-		/datum/gas/miasma = new/datum/tlv/(-1, -1, 2, 5),
-		/datum/gas/plasma = new/datum/tlv/dangerous,
-		/datum/gas/nitrous_oxide = new/datum/tlv/dangerous,
-		/datum/gas/bz = new/datum/tlv/dangerous,
-		/datum/gas/hypernoblium = new/datum/tlv(-1, -1, 1000, 1000), // Hyper-Noblium is inert and nontoxic
-		/datum/gas/water_vapor = new/datum/tlv/dangerous,
-		/datum/gas/tritium = new/datum/tlv/dangerous,
-		/datum/gas/stimulum = new/datum/tlv/dangerous,
-		/datum/gas/nitryl = new/datum/tlv/dangerous,
-		/datum/gas/pluoxium = new/datum/tlv(-1, -1, 1000, 1000), // Unlike oxygen, pluoxium does not fuel plasma/tritium fires
-		/datum/gas/freon = new/datum/tlv/dangerous,
-		/datum/gas/hydrogen = new/datum/tlv/dangerous,
-		/datum/gas/healium = new/datum/tlv/dangerous,
-		/datum/gas/proto_nitrate = new/datum/tlv/dangerous,
-		/datum/gas/zauker = new/datum/tlv/dangerous,
-		/datum/gas/helium = new/datum/tlv/dangerous,
-		/datum/gas/antinoblium = new/datum/tlv/dangerous,
-		/datum/gas/halon = new/datum/tlv/dangerous,
+		GAS_O2 = new/datum/tlv(16, 19, 135, 140), // Partial pressure, kpa
+		GAS_N2 = new/datum/tlv(-1, -1, 1000, 1000),
+		GAS_CO2 = new/datum/tlv(-1, -1, 5, 10),
+		GAS_MIASMA = new/datum/tlv/(-1, -1, 2, 5),
+		GAS_PLASMA = new/datum/tlv/dangerous,
+		GAS_NITROUS = new/datum/tlv/dangerous,
+		GAS_BZ = new/datum/tlv/dangerous,
+		GAS_HYPERNOB = new/datum/tlv(-1, -1, 1000, 1000), // Hyper-Noblium is inert and nontoxic
+		GAS_H2O = new/datum/tlv/dangerous,
+		GAS_TRITIUM = new/datum/tlv/dangerous,
+		GAS_STIMULUM = new/datum/tlv/dangerous,
+		GAS_NITRYL = new/datum/tlv/dangerous,
+		GAS_PLUOXIUM = new/datum/tlv(-1, -1, 1000, 1000), // Unlike oxygen, pluoxium does not fuel plasma/tritium fires
+		GAS_FREON = new/datum/tlv/dangerous,
+		GAS_HYDROGEN = new/datum/tlv/dangerous,
+		GAS_HEALIUM = new/datum/tlv/dangerous,
+		GAS_PROTO_NITRATE = new/datum/tlv/dangerous,
+		GAS_ZAUKER = new/datum/tlv/dangerous,
+		GAS_HELIUM = new/datum/tlv/dangerous,
+		GAS_ANTINOBLIUM = new/datum/tlv/dangerous,
+		GAS_HALON = new/datum/tlv/dangerous
 	)
 
 /obj/machinery/airalarm/unlocked
@@ -927,18 +927,18 @@
 			"Temperature" = "temperature"
 		)
 
-		for(var/gas_id in GLOB.meta_gas_info)
-			component_options[GLOB.meta_gas_info[gas_id][META_GAS_NAME]] = gas_id2path(gas_id)
+		for(var/gas_id in GLOB.gas_data.ids)
+			component_options[GLOB.gas_data.names[gas_id]] = gas_id
 
 	air_alarm_options = add_option_port("Air Alarm Options", component_options)
 	options_map = component_options
 
-/obj/item/circuit_component/air_alarm/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/air_alarm/register_usb_parent(atom/movable/shell)
 	. = ..()
-	if(istype(parent, /obj/machinery/airalarm))
-		connected_alarm = parent
+	if(istype(shell, /obj/machinery/airalarm))
+		connected_alarm = shell
 
-/obj/item/circuit_component/air_alarm/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/air_alarm/unregister_usb_parent(atom/movable/shell)
 	connected_alarm = null
 	return ..()
 
@@ -953,10 +953,8 @@
 		var/datum/gas_mixture/environment = alarm_turf.return_air()
 		pressure.set_output(round(environment.return_pressure()))
 		temperature.set_output(round(environment.return_temperature()))
-		/* похуй чисто паебать потом пофиксит ктонить кому нада
 		if(ispath(options_map[current_option]))
-			gas_amount.set_output(round(environment.gases[options_map[current_option]][MOLES]))
-		*/
+			gas_amount.set_output(round(environment.get_moles(options_map[current_option])))
 		return
 
 	var/datum/tlv/settings = connected_alarm.TLV[options_map[current_option]]

@@ -1,10 +1,11 @@
 /obj/structure/speaking_tile
 	name = "strange tile"
 	desc = "A weird tile that beckons you towards it. Maybe it can help you get out of this mess..."
-	verb_say = "intones"
+	verb_say = "интонирует"
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "speaking_tile"
-	layer = 5
+	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	resistance_flags = INDESTRUCTIBLE
 	var/speaking = FALSE
 	var/times_spoken_to = 0

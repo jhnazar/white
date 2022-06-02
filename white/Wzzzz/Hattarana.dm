@@ -70,7 +70,7 @@
 	icon_state = "brown_jacket"
 	body_parts_covered = CHEST|ARMS
 	inhand_icon_state = "brown_jacket"
-
+/*
 
 /obj/item/clothing/neck/stripedgreenscarf/black
 	name = "striped black scarf"
@@ -79,7 +79,7 @@
 	custom_price = 25
 	worn_icon = 'white/Wzzzz/clothing/mob/ties.dmi'
 	icon = 'white/Wzzzz/clothing/ties.dmi'
-
+*/
 /obj/item/clothing/mask/skull
 	name = "skull mask"
 	desc = "Life is full of cruel. That's one of examples."
@@ -94,6 +94,7 @@
 	force = 5
 	throwforce = 3
 
+/*
 /obj/item/clothing/neck/stripedgreenscarf/grey
 	name = "striped grey scarf"
 	icon_state = "stripedgreyscarf"
@@ -101,7 +102,7 @@
 	custom_price = 25
 	worn_icon = 'white/Wzzzz/clothing/mob/ties.dmi'
 	icon = 'white/Wzzzz/clothing/ties.dmi'
-
+*/
 /obj/item/clothing/suit/armor/vest/leather/tailcoat
 	name = "tail coat"
 	desc = "Stylish armored coat."
@@ -4633,22 +4634,17 @@
 	cost = 150
 	contains = list(/obj/item/gun/ballistic/automatic/pistol/traumatic,
 					/obj/item/gun/ballistic/automatic/pistol/traumatic)
-
-/datum/supply_pack/security/trau_a_s
-	name = "Traumatic Pistol Ammo Single-Pack"
-	desc = "Contains a 8-round magazine for traumatic pistol. Each magazine is designed to facilitate rapid tactical reloads. Requires Armory access to open."
-	cost = 25
-	contains = list(/obj/item/ammo_box/magazine/traumatic)
+*/
 
 /datum/supply_pack/security/trau_a
 	name = "Traumatic Pistol Ammo Crate"
-	desc = "Contains a 8-round magazine for traumatic pistol. Each magazine is designed to facilitate rapid tactical reloads. Requires Armory access to open."
-	cost = 60
+	desc = "Contains a four 8-round magazines for \"Enforcer\" traumatic pistol. Each magazine is designed to facilitate rapid tactical reloads. Requires Armory access to open."
+	cost = CARGO_CRATE_VALUE * 6
 	contains = list(/obj/item/ammo_box/magazine/traumatic,
 					/obj/item/ammo_box/magazine/traumatic,
 					/obj/item/ammo_box/magazine/traumatic,
 					/obj/item/ammo_box/magazine/traumatic)
-
+/*
 /datum/supply_pack/security/armory/mak_s
 	name = "Makarov Pistol Single-Pack"
 	desc = "Contains a single makarov pistol. Requires Armory access to open."

@@ -22,10 +22,10 @@ SUBSYSTEM_DEF(nightshift)
 
 /datum/controller/subsystem/nightshift/proc/announce(message)
 	spawn(10 SECONDS)
-		priority_announce(message, sound='sound/misc/notice2.ogg', sender_override="Автоматизированная Система Света")
+		priority_announce(message, sound=sound('sound/misc/notice2.ogg'), sender_override="Автоматизированная Система Света")
 
 /datum/controller/subsystem/nightshift/proc/check_nightshift()
-	var/emergency = GLOB.security_level >= SEC_LEVEL_RED
+	var/emergency = SSsecurity_level.current_level >= SEC_LEVEL_RED
 	var/announcing = TRUE
 	var/time = station_time()
 	var/night_time = (time < nightshift_end_time) || (time > nightshift_start_time)
@@ -53,4 +53,5 @@ SUBSYSTEM_DEF(nightshift)
 		var/obj/machinery/power/apc/APC = A
 		if (APC.area && (APC.area.type in GLOB.the_station_areas))
 			APC.set_nightshift(active)
-			CHECK_TICK
+		if(MC_TICK_CHECK)
+			return

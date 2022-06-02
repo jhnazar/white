@@ -1,24 +1,24 @@
 /mob/living/simple_animal/mouse
 	name = "мышь"
-	desc = "Это гадкий, уродливый, злой, заразный грызун."
+	desc = "Гадкий, уродливый, злой, заразный грызун."
 	icon = 'white/valtos/icons/animal.dmi'
 	icon_state = "mouse_gray"
 	icon_living = "mouse_gray"
 	icon_dead = "mouse_gray_dead"
-	speak = list("Squeak!","SQUEAK!","Squeak?")
-	speak_emote = list("squeaks")
-	emote_hear = list("squeaks.")
-	emote_see = list("runs in a circle.", "shakes.")
+	speak = list("Пи!","ПИ!","Пи?")
+	speak_emote = list("пищит")
+	emote_hear = list("пищит.")
+	emote_see = list("бегает по кругу.", "качается.")
 	speak_chance = 1
 	turns_per_move = 5
 	see_in_dark = 6
 	maxHealth = 5
 	health = 5
 	butcher_results = list(/obj/item/food/meat/slab/mouse = 1)
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
 	response_harm_continuous = "splats"
 	response_harm_simple = "splat"
 	density = FALSE
@@ -181,10 +181,10 @@
 /mob/living/simple_animal/mouse/brown/tom
 	name = "Tom"
 	desc = "Jerry the cat is not amused."
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
 	response_harm_continuous = "splats"
 	response_harm_simple = "splat"
 	gold_core_spawnable = NO_SPAWN

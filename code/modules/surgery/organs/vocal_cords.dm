@@ -35,7 +35,7 @@
 	actions_types = list(/datum/action/item_action/organ_action/use/adamantine_vocal_cords)
 	icon_state = "adamantine_cords"
 
-/datum/action/item_action/organ_action/use/adamantine_vocal_cords/Trigger()
+/datum/action/item_action/organ_action/use/adamantine_vocal_cords/Trigger(trigger_flags)
 	if(!IsAvailable())
 		return
 	var/message = input(owner, "Что же мы скажем?", "Резонирование")
@@ -44,7 +44,7 @@
 	owner.say(".x[message]")
 
 /obj/item/organ/vocal_cords/adamantine/handle_speech(message)
-	var/msg = span_resonate("<span class='name'>[owner.real_name]</span> <span class='message'>резонирует, \"[message]\"</span>")
+	var/msg = span_resonate(span_name("[owner.real_name]</span> <span class='message'>резонирует, \"[message]\""))
 	for(var/m in GLOB.player_list)
 		if(iscarbon(m))
 			var/mob/living/carbon/C = m
@@ -87,7 +87,7 @@
 			return FALSE
 	return TRUE
 
-/datum/action/item_action/organ_action/colossus/Trigger()
+/datum/action/item_action/organ_action/colossus/Trigger(trigger_flags)
 	. = ..()
 	if(!IsAvailable())
 		if(world.time < cords.next_command)
@@ -327,7 +327,7 @@
 		for(var/V in listeners)
 			var/mob/living/L = V
 			L.adjust_fire_stacks(1 * power_multiplier)
-			L.IgniteMob()
+			L.ignite_mob()
 
 	//HOT
 	else if((findtext(message, hot_words)))

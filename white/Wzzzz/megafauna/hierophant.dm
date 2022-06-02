@@ -1,6 +1,6 @@
 /mob/living/simple_animal/hostile/megafauna/hierophantold
-	name = "hierophant"
-	desc = "A massive metal club that hangs in the air as though waiting. It'll make you dance to its beat."
+	name = "Иерофант"
+	desc = "Неизвестное инопланетное существо, чем-то напоминающее средневекового короля."
 	health = 2500
 	maxHealth = 2500
 	attack_verb_continuous = "въебенивает"
@@ -12,7 +12,7 @@
 	friendly_verb_simple = "stare down"
 	icon = 'white/Wzzzz/disneyland/hierophant.dmi'
 	faction = list("boss") //asteroid mobs? get that shit out of my beautiful square house
-	speak_emote = list("preaches")
+	speak_emote = list("проповедует")
 	armour_penetration = 50
 	melee_damage_lower = 15
 	melee_damage_upper = 15

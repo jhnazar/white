@@ -6,7 +6,6 @@
 	icon_state = "harvester"
 	verb_say = "констатирует"
 	state_open = FALSE
-	idle_power_usage = 50
 	circuit = /obj/item/circuitboard/machine/harvester
 	light_color = LIGHT_COLOR_BLUE
 	var/interval = 20
@@ -22,6 +21,7 @@
 		name = "auto-autopsy"
 
 /obj/machinery/harvester/RefreshParts()
+	. = ..()
 	interval = 0
 	var/max_time = 40
 	for(var/obj/item/stock_parts/micro_laser/L in component_parts)
@@ -68,15 +68,15 @@
 			var/obj/item/I = A
 			if(!(HAS_TRAIT(I, TRAIT_NODROP)))
 				say("Subject may not have abiotic items on.")
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 				return
 	if(!(C.mob_biotypes & MOB_ORGANIC))
 		say("Subject is not organic.")
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		return
 	if(!allow_living && !(C.stat == DEAD || HAS_TRAIT(C, TRAIT_FAKEDEATH)))     //I mean, the machines scanners arent advanced enough to tell you're alive
 		say("Subject is still alive.")
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		return
 	return TRUE
 
@@ -124,7 +124,7 @@
 				O.forceMove(target) //Some organs, like chest ones, are different so we need to manually move them
 		operation_order.Remove(BP)
 		break
-	use_power(5000)
+	use_power(active_power_usage)
 	addtimer(CALLBACK(src, .proc/harvest), interval)
 
 /obj/machinery/harvester/proc/end_harvesting()

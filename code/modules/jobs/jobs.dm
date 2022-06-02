@@ -34,6 +34,7 @@ GLOBAL_LIST_INIT(science_positions, list(
 GLOBAL_LIST_INIT(supply_positions, list(
 	"Quartermaster",
 	"Cargo Technician",
+	"Exploration Crew",
 	"Shaft Miner",
 	"Hunter"))
 
@@ -72,6 +73,12 @@ GLOBAL_LIST_INIT(security_positions, list(
 GLOBAL_LIST_INIT(scum_positions, list(
 	"Bomj",
 	"Prisoner"))
+
+GLOBAL_LIST_INIT(combatant_red_positions, list(
+	"Combantant: Red"))
+
+GLOBAL_LIST_INIT(combatant_blue_positions, list(
+	"Combantant: Blue"))
 
 GLOBAL_LIST_INIT(nonhuman_positions, list(
 	"AI",

@@ -10,12 +10,10 @@
 	armor = list("melee" = 0, "bullet" = 0, "laser" = 0, "energy" = 0, "bomb" = 0, "bio" = 100, "rad" = 100, "fire" = 80, "acid" = 10)
 	//circuit = /obj/item/circuitboard/machine/electrolyzer
 	use_power = NO_POWER_USE
-	idle_power_usage = 100
-	active_power_usage = 200
 
 	var/synth_type = /obj/item/stack/sheet/cotton
 	var/list/gas_moles_per_synth = list(
-										/datum/gas/oxygen = 0.1
+										GAS_O2 = 0.1
 										)
 	var/moles_removed = 5
 
@@ -109,9 +107,9 @@
 	desc = "Собирает уголь, во хохма-то."
 	synth_type = /obj/item/stack/sheet/mineral/coal
 	gas_moles_per_synth = list(
-								/datum/gas/carbon_dioxide = 0.05,
-								/datum/gas/hydrogen = 0.2,
-								/datum/gas/miasma = 0.1
+								GAS_CO2 = 0.05,
+								GAS_HYDROGEN = 0.2,
+								GAS_MIASMA = 0.1
 								)
 
 

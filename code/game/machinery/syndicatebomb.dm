@@ -16,6 +16,7 @@
 
 	interaction_flags_machine = INTERACT_MACHINE_WIRES_IF_OPEN | INTERACT_MACHINE_OFFLINE
 
+	use_power = NO_POWER_USE
 	var/minimum_timer = 90
 	var/timer_set = 90
 	var/maximum_timer = 60000
@@ -110,6 +111,9 @@
 		. = timer_set
 
 /obj/machinery/syndicatebomb/attackby(obj/item/I, mob/user, params)
+	if(HAS_TRAIT(user, TRAIT_PACIFISM))
+		to_chat(user, span_warning("Не могу как-то взаимодействовать с бомбой!"))
+		return FALSE
 	if(I.tool_behaviour == TOOL_WRENCH && can_unanchor)
 		if(!anchored)
 			if(!isturf(loc) || isspaceturf(loc))
@@ -192,6 +196,10 @@
 	notify_ghosts("<b>[src.name]</b> has been activated at [get_area(src)]!", source = src, action = NOTIFY_ORBIT, flashwindow = FALSE, header = "Bomb Planted")
 
 /obj/machinery/syndicatebomb/proc/settings(mob/user)
+	if(HAS_TRAIT(user, TRAIT_PACIFISM))
+		to_chat(user, span_warning("Не могу заставить себя поставить бомбу! Это ведь навредит кому-то!"))
+		return FALSE
+
 	var/new_timer = input(user, "Please set the timer.", "Timer", "[timer_set]") as num|null
 
 	if (isnull(new_timer))
@@ -199,7 +207,7 @@
 
 	if(in_range(src, user) && isliving(user)) //No running off and setting bombs from across the station
 		timer_set = clamp(new_timer, minimum_timer, maximum_timer)
-		loc.visible_message("<span class='notice'>[icon2html(src, viewers(src))] timer set for [timer_set] seconds.</span>")
+		loc.visible_message(span_notice("[icon2html(src, viewers(src))] timer set for [timer_set] seconds."))
 	if(tgui_alert(user,"Would you like to start the countdown now?",,list("Yes","No")) == "Yes" && in_range(src, user) && isliving(user))
 		if(!active)
 			visible_message(span_danger("[icon2html(src, viewers(loc))] [timer_set] секунд до детонации, пожалуйста, покиньте зону."))
@@ -296,7 +304,7 @@
 
 /obj/item/bombcore/training
 	name = "тренировочный боезаряд"
-	desc = "Точная копия боезаряда Синдиката сделанная Нанотрейсен. Не предназначен для взрыва, но вместо этого уведомляет что взорвался."
+	desc = "Точная копия боезаряда Синдиката, сделанная NanoTrasen. Полностью лишенная взрывчатки, на ней можно практиковать свои навыки обезвреживания бомб."
 	var/defusals = 0
 	var/attempts = 0
 

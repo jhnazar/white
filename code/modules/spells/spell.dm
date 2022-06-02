@@ -155,6 +155,8 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	base_action = /datum/action/spell_action/spell
 
 /obj/effect/proc_holder/spell/proc/cast_check(skipcharge = 0,mob/user = usr) //checks if the spell can be cast based on its settings; skipcharge is used when an additional cast_check is called inside the spell
+	if(SEND_SIGNAL(user, COMSIG_MOB_PRE_CAST_SPELL, src) & COMPONENT_CANCEL_SPELL)
+		return FALSE
 	if(player_lock)
 		if(!user.mind || !(src in user.mind.spell_list) && !(src in user.mob_spell_list))
 			to_chat(user, span_warning("You shouldn't have this spell! Something's wrong."))
@@ -523,7 +525,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	dummy.pass_flags |= PASSTABLE
 	var/turf/previous_step = get_turf(A)
 	var/first_step = TRUE
-	for(var/turf/next_step as anything in (getline(A, B) - previous_step))
+	for(var/turf/next_step as anything in (get_line(A, B) - previous_step))
 		if(first_step)
 			for(var/obj/blocker in previous_step)
 				if(!blocker.density || !(blocker.flags_1 & ON_BORDER_1))

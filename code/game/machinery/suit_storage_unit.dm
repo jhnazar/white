@@ -5,8 +5,6 @@
 	icon = 'icons/obj/machines/suit_storage.dmi'
 	icon_state = "classic"
 	base_icon_state = "classic"
-	use_power = ACTIVE_POWER_USE
-	active_power_usage = 6000
 	power_channel = AREA_USAGE_EQUIP
 	density = TRUE
 	max_integrity = 250
@@ -403,22 +401,22 @@
 				visible_message(span_warning("[capitalize(src.name)] door slides open, barraging you with the nauseating smell of charred flesh."))
 				mob_occupant.radiation = 0
 			playsound(src, 'sound/machines/airlockclose.ogg', 25, TRUE)
-			var/list/things_to_clear = list() //Done this way since using GetAllContents on the SSU itself would include circuitry and such.
+			var/list/things_to_clear = list() //Done this way since using get_all_contents on the SSU itself would include circuitry and such.
 			if(suit)
 				things_to_clear += suit
-				things_to_clear += suit.GetAllContents()
+				things_to_clear += suit.get_all_contents()
 			if(helmet)
 				things_to_clear += helmet
-				things_to_clear += helmet.GetAllContents()
+				things_to_clear += helmet.get_all_contents()
 			if(mask)
 				things_to_clear += mask
-				things_to_clear += mask.GetAllContents()
+				things_to_clear += mask.get_all_contents()
 			if(storage)
 				things_to_clear += storage
-				things_to_clear += storage.GetAllContents()
+				things_to_clear += storage.get_all_contents()
 			if(mob_occupant)
 				things_to_clear += mob_occupant
-				things_to_clear += mob_occupant.GetAllContents()
+				things_to_clear += mob_occupant.get_all_contents()
 			for(var/am in things_to_clear) //Scorches away blood and forensic evidence, although the SSU itself is unaffected
 				var/atom/movable/dirty_movable = am
 				dirty_movable.wash(CLEAN_ALL)
@@ -431,11 +429,11 @@
 		return
 	if(!istype(suit, /obj/item/clothing/suit/space))
 		return
-	if(!suit.cell)
+	if(!suit.cell || suit.cell.charge == suit.cell.maxcharge)
 		return
 
 	var/obj/item/stock_parts/cell/C = suit.cell
-	use_power(charge_rate * delta_time)
+	use_power((active_power_usage + charge_rate) * delta_time)
 	C.give(charge_rate * delta_time)
 
 /obj/machinery/suit_storage_unit/proc/shock(mob/user, prb)

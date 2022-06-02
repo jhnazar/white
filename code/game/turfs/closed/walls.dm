@@ -95,18 +95,16 @@
 	if(target == src)
 		dismantle_wall(1,1)
 		return
+
 	switch(severity)
-		if(1)
+		if(EXPLODE_DEVASTATE)
 			//SN src = null
 			var/turf/NT = ScrapeAway()
 			NT.contents_explosion(severity, target)
 			return
-		if(2)
-			if (prob(50))
-				dismantle_wall(0,1)
-			else
-				dismantle_wall(1,1)
-		if(3)
+		if(EXPLODE_HEAVY)
+			dismantle_wall(prob(50), TRUE)
+		if(EXPLODE_LIGHT)
 			if (prob(hardness))
 				dismantle_wall(0,1)
 	if(!density)
@@ -242,12 +240,6 @@
 	else if(istype(W, /obj/item/poster))
 		place_poster(W,user)
 		return TRUE
-	else if(istype(W, /obj/item/blacksmith/torch_handle))
-		var/obj/item/blacksmith/torch_handle/F = W
-		if(F.try_build(src, user))
-			F.attach(src, user)
-		return TRUE
-
 	return FALSE
 
 /turf/closed/wall/proc/try_decon(obj/item/I, mob/user, turf/T)

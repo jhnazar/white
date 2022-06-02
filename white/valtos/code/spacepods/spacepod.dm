@@ -4,8 +4,6 @@
 // - damages shit if you run into it too fast instead of just stopping. You have to have a huge running start to do that though and damages the spacepod as well.
 // - doesn't explode
 
-GLOBAL_LIST_INIT(spacepods_list, list())
-
 /obj/spacepod
 	name = "space pod"
 	desc = "A frame for a spacepod."
@@ -15,7 +13,6 @@ GLOBAL_LIST_INIT(spacepods_list, list())
 	density = 1
 	opacity = 0
 	dir = NORTH // always points north because why not
-	layer = SPACEPOD_LAYER
 	bound_width = 32
 	bound_height = 32
 	animate_movement = NO_STEPS // we do our own gliding here
@@ -86,10 +83,10 @@ GLOBAL_LIST_INIT(spacepods_list, list())
 	cabin_air = new
 	cabin_air.set_temperature(T20C)
 	cabin_air.set_volume(200)
-	/*cabin_air.assert_gas(/datum/gas/oxygen)
-	cabin_air.assert_gas(/datum/gas/nitrogen)
-	cabin_air.gases[/datum/gas/oxygen][MOLES] = ONE_ATMOSPHERE*O2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
-	cabin_air.gases[/datum/gas/nitrogen][MOLES] = ONE_ATMOSPHERE*N2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)*/
+	/*cabin_air.assert_gas(GAS_O2)
+	cabin_air.assert_gas(GAS_N2)
+	cabin_air.gases[GAS_O2][MOLES] = ONE_ATMOSPHERE*O2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)
+	cabin_air.gases[GAS_N2][MOLES] = ONE_ATMOSPHERE*N2STANDARD*cabin_air.volume/(R_IDEAL_GAS_EQUATION*cabin_air.temperature)*/
 
 /obj/spacepod/Destroy()
 	GLOB.spacepods_list -= src
@@ -249,7 +246,7 @@ GLOBAL_LIST_INIT(spacepods_list, list())
 /*
 /obj/spacepod/proc/InterceptClickOn(mob/user, params, atom/target)
 	var/list/params_list = params2list(params)
-	if(target == src || istype(target, /atom/movable/screen) || (target && (target in user.GetAllContents())) || user != pilot || params_list["shift"] || params_list["alt"])
+	if(target == src || istype(target, /atom/movable/screen) || (target && (target in user.get_all_contents())) || user != pilot || params_list["shift"] || params_list["alt"])
 		return FALSE
 	if(weapon && params_list["ctrl"])
 		weapon.fire_weapons(target)
@@ -273,13 +270,13 @@ GLOBAL_LIST_INIT(spacepods_list, list())
 /obj/spacepod/proc/on_mouse_moved(mob/user, object, location, control, params)
 	SIGNAL_HANDLER
 	var/list/modifiers = params2list(params)
-	if(object == src || /*istype(object, /atom/movable/screen) ||*/ (object && (object in user.GetAllContents())) || user != pilot/* || modifiers["shift"] || modifiers["alt"]*/)
+	if(object == src || /*istype(object, /atom/movable/screen) ||*/ (object && (object in user.get_all_contents())) || user != pilot/* || modifiers["shift"] || modifiers["alt"]*/)
 		return
 	if(weapon && modifiers["ctrl"])
 		INVOKE_ASYNC(src, .proc/async_fire_weapons_at, object)
 		//weapon.fire_weapons(object)
 	else
-		//desired_angle = Get_Angle(src, object)
+		//desired_angle = get_angle(src, object)
 		var/list/sl_list = splittext(modifiers["screen-loc"],",")
 		var/list/sl_x_list = splittext(sl_list[1], ":")
 		var/list/sl_y_list = splittext(sl_list[2], ":")
@@ -346,13 +343,13 @@ GLOBAL_LIST_INIT(spacepods_list, list())
 
 /obj/spacepod/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(EXPLODE_DEVASTATE)
 			for(var/mob/living/M in contents)
 				M.ex_act(severity+1)
 			deconstruct()
-		if(2)
+		if(EXPLODE_HEAVY)
 			take_damage(100, BRUTE, "bomb", 0)
-		if(3)
+		if(EXPLODE_LIGHT)
 			if(prob(40))
 				take_damage(40, BRUTE, "bomb", 0)
 

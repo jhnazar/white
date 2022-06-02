@@ -7,9 +7,9 @@
 
 /datum/station_goal/station_shield/get_report()
 	return {"\nСтанция находится в зоне, заполненной космическим мусором.
-		\nУ нас есть прототип системы защиты, которую вы должны развернуть, чтобы уменьшить количество аварий, связанных с столкновениями.
+		\nУ нас есть прототип системы защиты, которую требуется развернуть, чтобы уменьшить количество аварий, связанных с столкновениями.
 		\n
-		\nВы можете заказать спутники и системы управления в грузовом отсеке.
+		\nМожно заказать спутники и системы управления в грузовом отсеке.
 		"}
 
 
@@ -37,12 +37,13 @@
 	return coverage.len
 
 /obj/machinery/computer/sat_control
-	name = "управление щитами"
+	name = "Управление щитами"
 	desc = "Используется для управления массивом защитных спутников."
 	circuit = /obj/item/circuitboard/computer/sat_control
 	var/notice
 
 /obj/machinery/computer/sat_control/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "SatelliteControl", name)
@@ -97,7 +98,7 @@
 
 
 /obj/machinery/satellite
-	name = "повреждённый спутник"
+	name = "Повреждённый спутник"
 	desc = ""
 	icon = 'icons/obj/machines/satellite.dmi'
 	icon_state = "sat_inactive"
@@ -148,7 +149,7 @@
 	return TRUE
 
 /obj/machinery/satellite/meteor_shield
-	name = "защитный спутник"
+	name = "Защитный спутник"
 	desc = "Противометеоритная защита для всей семьи."
 	mode = "M-SHIELD"
 	processing_flags = START_PROCESSING_MANUALLY
@@ -156,7 +157,7 @@
 	var/kill_range = 14
 
 /obj/machinery/satellite/meteor_shield/proc/space_los(meteor)
-	for(var/turf/T in getline(src,meteor))
+	for(var/turf/T in get_line(src,meteor))
 		if(!isspaceturf(T) && !isopenspace(T))
 			return FALSE
 	return TRUE

@@ -144,8 +144,8 @@
 
 	return SECONDARY_ATTACK_CALL_NORMAL
 
-/obj/attackby(obj/item/I, mob/living/user, params)
-	return ..() || ((obj_flags & CAN_BE_HIT) && I.attack_obj(src, user, params))
+/obj/attackby(obj/item/attacking_item, mob/user, params)
+	return ..() || ((obj_flags & CAN_BE_HIT) && attacking_item.attack_obj(src, user, params))
 
 /mob/living/attackby(obj/item/I, mob/living/user, params)
 	if(..())
@@ -273,7 +273,7 @@
 		random_type_damage(target, proximity_flag)
 
 	SEND_SIGNAL(src, COMSIG_ITEM_AFTERATTACK, target, user, proximity_flag, click_parameters)
-	SEND_SIGNAL(user, COMSIG_MOB_ITEM_AFTERATTACK, target, user, proximity_flag, click_parameters)
+	SEND_SIGNAL(user, COMSIG_MOB_ITEM_AFTERATTACK, target, src, proximity_flag, click_parameters)
 
 /**
  * Called at the end of the attack chain if the user right-clicked.
@@ -285,6 +285,14 @@
  * * click_parameters - is the params string from byond [/atom/proc/Click] code, see that documentation.
  */
 /obj/item/proc/afterattack_secondary(atom/target, mob/user, proximity_flag, click_parameters)
+	var/signal_result = SEND_SIGNAL(src, COMSIG_ITEM_AFTERATTACK_SECONDARY, target, user, proximity_flag, click_parameters)
+	SEND_SIGNAL(user, COMSIG_MOB_ITEM_AFTERATTACK_SECONDARY, target, src, proximity_flag, click_parameters)
+
+	if(signal_result & COMPONENT_SECONDARY_CANCEL_ATTACK_CHAIN)
+		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+
+	if(signal_result & COMPONENT_SECONDARY_CONTINUE_ATTACK_CHAIN)
+		return SECONDARY_ATTACK_CONTINUE_CHAIN
 	return SECONDARY_ATTACK_CALL_NORMAL
 
 /// Called if the target gets deleted by our attack

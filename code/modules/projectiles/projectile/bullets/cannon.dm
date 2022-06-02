@@ -11,6 +11,7 @@
 	embedding = null
 	hitsound = 'sound/effects/meteorimpact.ogg'
 	hitsound_wall = 'sound/weapons/sonic_jackhammer.ogg'
+	nomiss = TRUE
 
 /obj/projectile/bullet/cannonball/on_hit(atom/target, blocked = FALSE)
 	damage -= 10
@@ -34,7 +35,7 @@
 	damage = 40 //set to 30 before first mob impact, but they're gonna be gibbed by the explosion
 
 /obj/projectile/bullet/cannonball/explosive/on_hit(atom/target, blocked = FALSE)
-	explosion(target, 2, 3, 4)
+	explosion(target, devastation_range = 2, heavy_impact_range = 3, light_impact_range = 4, explosion_cause = src)
 	. = ..()
 
 /obj/projectile/bullet/cannonball/emp
@@ -54,5 +55,5 @@
 
 /obj/projectile/bullet/cannonball/biggest_one/on_hit(atom/target, blocked = FALSE)
 	if(projectile_piercing == NONE)
-		explosion(target, GLOB.MAX_EX_DEVESTATION_RANGE, GLOB.MAX_EX_HEAVY_RANGE, GLOB.MAX_EX_LIGHT_RANGE, GLOB.MAX_EX_FLASH_RANGE)
+		explosion(target, devastation_range = GLOB.MAX_EX_DEVESTATION_RANGE, heavy_impact_range = GLOB.MAX_EX_HEAVY_RANGE, light_impact_range = GLOB.MAX_EX_LIGHT_RANGE, flash_range = GLOB.MAX_EX_FLASH_RANGE, explosion_cause = src)
 	. = ..()

@@ -15,7 +15,7 @@
 	var/old_real_name = user.real_name
 	user.real_name += " (суицид)"
 	// no conflicts with their identification card
-	for(var/atom/A in user.GetAllContents())
+	for(var/atom/A in user.get_all_contents())
 		if(istype(A, /obj/item/card/id))
 			var/obj/item/card/id/their_card = A
 
@@ -49,7 +49,7 @@
 	if(!label || !length(label))
 		to_chat(user, span_warning("Не выбран текст!"))
 		return
-	if(length(A.name) + length(label) > 64)
+	if(length(A.name) + length(label) > MAX_NAME_LEN * 2)
 		to_chat(user, span_warning("Текст слишком большой!"))
 		return
 	if(ismob(A))

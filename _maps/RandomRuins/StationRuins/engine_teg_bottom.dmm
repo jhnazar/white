@@ -10,15 +10,19 @@
 /turf/closed/wall/r_wall,
 /area/engineering/main)
 "ao" = (
-/obj/machinery/door/airlock/maintenance{
-	name = "Engineering Maintenance";
-	req_access_txt = "10"
-	},
 /obj/machinery/door/firedoor/border_only,
 /obj/machinery/door/firedoor/border_only{
 	dir = 1
 	},
 /obj/structure/cable,
+/obj/machinery/door/poddoor/shutters/preopen{
+	id = "engi_reactor_shutters"
+	},
+/obj/machinery/door/airlock/highsecurity{
+	req_access = null;
+	req_access_txt = "10";
+	security_level = 6
+	},
 /turf/open/floor/plating,
 /area/engineering/main)
 "ar" = (
@@ -107,6 +111,12 @@
 	},
 /obj/effect/turf_decal/tile/yellow{
 	dir = 1
+	},
+/obj/machinery/button/door{
+	id = "engi_reactor_shutters";
+	name = "бронеставни выхода в теха";
+	pixel_y = 32;
+	req_access_txt = "10"
 	},
 /turf/open/floor/plating,
 /area/engineering/main)
@@ -517,6 +527,11 @@
 /obj/machinery/atmospherics/pipe/layer_manifold/general/visible,
 /turf/template_noop,
 /area/space/nearstation)
+"jV" = (
+/obj/structure/lattice,
+/obj/machinery/camera/autoname,
+/turf/template_noop,
+/area/space/nearstation)
 "lW" = (
 /obj/machinery/atmospherics/pipe/heat_exchanging/simple{
 	dir = 10
@@ -698,6 +713,16 @@
 /obj/machinery/atmospherics/components/binary/pump,
 /turf/closed/wall/r_wall,
 /area/engineering/main)
+"Ej" = (
+/obj/structure/lattice/catwalk,
+/obj/machinery/atmospherics/pipe/heat_exchanging/simple{
+	dir = 10
+	},
+/obj/machinery/camera/autoname{
+	dir = 8
+	},
+/turf/template_noop,
+/area/space/nearstation)
 "Ep" = (
 /obj/effect/turf_decal/tile/yellow,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/cyan/visible,
@@ -1232,7 +1257,7 @@ ab
 LF
 LD
 bt
-LD
+Ej
 bt
 LD
 bt
@@ -1270,7 +1295,7 @@ ad
 ad
 ad
 ad
-bb
+jV
 LD
 GN
 GN
@@ -1396,7 +1421,7 @@ ab
 ab
 "}
 (18,1,1) = {"
-ad
+ar
 aK
 bN
 cY
@@ -1480,7 +1505,7 @@ ab
 ab
 "}
 (21,1,1) = {"
-ar
+ad
 aO
 Ap
 do
@@ -1718,7 +1743,7 @@ cY
 bN
 Uv
 ad
-bb
+jV
 LF
 zJ
 zJ

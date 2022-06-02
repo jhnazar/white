@@ -37,7 +37,7 @@
 
 /obj/structure/fluff/empty_sleeper/nanotrasen
 	name = "сломанная камера гиперсна"
-	desc = "Камера гиперсна Нанотрейсена - похоже она сломана. \
+	desc = "Камера гиперсна NanoTrasen - похоже она сломана. \
 		Это болты с неполной резьбой, легко демонтируются гаечным ключом."
 	icon_state = "sleeper-o"
 
@@ -65,8 +65,11 @@
 	density = TRUE
 	deconstructible = FALSE
 	layer = EDGED_TURF_LAYER
-
-/obj/structure/fluff/drake_statue/falling //A variety of statue in disrepair; parts are broken off and a gemstone is missing
+	plane = GAME_PLANE_UPPER
+/**
+ * A variety of statue in disrepair; parts are broken off and a gemstone is missing
+ */
+/obj/structure/fluff/drake_statue/falling
 	desc = "Возвышающаяся базальтовая скульптура дракона. На поверхности трещины, а некоторые куски отвалились."
 	icon_state = "drake_statue_falling"
 
@@ -88,6 +91,7 @@
 	icon_state = "frontwalltop"
 	density = FALSE
 	layer = ABOVE_ALL_MOB_LAYER //except for the stairs tile, which should be set to OBJ_LAYER aka 3.
+	plane = ABOVE_GAME_PLANE
 
 
 /obj/structure/fluff/bus/passable/seat
@@ -96,6 +100,7 @@
 	icon_state = "backseat"
 	pixel_y = 17
 	layer = OBJ_LAYER
+	plane = GAME_PLANE
 
 
 /obj/structure/fluff/bus/passable/seat/driver
@@ -174,6 +179,7 @@
 	icon = 'icons/effects/32x96.dmi'
 	icon_state = "chain"
 	layer = ABOVE_OBJ_LAYER
+	resistance_flags = FIRE_PROOF | LAVA_PROOF
 	anchored = TRUE
 	density = TRUE
 	deconstructible = FALSE
@@ -249,8 +255,8 @@
 	icon_state = "clockgolem_dead"
 
 /obj/structure/fluff/hedge
-	name = "hedge"
-	desc = "A large bushy hedge."
+	name = "живая изгородь"
+	desc = "Огромная."
 	icon = 'icons/obj/smooth_structures/hedge.dmi'
 	icon_state = "hedge-0"
 	base_icon_state = "hedge"
@@ -264,9 +270,9 @@
 
 /obj/structure/fluff/hedge/attacked_by(obj/item/I, mob/living/user)
 	if(opacity && HAS_TRAIT(user, TRAIT_BONSAI) && I.get_sharpness())
-		to_chat(user,span_notice("You start trimming <b>[src.name]</b>."))
+		to_chat(user,span_notice("Начинаю стричь <b>[src.name]</b>."))
 		if(do_after(user, 3 SECONDS,target=src))
-			to_chat(user,span_notice("You finish trimming <b>[src.name]</b>."))
+			to_chat(user,span_notice("Стригу <b>[src.name]</b>."))
 			opacity = FALSE
 	else
 		return ..()

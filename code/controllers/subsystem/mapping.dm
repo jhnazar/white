@@ -42,6 +42,7 @@ SUBSYSTEM_DEF(mapping)
 	// Z-manager stuff
 	var/station_start  // should only be used for maploading-related tasks
 	var/space_levels_so_far = 0
+	var/near_space_levels_so_far = 0
 	var/list/z_list
 	var/datum/space_level/transit
 	var/datum/space_level/empty_space
@@ -82,20 +83,17 @@ SUBSYSTEM_DEF(mapping)
 	while (space_levels_so_far < config.space_ruin_levels)
 		++space_levels_so_far
 		LAZYADD(SSzclear.free_levels, add_new_zlevel("Empty Area [space_levels_so_far]", ZTRAITS_SPACE, orbital_body_type = null))
+	while (near_space_levels_so_far < config.space_ruin_levels)
+		++near_space_levels_so_far
+		add_new_zlevel("Near Space [near_space_levels_so_far]", ZTRAITS_NEAR_SPACE, orbital_body_type = null)
 	// and one level with no ruins
 	for (var/i in 1 to config.space_empty_levels)
 		++space_levels_so_far
-		empty_space = add_new_zlevel("Empty Area [space_levels_so_far]", list(ZTRAIT_LINKAGE = CROSSLINKED), orbital_body_type = /datum/orbital_object/z_linked/beacon/weak)
+		empty_space = add_new_zlevel("Empty Area [space_levels_so_far]", list(ZTRAIT_LINKAGE = SELFLOOPING), orbital_body_type = /datum/orbital_object/z_linked/beacon/weak)
 
 	// Pick a random away mission.
 	if(CONFIG_GET(flag/roundstart_away))
 		createRandomZlevel()
-
-	// Load the virtual reality hub
-	if(CONFIG_GET(flag/virtual_reality))
-		to_chat(world, span_boldannounce("Загружается виртуальная реальность..."))
-		load_new_z_level("_maps/RandomZLevels/VR/vrhub.dmm", "Virtual Reality Hub")
-		to_chat(world, span_boldannounce("Виртуальная реальность загружена."))
 
 	// Generate mining ruins
 	loading_ruins = TRUE
@@ -121,19 +119,10 @@ SUBSYSTEM_DEF(mapping)
 		for (var/ice_z in ice_ruins_underground)
 			spawn_rivers(ice_z, 4, level_trait(ice_z, ZTRAIT_BASETURF), /area/icemoon/underground/unexplored/rivers)
 
-	/*
-	var/list/planet_ruins = levels_by_trait(ZTRAIT_STATION)
-	if (planet_ruins.len)
-		// needs to be whitelisted for underground too so place_below ruins work
-		seedRuins(planet_ruins, CONFIG_GET(number/lavaland_budget), list(/area/boxplanet/underground/unexplored), lava_ruins_templates)
-		for (var/ice_z in planet_ruins)
-			spawn_rivers(ice_z, 6, /turf/open/floor/plating/asteroid/boxplanet/caves, /area/boxplanet/underground/unexplored)
-	*/
-
 	// Generate deep space ruins
-	/*var/list/space_ruins = levels_by_trait(ZTRAIT_DYNAMIC_LEVEL)
+	var/list/space_ruins = levels_by_trait(ZTRAIT_NEAR_SPACE_LEVEL)
 	if (space_ruins.len)
-		seedRuins(space_ruins, CONFIG_GET(number/space_budget), list(/area/space), space_ruins_templates)*/
+		seedRuins(space_ruins, CONFIG_GET(number/space_budget), list(/area/space), space_ruins_templates)
 	seedStation() //yogs - random station rooms
 	loading_ruins = FALSE
 #endif
@@ -303,9 +292,9 @@ Used by the AI doomsday and the self-destruct nuke.
 
 #ifndef LOWMEMORYMODE
 	// TODO: remove this when the DB is prepared for the z-levels getting reordered
-	while (world.maxz < (5 - 1) && space_levels_so_far < config.space_ruin_levels)
+	while (world.maxz < (5 - 1) && near_space_levels_so_far < config.space_ruin_levels)
 		++space_levels_so_far
-		LAZYADD(SSzclear.free_levels, add_new_zlevel("Empty Area [space_levels_so_far]", ZTRAITS_SPACE, orbital_body_type = null))
+		add_new_zlevel("Near Space [near_space_levels_so_far]", ZTRAITS_NEAR_SPACE, orbital_body_type = null)
 
 	if(config.minetype == "lavaland")
 		LoadGroup(FailedZs, "Lavaland", "map_files/Mining", "Lavaland.dmm", default_traits = ZTRAITS_LAVALAND, orbital_body_type = /datum/orbital_object/z_linked/lavaland)
@@ -405,17 +394,17 @@ GLOBAL_LIST_EMPTY(the_station_areas)
 	if (!pickedmap)
 		return
 	var/datum/map_config/VM = global.config.maplist[pickedmap]
-	message_admins("Randomly rotating map to [VM.map_name]")
+	message_admins("Случайно выбираем [VM.map_name]")
 	. = changemap(VM)
 	if (. && VM.map_name != config.map_name)
-		to_chat(world, span_boldannounce("Map rotation has chosen [VM.map_name] for next round!"))
+		to_chat(world, span_boldannounce("Выбрана карта [VM.map_name] для следующего раунда!"))
 
 /datum/controller/subsystem/mapping/proc/mapvote()
 	if(map_voted || SSmapping.next_map_config) //If voted or set by other means.
 		return
 	if(SSvote.mode) //Theres already a vote running, default to rotation.
 		maprotate()
-	SSvote.initiate_vote("map", "automatic map rotation")
+	SSvote.initiate_vote("карту", "автоматическая ротация карт")
 
 /datum/controller/subsystem/mapping/proc/changemap(datum/map_config/VM)
 	if(!VM.MakeNextMap())
@@ -443,7 +432,7 @@ GLOBAL_LIST_EMPTY(the_station_areas)
 	banned += generateMapList("[global.config.directory]/spaceruinblacklist.txt")
 	banned += generateMapList("[global.config.directory]/iceruinblacklist.txt")
 
-	for(var/item in sortList(subtypesof(/datum/map_template/ruin), /proc/cmp_ruincost_priority))
+	for(var/item in sort_list(subtypesof(/datum/map_template/ruin), /proc/cmp_ruincost_priority))
 		var/datum/map_template/ruin/ruin_type = item
 		// screen out the abstract subtypes
 		if(!initial(ruin_type.id))
@@ -540,6 +529,8 @@ GLOBAL_LIST_EMPTY(the_station_areas)
 				away_level = template.load_new_z()
 			else
 				return
+
+	GLOB.isGatewayLoaded = TRUE
 
 	message_admins("Admin [key_name_admin(usr)] has loaded [away_name] away mission.")
 	log_admin("Admin [key_name(usr)] has loaded [away_name] away mission.")

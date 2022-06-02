@@ -12,7 +12,7 @@ SUBSYSTEM_DEF(traumas)
 
 /datum/controller/subsystem/traumas/Initialize()
 	//phobia types is to pull from randomly for brain traumas, e.g. conspiracies is for special assignment only
-	phobia_types = sortList(list("spiders", "space", "security", "clowns", "greytide", "lizards",
+	phobia_types = sort_list(list("spiders", "space", "security", "clowns", "greytide", "lizards",
 						"skeletons", "snakes", "robots", "doctors", "authority", "the supernatural",
 						"aliens", "strangers", "birds", "falling", "anime", "insects", "blood"))
 
@@ -74,7 +74,7 @@ SUBSYSTEM_DEF(traumas)
 		"clowns"    = typecacheof(list(
 			/obj/item/clothing/under/rank/civilian/clown, /obj/item/clothing/shoes/clown_shoes,
 			/obj/item/clothing/mask/gas/clown_hat, /obj/item/instrument/bikehorn,
-			/obj/item/pda/clown, /obj/item/grown/bananapeel, /obj/item/food/cheesiehonkers,
+			/obj/item/modular_computer/tablet/pda/clown, /obj/item/grown/bananapeel, /obj/item/food/cheesiehonkers,
 			/obj/item/trash/cheesie,
 		)),
 
@@ -124,7 +124,8 @@ SUBSYSTEM_DEF(traumas)
 			/obj/item/clothing/under/rank/medical/chief_medical_officer, /obj/item/clothing/under/rank/engineering/chief_engineer,
 			/obj/item/clothing/under/rank/centcom/officer, /obj/item/clothing/under/rank/centcom/commander,
 			/obj/item/melee/classic_baton/telescopic, /obj/item/card/id/advanced/silver, /obj/item/card/id/advanced/gold,
-			/obj/item/card/id/advanced/centcom, /obj/machinery/door/airlock/command, /obj/item/card/id/advanced/black,
+			/obj/item/card/id/advanced/centcom, /obj/machinery/door/airlock/command, /obj/item/card/id/advanced/black, 
+			/obj/item/clothing/under/rank/omon/telnajka, /obj/item/clothing/under/rank/omon
 		)),
 
 		"the supernatural"  = typecacheof(list(/obj/structure/destructible/cult, /obj/item/tome,

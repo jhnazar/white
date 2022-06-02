@@ -1,13 +1,13 @@
 
 /obj/machinery/hydroponics
-	name = "Лоток гидропоники"
+	name = "лоток гидропоники"
+	desc = "Это самая высокотехнологичная, автоматизированная, автономная грядка которую вы когда-либо видели."
 	icon = 'icons/obj/hydroponics/equipment.dmi'
 	icon_state = "hydrotray"
 	density = TRUE
 	pixel_z = 8
 	obj_flags = CAN_BE_HIT | UNIQUE_RENAME
 	circuit = /obj/item/circuitboard/machine/hydroponics
-	idle_power_usage = 5000
 	use_power = NO_POWER_USE
 	///The amount of water in the tray (max 100)
 	var/waterlevel = 100
@@ -15,8 +15,8 @@
 	var/maxwater = 100
 	///How many units of nutrients will be drained in the tray.
 	var/nutridrain = 1
-	///The maximum nutrient of water in the tray
-	var/maxnutri = 10
+	///The maximum nutrient reagent container size of the tray.
+	var/maxnutri = 20
 	///The amount of pests in the tray (max 10)
 	var/pestlevel = 0
 	///The amount of weeds in the tray (max 10)
@@ -59,13 +59,13 @@
 /obj/machinery/hydroponics/Initialize()
 	//ALRIGHT YOU DEGENERATES. YOU HAD REAGENT HOLDERS FOR AT LEAST 4 YEARS AND NONE OF YOU MADE HYDROPONICS TRAYS HOLD NUTRIENT CHEMS INSTEAD OF USING "Points".
 	//SO HERE LIES THE "nutrilevel" VAR. IT'S DEAD AND I PUT IT OUT OF IT'S MISERY. USE "reagents" INSTEAD. ~ArcaneMusic, accept no substitutes.
-	create_reagents(20)
+	create_reagents(maxnutri)
 	reagents.add_reagent(/datum/reagent/plantnutriment/eznutriment, 10) //Half filled nutrient trays for dirt trays to have more to grow with in prison/lavaland.
 	. = ..()
 
 
 /obj/machinery/hydroponics/constructable
-	name = "Лоток гидропоники"
+	name = "лоток гидропоники"
 	icon = 'icons/obj/hydroponics/equipment.dmi'
 	icon_state = "hydrotray3"
 
@@ -78,6 +78,7 @@
 	return !anchored
 
 /obj/machinery/hydroponics/constructable/RefreshParts()
+	. = ..()
 	var/tmp_capacity = 0
 	for (var/obj/item/stock_parts/matter_bin/M in component_parts)
 		tmp_capacity += M.rating
@@ -356,18 +357,18 @@
 	if(myseed)
 		. += span_info("Здесь <span class='name'>[myseed.plantname]</span> посажен.")
 		if (dead)
-			. += "\n<span class='warning'>Оно мертво!</span>"
+			. += span_warning("\nОно мертво!")
 		else if (harvest)
-			. += "\n<span class='info'>Оно готово к сбору.</span>"
+			. += span_info("\nОно готово к сбору.")
 		else if (plant_health <= (myseed.endurance / 2))
-			. += "\n<span class='warning'>Оно выглядит нездорово.</span>"
+			. += span_warning("\nОно выглядит нездорово.")
 	else
 		. += span_info("Тут пусто.")
 
-	. += "\n<span class='info'>Вода: [waterlevel]/[maxwater].</span>"
-	. += "\n<span class='info'>Питание: [reagents.total_volume]/[maxnutri].</span>"
+	. += span_info("\nВода: [waterlevel]/[maxwater].")
+	. += span_info("\nПитание: [reagents.total_volume]/[maxnutri].")
 	if(self_sustaining)
-		. += "\n<span class='info'>Авторост лотка активен, теперь лоток защищает растение от мутаций, сорняков и паразитов.</span>"
+		. += span_info("\nАвторост лотка активен, теперь лоток защищает растение от мутаций, сорняков и паразитов.")
 
 	if(weedlevel >= 5)
 		. += span_warning("Оно всё в сорняках!")
@@ -653,7 +654,7 @@
 			if(!(gene.mutability_flags & PLANT_GENE_REMOVABLE) || !(gene.mutability_flags & PLANT_GENE_EXTRACTABLE))
 				continue //No bypassing unextractable or essential genes.
 			current_traits[gene.name] = gene
-		var/removed_trait = (input(user, "Select a trait to remove from the [myseed.plantname].", "Plant Trait Removal") as null|anything in sortList(current_traits))
+		var/removed_trait = (input(user, "Select a trait to remove from the [myseed.plantname].", "Plant Trait Removal") as null|anything in sort_list(current_traits))
 		if(removed_trait == null)
 			return
 		if(!user.canUseTopic(src, BE_CLOSE))
@@ -737,7 +738,7 @@
 			for(var/muties in myseed.mutatelist)
 				var/obj/item/seeds/another_mut = new muties
 				fresh_mut_list[another_mut.plantname] =  muties
-			var/locked_mutation = (input(user, "Select a mutation to lock.", "Plant Mutation Locks") as null|anything in sortList(fresh_mut_list))
+			var/locked_mutation = (input(user, "Select a mutation to lock.", "Plant Mutation Locks") as null|anything in sort_list(fresh_mut_list))
 			if(!user.canUseTopic(src, BE_CLOSE) || !locked_mutation)
 				return
 			myseed.mutatelist = list(fresh_mut_list[locked_mutation])
@@ -786,7 +787,7 @@
 	if(!anchored)
 		return
 	self_sustaining = !self_sustaining
-	update_use_power(self_sustaining ? IDLE_POWER_USE : NO_POWER_USE)
+	update_use_power(self_sustaining ? ACTIVE_POWER_USE : NO_POWER_USE)
 	to_chat(user, "<span class='notice'>[self_sustaining ? "activate" : "deactivated"] [src] функцию автороста[self_sustaining ? ", maintaining the tray's health while using high amounts of power" : ""].")
 
 	update_appearance()
@@ -896,6 +897,7 @@
 	use_power = NO_POWER_USE
 	flags_1 = NODECONSTRUCT_1
 	unwrenchable = FALSE
+	maxnutri = 10
 
 /obj/machinery/hydroponics/soil/update_icon(updates=ALL)
 	. = ..()

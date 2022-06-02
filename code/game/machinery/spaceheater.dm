@@ -11,7 +11,7 @@
 	icon_state = "sheater-off"
 	base_icon_state = "sheater"
 	name = "обогреватель"
-	desc = "Этот обогреватель/охладитель, сделанный космическими амишами с использованием традиционных космических технологий, гарантированно не подожжет станцию. Гарантия аннулируется при использовании в двигателях."
+	desc = "Обогреватель/охладитель, сделанный космическими амишами с использованием традиционных космических технологий, гарантированно не подожжет станцию. Гарантия аннулируется при использовании в двигателях."
 	max_integrity = 250
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, RAD = 100, FIRE = 80, ACID = 10)
 	circuit = /obj/item/circuitboard/machine/space_heater
@@ -113,7 +113,7 @@
 			deltaTemperature *= -1
 		if(deltaTemperature)
 			env.set_temperature(env.return_temperature() + deltaTemperature)
-			air_update_turf(FALSE, FALSE)
+			air_update_turf()
 		cell.use(requiredEnergy / efficiency)
 	else
 		on = FALSE
@@ -121,6 +121,7 @@
 		return PROCESS_KILL
 
 /obj/machinery/space_heater/RefreshParts()
+	. = ..()
 	var/laser = 0
 	var/cap = 0
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
@@ -388,6 +389,7 @@
 	icon_state = "sheater-off"
 
 /obj/machinery/space_heater/improvised_chem_heater/RefreshParts()
+	. = ..()
 	var/lasers_rating = 0
 	var/capacitors_rating = 0
 	for(var/obj/item/stock_parts/micro_laser/laser in component_parts)

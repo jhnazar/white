@@ -17,13 +17,6 @@
 /area/template_noop)
 "M" = (
 /obj/effect/spawner/structure/window,
-/obj/machinery/door/firedoor/window,
-/obj/machinery/door/firedoor/window,
-/turf/open/floor/plating,
-/area/ruin/unpowered)
-"Q" = (
-/obj/effect/spawner/structure/window,
-/obj/machinery/door/firedoor/window,
 /turf/open/floor/plating,
 /area/ruin/unpowered)
 "R" = (
@@ -46,8 +39,8 @@ a
 "}
 (3,1,1) = {"
 a
-Q
-Q
+M
+M
 M
 a
 "}

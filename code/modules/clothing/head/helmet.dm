@@ -21,9 +21,17 @@
 
 /obj/item/clothing/head/helmet/Initialize()
 	. = ..()
+	AddComponent(/datum/component/armor_plate/plasteel)
 	if(attached_light)
 		alight = new(src)
 
+/obj/item/clothing/head/helmet/worn_overlays(isinhands)
+	. = ..()
+	if(!isinhands)
+		var/datum/component/armor_plate/plasteel/ap = GetComponent(/datum/component/armor_plate/plasteel)
+		if(ap?.amount)
+			var/mutable_appearance/armor_overlay = mutable_appearance('icons/mob/clothing/head.dmi', "armor_plasteel_[ap.amount]")
+			. += armor_overlay
 
 /obj/item/clothing/head/helmet/Destroy()
 	var/obj/item/flashlight/seclite/old_light = set_attached_light(null)
@@ -128,9 +136,10 @@
 	icon_state = "marine_medic"
 
 /obj/item/clothing/head/helmet/old
-	name = "изношенный шлем"
-	desc = "Стандартный защитный шлем. Из-за изношенности козырек шлема препятствует обзору на большие расстояния."
-	tint = 2
+	name = "старый шлем"
+	desc = "Стандартный защитный шлем. Предоставляет гораздо меньшую защиту, по сравнению с шлемами нового поколения."
+	armor = list(MELEE = 25, BULLET = 20, LASER = 10, ENERGY = 30, BOMB = 25, BIO = 0, RAD = 0, FIRE = 30, ACID = 30, WOUND = 10)
+
 
 /obj/item/clothing/head/helmet/blueshirt
 	name = "синий шлем"
@@ -141,7 +150,7 @@
 
 /obj/item/clothing/head/helmet/riot
 	name = "анти-мятежный шлем"
-	desc = "Это шлем, специально разработанный для защиты от атак с близкого расстояния."
+	desc = "Шлем, специально разработанный для защиты от оружия ближнего боя."
 	icon_state = "riot"
 	inhand_icon_state = "helmet"
 	toggle_message = "Опускаю козырёк вниз"
@@ -231,7 +240,7 @@
 
 /obj/item/clothing/head/helmet/constable
 	name = "шлем констебля"
-	desc = "Этот шлем такой британский."
+	desc = "Такой британский."
 	worn_icon = 'icons/mob/large-worn-icons/64x64/head.dmi'
 	icon_state = "constable"
 	inhand_icon_state = "constable"
@@ -242,7 +251,7 @@
 
 /obj/item/clothing/head/helmet/swat/nanotrasen
 	name = "шлем спецназа"
-	desc = "Чрезвычайно прочный, космический шлем с логотипом Нанотрансен, украшенный сверху."
+	desc = "Чрезвычайно прочный, космический шлем с логотипом NanoTrasen, украшенный сверху."
 	icon_state = "swat"
 	inhand_icon_state = "swat"
 
@@ -432,11 +441,11 @@
 /obj/item/clothing/head/helmet/monkey_sentience/examine(mob/user)
 	. = ..()
 	. += "<hr><span class='boldwarning'>---ВНИМАНИЕ: УДАЛЕНИЕ ШЛЕМА С СУБЪЕКТА МОЖЕТ ПРИВЕСТИ К:---</span>"
-	. += "\n<span class='warning'>ЖАЖДЕ КРОВИ</span>"
-	. += "\n<span class='warning'>СМЕРТИ МОЗГА</span>"
-	. += "\n<span class='warning'>АКТИВАЦИИ ПЕРВОБЫТНОГО ГЕНА</span>"
-	. += "\n<span class='warning'>МАССОВОЙ УСТОЙЧИВОСТИ ГЕНЕТИЧЕСКОГО СОСТАВА</span>"
-	. += "\n<span class='boldnotice'>Перед применением устройства проконсультируйтесь с вашим главным врачом.</span>"
+	. += span_warning("\nЖАЖДЕ КРОВИ")
+	. += span_warning("\nСМЕРТИ МОЗГА")
+	. += span_warning("\nАКТИВАЦИИ ПЕРВОБЫТНОГО ГЕНА")
+	. += span_warning("\nМАССОВОЙ УСТОЙЧИВОСТИ ГЕНЕТИЧЕСКОГО СОСТАВА")
+	. += span_boldnotice("\nПеред применением устройства проконсультируйтесь с вашим главным врачом.")
 
 /obj/item/clothing/head/helmet/monkey_sentience/update_icon_state()
 	icon_state = "[initial(icon_state)][light_colors][magnification ? "up" : ""]"
@@ -449,10 +458,10 @@
 		var/mob/living/something = user
 		to_chat(something, span_boldnotice("На секунду ощутил колющую боль в затылке."))
 		something.apply_damage(5,BRUTE,BODY_ZONE_HEAD,FALSE,FALSE,FALSE) //notably: no damage resist (it's in your helmet), no damage spread (it's in your helmet)
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		return
 	if(!(GLOB.ghost_role_flags & GHOSTROLE_STATION_SENTIENCE))
-		say("ERROR: Центральное командование временно запретило использование шлемов по увеличению обезьянего интеллекта в этом секторе. БЛИЖАЙШИЙ ЗАКОННЫЙ СЕКТОР: в 2,537 миллионов световых лет от вас.")
+		say("ERROR: Центральное командование временно запретило использование шлемов по увеличению обезьянего интеллекта в этом секторе. БЛИЖАЙШИЙ ЗАКОННЫЙ СЕКТОР: в 2,537 миллионов световых лет от меня.")
 	magnification = user //this polls ghosts
 	visible_message(span_warning("[capitalize(src.name)] включается!"))
 	playsound(src, 'sound/machines/ping.ogg', 30, TRUE)
@@ -462,7 +471,7 @@
 	if(!candidates.len)
 		magnification = null
 		visible_message(span_notice("[capitalize(src.name)] замолкает и падает на пол. Может стоит попробовать позже?"))
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		user.dropItemToGround(src)
 		return
 	var/mob/picked = pick(candidates)
@@ -496,7 +505,7 @@
 				if(4) //genetic mass susceptibility (gib)
 					magnification.gib()
 	//either used up correctly or taken off before polling finished (punish this by destroying the helmet)
-	playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+	playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 	playsound(src, "sparks", 100, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 	visible_message(span_warning("[capitalize(src.name)] шипит и распадается"))
 	magnification = null

@@ -5,7 +5,7 @@
 	w_class = WEIGHT_CLASS_BULKY
 	inhand_icon_state = null	//so the human update icon uses the icon_state instead.
 	ammo_type = list(/obj/item/ammo_casing/energy/disabler, /obj/item/ammo_casing/energy/laser)
-	modifystate = 1
+	modifystate = TRUE
 	can_flashlight = TRUE
 	ammo_x_offset = 3
 	flight_x_offset = 15
@@ -14,7 +14,7 @@
 
 /obj/item/gun/energy/e_gun/mini
 	name = "миниатюрный Е-Ган"
-	desc = "Маленькая энергетическая пушка размером с пистолет со встроенным фонариком. У него есть две настройки: оглушить и убить."
+	desc = "Маленькая энергетическая пушка размером с пистолет со встроенным фонариком. У неё есть две настройки: оглушить и убить."
 	icon_state = "mini"
 	inhand_icon_state = "gun"
 	w_class = WEIGHT_CLASS_SMALL
@@ -25,6 +25,7 @@
 	gunlight_state = "mini-light"
 	flight_x_offset = 19
 	flight_y_offset = 13
+	dual_wield_spread = 10
 
 /obj/item/gun/energy/e_gun/mini/Initialize()
 	set_gun_light(new /obj/item/flashlight/seclite(src))
@@ -32,8 +33,9 @@
 
 /obj/item/gun/energy/e_gun/stun
 	name = "тактический Е-Ган"
-	desc = "Военный выпуск энергетической пушки, способен стрелять оглушающими патронами."
+	desc = "Энергетический пистолет военного образца, способный стрелять стансферами."
 	icon_state = "energytac"
+	cell_type = /obj/item/stock_parts/cell/upgraded/plus
 	ammo_x_offset = 2
 	ammo_type = list(/obj/item/ammo_casing/energy/electrode/spec, /obj/item/ammo_casing/energy/disabler, /obj/item/ammo_casing/energy/laser)
 
@@ -51,8 +53,8 @@
 	icon_state = "decloner"
 
 /obj/item/gun/energy/e_gun/hos
-	name = "\improper X-01 МультиФазовый Е-Ган"
-	desc = "Это дорогой, современный образец старинной лазерной пушки. У этого оружия есть несколько уникальных режимов огня, но ему не хватает времени на перезарядку."
+	name = "X-01 МультиФазовый Е-Ган"
+	desc = "Дорогой, современный образец старинной лазерной пушки. У этого оружия есть несколько уникальных режимов огня, но ему не хватает времени на перезарядку."
 	cell_type = /obj/item/stock_parts/cell/hos_gun
 	icon_state = "hoslaser"
 	w_class = WEIGHT_CLASS_NORMAL
@@ -68,6 +70,7 @@
 	inhand_icon_state = "dragnet"
 	lefthand_file = 'icons/mob/inhands/weapons/guns_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/guns_righthand.dmi'
+	modifystate = FALSE
 	ammo_type = list(/obj/item/ammo_casing/energy/net, /obj/item/ammo_casing/energy/trap)
 	w_class = WEIGHT_CLASS_NORMAL
 	can_flashlight = FALSE

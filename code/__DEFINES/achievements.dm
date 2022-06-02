@@ -30,6 +30,7 @@
 #define MEDAL_FLESH_ASCENSION	"Flesh"
 #define MEDAL_RUST_ASCENSION	"Rust"
 #define MEDAL_VOID_ASCENSION	"Void"
+#define MEDAL_BLADE_ASCENSION 	"Blade"
 #define MEDAL_TOOLBOX_SOUL		"Toolsoul"
 #define MEDAL_CHEM_TUT          "Beginner Chemist"
 #define MEDAL_HOT_DAMN "Hot Damn!"
@@ -107,9 +108,6 @@
 
 // DB ID for amount of consumed maintenance pills
 #define MAINTENANCE_PILL_SCORE "Maintenance Pill Score"
-
-// DB ID for amount of consumed poo
-#define POO_EATEN_SCORE "Poo Eaten Score"
 
 // DB ID for intento score
 #define INTENTO_SCORE "Intento Score"

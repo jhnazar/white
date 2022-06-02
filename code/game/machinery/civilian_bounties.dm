@@ -2,7 +2,7 @@
 
 ///Pad for the Civilian Bounty Control.
 /obj/machinery/piratepad/civilian
-	name = "платформа отправки"
+	name = "гражданская платформа отправки"
 	desc = "Используется для отправки груза на ЦК."
 	layer = TABLE_LAYER
 	resistance_flags = FIRE_PROOF
@@ -18,6 +18,7 @@
 	warmup_time = 3 SECONDS
 	var/obj/item/card/id/inserted_scan_id
 	circuit = /obj/item/circuitboard/computer/bountypad
+	interface_name = "CivCargoHoldTerminal"
 
 /obj/machinery/computer/piratepad_control/civilian/Initialize()
 	. = ..()
@@ -151,13 +152,6 @@
 	if(!user.canUseTopic(src, !issilicon(user)) || !is_operational)
 		id_eject(user, inserted_scan_id)
 
-/obj/machinery/computer/piratepad_control/civilian/ui_interact(mob/user, datum/tgui/ui)
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "CivCargoHoldTerminal", name)
-		ui.open()
-
-
 /obj/machinery/computer/piratepad_control/civilian/ui_data(mob/user)
 	var/list/data = list()
 	data["points"] = points
@@ -263,7 +257,7 @@
 ///Beacon to launch a new bounty setup when activated.
 /obj/item/civ_bounty_beacon
 	name = "гражданский маяк заказов"
-	desc = "Универсальный приёмник от Нанотрейзен, который посылает сигнал с требованием прислать гражданский терминал заказов и платформу прямо сюда. Чудеса!"
+	desc = "Универсальный приёмник от NanoTrasen, который посылает сигнал с требованием прислать гражданский терминал заказов и платформу прямо сюда. Чудеса!"
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "floor_beacon"
 	var/uses = 2

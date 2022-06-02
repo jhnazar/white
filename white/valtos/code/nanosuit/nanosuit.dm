@@ -1,17 +1,3 @@
-#define NANO_ARMOR "armor"
-#define NANO_CLOAK "cloak"
-#define NANO_SPEED "speed"
-#define NANO_STRENGTH "strength"
-#define NANO_NONE "none"
-#define NANO_JUMP_USE 30
-#define NANO_CHARGE_DELAY 20
-#define NANO_EMP_CHARGE_DELAY 45
-
-#define POWER_PUNCH "QQQ"
-#define HEAD_EXPLOSION "SSSS"
-#define MARTIALART_NANOSUIT "nanosuit strength"
-#define TRAIT_TACRELOAD "tac_reload_trait"
-
 /datum/action/item_action/dusting_implant
 	check_flags =  NONE
 	name = "Activate Dusting Implant"
@@ -650,14 +636,14 @@
 		ADD_TRAIT(src, TRAIT_NODROP, CLOTHING_TRAIT)
 		for(var/hud_type in datahuds)
 			var/datum/atom_hud/DHUD = GLOB.huds[hud_type]
-			DHUD.add_hud_to(user)
+			DHUD.show_to(user)
 
 /obj/item/clothing/head/helmet/space/hardsuit/nano/dropped(mob/living/carbon/human/user)
 	..()
 	if(user.head == src)
 		for(var/hud_type in datahuds)
 			var/datum/atom_hud/DHUD = GLOB.huds[hud_type]
-			DHUD.remove_hud_from(user)
+			DHUD.hide_from(user)
 			if(zoom)
 				toggle_zoom(user, TRUE)
 
@@ -682,7 +668,7 @@
 	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "sniper_zoom"
 
-/datum/action/item_action/nanosuit/zoom/Trigger()
+/datum/action/item_action/nanosuit/zoom/Trigger(trigger_flags)
 	var/obj/item/clothing/head/helmet/space/hardsuit/nano/NS = target
 	if(istype(NS))
 		NS.toggle_zoom(owner)
@@ -696,8 +682,8 @@
 	if(ishuman(user))
 		Wearer = user
 	if(slot == ITEM_SLOT_OCLOTHING)
-		var/turf/T = get_turf(src)
-		var/area/A = get_area(src)
+		var/turf/T = get_turf(user)
+		var/area/A = get_area(user)
 		ADD_TRAIT(src, TRAIT_NODROP, CLOTHING_TRAIT)
 		Wearer.unequip_everything()
 		Wearer.equipOutfit(outfit)
@@ -705,7 +691,7 @@
 		ADD_TRAIT(Wearer, TRAIT_NEVER_WOUNDED, "Nanosuit")
 		RegisterSignal(Wearer, list(COMSIG_MOB_ITEM_ATTACK,COMSIG_MOB_ITEM_AFTERATTACK,COMSIG_MOB_THROW,COMSIG_MOB_ATTACK_HAND), .proc/kill_cloak,TRUE)
 		if(is_station_level(T.z))
-			priority_announce("[user] использовал[user.ru_a()] запрещённый нанокостюм в [A.name]!","Экстренное сообщение!", sound = 'white/valtos/sounds/nanosuitengage.ogg')
+			priority_announce("[user] использовал[user.ru_a()] запрещённый нанокостюм в [A.name]!", "Экстренное сообщение!", sound('white/valtos/sounds/nanosuitengage.ogg'))
 		log_game("[user] has engaged [src]")
 		if(help_verb)
 			Wearer.verbs += help_verb
@@ -1086,7 +1072,7 @@
 
 /obj/item/tank/internals/emergency_oxygen/recharge/New()
 	..()
-	air_contents.set_moles(/datum/gas/oxygen, (10*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C))
+	air_contents.set_moles(GAS_O2, (10*ONE_ATMOSPHERE)*volume/(R_IDEAL_GAS_EQUATION*T20C))
 
 /obj/item/tank/internals/emergency_oxygen/recharge/process()
 	if(ishuman(loc))
@@ -1097,8 +1083,8 @@
 			return
 		else
 			sleep(10)
-			if(air_contents.get_moles(/datum/gas/oxygen) < (10*moles_val))
-				air_contents.set_moles(/datum/gas/oxygen, clamp(air_contents.total_moles()+moles_val,0,(10*moles_val)))
+			if(air_contents.get_moles(GAS_O2) < (10*moles_val))
+				air_contents.set_moles(GAS_O2, clamp(air_contents.total_moles()+moles_val,0,(10*moles_val)))
 		if(air_contents.return_pressure() != initial(distribute_pressure))
 			distribute_pressure = initial(distribute_pressure)
 
@@ -1182,17 +1168,10 @@
 			toggle_mode(NANO_STRENGTH)
 			return
 
-/datum/radial_menu/extract_image(E)
-	var/mutable_appearance/MA = new /mutable_appearance(E)
-	if(MA)
-		MA.layer = ABOVE_HUD_LAYER
-		MA.appearance_flags |= RESET_TRANSFORM | RESET_ALPHA
-	return MA
-
-//Nanosuit uplink item, available in all traitor rounds and nuke.
+//Nanosuit uplink item, available in all traitor rounds
 /datum/uplink_item/dangerous/nanosuit
-	name = "CryNet Nanosuit"
-	desc = "Become a posthuman warrior. The items cannot be taken off once you wear them and alerts the crew of your position if equipped on station."
+	name = "Нанокостюм CryNet"
+	desc = "Станьте постчеловеческим воином с этим тяжелобронированным и мощным костюмом. Нанокостюм нельзя снять, а также он предупреждают экипаж о вашем местоположении, если вы его надели."
 	item = /obj/item/storage/box/syndie_kit/nanosuit
 	cost = 30
 	surplus = 20

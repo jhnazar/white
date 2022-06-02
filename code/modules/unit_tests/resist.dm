@@ -5,7 +5,7 @@
 	TEST_ASSERT_EQUAL(human.fire_stacks, 0, "Human does not have 0 fire stacks pre-ignition")
 
 	human.adjust_fire_stacks(5)
-	human.IgniteMob()
+	human.ignite_mob()
 
 	TEST_ASSERT_EQUAL(human.fire_stacks, 5, "Human does not have 5 fire stacks pre-resist")
 
@@ -22,8 +22,8 @@
 	closet.open(human)
 	TEST_ASSERT(!(human in closet.contents), "Human was in the contents of an open closet")
 
-	//closet.close(human)
-	//TEST_ASSERT(human in closet.contents, "Human was not in the contents of the closed closet")
+	closet.close(human)
+	TEST_ASSERT(human in closet.contents, "Human was not in the contents of the closed closet")
 
-	//human.resist()
-	//TEST_ASSERT(!(human in closet.contents), "Human resisted out of a standard closet, but was still in it")
+	human.resist()
+	TEST_ASSERT(!(human in closet.contents), "Human resisted out of a standard closet, but was still in it")

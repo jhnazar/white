@@ -54,7 +54,7 @@
 	name = "wabbajack altar"
 	desc = "Whether you're sleeping or waking, it's going to be quite chaotic."
 	max_integrity = 1000
-	verb_say = "chants"
+	verb_say = "поёт"
 	var/obj/machinery/power/emitter/energycannon/magical/our_statue
 	var/list/mob/living/sleepers = list()
 	var/never_spoken = TRUE
@@ -311,17 +311,17 @@
 
 	//Here is all the possible paygate payment methods.
 	var/list/counted_money = list()
-	for(var/obj/item/coin/C in AM.GetAllContents()) //Coins.
+	for(var/obj/item/coin/C in AM.get_all_contents()) //Coins.
 		if(payees[AM] >= threshold)
 			break
 		payees[AM] += C.value
 		counted_money += C
-	for(var/obj/item/stack/spacecash/S in AM.GetAllContents()) //Paper Cash
+	for(var/obj/item/stack/spacecash/S in AM.get_all_contents()) //Paper Cash
 		if(payees[AM] >= threshold)
 			break
 		payees[AM] += S.value * S.amount
 		counted_money += S
-	for(var/obj/item/holochip/H in AM.GetAllContents()) //Holocredits
+	for(var/obj/item/holochip/H in AM.get_all_contents()) //Holocredits
 		if(payees[AM] >= threshold)
 			break
 		payees[AM] += H.credits

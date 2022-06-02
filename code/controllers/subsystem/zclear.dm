@@ -95,7 +95,7 @@ SUBSYSTEM_DEF(zclear)
 				//Zombie level detected.
 				announced_zombie_levels["[level.z_value]"] = TRUE
 				if(level.orbital_body)
-					priority_announce("Датчики дальнего действия Нанотрейзен показали, что все разумные формы жизни находящиеся в приоритетной точке [level.orbital_body.name] более не подают признаков жизни. Командованию рекомендуется организовать спасательную операцию для извлечения тел. В связи с характером угрозы в этом месте, сотрудникам службы безопасности, вооруженным смертоносным оружием, рекомендуется сопровождать спасательную команду.", "Сенсоры дальнего обнаружения Нанотрейзен")
+					priority_announce("Датчики дальнего действия NanoTrasen показали, что все разумные формы жизни находящиеся в приоритетной точке [level.orbital_body.name] более не подают признаков жизни. Командованию рекомендуется организовать спасательную операцию для извлечения тел. В связи с характером угрозы в этом месте, сотрудникам службы безопасности, вооруженным смертоносным оружием, рекомендуется сопровождать спасательную команду.", "Сенсоры дальнего обнаружения NanoTrasen")
 			continue
 		//Level is free, do the wiping thing.
 		LAZYREMOVE(autowipe, level)
@@ -152,6 +152,8 @@ SUBSYSTEM_DEF(zclear)
 	if(!z_level)
 		return
 
+	SSair.pause_z(z_level)
+
 	var/list/turfs = block(locate(1, 1, z_level), locate(world.maxx, world.maxy, z_level))
 	var/list/divided_turfs = list()
 	var/section_process_time = CLEAR_TURF_PROCESSING_TIME * 0.5 //There are 3 processes, cleaing atoms, cleaing turfs and then reseting atmos
@@ -165,7 +167,6 @@ SUBSYSTEM_DEF(zclear)
 		if(i % group_size == 0)
 			divided_turfs += list(current_group)
 			current_group = list()
-		SSair.remove_from_active(T)
 	divided_turfs += list(current_group)
 
 	//Create the wipe data datum
@@ -203,6 +204,7 @@ SUBSYSTEM_DEF(zclear)
 			//Done
 			LAZYREMOVE(processing_levels, cleardata)
 			//Finalize area
+			SSair.unpause_z(cleardata.zvalue)
 			var/area/spaceA = GLOB.areas_by_type[/area/space]
 			spaceA.reg_in_areas_in_z()	//<< Potentially slow proc
 			if(cleardata.completion_callback)
@@ -216,7 +218,7 @@ SUBSYSTEM_DEF(zclear)
 						nullspaced_mob_names += " - [M.name]\n"
 						valid = TRUE
 				if(valid)
-					priority_announce("Сенсоры сообщают о том, что несколько членов вашего экипажа пропало. Скорее всего их раскидало по космосу, их всё ещё можно попробовать найти.\n[nullspaced_mob_names]")
+					priority_announce("Сенсоры сообщают о том, что несколько членов экипажа пропало. Скорее всего их раскидало по космосу, их всё ещё можно попробовать найти.\n[nullspaced_mob_names]")
 	cleardata.process_num ++
 
 /*
@@ -226,7 +228,7 @@ SUBSYSTEM_DEF(zclear)
 	//Clear atoms
 	for(var/turf/T as() in turfs)
 		// Remove all atoms except abstract mobs
-		var/list/allowed_contents = T.GetAllContentsIgnoring(ignored_atoms)
+		var/list/allowed_contents = T.get_all_contents_ignoring(ignored_atoms)
 		allowed_contents -= T
 		for(var/i in 1 to allowed_contents.len)
 			var/thing = allowed_contents[i]
@@ -289,7 +291,9 @@ SUBSYSTEM_DEF(zclear)
 	for(var/datum/space_level/D as() in SSmapping.z_list)
 		if (D.linkage == CROSSLINKED)
 			possible_transtitons += D.z_value
-	var/_z = pick(possible_transtitons)
+	var/_z = safepick(possible_transtitons)
+	if(!_z)
+		_z = 2
 
 	//now select coordinates for a border turf
 	var/_x = rand(min,max)
@@ -302,7 +306,6 @@ SUBSYSTEM_DEF(zclear)
 	var/list/new_turfs = list()
 	for(var/turf/T as() in turfs)
 		//TODO: This doesn't update turfs around it.
-		SSair.remove_from_active(T)
 		var/turf/newT
 		if(istype(T, /turf/open/space))
 			newT = T
@@ -311,7 +314,7 @@ SUBSYSTEM_DEF(zclear)
 		if(!istype(newT.loc, /area/space))
 			var/area/newA = GLOB.areas_by_type[/area/space]
 			newA.contents += newT
-			newT.change_area(newT.loc, newA)
+			newT.transfer_area_lighting(newT.loc, newA)
 		newT.turf_flags &= ~NO_RUINS
 		new_turfs += newT
 	return new_turfs

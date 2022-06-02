@@ -91,7 +91,7 @@ GLOBAL_LIST_INIT_TYPED(sdql_spells, /obj/effect/proc_holder/spell, list())
 	)
 
 	var/static/list/enum_vars = list(
-		"invocation_type" = list("none", "whisper", "shout", "emote"),
+		"invocation_type" = list(INVOCATION_NONE, INVOCATION_WHISPER, INVOCATION_SHOUT, INVOCATION_EMOTE),
 		"selection_type" = list("view", "range"),
 		"smoke_spread" = list(0, 1, 2, 3),
 		"random_target_priority" = list(0, 1),
@@ -335,7 +335,7 @@ GLOBAL_LIST_INIT_TYPED(sdql_spells, /obj/effect/proc_holder/spell, list())
 				var/path = saved_vars[special_list_vars[params["list"]]]
 				var/datum/sample = new path
 				var/list/choosable_vars = map_var_list(sample.vars-list_vars[params["list"]], sample)
-				var/chosen_var = tgui_input_list(user, "Select variable to add.", "Add SDQL Spell", sortList(choosable_vars))
+				var/chosen_var = tgui_input_list(user, "Select variable to add.", "Add SDQL Spell", sort_list(choosable_vars))
 				if(chosen_var)
 					if(islist(sample.vars[choosable_vars[chosen_var]]))
 						list_vars[params["list"]][choosable_vars[chosen_var]] = list("type" = "list", "value" = null, "flags" = LIST_VAR_FLAGS_TYPED|LIST_VAR_FLAGS_NAMED)

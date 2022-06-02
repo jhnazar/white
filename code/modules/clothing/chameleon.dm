@@ -5,7 +5,7 @@
 	icon_icon = 'icons/mob/actions/actions_items.dmi'
 	button_icon_state = "random"
 
-/datum/action/item_action/chameleon/drone/randomise/Trigger()
+/datum/action/item_action/chameleon/drone/randomise/Trigger(trigger_flags)
 	if(!IsAvailable())
 		return
 
@@ -32,7 +32,7 @@
 	if (istype(target, /obj/item/clothing/mask/chameleon/drone))
 		button_icon_state = "drone_camogear_mask"
 
-/datum/action/item_action/chameleon/drone/togglehatmask/Trigger()
+/datum/action/item_action/chameleon/drone/togglehatmask/Trigger(trigger_flags)
 	if(!IsAvailable())
 		return
 
@@ -88,7 +88,7 @@
 		sortTim(standard_outfit_options, /proc/cmp_text_asc)
 	outfit_options = standard_outfit_options
 
-/datum/action/chameleon_outfit/Trigger()
+/datum/action/chameleon_outfit/Trigger(trigger_flags)
 	return select_outfit(owner)
 
 /datum/action/chameleon_outfit/proc/select_outfit(mob/user)
@@ -182,7 +182,7 @@
 /datum/action/item_action/chameleon/change/proc/select_look(mob/user)
 	var/obj/item/picked_item
 	var/picked_name
-	picked_name = input("Select [chameleon_name] to change into", "Chameleon [chameleon_name]", picked_name) as null|anything in sortList(chameleon_list, /proc/cmp_typepaths_asc)
+	picked_name = input("Select [chameleon_name] to change into", "Chameleon [chameleon_name]", picked_name) as null|anything in sort_list(chameleon_list, /proc/cmp_typepaths_asc)
 	if(!picked_name)
 		return
 	picked_item = chameleon_list[picked_name]
@@ -242,7 +242,7 @@
 	else
 		target.icon = initial(picked_item.icon)
 
-/datum/action/item_action/chameleon/change/Trigger()
+/datum/action/item_action/chameleon/change/Trigger(trigger_flags)
 	if(!IsAvailable())
 		return
 
@@ -352,18 +352,17 @@
 	agent_card.update_label()
 	agent_card.update_icon()
 
-/datum/action/item_action/chameleon/change/pda/update_item(obj/item/picked_item)
+/datum/action/item_action/chameleon/change/tablet/update_item(obj/item/picked_item)
 	..()
-	var/obj/item/pda/agent_pda = target
+	var/obj/item/modular_computer/tablet/pda/agent_pda = target
 	if(istype(agent_pda))
-		agent_pda.update_label()
-		agent_pda.update_icon()
+		agent_pda.update_appearance()
 
-/datum/action/item_action/chameleon/change/pda/apply_job_data(datum/job/job_datum)
+/datum/action/item_action/chameleon/change/tablet/apply_job_data(datum/job/job_datum)
 	..()
-	var/obj/item/pda/agent_pda = target
+	var/obj/item/modular_computer/tablet/pda/agent_pda = target
 	if(istype(agent_pda) && istype(job_datum))
-		agent_pda.ownjob = job_datum.title
+		agent_pda.saved_job = job_datum.title
 
 
 /obj/item/clothing/under/chameleon
@@ -375,7 +374,7 @@
 	greyscale_config_inhand_left = /datum/greyscale_config/jumpsuit_inhand_left
 	greyscale_config_inhand_right = /datum/greyscale_config/jumpsuit_inhand_right
 	greyscale_config_worn = /datum/greyscale_config/jumpsuit_worn
-	desc = "Это простой комбинезон. На запястье у него есть небольшой циферблат."
+	desc = "Простой комбинезон. На запястье у него есть небольшой циферблат."
 	sensor_mode = SENSOR_OFF //Hey who's this guy on the Syndicate Shuttle??
 	random_sensor = FALSE
 	resistance_flags = NONE
@@ -383,6 +382,13 @@
 	armor = list(MELEE = 10, BULLET = 10, LASER = 10, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 50)
 
 	var/datum/action/item_action/chameleon/change/chameleon_action
+
+/obj/item/clothing/under/chameleon/envirosuit/ratvar
+	name = "ratvarian engineer's envirosuit"
+	desc = "A tough envirosuit woven from alloy threads. It can take on the appearance of other jumpsuits."
+	icon_state = "engineer_envirosuit"
+	worn_icon = "engineer_envirosuit"
+	inhand_icon_state = "engineer_envirosuit"
 
 /obj/item/clothing/under/chameleon/Initialize()
 	. = ..()
@@ -490,7 +496,7 @@
 
 /obj/item/clothing/head/chameleon
 	name = "серая кепка"
-	desc = "Это бейсболка приятного серого цвета."
+	desc = "Бейсболка приятного серого цвета."
 	icon_state = "greysoft"
 
 	resistance_flags = NONE
@@ -515,6 +521,13 @@
 /obj/item/clothing/head/chameleon/broken/Initialize()
 	. = ..()
 	chameleon_action.emp_randomise(INFINITY)
+
+/obj/item/clothing/head/chameleon/envirohelm/ratvar
+	name = "ratvarian engineer's envirosuit helmet"
+	desc = "A tough envirohelm woven from alloy threads. It can take on the appearance of other headgear."
+	icon_state = "engineer_envirohelm"
+	worn_icon = "engineer_envirohelm"
+	flash_protect = TRUE
 
 /obj/item/clothing/head/chameleon/drone
 	// The camohat, I mean, holographic hat projection, is part of the
@@ -695,25 +708,25 @@
 	. = ..()
 	chameleon_action.emp_randomise(INFINITY)
 
-/obj/item/pda/chameleon
-	name = "ПДА"
-	var/datum/action/item_action/chameleon/change/pda/chameleon_action
+/obj/item/modular_computer/tablet/pda/chameleon
+	name = "tablet"
+	var/datum/action/item_action/chameleon/change/tablet/chameleon_action
 
-/obj/item/pda/chameleon/Initialize()
+/obj/item/modular_computer/tablet/pda/chameleon/Initialize()
 	. = ..()
 	chameleon_action = new(src)
-	chameleon_action.chameleon_type = /obj/item/pda
-	chameleon_action.chameleon_name = "PDA"
-	chameleon_action.chameleon_blacklist = typecacheof(list(/obj/item/pda/heads, /obj/item/pda/ai, /obj/item/pda/ai/pai), only_root_path = TRUE)
+	chameleon_action.chameleon_type = /obj/item/modular_computer/tablet/pda
+	chameleon_action.chameleon_name = "tablet"
+	chameleon_action.chameleon_blacklist = typecacheof(list(/obj/item/modular_computer/tablet/pda/heads), only_root_path = TRUE)
 	chameleon_action.initialize_disguises()
 
-/obj/item/pda/chameleon/emp_act(severity)
+/obj/item/modular_computer/tablet/pda/chameleon/emp_act(severity)
 	. = ..()
 	if(. & EMP_PROTECT_SELF)
 		return
 	chameleon_action.emp_randomise()
 
-/obj/item/pda/chameleon/broken/Initialize()
+/obj/item/modular_computer/tablet/pda/chameleon/broken/Initialize()
 	. = ..()
 	chameleon_action.emp_randomise(INFINITY)
 

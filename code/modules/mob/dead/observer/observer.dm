@@ -5,10 +5,9 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 
 /mob/dead/observer
 	name = "ghost"
-	desc = "Это призрак. Бу!" //jinkies!
+	desc = "Призрак. Бу!" //jinkies!
 	icon = 'icons/mob/mob.dmi'
 	icon_state = "ghost"
-	layer = GHOST_LAYER
 	stat = DEAD
 	density = FALSE
 	see_invisible = SEE_INVISIBLE_OBSERVER
@@ -22,6 +21,7 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 	light_power = 2
 	light_on = FALSE
 	shift_to_open_context_menu = FALSE
+	plane = GHOST_PLANE
 	var/can_reenter_corpse
 	var/datum/hud/living/carbon/hud = null // hud
 	var/bootime = 0
@@ -70,7 +70,10 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 		/mob/dead/observer/proc/dead_tele,
 		/mob/dead/observer/proc/open_spawners_menu,
 		/mob/dead/observer/proc/tray_view,
-		/mob/dead/observer/proc/open_minigames_menu))
+		/mob/dead/observer/proc/open_minigames_menu,
+		/mob/dead/observer/proc/pick_ghost_customization,
+		/mob/dead/observer/proc/toggle_ghost_hud_pref,
+		/mob/dead/observer/proc/toggle_inquisition))
 
 	if(icon_state in GLOB.ghost_forms_with_directions_list)
 		ghostimage_default = image(src.icon,src,src.icon_state + "_nodir")
@@ -384,6 +387,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	client.view_size.setDefault(getScreenSize(client.prefs.widescreenpref))//Let's reset so people can't become allseeing gods
 	client.view = "[client.prefs.widescreenwidth]x15"
 	SStgui.on_transfer(src, mind.current) // Transfer NanoUIs.
+	if(mind.current.stat == DEAD && SSlag_switch.measures[DISABLE_DEAD_KEYLOOP])
+		to_chat(src, span_warning("Чтобы покинуть тело используй кнопку Призрак."))
 	mind.current.key = key
 	mind.current.client.init_verbs()
 	return TRUE
@@ -410,6 +415,95 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 	inc_metabalance(src, METACOIN_DNR_REWARD, reason="Соединение с телом прервано. Приятного времяпрепровождения.")
 	return TRUE
+
+/mob/dead/observer/proc/toggle_ghost_hud_pref()
+	set name = "🔄 HUD призрака"
+	set category = "Призрак"
+	if(!client)
+		return
+	client.prefs.ghost_hud = !client.prefs.ghost_hud
+	to_chat(src, "Призрачный HUD теперь [client.prefs.ghost_hud ? "виден" : "не виден"].")
+	client.prefs.save_preferences()
+	hud_used.show_hud()
+	SSblackbox.record_feedback("nested tally", "preferences_verb", 1, list("Toggle Ghost HUD", "[client.prefs.ghost_hud ? "Enabled" : "Disabled"]"))
+
+/mob/dead/observer/proc/toggle_inquisition() // warning: unexpected inquisition
+	set name = "🔄 Изучение при клике"
+	set category = "Призрак"
+	if(!client)
+		return
+	client.prefs.inquisitive_ghost = !client.prefs.inquisitive_ghost
+	client.prefs.save_preferences()
+	if(client.prefs.inquisitive_ghost)
+		to_chat(src, span_notice("Буду изучать все, на что нажимаю."))
+	else
+		to_chat(src, span_notice("Больше не будешь изучать то, на что нажимаю."))
+	SSblackbox.record_feedback("nested tally", "preferences_verb", 1, list("Toggle Ghost Inquisitiveness", "[client.prefs.inquisitive_ghost ? "Enabled" : "Disabled"]"))
+
+GLOBAL_LIST_INIT(ghost_forms, sort_list(list("ghost","ghostking","ghostian2","skeleghost","ghost_red","ghost_black", \
+							"ghost_blue","ghost_yellow","ghost_green","ghost_pink", \
+							"ghost_cyan","ghost_dblue","ghost_dred","ghost_dgreen", \
+							"ghost_dcyan","ghost_grey","ghost_dyellow","ghost_dpink", "ghost_purpleswirl","ghost_funkypurp","ghost_pinksherbert","ghost_blazeit",\
+							"ghost_mellow","ghost_rainbow","ghost_camo","ghost_fire", "catghost")))
+
+/mob/dead/observer/proc/pick_form()
+	var/new_form = input(src, "Choose your ghostly form:","Thanks for supporting BYOND",null) as null|anything in GLOB.ghost_forms
+	if(new_form)
+		client.prefs.ghost_form = new_form
+		client.prefs.save_preferences()
+		update_icon(new_form)
+
+GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOST_ORBIT_SQUARE,GHOST_ORBIT_HEXAGON,GHOST_ORBIT_PENTAGON))
+
+/mob/dead/observer/proc/pick_ghost_orbit()
+	var/new_orbit = input(src, "Choose your ghostly orbit:","Thanks for supporting BYOND",null) as null|anything in GLOB.ghost_orbits
+	if(new_orbit)
+		client.prefs.ghost_orbit = new_orbit
+		client.prefs.save_preferences()
+		ghost_orbit = new_orbit
+
+/mob/dead/observer/proc/pick_ghost_accs()
+	var/new_ghost_accs = tgui_alert(usr,"Do you want your ghost to show full accessories where possible, hide accessories but still use the directional sprites where possible, or also ignore the directions and stick to the default sprites?",,list("full accessories", "only directional sprites", "default sprites"))
+	if(new_ghost_accs)
+		switch(new_ghost_accs)
+			if("full accessories")
+				client.prefs.ghost_accs = GHOST_ACCS_FULL
+			if("only directional sprites")
+				client.prefs.ghost_accs = GHOST_ACCS_DIR
+			if("default sprites")
+				client.prefs.ghost_accs = GHOST_ACCS_NONE
+		client.prefs.save_preferences()
+		update_icon()
+
+/mob/dead/observer/proc/pick_ghost_customization()
+	set name = "Настройка призрака"
+	set category = "Призрак"
+	if(!client)
+		return
+	switch(tgui_alert("Что хотим сменить?",,list("Форма","Тип орбиты","Побрякушки")))
+		if("Форма")
+			pick_form()
+		if("Тип орбиты")
+			pick_ghost_orbit()
+		if("Побрякушки")
+			pick_ghost_accs()
+
+/mob/dead/observer/proc/pick_ghost_others()
+	set name = "Вид других призраков"
+	set category = "Призрак"
+	if(!client)
+		return
+	var/new_ghost_others = tgui_alert(usr, "Хочешь изменить других призраков или же просто убрать их побрякушки?",,list("Их настройки", "Стандартные спрайты", "Белые призраки"))
+	if(new_ghost_others)
+		switch(new_ghost_others)
+			if("Их настройки")
+				client.prefs.ghost_others = GHOST_OTHERS_THEIR_SETTING
+			if("Стандартные спрайты")
+				client.prefs.ghost_others = GHOST_OTHERS_DEFAULT_SPRITE
+			if("Белые призраки")
+				client.prefs.ghost_others = GHOST_OTHERS_SIMPLE
+		client.prefs.save_preferences()
+		update_sight()
 
 /mob/dead/observer/proc/notify_cloning(message, sound, atom/source, flashwindow = TRUE)
 	if(flashwindow)
@@ -538,6 +632,10 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set name = "Радиус обзора"
 	set desc = "Change your view range."
 
+	if(SSlag_switch.measures[DISABLE_GHOST_ZOOM_TRAY] && !client?.holder)
+		to_chat(usr, span_notice("Запрещено."))
+		return
+
 	var/max_view = client.prefs.unlock_content ? GHOST_MAX_VIEW_RANGE_MEMBER : GHOST_MAX_VIEW_RANGE_DEFAULT
 	if(client.view_size.getView() == client.view_size.default)
 		var/list/views = list()
@@ -552,6 +650,11 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/verb/add_view_range(input as num)
 	set name = "Add View Range"
 	set hidden = TRUE
+
+	if(SSlag_switch.measures[DISABLE_GHOST_ZOOM_TRAY] && !client?.holder)
+		to_chat(usr, span_notice("Запрещено."))
+		return
+
 	var/max_view = client.prefs.unlock_content ? GHOST_MAX_VIEW_RANGE_MEMBER : GHOST_MAX_VIEW_RANGE_DEFAULT
 	if(input)
 		client.rescale_view(input, 0, ((max_view*2)+1) - 15)
@@ -738,12 +841,12 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/proc/show_data_huds()
 	for(var/hudtype in datahuds)
 		var/datum/atom_hud/H = GLOB.huds[hudtype]
-		H.add_hud_to(src)
+		H.show_to(src)
 
 /mob/dead/observer/proc/remove_data_huds()
 	for(var/hudtype in datahuds)
 		var/datum/atom_hud/H = GLOB.huds[hudtype]
-		H.remove_hud_from(src)
+		H.hide_from(src)
 
 /mob/dead/observer/verb/toggle_data_huds()
 	set name = " 🔄 Sec/Med/Diag HUD"
@@ -998,6 +1101,11 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set desc = "Toggles a view of sub-floor objects"
 
 	var/static/t_ray_view = FALSE
+
+	if(SSlag_switch.measures[DISABLE_GHOST_ZOOM_TRAY] && !client?.holder && !t_ray_view)
+		to_chat(usr, span_notice("Запрещено."))
+		return
+
 	t_ray_view = !t_ray_view
 
 	var/list/t_ray_images = list()

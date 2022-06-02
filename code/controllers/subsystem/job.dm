@@ -33,11 +33,10 @@ SUBSYSTEM_DEF(job)
 	var/list/chain_of_command = list(
 		"Captain" = 1,
 		"Head of Personnel" = 2,
-		"Research Director" = 3,
-		"Chief Engineer" = 4,
-		"Chief Medical Officer" = 5,
-		"Head of Security" = 6,
-		"Quartermaster" = 7)
+		"Head of Security" = 3,
+		"Research Director" = 4,
+		"Chief Engineer" = 5,
+		"Chief Medical Officer" = 6)
 
 	/// If TRUE, some player has been assigned Captaincy or Acting Captaincy at some point during the shift and has been given the spare ID safe code.
 	var/assigned_captain = FALSE
@@ -211,7 +210,7 @@ SUBSYSTEM_DEF(job)
 			if(AssignRole(player, job.title))
 				return TRUE
 
-/datum/controller/subsystem/job/proc/ResetOccupations()
+/datum/controller/subsystem/job/proc/ResetOccupations(faction = "Station")
 	JobDebug("Occupations reset.")
 	for(var/i in GLOB.new_player_list)
 		var/mob/dead/new_player/player = i
@@ -219,7 +218,7 @@ SUBSYSTEM_DEF(job)
 			player.mind.assigned_role = null
 			player.mind.special_role = null
 			SSpersistence.antag_rep_change[player.ckey] = 0
-	SetupOccupations()
+	SetupOccupations(faction)
 	unassigned = list()
 	return
 
@@ -515,7 +514,7 @@ SUBSYSTEM_DEF(job)
 				M.client.holder.auto_deadmin()
 			else
 				handle_auto_deadmin_roles(M.client, rank)
-		to_chat(M, "\n<span class='notice'>На должности <b>[ru_job_parse(rank)]</b> я подчиняюсь [job.supervisors]. Некоторые обстоятельства могут изменить это.</span>")
+		to_chat(M, span_notice("\nНа должности <b>[ru_job_parse(rank)]</b> я подчиняюсь [job.supervisors]. Некоторые обстоятельства могут изменить это."))
 		job.radio_help_message(M)
 		if(job.req_admin_notify)
 			to_chat(M, "\n<span class='revenbignotice'>Это важная работа. Перед уходом стоит найти себе замену.</spawn>")
@@ -709,10 +708,18 @@ SUBSYSTEM_DEF(job)
 		destination = arrivals_turfs[1]
 		destination.JoinPlayerHere(M, FALSE)
 		return TRUE
-	else
-		var/msg = "Unable to send mob [M] to late join!"
-		message_admins(msg)
-		CRASH(msg)
+
+	for(var/_sloc in GLOB.start_landmarks_list)
+		var/obj/effect/landmark/start/sloc = _sloc
+		if(sloc.name != M.job)
+			continue
+		sloc.JoinPlayerHere(M, FALSE)
+		message_admins("!! [M] входит в игру в зоне [get_area(M)].")
+		return TRUE
+
+	var/msg = "Unable to send mob [M] to late join!"
+	message_admins(msg)
+	CRASH(msg)
 
 
 ///////////////////////////////////
@@ -769,7 +776,7 @@ SUBSYSTEM_DEF(job)
 
 	additional_jobs_with_icons = list("Emergency Response Team Commander", "Security Response Officer", "Engineering Response Officer", "Medical Response Officer", \
 		"Entertainment Response Officer", "Religious Response Officer", "Janitorial Response Officer", "Death Commando", "Security Officer (Engineering)", \
-		"Security Officer (Cargo)", "Security Officer (Medical)", "Security Officer (Science)")
+		"Security Officer (Cargo)", "Security Officer (Medical)", "Security Officer (Science)","SOBR","SOBR Leader")
 
 	centcom_jobs = list("Central Command","VIP Guest","Custodian","Thunderdome Overseer","CentCom Official","Medical Officer","Research Officer", \
 		"Special Ops Officer","Admiral","CentCom Commander","CentCom Bartender","Private Security Force")
@@ -814,3 +821,25 @@ SUBSYSTEM_DEF(job)
 			id_card.add_wildcards(list(ACCESS_CAPTAIN), mode=FORCE_ADD_ALL)
 
 	assigned_captain = TRUE
+
+/datum/controller/subsystem/job/proc/SetJobPositions(job_path, total, spawn_pos, wipe_current = FALSE)
+	for(var/I in occupations)
+		var/datum/job/J = I
+		if(istype(J, job_path))
+			J.total_positions = total
+			J.spawn_positions = spawn_pos
+			if(wipe_current)
+				J.current_positions = 0
+
+/datum/controller/subsystem/job/proc/AddJobPositions(job_path, total, spawn_pos)
+	for(var/I in occupations)
+		var/datum/job/J = I
+		if(istype(J, job_path))
+			J.total_positions = total
+			J.spawn_positions = spawn_pos
+
+/datum/controller/subsystem/job/proc/GetJobPositions(job_path)
+	for(var/I in occupations)
+		var/datum/job/J = I
+		if(istype(J, job_path))
+			return J.spawn_positions

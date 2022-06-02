@@ -6,7 +6,6 @@ GLOBAL_LIST_INIT(possible_abductor_names, list("Alpha","Beta","Gamma","Delta","E
 	roundend_category = "abductors"
 	antagpanel_category = "Abductor"
 	job_rank = ROLE_ABDUCTOR
-	antag_hud_type = ANTAG_HUD_ABDUCTOR
 	antag_hud_name = "abductor"
 	show_in_antagpanel = FALSE //should only show subtypes
 	show_to_ghosts = TRUE
@@ -86,8 +85,6 @@ GLOBAL_LIST_INIT(possible_abductor_names, list("Alpha","Beta","Gamma","Delta","E
 		if(istype(LM, landmark_type) && LM.team_number == team.team_number)
 			H.forceMove(LM.loc)
 			break
-
-	add_antag_hud(antag_hud_type, antag_hud_name, owner.current)
 
 /datum/antagonist/abductor/scientist/on_gain()
 	ADD_TRAIT(owner, TRAIT_ABDUCTOR_SCIENTIST_TRAINING, ABDUCTOR_ANTAGONIST)
@@ -173,7 +170,6 @@ GLOBAL_LIST_INIT(possible_abductor_names, list("Alpha","Beta","Gamma","Delta","E
 	name = "Abductee"
 	roundend_category = "abductees"
 	antagpanel_category = "Abductee"
-	antag_hud_type = ANTAG_HUD_ABDUCTOR
 	antag_hud_name = "abductee"
 	greentext_reward = 10
 
@@ -193,15 +189,6 @@ GLOBAL_LIST_INIT(possible_abductor_names, list("Alpha","Beta","Gamma","Delta","E
 	var/objtype = (prob(75) ? /datum/objective/abductee/random : pick(subtypesof(/datum/objective/abductee/) - /datum/objective/abductee/random))
 	var/datum/objective/abductee/O = new objtype()
 	objectives += O
-
-/datum/antagonist/abductee/apply_innate_effects(mob/living/mob_override)
-	var/mob/living/M = mob_override || owner.current
-	add_antag_hud(antag_hud_type, antag_hud_name, M)
-
-/datum/antagonist/abductee/remove_innate_effects(mob/living/mob_override)
-	var/mob/living/M = mob_override || owner.current
-	remove_antag_hud(antag_hud_type, M)
-
 
 // LANDMARKS
 /obj/effect/landmark/abductor

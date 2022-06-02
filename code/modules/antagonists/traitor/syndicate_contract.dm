@@ -37,7 +37,7 @@
 	contract.payout = rand(0, 2)
 	contract.generate_dropoff()
 
-	ransom = 100 * rand(18, 45)
+	ransom = 1000 * rand(18, 45)
 
 	var/base = pick_list(WANTED_FILE, "basemessage")
 	var/verb_string = pick_list(WANTED_FILE, "verb")
@@ -134,7 +134,7 @@
 				D.adjust_money(-points_to_check)
 
 			priority_announce("Один из членов экипажа был захвачен конкурирующей организацией - нам нужно заплатить выкуп, чтобы вернуть его. \
-							В соответствии с политикой мы взяли часть средств станции, чтобы компенсировать общую стоимость.", null, null, null, "Защита Активов Нанотрейзен")
+							В соответствии с политикой мы взяли часть средств станции, чтобы компенсировать общую стоимость.", null, null, null, "Защита Активов NanoTrasen")
 
 			sleep(30)
 

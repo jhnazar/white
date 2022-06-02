@@ -6,8 +6,8 @@
 
 
 /obj/item/mecha_parts/mecha_equipment/drill
-	name = "exosuit drill"
-	desc = "Equipment for engineering and combat exosuits. This is the drill that'll pierce the heavens!"
+	name = "бур экзокостюма"
+	desc = "Оборудование для инженерных и боевых экзокостюмов. Для бурения породы и прочего."
 	icon_state = "mecha_drill"
 	equip_cooldown = 15
 	energy_drain = 10
@@ -89,7 +89,7 @@
 /turf/closed/mineral/drill_act(obj/item/mecha_parts/mecha_equipment/drill/drill, mob/user)
 	for(var/turf/closed/mineral/M in range(drill.chassis,1))
 		if(get_dir(drill.chassis,M)&drill.chassis.dir)
-			M.gets_drilled()
+			M.attempt_drill()
 	drill.log_message("[user] drilled through [src]", LOG_MECHA)
 	drill.move_ores()
 
@@ -102,11 +102,11 @@
 
 
 /obj/item/mecha_parts/mecha_equipment/drill/proc/move_ores()
-	if(locate(/obj/item/mecha_parts/mecha_equipment/hydraulic_clamp) in chassis.equipment && istype(chassis, /obj/vehicle/sealed/mecha/working/ripley))
+	if(locate(/obj/item/mecha_parts/mecha_equipment/hydraulic_clamp) in chassis.flat_equipment && istype(chassis, /obj/vehicle/sealed/mecha/working/ripley))
 		var/obj/vehicle/sealed/mecha/working/ripley/R = chassis //we could assume that it's a ripley because it has a clamp, but that's ~unsafe~ and ~bad practice~
 		R.collect_ore()
 
-/obj/item/mecha_parts/mecha_equipment/drill/can_attach(obj/vehicle/sealed/mecha/M as obj)
+/obj/item/mecha_parts/mecha_equipment/drill/can_attach(obj/vehicle/sealed/mecha/M, attach_right = FALSE)
 	if(..())
 		if(istype(M, /obj/vehicle/sealed/mecha/working) || istype(M, /obj/vehicle/sealed/mecha/combat))
 			return TRUE
@@ -150,8 +150,8 @@
 			target_part.dismember(BRUTE)
 
 /obj/item/mecha_parts/mecha_equipment/drill/diamonddrill
-	name = "diamond-tipped exosuit drill"
-	desc = "Equipment for engineering and combat exosuits. This is an upgraded version of the drill that'll pierce the heavens!"
+	name = "алмазный бур экзокостюма"
+	desc = "Оборудование для инженерных и боевых экзоскелетов. Это усовершенствованная версия!"
 	icon_state = "mecha_diamond_drill"
 	equip_cooldown = 10
 	drill_delay = 4
@@ -161,11 +161,12 @@
 
 
 /obj/item/mecha_parts/mecha_equipment/mining_scanner
-	name = "exosuit mining scanner"
-	desc = "Equipment for working exosuits. It will automatically check surrounding rock for useful minerals."
+	name = "рудный сканер для экзокостюма"
+	desc = "Оборудование для рабочих экзокостюмов. Он автоматически проверит окружающую породу на наличие полезных ископаемых."
 	icon_state = "mecha_analyzer"
 	selectable = 0
 	equip_cooldown = 15
+	equipment_slot = MECHA_UTILITY
 	var/scanning_time = 0
 	mech_flags = EXOSUIT_MODULE_WORKING
 
@@ -173,7 +174,7 @@
 	. = ..()
 	START_PROCESSING(SSfastprocess, src)
 
-/obj/item/mecha_parts/mecha_equipment/mining_scanner/can_attach(obj/vehicle/sealed/mecha/M as obj)
+/obj/item/mecha_parts/mecha_equipment/mining_scanner/can_attach(obj/vehicle/sealed/mecha/M, attach_right = FALSE)
 	if(..())
 		if(istype(M, /obj/vehicle/sealed/mecha/working))
 			return TRUE

@@ -8,9 +8,9 @@
 	icon = 'icons/obj/machines/camera.dmi'
 	icon_state = "camera" //mapping icon to represent upgrade states. if you want a different base icon, update default_camera_icon as well as this.
 	use_power = ACTIVE_POWER_USE
-	idle_power_usage = 50
-	active_power_usage = 1000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.02
 	layer = WALL_OBJ_LAYER
+	plane = GAME_PLANE_UPPER
 	resistance_flags = FIRE_PROOF
 	damage_deflection = 12
 	armor = list(MELEE = 50, BULLET = 20, LASER = 20, ENERGY = 20, BOMB = 0, BIO = 0, RAD = 0, FIRE = 90, ACID = 50)
@@ -43,15 +43,29 @@
 	///Represents a signel source of camera alarms about movement or camera tampering
 	var/datum/alarm_handler/alarm_manager
 
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera, 0)
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera/autoname, 0)
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera/emp_proof, 0)
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera/motion, 0)
+MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/camera/xray, 0)
+
 /obj/machinery/camera/preset/toxins //Bomb test site in space
-	name = "Hardened Bomb-Test Camera"
-	desc = "A specially-reinforced camera with a long lasting battery, used to monitor the bomb testing site. An external light is attached to the top."
+	name = "полигонная камера"
+	desc = "Специально усиленная камера с длительным сроком службы батареи, используемая для наблюдения за местом испытания бомбы. К верхней части камеры приделана лампочка."
 	c_tag = "Bomb Testing Site"
 	network = list("rd","toxins")
 	use_power = NO_POWER_USE //Test site is an unpowered area
 	invuln = TRUE
 	light_range = 10
 	start_active = TRUE
+
+/obj/machinery/camera/preset/toxins/num1
+	name = "полигонная камера №1"
+	c_tag = "Bomb Testing Site №1"
+
+/obj/machinery/camera/preset/toxins/num2
+	name = "полигонная камера №2"
+	c_tag = "Bomb Testing Site №2"
 
 /obj/machinery/camera/Initialize(mapload, obj/structure/camera_assembly/CA)
 	. = ..()
@@ -129,7 +143,7 @@
 	if(isXRay(TRUE)) //don't reveal it's upgraded if was done via MALF AI Upgrade Camera Network ability
 		. += "<hr>Похоже тут установлен X-ray фотодиод."
 	else
-		. += "<hr><span class='info'>Она может быть улучшена X-ray фотодиодом при помощи <b>анализатора</b>.</span>"
+		. += "<hr><span class='info'>Она может быть улучшена рентгеновским фотодиодом при помощи <b>газоанализатора</b>.</span>"
 	if(isMotion())
 		. += "<hr>Здесь установлен датчик движения."
 	else
@@ -314,10 +328,10 @@
 			return
 
 	// OTHER
-	if((istype(I, /obj/item/paper) || istype(I, /obj/item/pda)) && isliving(user))
+	if((istype(I, /obj/item/paper) || istype(I, /obj/item/modular_computer/tablet)) && isliving(user))
 		var/mob/living/U = user
 		var/obj/item/paper/X = null
-		var/obj/item/pda/P = null
+		var/obj/item/modular_computer/tablet/P = null
 
 		var/itemname = ""
 		var/info = ""
@@ -325,10 +339,10 @@
 			X = I
 			itemname = X.name
 			info = X.info
-		else
+		if(istype(I, /obj/item/modular_computer/tablet))
 			P = I
 			itemname = P.name
-			info = P.notehtml
+			info = P.note
 		to_chat(U, span_notice("Показываю [itemname] перед камерой..."))
 		U.changeNext_move(CLICK_CD_MELEE)
 		for(var/mob/O in GLOB.player_list)

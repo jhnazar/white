@@ -4,6 +4,8 @@
 
 // Operates TGUI
 /obj/item/modular_computer/ui_interact(mob/user, datum/tgui/ui)
+	if(issilicon(user)) // silicons have some issues regarding real_name
+		saved_identification = user.real_name
 	if(!enabled)
 		if(ui)
 			ui.close()
@@ -34,8 +36,12 @@
 	// This screen simply lists available programs and user may select them.
 	var/obj/item/computer_hardware/hard_drive/hard_drive = all_components[MC_HDD]
 	if(!hard_drive || !hard_drive.stored_files || !hard_drive.stored_files.len)
-		to_chat(user, span_danger("<b>[src.name]</b>издает три звуковых сигнала, на экране отображается предупреждение \"ОШИБКА ДИСКА\"."))
+		to_chat(user, span_danger("<b>[src.name]</b> издает три звуковых сигнала, на экране отображается предупреждение \"ОШИБКА ДИСКА\"."))
 		return // No HDD, No HDD files list or no stored files. Something is very broken.
+
+	if(honkamnt > 0) // EXTRA annoying, huh!
+		honkamnt--
+		playsound(src, 'sound/items/bikehorn.ogg', 30, TRUE)
 
 	ui = SStgui.try_update_ui(user, src, ui)
 	if (!ui)
@@ -44,32 +50,45 @@
 		if(ui.open())
 			ui.send_asset(get_asset_datum(/datum/asset/simple/headers))
 
+/obj/item/modular_computer/ui_static_data(mob/user)
+	. = ..()
+	var/list/data = list()
+
+	data["show_imprint"] = istype(src, /obj/item/modular_computer/tablet/)
+
+	return data
 
 /obj/item/modular_computer/ui_data(mob/user)
 	var/list/data = get_header_data()
 	data["device_theme"] = device_theme
-
 	data["login"] = list()
+
+	data["disk"] = null
+
 	var/obj/item/computer_hardware/card_slot/cardholder = all_components[MC_CARD]
 	data["cardholder"] = FALSE
+
 	if(cardholder)
 		data["cardholder"] = TRUE
-		var/obj/item/card/id/stored_card = cardholder.GetID()
-		if(stored_card)
-			var/stored_name = stored_card.registered_name
-			var/stored_title = stored_card.assignment
-			if(!stored_name)
-				stored_name = "Неизвестный"
-			if(!stored_title)
-				stored_title = "Неизвестный"
-			data["login"] = list(
-				IDName = stored_name,
-				IDJob = stored_title,
-			)
+
+		var/stored_name = saved_identification
+		var/stored_title = saved_job
+		if(!stored_name)
+			stored_name = "Неизвестный"
+		if(!stored_title)
+			stored_title = "Неизвестный"
+		data["login"] = list(
+			IDName = saved_identification,
+			IDJob = saved_job,
+		)
+		data["proposed_login"] = list(
+			IDName = cardholder.current_identification,
+			IDJob = cardholder.current_job,
+		)
 
 	data["removable_media"] = list()
 	if(all_components[MC_SDD])
-		data["removable_media"] += "removable storage disk"
+		data["removable_media"] += "Eject Disk"
 	var/obj/item/computer_hardware/ai_slot/intelliholder = all_components[MC_AI]
 	if(intelliholder?.stored_card)
 		data["removable_media"] += "intelliCard"
@@ -89,6 +108,7 @@
 	data["has_light"] = has_light
 	data["light_on"] = light_on
 	data["comp_light_color"] = comp_light_color
+	data["pai"] = pai
 	return data
 
 
@@ -134,9 +154,10 @@
 
 		if("PC_runprogram")
 			var/prog = params["name"]
+			var/is_disk = params["is_disk"]
 			var/datum/computer_file/program/P = null
 			var/mob/user = usr
-			if(hard_drive)
+			if(hard_drive && !is_disk)
 				P = hard_drive.find_file_by_name(prog)
 
 			if(!P || !istype(P)) // Program not found or it's not executable program.
@@ -191,7 +212,7 @@
 			var/param = params["name"]
 			var/mob/user = usr
 			switch(param)
-				if("removable storage disk")
+				if("Eject Disk")
 					var/obj/item/computer_hardware/hard_drive/portable/portable_drive = all_components[MC_SDD]
 					if(!portable_drive)
 						return
@@ -208,13 +229,37 @@
 					var/obj/item/computer_hardware/card_slot/cardholder = all_components[MC_CARD]
 					if(!cardholder)
 						return
-					cardholder.try_eject(user)
+					if(cardholder.try_eject(user))
+						playsound(src, 'sound/machines/card_slide.ogg', 50)
 				if("secondary RFID card")
 					var/obj/item/computer_hardware/card_slot/cardholder = all_components[MC_CARD2]
 					if(!cardholder)
 						return
-					cardholder.try_eject(user)
+					if(cardholder.try_eject(user))
+						playsound(src, 'sound/machines/card_slide.ogg', 50)
+		if("PC_Imprint_ID")
+			var/obj/item/computer_hardware/card_slot/cardholder = all_components[MC_CARD]
+			var/obj/item/computer_hardware/identifier/id_hardware = all_components[MC_IDENTIFY]
+			if(!cardholder)
+				return
 
+			saved_identification = cardholder.current_identification
+			saved_job = cardholder.current_job
+
+			if(id_hardware)
+				id_hardware.UpdateDisplay()
+
+			playsound(src, 'sound/machines/terminal_processing.ogg', 15, TRUE)
+		if("PC_Pai_Interact")
+			switch(params["option"])
+				if("eject")
+					usr.put_in_hands(pai)
+					pai.slotted = FALSE
+					pai = null
+					to_chat(usr, span_notice("You remove the pAI from the [name]."))
+				if("interact")
+					pai.attack_self(usr)
+			return UI_UPDATE
 
 		else
 			return

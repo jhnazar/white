@@ -18,8 +18,8 @@
 
 #define FAIL 8
 /obj/machinery/rnd/experimentor
-	name = "\improper E.X.P.E.R.I-MENTOR"
-	desc = "A \"replacement\" for the destructive analyzer with a slight tendency to catastrophically fail."
+	name = "Э.К.С.П.Е.Р.И.Ментор"
+	desc = "\"Альтернативная\" версия деструктивного анализатора с небольшой тенденцией к катастрофическому выходу из строя."
 	icon = 'icons/obj/machines/heavy_lathe.dmi'
 	icon_state = "h_lathe"
 	density = TRUE
@@ -86,6 +86,7 @@
 		/obj/item/transfer_valve))
 
 /obj/machinery/rnd/experimentor/RefreshParts()
+	. = ..()
 	for(var/obj/item/stock_parts/manipulator/M in component_parts)
 		if(resetTime > 0 && (resetTime - M.rating) >= 1)
 			resetTime -= M.rating
@@ -359,7 +360,7 @@
 				FB.fire()
 		else if(prob(EFFECT_PROB_LOW-badThingCoeff))
 			visible_message(span_danger("[capitalize(src.name)] malfunctions, melting [exp_on] and releasing a burst of flame!"))
-			explosion(loc, -1, 0, 0, 0, 0, flame_range = 2)
+			explosion(src, devastation_range = -1, flame_range = 2, adminlog = FALSE)
 			investigate_log("Experimentor started a fire.", INVESTIGATE_EXPERIMENTOR)
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_MEDIUM-badThingCoeff))
@@ -373,7 +374,7 @@
 					heat_capacity = 1
 				removed.set_temperature(min((removed.return_temperature()*heat_capacity + 100000)/heat_capacity, 1000))
 			env.merge(removed)
-			air_update_turf(FALSE, FALSE)
+			air_update_turf()
 			investigate_log("Experimentor has released hot air.", INVESTIGATE_EXPERIMENTOR)
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_MEDIUM-badThingCoeff))
@@ -419,7 +420,7 @@
 					heat_capacity = 1
 				removed.set_temperature((removed.return_temperature()*heat_capacity - 75000)/heat_capacity)
 			env.merge(removed)
-			air_update_turf(FALSE, FALSE)
+			air_update_turf()
 			investigate_log("Experimentor has released cold air.", INVESTIGATE_EXPERIMENTOR)
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_MEDIUM-badThingCoeff))
@@ -516,7 +517,7 @@
 	addtimer(CALLBACK(src, .proc/reset_exp), resetTime)
 
 /obj/machinery/rnd/experimentor/proc/boom()
-	explosion(src, 1, 5, 10, 5, 1)
+	explosion(src, devastation_range = 1, heavy_impact_range = 5, light_impact_range = 10, flash_range = 5, adminlog = TRUE)
 
 /obj/machinery/rnd/experimentor/proc/honk()
 	playsound(src, 'sound/items/bikehorn.ogg', 500)
@@ -652,7 +653,7 @@
 /obj/item/relic/proc/do_explode(mob/user)
 	if(loc == user)
 		visible_message(span_notice("<b>[src.name]</b>'s top opens, releasing a powerful blast!"))
-		explosion(user.loc, 0, rand(1,5), rand(1,5), rand(1,5), rand(1,5), flame_range = 2)
+		explosion(src, heavy_impact_range = rand(1,5), light_impact_range = rand(1,5), flame_range = 2, flash_range = rand(1,5), adminlog = TRUE)
 		warn_admins(user, "Explosion")
 		qdel(src) //Comment this line to produce a light grenade (the bomb that keeps on exploding when used)!!
 

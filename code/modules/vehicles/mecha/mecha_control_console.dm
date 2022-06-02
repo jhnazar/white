@@ -1,12 +1,13 @@
 /obj/machinery/computer/mecha
-	name = "exosuit control console"
-	desc = "Used to remotely locate or lockdown exosuits."
+	name = "Консоль управления экзоскостюмами"
+	desc = "Используется для удаленного отслеживания местоположения или блокировки экзокостюмов с подключенными маячками слежения."
 	icon_screen = "mecha"
 	icon_keyboard = "tech_key"
 	req_access = list(ACCESS_ROBOTICS)
 	circuit = /obj/item/circuitboard/computer/mecha_control
 
 /obj/machinery/computer/mecha/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "ExosuitControlConsole", name)
@@ -31,7 +32,6 @@
 			airtank = M.internal_tank ? M.return_pressure() : null,
 			pilot = M.return_drivers(),
 			location = get_area_name(M, TRUE),
-			active_equipment = M.selected,
 			emp_recharging = MT.recharging,
 			tracker_ref = REF(MT)
 		)
@@ -73,8 +73,8 @@
 				. = TRUE
 
 /obj/item/mecha_parts/mecha_tracking
-	name = "exosuit tracking beacon"
-	desc = "Device used to transmit exosuit data."
+	name = "сигнальный маяк экзокостюма"
+	desc = "Устройство, используемое для передачи данных о состоянии экзокостюма и удаленного отключения."
 	icon = 'icons/obj/device.dmi'
 	icon_state = "motion2"
 	w_class = WEIGHT_CLASS_SMALL
@@ -98,8 +98,7 @@
 				<b>Cell Charge:</b> [isnull(cell_charge) ? "Not Found":"[chassis.cell.percent()]%"]<br>
 				<b>Airtank:</b> [chassis.internal_tank ? "[round(chassis.return_pressure(), 0.01)]" : "Not Equipped"] kPa<br>
 				<b>Pilot:</b> [chassis.return_drivers() || "None"]<br>
-				<b>Location:</b> [get_area_name(chassis, TRUE) || "Unknown"]<br>
-				<b>Active Equipment:</b> [chassis.selected || "None"]"}
+				<b>Location:</b> [get_area_name(chassis, TRUE) || "Unknown"]"}
 	if(istype(chassis, /obj/vehicle/sealed/mecha/working/ripley))
 		var/obj/vehicle/sealed/mecha/working/ripley/RM = chassis
 		answer += "<br><b>Used Cargo Space:</b> [round((LAZYLEN(RM.cargo) / RM.cargo_capacity * 100), 0.01)]%"
@@ -118,7 +117,7 @@
 	chassis = null
 	return ..()
 
-/obj/item/mecha_parts/mecha_tracking/try_attach_part(mob/user, obj/vehicle/sealed/mecha/M)
+/obj/item/mecha_parts/mecha_tracking/try_attach_part(mob/user, obj/vehicle/sealed/mecha/M, attach_right = FALSE)
 	if(!..())
 		return
 	M.trackers += src
@@ -143,8 +142,8 @@
 	recharging = FALSE
 
 /obj/item/mecha_parts/mecha_tracking/ai_control
-	name = "exosuit AI control beacon"
-	desc = "A device used to transmit exosuit data. Also allows active AI units to take control of said exosuit."
+	name = "маяк удаленного доступа к экзокостюму для ИИ"
+	desc = "Устройство, используемое для передачи данных экзокостюма. Позволяет ИИ взять экзокостюм под прямой контроль."
 	ai_beacon = TRUE
 
 /obj/item/storage/box/mechabeacons

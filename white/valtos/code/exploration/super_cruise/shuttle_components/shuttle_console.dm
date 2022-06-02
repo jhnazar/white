@@ -1,5 +1,3 @@
-GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
-
 /obj/machinery/computer/shuttle_flight
 	name = "shuttle console"
 	desc = "A shuttle control computer."
@@ -88,6 +86,7 @@ GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
 		say("Пошёл нахуй, ящер ёбаный.")
 		//to_chat(user, span_warning("Пошёл на хуй, ящер ёбаный."))
 		return
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "OrbitalMap")
@@ -96,6 +95,7 @@ GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
 	ui.set_autoupdate(FALSE)
 
 /obj/machinery/computer/shuttle_flight/ui_close(mob/user, datum/tgui/tgui)
+	. = ..()
 	SSorbits.open_orbital_maps -= tgui
 
 /obj/machinery/computer/shuttle_flight/ui_static_data(mob/user)
@@ -242,7 +242,7 @@ GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
 							shuttleObject.controlling_computer = src
 							say("Шаттл запрошен.")
 							return
-				say("Место стыковки в жопе. Свяжитесь с техниками Нанотрейзен.")
+				say("Место стыковки в жопе. Свяжитесь с техниками NanoTrasen.")
 		return
 
 	switch(action)
@@ -403,22 +403,22 @@ GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
 			SSzclear.temp_keep_z(target_port.z)
 			switch(SSshuttle.moveShuttle(shuttleId, target_port.id, 1))
 				if(0)
-					say("Инициируем замедление скорости, готовимся к сближению.")
+					say("Инициация замедления скорости, готовимся к сближению.")
 					if(current_user)
 						remove_eye_control(current_user)
 					QDEL_NULL(shuttleObject)
 					//Hold the shuttle in the docking position until ready.
 					mobile_port.setTimer(INFINITY)
-					say("Ожидаем очищение гиперпространственных пробок...")
+					say("Активирован протокол стыковки, ожидайте...")
 					INVOKE_ASYNC(src, .proc/unfreeze_shuttle, mobile_port, SSmapping.get_level(target_port.z))
 				if(1)
 					to_chat(usr, span_warning("Неправильный шаттл запрошен."))
 				else
-					to_chat(usr, span_notice("Не понимаю. Иди на хуй."))
+					to_chat(usr, span_notice("Ошибка! Данные повреждены."))
 
 /obj/machinery/computer/shuttle_flight/proc/launch_shuttle()
 	if(check_banned_contents())
-		say("Пидарас, ты ксенохуйню с шаттла выкинь, тогда побазарим.")
+		say("ВНИМАНИЕ! На борту обнаружен ксенопаразит! Активирован протокол сдерживания! В случае заражения экипажа вколите пострадавшему антипаразитный препарат из чрезвычайного хранилища!")
 		return
 	if(SSorbits.interdicted_shuttles.Find(shuttleId))
 		if(world.time < SSorbits.interdicted_shuttles[shuttleId])
@@ -450,7 +450,7 @@ GLOBAL_VAR_INIT(shuttle_docking_jammed, FALSE)
 /obj/machinery/computer/shuttle_flight/proc/check_banned_contents()
 	var/obj/docking_port/mobile/port = SSshuttle.getShuttle(shuttleId)
 	for(var/area/A in port.shuttle_areas)
-		for(var/atom/movable/AM in A.GetAllContents())
+		for(var/atom/movable/AM in A.get_all_contents())
 			for(var/type in banned_types)
 				if(istype(AM, type))
 					return TRUE

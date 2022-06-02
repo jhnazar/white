@@ -8,7 +8,6 @@
 	antagpanel_category = "Changeling"
 	job_rank = ROLE_CHANGELING
 	antag_moodlet = /datum/mood_event/focused
-	antag_hud_type = ANTAG_HUD_CHANGELING
 	antag_hud_name = "changeling"
 	hijack_speed = 0.5
 	greentext_reward = 30
@@ -28,6 +27,7 @@
 	var/chem_recharge_rate = 0.5
 	var/chem_recharge_slowdown = 0
 	var/sting_range = 2
+	var/changelingID = "Changeling"
 	var/geneticdamage = 0
 	var/was_absorbed = FALSE //if they were absorbed by another ling already.
 	var/isabsorbing = FALSE
@@ -62,12 +62,28 @@
 	QDEL_NULL(emporium_action)
 	. = ..()
 
+/datum/antagonist/changeling/proc/generate_name()
+	var/honorific
+	if(owner.current.gender == FEMALE)
+		honorific = "Мисс"
+	else if(owner.current.gender == MALE)
+		honorific = "Мистер"
+	else
+		honorific = "Мистер"
+	if(GLOB.possible_changeling_IDs.len)
+		changelingID = pick(GLOB.possible_changeling_IDs)
+		GLOB.possible_changeling_IDs -= changelingID
+		changelingID = "[honorific] [changelingID]"
+	else
+		changelingID = "[honorific] [rand(1,999)]"
+
 /datum/antagonist/changeling/proc/create_actions()
 	cellular_emporium = new(src)
 	emporium_action = new(cellular_emporium)
 	emporium_action.Grant(owner.current)
 
 /datum/antagonist/changeling/on_gain()
+	generate_name()
 	create_actions()
 	reset_powers()
 	create_initial_profile()
@@ -252,10 +268,6 @@
 		if(verbose)
 			to_chat(user, span_warning("Мы не получим никакой пользы от поглощения данного существа."))
 		return
-	if(has_dna(target.dna))
-		if(verbose)
-			to_chat(user, span_warning("Мы уже имеем данный ДНК в нашем хранилище!"))
-		return
 	if(!target.has_dna())
 		if(verbose)
 			to_chat(user, span_warning("<b>[target]</b> не подходит нашему биологическому типу."))
@@ -366,19 +378,18 @@
 			B.decoy_override = TRUE
 		RegisterSignal(C, list(COMSIG_MOB_MIDDLECLICKON, COMSIG_MOB_ALTCLICKON), .proc/stingAtom)
 	var/mob/living/M = mob_override || owner.current
-	add_antag_hud(antag_hud_type, antag_hud_name, M)
 	handle_clown_mutation(M, "Нам удалось вознестись над нашей клоунской натурой в прошлом, теперь мы способны использовать оружие без вреда себе.")
 
 /datum/antagonist/changeling/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/M = mob_override || owner.current
-	remove_antag_hud(antag_hud_type, M)
 	handle_clown_mutation(M, removing = FALSE)
 	UnregisterSignal(owner.current, list(COMSIG_MOB_MIDDLECLICKON, COMSIG_MOB_ALTCLICKON))
 
 
 /datum/antagonist/changeling/greet()
 	if (you_are_greet)
-		to_chat(owner.current, span_boldannounce("Мы генокрад! Нам удалось поглотить одного из членов экипажа станции и занять его форму."))
+		to_chat(owner.current, "<span class='boldannounce'>Мы [changelingID], генокрад! Нам удалось поглотить одного из членов экипажа станции и занять его форму.</span>")
+	to_chat(owner.current, "<span class='boldannounce'>Используй \"[MODE_TOKEN_CHANGELING] сообщение\" для связи со своими собратьями.</span>")
 	to_chat(owner.current, "<b>Мы должны выполнить следующие цели:</b>")
 	owner.current.playsound_local(get_turf(owner.current), 'sound/ambience/antag/ling_aler.ogg', 100, FALSE, pressure_affected = FALSE, use_reverb = FALSE)
 
@@ -463,7 +474,7 @@
 
 /datum/antagonist/changeling/admin_add(datum/mind/new_owner,mob/admin)
 	. = ..()
-	to_chat(new_owner.current, span_boldannounce("Наши силы пробудились. Частички памяти мгновенно дают нам понять, что... мы генокрад!"))
+	to_chat(new_owner.current, span_boldannounce("Наши силы пробудились. Частички памяти мгновенно дают нам понять, мы [changelingID], генокрад!"))
 
 /datum/antagonist/changeling/get_admin_commands()
 	. = ..()
@@ -555,7 +566,9 @@
 
 	//Removed sanity if(changeling) because we -want- a runtime to inform us that the changelings list is incorrect and needs to be fixed.
 	parts += "<b>ДНК украдено:</b> [absorbedcount]"
+	parts += "<b>ID Генокрада:</b> [changelingID]."
 	parts += " "
+
 	if(objectives.len)
 		var/count = 1
 		for(var/datum/objective/objective in objectives)
@@ -572,6 +585,9 @@
 		parts += span_redtext("Генокрад провален.")
 
 	return parts.Join("<br>")
+
+/datum/antagonist/changeling/antag_listing_name()
+	return ..() + "([changelingID])"
 
 /datum/antagonist/changeling/xenobio/antag_listing_name()
 	return ..() + "(Xenobio)"

@@ -11,7 +11,6 @@
 GLOBAL_LIST_INIT(glass_recipes, list ( \
 	new/datum/stack_recipe("направленное окно", /obj/structure/window/unanchored, time = 0, on_floor = TRUE, window_checks = TRUE), \
 	new/datum/stack_recipe("полноценное окно", /obj/structure/window/fulltile/unanchored, 2, time = 0, on_floor = TRUE, window_checks = TRUE), \
-	new/datum/stack_recipe("запасное окно", /obj/machinery/door/firedoor/window, 2, time = 30, on_floor = TRUE, window_checks = FALSE, one_per_turf = TRUE), \
 	new/datum/stack_recipe("осколок стекла", /obj/item/shard, time = 0, on_floor = TRUE), \
 	new/datum/stack_recipe("стеклянная плитка", /obj/item/stack/tile/glass, 1, 4, 20)
 ))
@@ -60,7 +59,8 @@ GLOBAL_LIST_INIT(glass_recipes, list ( \
 		use(1)
 		to_chat(user, span_notice("Присоединяю провод к стеклу."))
 		var/obj/item/stack/light_w/new_tile = new(user.loc)
-		new_tile.add_fingerprint(user)
+		if (!QDELETED(new_tile))
+			new_tile.add_fingerprint(user)
 		return
 	if(istype(W, /obj/item/stack/rods))
 		var/obj/item/stack/rods/V = W
@@ -86,7 +86,7 @@ GLOBAL_LIST_INIT(pglass_recipes, list ( \
 
 /obj/item/stack/sheet/plasmaglass
 	name = "плазмастекло"
-	desc = "Стеклянный лист из плазмосиликатного сплава. Это выглядит чрезвычайно жестким и достаточно огнестойким."
+	desc = "Стеклянный лист из плазмосиликатного сплава. Обладает отличной огнестойкостью и повышенной прочностью."
 	singular_name = "лист плазмастекла"
 	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-pglass"
@@ -113,7 +113,8 @@ GLOBAL_LIST_INIT(pglass_recipes, list ( \
 		var/obj/item/stack/rods/V = W
 		if (V.get_amount() >= 1 && get_amount() >= 1)
 			var/obj/item/stack/sheet/plasmarglass/RG = new (get_turf(user))
-			RG.add_fingerprint(user)
+			if (!QDELETED(RG))
+				RG.add_fingerprint(user)
 			var/replace = user.get_inactive_held_item()==src
 			V.use(1)
 			use(1)
@@ -140,7 +141,7 @@ GLOBAL_LIST_INIT(reinforced_glass_recipes, list ( \
 
 /obj/item/stack/sheet/rglass
 	name = "армированное стекло"
-	desc = "Стекло, в котором, кажется, есть стержни или что-то застряло."
+	desc = "Стекло, укрепленное металлической арморешеткой."
 	singular_name = "лист армированного стекла"
 	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-rglass"
@@ -192,7 +193,7 @@ GLOBAL_LIST_INIT(prglass_recipes, list ( \
 
 /obj/item/stack/sheet/plasmarglass
 	name = "армированное плазмастекло"
-	desc = "Стеклянный лист из плазмосиликатного сплава и стержневой матрицы. Это выглядит безнадежно жестким и почти пожаробезопасным!"
+	desc = "Стеклянный лист из плазмосиликатного сплава укрепленный металлической армосеткой. Обладает невероятной огнестойкостью и хорошей прочностью."
 	singular_name = "лист армированного плазмастекла"
 	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-prglass"

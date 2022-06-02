@@ -4,8 +4,8 @@
  * Placed machine that handles destructive experiments (but can also do the normal ones)
  */
 /obj/machinery/destructive_scanner
-	name = "Experimental Destructive Scanner"
-	desc = "A much larger version of the hand-held scanner, a charred label warns about its destructive capabilities."
+	name = "экспериментально-деструктивный сканер"
+	desc = "Гораздо более крупная версия ручного сканера, обугленная этикетка предупреждает о его разрушительных возможностях."
 	icon = 'icons/obj/machines/experisci.dmi'
 	icon_state = "tube_open"
 	circuit = /obj/item/circuitboard/machine/destructive_scanner
@@ -30,11 +30,12 @@
 	var/aggressive = FALSE
 	for(var/mob/living/living_mob in pickup_zone)
 		if(!(obj_flags & EMAGGED) && ishuman(living_mob)) //Can only kill humans when emagged.
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 25)
+			playsound(src, 'white/valtos/sounds/error1.ogg', 25)
 			say("Cannot scan with humans inside.")
 			return
 		aggressive = TRUE
 	start_closing(aggressive)
+	use_power(idle_power_usage)
 
 ///Closes the machine to kidnap everything in the turf into it.
 /obj/machinery/destructive_scanner/proc/start_closing(aggressive)
@@ -47,6 +48,7 @@
 	scanning = TRUE
 	update_icon()
 	playsound(src, 'sound/machines/destructive_scanner/TubeDown.ogg', 100)
+	use_power(idle_power_usage)
 	addtimer(CALLBACK(src, .proc/start_scanning, aggressive), 1.2 SECONDS)
 
 ///Starts scanning the fancy scanning effects
@@ -55,6 +57,7 @@
 		playsound(src, 'sound/machines/destructive_scanner/ScanDangerous.ogg', 100, extrarange = 5)
 	else
 		playsound(src, 'sound/machines/destructive_scanner/ScanSafe.ogg', 100)
+	use_power(active_power_usage)
 	addtimer(CALLBACK(src, .proc/finish_scanning, aggressive), 6 SECONDS)
 
 

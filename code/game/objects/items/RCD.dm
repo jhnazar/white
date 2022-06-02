@@ -210,7 +210,8 @@ RLD
 #define RCD_DESTRUCTIVE_SCAN_COOLDOWN (RCD_HOLOGRAM_FADE_TIME + 1 SECONDS)
 
 /obj/item/construction/rcd
-	name = "автоматический строительный комплекс (РЦД)"
+	name = "РЦД - автоматический строительный комплекс"
+	desc = "Многофункциональный инструмент для быстрого строительства и разбора базовых конструкций, можно загрузить дополнительные чертежи."
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "rcd"
 	worn_icon_state = "RCD"
@@ -735,14 +736,15 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 	addtimer(CALLBACK(src, .proc/detonate_pulse_explode), 50)
 
 /obj/item/construction/rcd/proc/detonate_pulse_explode()
-	explosion(src, 0, 0, 3, 1, flame_range = 1)
+	explosion(src, light_impact_range = 3, flame_range = 1, flash_range = 1)
 	qdel(src)
 
 /obj/item/construction/rcd/update_overlays()
 	. = ..()
 	if(has_ammobar)
 		var/ratio = CEILING((matter / max_matter) * ammo_sections, 1)
-		. += "[icon_state]_charge[ratio]"
+		if(ratio > 0)
+			. += "[icon_state]_charge[ratio]"
 
 /obj/item/construction/rcd/Initialize()
 	. = ..()
@@ -799,7 +801,7 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 	canRturf = TRUE
 
 /obj/item/rcd_ammo
-	name = "картридж спрессованной материи"
+	name = "малый картридж спрессованной материи"
 	desc = "А на вид он выглядит значительно легче."
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "rcdammo"
@@ -811,8 +813,11 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 	var/ammoamt = 40
 
 /obj/item/rcd_ammo/large
+	name = "большой картридж спрессованной материи"
+	desc = "Если прошлый казался вам неестественно тяжелым, то этот в 4 раза тяжелее обычного!"
 	custom_materials = list(/datum/material/iron=48000, /datum/material/glass=32000)
 	ammoamt = 160
+	color = "#cc99ff"
 
 
 /obj/item/construction/rcd/combat/admin
@@ -851,8 +856,8 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 
 
 /obj/item/construction/rld
-	name = "Rapid Lighting Device (RLD)"
-	desc = "A device used to rapidly provide lighting sources to an area. Reload with iron, plasteel, glass or compressed matter cartridges."
+	name = "РЛД - Светопостановщик"
+	desc = "Устройство для быстрого монтажа импровизированного освещения. Чертежи выкуплены у компании Б.Е.П.И.С."
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "rld-5"
 	worn_icon_state = "RPD"
@@ -1147,8 +1152,8 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 	to_chat(user, span_notice("You switch [src] to [current_layer]."))
 
 /obj/item/construction/plumbing/research
-	name = "research plumbing constructor"
-	desc = "A type of plumbing constructor designed to rapidly deploy the machines needed to conduct cytological research."
+	name = "Хим-фаб конструктор (научный)"
+	desc = "Тип Хим-фаб конструктора, предназначенный для быстрого развертывания машин, необходимых для проведения цитологических исследований."
 	icon_state = "plumberer_sci"
 	inhand_icon_state = "plumberer_sci"
 	lefthand_file = 'icons/mob/inhands/equipment/tools_lefthand.dmi'
@@ -1178,19 +1183,23 @@ GLOBAL_VAR_INIT(icon_holographic_window, init_holographic_window())
 	var/upgrade
 
 /obj/item/rcd_upgrade/frames
-	desc = "It contains the design for machine frames and computer frames."
+	name = "Диск с чертежами для РЦД - Машиностроение"
+	desc = "Он содержит чертежи для машинных и компьютерных каркасов."
 	upgrade = RCD_UPGRADE_FRAMES
 
 /obj/item/rcd_upgrade/simple_circuits
-	desc = "It contains the design for firelock, air alarm, fire alarm, apc circuits and crap power cells."
+	name = "Диск с чертежами для РЦД - Контролеры"
+	desc = "Он чертежи для плат пожарных шлюзов, контролера АТМОСа, пожарной сигнализации, контролера электропитания и даже синтеза примитивных батарей."
 	upgrade = RCD_UPGRADE_SIMPLE_CIRCUITS
 
 /obj/item/rcd_upgrade/silo_link
-	desc = "It contains direct silo connection RCD upgrade."
+	name = "Диск с чертежами для РЦД - Сило-линк"
+	desc = "Он содержит обновление для прямого подключения к хранилищу ресурсов. Связь осуществляется мультитулом."
 	upgrade = RCD_UPGRADE_SILO_LINK
 
 /obj/item/rcd_upgrade/furnishing
-	desc = "It contains the design for chairs, stools, tables, and glass tables."
+	name = "Диск с чертежами для РЦД - Фуринитура"
+	desc = "Он содержит чертежи стульев, табуреток, столов и стеклянных столов."
 	upgrade = RCD_UPGRADE_FURNISHING
 
 /datum/action/item_action/rcd_scan

@@ -9,8 +9,8 @@
 	pass_flags = PASSTABLE | PASSGRILLE
 	ventcrawler = VENTCRAWLER_ALWAYS
 	gender = NEUTER
-	emote_see = list("jiggles", "bounces in place")
-	speak_emote = list("blorbles")
+	emote_see = list("покачивается", "подпрыгивает")
+	speak_emote = list("пузырит")
 	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	hud_type = /datum/hud/ooze
 	minbodytemp = 250
@@ -168,7 +168,7 @@
 	return (ooze.ooze_nutrition >= nutrition_cost && !active)
 
 ///Give the mob a speed boost, heat it up every second, and end the ability in 6 seconds
-/datum/action/cooldown/metabolicboost/Trigger()
+/datum/action/cooldown/metabolicboost/Trigger(trigger_flags)
 	. = ..()
 	if(!.)
 		return
@@ -216,7 +216,7 @@
 	stop_consuming() //Shit out the vored mob before u go go
 
 ///Try to consume the pulled mob
-/datum/action/consume/Trigger()
+/datum/action/consume/Trigger(trigger_flags)
 	. = ..()
 	if(!.)
 		return
@@ -364,8 +364,9 @@
 		return
 
 	ooze.visible_message("<span class='nicegreen>[ooze] launches a mending globule!</span>", span_notice("You launch a mending globule."))
+	var/modifiers = params2list(params)
 	var/obj/projectile/globule/globule = new (ooze.loc)
-	globule.preparePixelProjectile(target, ooze, params)
+	globule.preparePixelProjectile(target, ooze, modifiers)
 	globule.def_zone = ooze.zone_selected
 	globule.fire()
 	ooze.adjust_ooze_nutrition(-5)
@@ -432,7 +433,7 @@
 	cooldown_time = 10 SECONDS
 
 ///Try to put the pulled mob in a cocoon
-/datum/action/cooldown/gel_cocoon/Trigger()
+/datum/action/cooldown/gel_cocoon/Trigger(trigger_flags)
 	. = ..()
 	if(!.)
 		return

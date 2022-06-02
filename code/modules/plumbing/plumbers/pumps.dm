@@ -6,8 +6,7 @@
 	icon_state = "pump"
 	anchored = FALSE
 	density = TRUE
-	idle_power_usage = 10
-	active_power_usage = 1000
+	use_power = NO_POWER_USE
 
 	///units we pump per second
 	var/pump_power = 1
@@ -41,7 +40,7 @@
 		if(!geyser) //we didnt find one, abort
 			geyserless = TRUE
 			visible_message(span_warning("The [name] makes a sad beep!"))
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 50)
+			playsound(src, 'white/valtos/sounds/error1.ogg', 50)
 			return
 
 	pump(delta_time)

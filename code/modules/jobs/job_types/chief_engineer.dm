@@ -17,6 +17,9 @@
 
 	outfit = /datum/outfit/job/ce
 
+	skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
+
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_ENG
 
@@ -46,7 +49,7 @@
 
 	id = /obj/item/card/id/advanced/silver
 	belt = /obj/item/storage/belt/utility/chief/full
-	l_pocket = /obj/item/pda/heads/ce
+	l_pocket = /obj/item/modular_computer/tablet/pda/heads/ce
 	ears = /obj/item/radio/headset/heads/ce
 	uniform = /obj/item/clothing/under/rank/engineering/chief_engineer
 	shoes = /obj/item/clothing/shoes/sneakers/brown

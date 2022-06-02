@@ -50,7 +50,7 @@
 		COMSIG_ATOM_EXIT = .proc/on_exit,
 	)
 
-	AddElement(/datum/element/connect_loc, loc_connections)
+	AddComponent(/datum/component/connect_loc_behalf, src, loc_connections)
 
 /obj/structure/necropolis_gate/Destroy(force)
 	if(force)
@@ -78,6 +78,7 @@
 	icon = 'icons/effects/96x96.dmi'
 	icon_state = "gate_blocker"
 	layer = EDGED_TURF_LAYER
+	plane = GAME_PLANE_UPPER
 	pixel_x = -32
 	pixel_y = -32
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT

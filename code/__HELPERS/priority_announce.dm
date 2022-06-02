@@ -14,7 +14,7 @@
 			announcement += "<h2 class='alert'>[html_encode(title)]</h2>"
 	else if(type == "Captain")
 		announcement += "<h1 class='alert'>Капитан Объявляет</h1>"
-		GLOB.news_network.SubmitArticle(text, "Капитан Объявляет", "Станционные Объявления", null)
+		GLOB.news_network.submit_article(text, "Капитан Объявляет", "Станционные Объявления", null)
 
 	else
 		if(!sender_override)
@@ -26,9 +26,9 @@
 
 		if(!sender_override)
 			if(title == "")
-				GLOB.news_network.SubmitArticle(text, "Центральное Командование", "Станционные Объявления", null)
+				GLOB.news_network.submit_article(text, "Центральное Командование", "Станционные Объявления", null)
 			else
-				GLOB.news_network.SubmitArticle(title + "\n" + text, "Центральное Командование", "Станционные Объявления", null)
+				GLOB.news_network.submit_article(title + "\n" + text, "Центральное Командование", "Станционные Объявления", null)
 
 	///If the announcer overrides alert messages, use that message.
 	if(SSstation.announcer.custom_alert_message && !has_important_message)
@@ -39,7 +39,8 @@
 
 	var/s = sound(sound)
 	for(var/mob/M in GLOB.player_list)
-		if(!isnewplayer(M) && M.can_hear() && (is_station_level(M.z) || is_mining_level(M.z) || is_centcom_level(M.z)))
+		var/turf/T = get_turf(M)
+		if(!isnewplayer(M) && M.can_hear() && (is_station_level(T.z) || is_mining_level(T.z) || is_centcom_level(T.z)))
 			to_chat(M, announcement)
 			if(M.client.prefs.toggles & SOUND_ANNOUNCEMENTS)
 				SEND_SOUND(M, s)
@@ -99,7 +100,8 @@
 		message = html_encode(message)
 
 	for(var/mob/M in GLOB.player_list)
-		if(!isnewplayer(M) && M.can_hear() && (is_station_level(M.z) || is_mining_level(M.z) || is_centcom_level(M.z)))
+		var/turf/T = get_turf(M)
+		if(!isnewplayer(M) && M.can_hear() && (is_station_level(T.z) || is_mining_level(T.z) || is_centcom_level(T.z)))
 			to_chat(M, "<h1 class='alert'>[title]</h1><span class='alert'><big>[message]</big></span>\n\n")
 			if(M.client.prefs.toggles & SOUND_ANNOUNCEMENTS)
 				if(alert)

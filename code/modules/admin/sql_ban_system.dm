@@ -258,6 +258,7 @@
 							"Medical" = GLOB.medical_positions,
 							"Science" = GLOB.science_positions,
 							"Supply" = GLOB.supply_positions,
+							"Service" = GLOB.service_positions,
 							"Scum" = GLOB.scum_positions)
 		for(var/department in job_lists)
 			//the first element is the department head so they need the same javascript call as above
@@ -278,7 +279,7 @@
 			output += "</div></div>"
 		//departments/groups that don't have command staff would throw a javascript error since there's no corresponding reference for toggle_head()
 		var/list/headless_job_lists = list("Silicon" = GLOB.nonhuman_positions,
-										"Abstract" = list("Appearance", "Emote", "Deadchat", "OOC"))
+										"Abstract" = list("Appearance", "Emote", "Deadchat", "OOC", "Urgent Adminhelp"))
 		for(var/department in headless_job_lists)
 			output += "<div class='column'><label class='rolegroup [ckey(department)]'><input type='checkbox' name='[department]' class='hidden' [usr.client.prefs.tgui_fancy ? " onClick='toggle_checkboxes(this, \"_com\")'" : ""]>[department]</label><div class='content'>"
 			break_counter = 0
@@ -350,7 +351,7 @@
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/list/error_state = list()
 	var/player_key
@@ -445,7 +446,7 @@
 			if("server")
 				roles_to_ban += "Server"
 			if("role")
-				href_list.Remove("Command", "Security", "Engineering", "Medical", "Science", "Supply", "Silicon", "Abstract", "Service", "Ghost and Other Roles", "Antagonist Positions") //remove the role banner hidden input values
+				href_list.Remove("Command", "Security", "Engineering", "Medical", "Science", "Supply", "Scum", "Silicon", "Abstract", "Service", "Ghost and Other Roles", "Antagonist Positions") //remove the role banner hidden input values
 				if(href_list[href_list.len] == "roleban_delimiter")
 					error_state += "Role ban was selected but no roles to ban were selected."
 				else
@@ -456,7 +457,7 @@
 			else
 				error_state += "No ban type was selected."
 	if(error_state.len)
-		to_chat(usr, span_danger("Ban not [edit_id ? "edited" : "created"] because the following errors were present:\n[error_state.Join("\n")]") , confidential = TRUE)
+		to_chat(usr, span_danger("Ban not [edit_id ? "edited" : "created"] because the following errors were present:\n[error_state.Join("\n")]"))
 		return
 	if(edit_id)
 		edit_ban(edit_id, player_key, ip_check, player_ip, cid_check, player_cid, use_last_connection, applies_to_admins, duration, interval, reason, mirror_edit, old_key, old_ip, old_cid, old_applies, page, admin_key, changes)
@@ -467,7 +468,7 @@
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/player_ckey = ckey(player_key)
 	if(player_ckey)
@@ -514,7 +515,7 @@
 			if(R_EVERYTHING && !(R_EVERYTHING & rank.can_edit_rights)) //edit rights are a more effective way to check hierarchical rank since many non-headmins have R_PERMISSIONS now
 				max_adminbans = MAX_ADMINBANS_PER_HEADMIN
 			if(adminban_count >= max_adminbans)
-				to_chat(usr, span_danger("You've already logged [max_adminbans] admin ban(s) or more. Do not abuse this function!") , confidential = TRUE)
+				to_chat(usr, span_danger("You've already logged [max_adminbans] admin ban(s) or more. Do not abuse this function!"))
 				qdel(query_check_adminban_count)
 				return
 		qdel(query_check_adminban_count)
@@ -575,34 +576,21 @@
 		create_message("note", player_ckey, admin_ckey, note_reason, null, null, 0, 0, null, 0, severity)
 	var/client/C = GLOB.directory[player_ckey]
 	var/datum/admin_help/AH = admin_ticket_log(player_ckey, msg)
-	//var/appeal_url = "No ban appeal url set!"
-	//appeal_url = CONFIG_GET(string/banappeals)
-	//var/is_admin = FALSE
 	if(C)
 		build_ban_cache(C)
-		to_chat(C, span_boldannounce("Сработала защита от детей. Этот раунд - последний."))
-		//to_chat(C, span_boldannounce("You have been [applies_to_admins ? "admin " : ""]banned by [usr.client.key] from [roles_to_ban[1] == "Server" ? "the server" : " Roles: [roles_to_ban.Join(", ")]"].\nReason: [reason]</span><br><span class='danger'>This ban is [isnull(duration) ? "permanent." : "temporary, it will be removed in [time_message]."] The round ID is [GLOB.round_id].</span><br><span class='danger'>To appeal this ban go to [appeal_url]"))
-		//if(GLOB.admin_datums[C.ckey] || GLOB.deadmins[C.ckey])
-		//	is_admin = TRUE
-		//if(roles_to_ban[1] == "Server" && (!is_admin || (is_admin && applies_to_admins)))
-		//	qdel(C)
+		to_chat(C.mob, span_boldannounce("Сработала защита от детей. Этот раунд - последний."))
 	if(roles_to_ban[1] == "Server" && AH)
 		AH.Resolve()
 	for(var/client/i in GLOB.clients - C)
 		if(i.address == player_ip || i.computer_id == player_cid)
 			build_ban_cache(i)
-			to_chat(i, span_boldannounce("Сработала защита от детей. Этот раунд - последний."))
-			//to_chat(i, span_boldannounce("You have been [applies_to_admins ? "admin " : ""]banned by [usr.client.key] from [roles_to_ban[1] == "Server" ? "the server" : " Roles: [roles_to_ban.Join(", ")]"].\nReason: [reason]</span><br><span class='danger'>This ban is [isnull(duration) ? "permanent." : "temporary, it will be removed in [time_message]."] The round ID is [GLOB.round_id].</span><br><span class='danger'>To appeal this ban go to [appeal_url]"))
-			//if(GLOB.admin_datums[i.ckey] || GLOB.deadmins[i.ckey])
-			//	is_admin = TRUE
-			//if(roles_to_ban[1] == "Server" && (!is_admin || (is_admin && applies_to_admins)))
-			//	qdel(i)
+			to_chat(i.mob, span_boldannounce("Сработала защита от детей. Этот раунд - последний."))
 
 /datum/admins/proc/unban_panel(player_key, admin_key, player_ip, player_cid, page = 0)
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/datum/browser/unban_panel = new(usr, "unbanpanel", "Unbanning Panel", 850, 600)
 	unban_panel.add_stylesheet("unbanpanelcss", 'html/admin/unbanpanel.css')
@@ -745,7 +733,7 @@
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/target = ban_target_string(player_key, player_ip, player_cid)
 	if(tgui_alert(usr, "Please confirm unban of [target] from [role].", "Unban confirmation", list("Yes", "No")) == "No")
@@ -770,18 +758,18 @@
 	var/client/C = GLOB.directory[player_key]
 	if(C)
 		build_ban_cache(C)
-		to_chat(C, span_boldannounce("[usr.client.key] has removed a ban from [role] for your key.") , confidential = TRUE)
+		to_chat(C, span_boldannounce("[usr.client.key] has removed a ban from [role] for your key."))
 	for(var/client/i in GLOB.clients - C)
 		if(i.address == player_ip || i.computer_id == player_cid)
 			build_ban_cache(i)
-			to_chat(i, span_boldannounce("[usr.client.key] has removed a ban from [role] for your IP or CID.") , confidential = TRUE)
+			to_chat(i, span_boldannounce("[usr.client.key] has removed a ban from [role] for your IP or CID."))
 	unban_panel(player_key, admin_key, player_ip, player_cid, page)
 
 /datum/admins/proc/edit_ban(ban_id, player_key, ip_check, player_ip, cid_check, player_cid, use_last_connection, applies_to_admins, duration, interval, reason, mirror_edit, old_key, old_ip, old_cid, old_applies, admin_key, page, list/changes)
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/player_ckey = ckey(player_key)
 	var/bantime
@@ -834,7 +822,7 @@
 			if(R_EVERYTHING && !(R_EVERYTHING & rank.can_edit_rights)) //edit rights are a more effective way to check hierarchical rank since many non-headmins have R_PERMISSIONS now
 				max_adminbans = MAX_ADMINBANS_PER_HEADMIN
 			if(adminban_count >= max_adminbans)
-				to_chat(usr, span_danger("You've already logged [max_adminbans] admin ban(s) or more. Do not abuse this function!") , confidential = TRUE)
+				to_chat(usr, span_danger("You've already logged [max_adminbans] admin ban(s) or more. Do not abuse this function!"))
 				qdel(query_check_adminban_count)
 				return
 		qdel(query_check_adminban_count)
@@ -902,18 +890,18 @@
 	var/client/C = GLOB.directory[old_key]
 	if(C)
 		build_ban_cache(C)
-		to_chat(C, span_boldannounce("[usr.client.key] has edited the [changes_keys_text] of a ban for your key.") , confidential = TRUE)
+		to_chat(C, span_boldannounce("[usr.client.key] has edited the [changes_keys_text] of a ban for your key."))
 	for(var/client/i in GLOB.clients - C)
 		if(i.address == old_ip || i.computer_id == old_cid)
 			build_ban_cache(i)
-			to_chat(i, span_boldannounce("[usr.client.key] has edited the [changes_keys_text] of a ban for your IP or CID.") , confidential = TRUE)
+			to_chat(i, span_boldannounce("[usr.client.key] has edited the [changes_keys_text] of a ban for your IP or CID."))
 	unban_panel(player_key, null, null, null, page)
 
 /datum/admins/proc/ban_log(ban_id)
 	if(!check_rights(R_BAN))
 		return
 	if(!SSdbcore.Connect())
-		to_chat(usr, span_danger("Failed to establish database connection.") , confidential = TRUE)
+		to_chat(usr, span_danger("Failed to establish database connection."))
 		return
 	var/datum/db_query/query_get_ban_edits = SSdbcore.NewQuery({"
 		SELECT edits FROM [format_table_name("ban")] WHERE id = :ban_id

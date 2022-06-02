@@ -203,9 +203,9 @@
 	user.visible_message(span_warning("<b>[user]</b> начинает наводить [lasgun] прямо на [ru_gde_zone(limb.name)] <b>[victim]</b>...") , span_userdanger("Начинаю наводить [lasgun] прямо на [user == victim ? "свою " : " "][ru_parse_zone(limb.name)][user == victim ? "" : " <b>[victim]</b>"]..."))
 	if(!do_after(user, base_treat_time  * self_penalty_mult, target=victim, extra_checks = CALLBACK(src, .proc/still_exists)))
 		return
-	var/damage = lasgun.chambered.BB.damage
-	lasgun.chambered.BB.wound_bonus -= 30
-	lasgun.chambered.BB.damage *= self_penalty_mult
+	var/damage = lasgun.chambered.loaded_projectile.damage
+	lasgun.chambered.loaded_projectile.wound_bonus -= 30
+	lasgun.chambered.loaded_projectile.damage *= self_penalty_mult
 	if(!lasgun.process_fire(victim, victim, TRUE, null, limb.body_zone))
 		return
 	victim.emote("agony")
@@ -304,3 +304,9 @@
 	status_effect_type = /datum/status_effect/wound/slash/critical
 	scar_keyword = "slashcritical"
 	wound_flags = (FLESH_WOUND | ACCEPTS_GAUZE | MANGLES_FLESH)
+
+/datum/wound/slash/moderate/many_cuts
+	name = "Numerous Small Slashes"
+	desc = "Patient's skin has numerous small slashes and cuts, generating moderate blood loss."
+	examine_desc = "has a ton of small cuts"
+	occur_text = "is cut numerous times, leaving many small slashes."

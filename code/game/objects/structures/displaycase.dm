@@ -100,7 +100,7 @@
 	if(!alert)
 		return
 	var/area/alarmed = get_area(src)
-	alarmed.burglaralert(src)
+	alarmed?.burglaralert(src)
 
 	alarm_manager.send_alarm(ALARM_BURGLAR)
 	addtimer(CALLBACK(alarm_manager, /datum/alarm_handler/proc/clear_alarm, ALARM_BURGLAR), 1 MINUTES)
@@ -328,7 +328,7 @@
 		to_chat(user, span_warning("Витрина отвергает [W]!"))
 		return
 
-	for(var/a in W.GetAllContents())
+	for(var/a in W.get_all_contents())
 		if(is_type_in_typecache(a, GLOB.blacklisted_cargo_types))
 			to_chat(user, span_warning("Витрина отвергает [W]!"))
 			return
@@ -389,17 +389,17 @@
 
 /obj/structure/displaycase/forsale
 	name = "торговая витрина"
+	desc = "Витрина со считывателем ID карты. Используйте свою ID карту для покупки содержимого."
 	gender = FEMALE
 	icon_state = "laserbox"
 	custom_glass_overlay = TRUE
-	desc = "Витрина со считывателем ID карты. Используйте свою ID карту для покупки содержимого."
 	density = FALSE
 	max_integrity = 100
 	req_access = null
 	alert = FALSE //No, we're not calling the fire department because someone stole your cookie.
 	glass_fix = FALSE //Fixable with tools instead.
 	///The price of the item being sold. Altered by grab intent ID use.
-	var/sale_price = 20
+	var/sale_price = 200
 	///The Account which will receive payment for purchases. Set by the first ID to swipe the tray.
 	var/datum/bank_account/payments_acc = null
 
@@ -483,7 +483,7 @@
 			if(!potential_acc || !potential_acc.registered_account)
 				return
 			if(!check_access(potential_acc))
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 50, TRUE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 50, TRUE)
 				return
 			toggle_lock()
 			SStgui.update_uis(src)
@@ -493,13 +493,13 @@
 			if(!potential_acc || !potential_acc.registered_account)
 				return
 			if(!check_access(potential_acc))
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 50, TRUE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 50, TRUE)
 				return
 			payments_acc = potential_acc.registered_account
 			playsound(src, 'sound/machines/click.ogg', 20, TRUE)
 		if("Adjust")
 			if(!check_access(potential_acc) || potential_acc.registered_account != payments_acc)
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 50, TRUE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 50, TRUE)
 				return
 
 			var/new_price_input = input(usr,"Set the sale price for this vend-a-tray.","new price",0) as num|null
@@ -526,7 +526,7 @@
 			playsound(src, 'sound/machines/click.ogg', 20, TRUE)
 			toggle_lock()
 			return
-	if(istype(I, /obj/item/pda))
+	if(istype(I, /obj/item/modular_computer/tablet/pda))
 		return TRUE
 	SStgui.update_uis(src)
 	. = ..()

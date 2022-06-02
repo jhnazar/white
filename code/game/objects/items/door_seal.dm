@@ -1,6 +1,6 @@
 /obj/item/door_seal
-	name = "pneumatic seal"
-	desc = "A brace used to seal and reinforce an airlock. Useful for making areas inaccessible to those without opposable thumbs."
+	name = "пневматический замок"
+	desc = "Скоба, используемая для герметизации и укрепления воздушного шлюза. Полезно для того, чтобы сделать области недоступными для не гуманоидов или тех, у кого нет противопоставленных больших пальцев."
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "pneumatic_seal"
 	lefthand_file = 'icons/mob/inhands/items_lefthand.dmi'
@@ -11,7 +11,7 @@
 	throwforce = 5
 	throw_speed = 2
 	throw_range = 1
-	w_class = WEIGHT_CLASS_BULKY
+	w_class = WEIGHT_CLASS_NORMAL
 	custom_materials = list(/datum/material/iron=5000,/datum/material/plasma=500)
 	/// how long the seal takes to place on the door
 	var/seal_time = 3 SECONDS

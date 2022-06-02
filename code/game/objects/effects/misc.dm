@@ -39,13 +39,13 @@
 	opacity = TRUE
 	density = TRUE
 	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 
 //Makes a tile fully lit no matter what
 /obj/effect/fullbright
 	icon = 'icons/effects/alphacolors.dmi'
 	icon_state = "white"
 	plane = LIGHTING_PLANE
-	layer = LIGHTING_LAYER
 	blend_mode = BLEND_ADD
 
 /obj/effect/abstract/marker
@@ -54,6 +54,7 @@
 	anchored = TRUE
 	icon_state = "wave3"
 	layer = RIPPLE_LAYER
+	plane = ABOVE_GAME_PLANE
 
 /obj/effect/abstract/marker/Initialize(mapload)
 	. = ..()

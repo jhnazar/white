@@ -95,7 +95,7 @@
 /datum/reagent/medicine/c2/libital //messes with your liber
 	name = "Либитал"
 	enname = "Libital"
-	description = "A bruise reliever. Does minor liver damage."
+	description = "Применяется при лечении легких травм, негативно сказывается на печени. Разбавлен Гранбиталури."
 	color = "#ECEC8D" // rgb: 236 236 141
 	ph = 8.2
 	taste_description = "горький с оттенком алкоголя"
@@ -112,7 +112,7 @@
 /datum/reagent/medicine/c2/probital
 	name = "Пробитал"
 	enname = "Probital"
-	description = "Originally developed as a prototype-gym supliment for those looking for quick workout turnover, this oral medication quickly repairs broken muscle tissue but causes lactic acid buildup, tiring the patient. Overdosing can cause extreme drowsiness. An Influx of nutrients promotes the muscle repair even further."
+	description = "Используется для лечения физических повреждений средней степени тяжести. Рекомендуется принимать с едой. Может вызывать утомление."
 	reagent_state = SOLID
 	color = "#FFFF6B"
 	ph = 5.5
@@ -161,7 +161,7 @@
 /datum/reagent/medicine/c2/lenturi
 	name = "Лентури"
 	enname = "Lenturi"
-	description = "Used to treat burns. Makes you move slower while it is in your system. Applies stomach damage when it leaves your system."
+	description = "Применяется при лечении легких ожогов, негативно сказывается на желудке. Вызывает переутомление."
 	reagent_state = LIQUID
 	color = "#6171FF"
 	ph = 4.7
@@ -178,9 +178,9 @@
 	return TRUE
 
 /datum/reagent/medicine/c2/aiuri
-	name = "Айурин"
+	name = "Айури"
 	enname = "Aiuri"
-	description = "Used to treat burns. Does minor eye damage."
+	description = "Применяется при лечении легких ожогов, негативно сказывается на органах зрения."
 	reagent_state = LIQUID
 	color = "#8C93FF"
 	ph = 4
@@ -218,7 +218,7 @@
 		var/mob/living/carbon/human/humi = M
 		humi.adjust_coretemperature(rand(-25,-5) * TEMPERATURE_DAMAGE_COEFFICIENT * REM * delta_time, 50)
 	M.reagents?.chem_temp += (-10 * REM * delta_time)
-	M.adjust_fire_stacks(-1 * REM * delta_time)
+	M.adjust_wet_stacks(1 * REM * delta_time)
 	..()
 	. = TRUE
 
@@ -228,7 +228,7 @@
 		return
 
 	exposed_mob.adjust_bodytemperature(-reac_volume * TEMPERATURE_DAMAGE_COEFFICIENT, 50)
-	exposed_mob.adjust_fire_stacks(-reac_volume / 2)
+	exposed_mob.adjust_fire_stacks(reac_volume / -2)
 	if(reac_volume >= metabolization_rate)
 		exposed_mob.extinguish_mob()
 
@@ -353,7 +353,7 @@
 /datum/reagent/medicine/c2/multiver //enhanced with MULTIple medicines
 	name = "Мультивер"
 	enname = "Multiver"
-	description = "A chem-purger that becomes more effective the more unique medicines present. Slightly heals toxicity but causes lung damage (mitigatable by unique medicines)."
+	description = "Выводит из крови химические вещества и нейтрализует токсины. Эффективность растет по мере того, как увеличвается количество нейтрализуемых вещество. Вызывает средние повреждения легких."
 	inverse_chem = /datum/reagent/inverse/healing/monover
 	inverse_chem_val = 0.35
 	failed_chem = null //Reaction uses a special method - so we don't want this for now.
@@ -477,7 +477,7 @@
 /datum/reagent/medicine/c2/synthflesh
 	name = "Синтеплоть"
 	enname = "Synthflesh"
-	description = "Heals brute and burn damage at the cost of toxicity (66% of damage healed). 100u or more can restore corpses husked by burns. Touch application only."
+	description = "Излечивает физические и ожоговые травмы ценой сильной интоксикации в размере 2/3 от объема повреждений. Применяется при лечении хаскированных ожогов высшей степени тяжести. Применяется исключительно в виде пластырей и аэрозолей."
 	reagent_state = LIQUID
 	color = "#FFEBEB"
 	ph = 7.2

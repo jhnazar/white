@@ -1,16 +1,14 @@
-#define ui_emotes "EAST-1:44,SOUTH+2:8"
-
 /datum/hud/proc/add_emote_panel(mob/owner)
 	var/atom/movable/screen/using
 
 	using = new /atom/movable/screen/emote_button()
+	using.icon = ui_style
 	using.screen_loc = ui_emotes
 	using.hud = src
 	infodisplay += using
 
 /atom/movable/screen/emote_button
 	name = "Действия"
-	icon = 'white/baldenysh/icons/ui/midnight_extended.dmi'
 	icon_state = "emotes"
 	var/cooldown = 0
 

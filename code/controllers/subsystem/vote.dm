@@ -109,7 +109,7 @@ SUBSYSTEM_DEF(vote)
 		text += "<b>Результат: ЕДИНАЯ РОССИЯ!</b>"
 	log_vote(text)
 	remove_action_buttons()
-	to_chat(world, "\n<span class='purple'>[text]</span>")
+	to_chat(world, span_purple("\n[text]"))
 	return .
 
 /datum/controller/subsystem/vote/proc/result()
@@ -334,7 +334,7 @@ SUBSYSTEM_DEF(vote)
 	name = "Голосуй!"
 	button_icon_state = "vote"
 
-/datum/action/vote/Trigger()
+/datum/action/vote/Trigger(trigger_flags)
 	if(owner)
 		owner.vote()
 		remove_from_client()

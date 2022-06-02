@@ -37,7 +37,7 @@
 	. = ..()
 
 /obj/machinery/fat_sucker/RefreshParts()
-	..()
+	. = ..()
 	var/rating = 0
 	for(var/obj/item/stock_parts/micro_laser/L in component_parts)
 		rating += L.rating
@@ -153,7 +153,7 @@
 		playsound(loc, 'sound/machines/chime.ogg', 30, FALSE)
 	else
 		next_fact--
-	use_power(500)
+	use_power(active_power_usage)
 
 /obj/machinery/fat_sucker/proc/start_extracting()
 	if(state_open || !occupant || processing || !powered())
@@ -167,7 +167,7 @@
 			set_light(2, 1, "#ff0000")
 		else
 			say("Пациент недостаточно жирный.")
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 40, FALSE)
+			playsound(src, 'white/valtos/sounds/error1.ogg', 40, FALSE)
 			overlays += "[icon_state]_red" //throw a red light icon over it, to show that it won't work
 
 /obj/machinery/fat_sucker/proc/stop()

@@ -127,13 +127,13 @@
 		. += span_warning("Конечность имеет [burn_dam > 30 ? "серьёзные" : "незначительные"] ожоги.")
 
 	if(locate(/datum/wound/blunt) in wounds)
-		. += "\n<span class='warning'>Кости этой кончености выглядят сильно потрескавшимися.</span>"
+		. += span_warning("\nКости этой кончености выглядят сильно потрескавшимися.")
 	if(locate(/datum/wound/slash) in wounds)
-		. += "\n<span class='warning'>Плоть этой конечности выглядит сильно порванной.</span>"
+		. += span_warning("\nПлоть этой конечности выглядит сильно порванной.")
 	if(locate(/datum/wound/pierce) in wounds)
-		. += "\n<span class='warning'>Плоть этой конечности выглядит сильно префорированной.</span>"
+		. += span_warning("\nПлоть этой конечности выглядит сильно префорированной.")
 	if(locate(/datum/wound/burn) in wounds)
-		. += "\n<span class='warning'>Плоть этой конечности выглядит сильно обгоревшей.</span>"
+		. += span_warning("\nПлоть этой конечности выглядит сильно обгоревшей.")
 
 /obj/item/bodypart/blob_act()
 	take_damage(max_damage)
@@ -249,7 +249,7 @@
 	var/wounding_dmg = max(brute, burn)
 
 	var/mangled_state = get_mangled_state()
-	var/bio_state = owner.get_biological_state()
+	var/bio_state = owner?.get_biological_state()
 	var/easy_dismember = HAS_TRAIT(owner, TRAIT_EASYDISMEMBER) // if we have easydismember, we don't reduce damage when redirecting damage to different types (slashing weapons on mangled/skinless limbs attack at 100% instead of 50%)
 
 	if(wounding_type == WOUND_BLUNT && sharpness)
@@ -865,14 +865,6 @@
 				limb.icon_state = "[species_id]_[body_zone]_[icon_gender]"
 			else
 				limb.icon_state = "[species_id]_[body_zone]"
-		// hippie start -- Hippie races (e.g. Avians)
-		if(should_draw_hippie)
-			limb.icon = 'white/valtos/icons/dwarfs/mutant_bodyparts.dmi'
-			if(should_draw_gender)
-				limb.icon_state = "[species_id]_[body_zone]_[icon_gender]"
-			else
-				limb.icon_state = "[species_id]_[body_zone]"
-		// hippie end
 		// yogs start
 		if(should_draw_custom_races)
 			limb.icon = 'white/valtos/icons/mutant_bodyparts.dmi'

@@ -68,7 +68,7 @@
 		var/obj/item/item = item_type
 		display_names[initial(item.name)] = item
 		bat_icons += list(initial(item.name) = image(icon = initial(item.icon), icon_state = initial(item.icon_state)))
-	bat_icons = sortList(bat_icons)
+	bat_icons = sort_list(bat_icons)
 	var/choice = show_radial_menu(user, src , bat_icons, custom_check = CALLBACK(src, .proc/check_menu, user), radius = 42, require_near = TRUE)
 	if(!choice || !check_menu(user))
 		return
@@ -99,7 +99,7 @@
 //FISH KILL!!
 /obj/item/melee/baseball_bat/hos/holymackerel
 	name = "\"Поддай леща\""
-	desc = "Убийство рыбой - самое унизительное наказание для вашего врага."
+	desc = "Убийство рыбой - самое унизительное наказание для врага."
 	icon_state = "holymackerel"
 	hitsound = 'white/RedFoxIV/sounds/weapons/holy_mackerel.ogg'
 	force = 7
@@ -177,7 +177,6 @@
 			qdel(src)
 			return
 		L.visible_message(span_danger("Голова [L] распидорашивается кирпичом нахуй!") , span_userdanger("Кирпич уничтожает мою голову!"))
-		L.emote("blyadiada")
 		new /obj/effect/gibspawner/generic(get_turf(L), L)
 		head.dismember(BRUTE)
 		head.drop_organs()
@@ -273,7 +272,7 @@
 	allowed_ckey = "sranklin"
 
 /obj/item/melee/baseball_bat/hos/hrukni/attack(mob/living/target, mob/living/user)
-	.=..()
+	. = ..()
 	target.emote("poo")
 	if(prob(30))
 		to_chat(target, "<span notice='userdanger'>[pick("Врата прорвало!", "Не могу перестать СРАТЬ!")]</span>")

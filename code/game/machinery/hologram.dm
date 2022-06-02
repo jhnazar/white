@@ -1,3 +1,8 @@
+#define CAN_HEAR_MASTERS (1<<0)
+#define CAN_HEAR_ACTIVE_HOLOCALLS (1<<1)
+#define CAN_HEAR_RECORD_MODE (1<<2)
+#define CAN_HEAR_ALL_FLAGS (CAN_HEAR_MASTERS|CAN_HEAR_ACTIVE_HOLOCALLS|CAN_HEAR_RECORD_MODE)
+
 /* Holograms!
  * Contains:
  *		Holopad
@@ -28,15 +33,12 @@ Possible to do for anyone motivated enough:
 #define HOLOGRAM_POWER_USAGE 2
 
 /obj/machinery/holopad
-	name = "голопад"
-	desc = "Это напольное устройство для проецирования голографических изображений."
+	name = "голопад ИИ"
+	desc = "Напольное устройство для проецирования голографических изображений."
 	icon_state = "holopad0"
 	layer = LOW_OBJ_LAYER
 	plane = FLOOR_PLANE
 	req_access = list(ACCESS_KEYCARD_AUTH) //Used to allow for forced connecting to other (not secure) holopads. Anyone can make a call, though.
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 50
-	active_power_usage = 1000
 	max_integrity = 300
 	armor = list(MELEE = 50, BULLET = 20, LASER = 20, ENERGY = 20, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 0)
 	circuit = /obj/item/circuitboard/machine/holopad
@@ -78,13 +80,12 @@ Possible to do for anyone motivated enough:
 	/// If we are currently calling another holopad
 	var/calling = FALSE
 
-/obj/machinery/holopad/Initialize()
-	. = ..()
-	become_hearing_sensitive()
+	///bitfield. used to turn on and off hearing sensitivity depending on if we can act on Hear() at all - meant for lowering the number of unessesary hearable atoms
+	var/can_hear_flags = NONE
 
 /obj/machinery/holopad/secure
 	name = "голопад безопасного соединения"
-	desc = "Это напольное устройство для проецирования голографических изображений. Этот откажется автоматически принимать входящие звонки."
+	desc = "Напольное устройство для проецирования голографических изображений. Этот откажется автоматически принимать входящие звонки."
 	secure = TRUE
 
 /obj/machinery/holopad/secure/Initialize()
@@ -155,9 +156,8 @@ Possible to do for anyone motivated enough:
 	if(outgoing_call)
 		outgoing_call.ConnectionFailure(src)
 
-	for(var/I in holo_calls)
-		var/datum/holocall/HC = I
-		HC.ConnectionFailure(src)
+	for(var/datum/holocall/holocall_to_disconnect as anything in holo_calls)
+		holocall_to_disconnect.ConnectionFailure(src)
 
 	for (var/I in masters)
 		clear_holo(I)
@@ -188,6 +188,7 @@ Possible to do for anyone motivated enough:
 		outgoing_call.ConnectionFailure(src)
 
 /obj/machinery/holopad/RefreshParts()
+	. = ..()
 	var/holograph_range = 4
 	for(var/obj/item/stock_parts/capacitor/B in component_parts)
 		holograph_range += 1 * B.rating
@@ -349,13 +350,57 @@ Possible to do for anyone motivated enough:
 				outgoing_call.Disconnect(src)
 				return TRUE
 
+//setters
+/**
+ * setter for can_hear_flags. handles adding or removing the given flag on can_hear_flags and then adding hearing sensitivity or removing it depending on the final state
+ * this is necessary because holopads are a significant fraction of the hearable atoms on station which increases the cost of procs that iterate through hearables
+ * so we need holopads to not be hearable until it is needed
+ *
+ * * flag - one of the can_hear_flags flag defines
+ * * set_flag - boolean, if TRUE sets can_hear_flags to that flag and might add hearing sensitivity if can_hear_flags was NONE before,
+ * if FALSE unsets the flag and possibly removes hearing sensitivity
+ */
+/obj/machinery/holopad/proc/set_can_hear_flags(flag, set_flag = TRUE)
+	if(!(flag & CAN_HEAR_ALL_FLAGS))
+		return FALSE //the given flag doesnt exist
+
+	if(set_flag)
+		if(can_hear_flags == NONE)//we couldnt hear before, so become hearing sensitive
+			become_hearing_sensitive()
+
+		can_hear_flags |= flag
+		return TRUE
+
+	else
+		can_hear_flags &= ~flag
+		if(can_hear_flags == NONE)
+			lose_hearing_sensitivity()
+
+		return TRUE
+
+///setter for adding/removing holocalls to this holopad. used to update the holo_calls list and can_hear_flags
+///adds the given holocall if add_holocall is TRUE, removes if FALSE
+/obj/machinery/holopad/proc/set_holocall(datum/holocall/holocall_to_update, add_holocall = TRUE)
+	if(!istype(holocall_to_update))
+		return FALSE
+
+	if(add_holocall)
+		set_can_hear_flags(CAN_HEAR_ACTIVE_HOLOCALLS)
+		LAZYADD(holo_calls, holocall_to_update)
+
+	else
+		LAZYREMOVE(holo_calls, holocall_to_update)
+		if(!LAZYLEN(holo_calls))
+			set_can_hear_flags(CAN_HEAR_ACTIVE_HOLOCALLS, FALSE)
+
+	return TRUE
+
 /**
  * hangup_all_calls: Disconnects all current holocalls from the holopad
  */
 /obj/machinery/holopad/proc/hangup_all_calls()
-	for(var/I in holo_calls)
-		var/datum/holocall/HC = I
-		HC.Disconnect(src)
+	for(var/datum/holocall/holocall_to_disconnect as anything in holo_calls)
+		holocall_to_disconnect.Disconnect(src)
 
 //do not allow AIs to answer calls or people will use it to meta the AI sattelite
 /obj/machinery/holopad/attack_ai(mob/living/silicon/ai/user)
@@ -425,7 +470,8 @@ Possible to do for anyone motivated enough:
 			Hologram.Impersonation = user
 
 		Hologram.mouse_opacity = MOUSE_OPACITY_TRANSPARENT//So you can't click on it.
-		Hologram.layer = FLY_LAYER//Above all the other objects/mobs. Or the vast majority of them.
+		Hologram.layer = FLY_LAYER //Above all the other objects/mobs. Or the vast majority of them.
+		Hologram.plane = ABOVE_GAME_PLANE
 		Hologram.set_anchored(TRUE)//So space wind cannot drag it.
 		Hologram.name = "Голограмма [user.name]"//If someone decides to right click.
 		Hologram.set_light(2)	//hologram lighting
@@ -447,10 +493,12 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 			if(masters[master] && speaker != master)
 				master.relay_speech(message, speaker, message_language, raw_message, radio_freq, spans, message_mods)
 
-	for(var/I in holo_calls)
-		var/datum/holocall/HC = I
-		if(HC.connected_holopad == src && speaker != HC.hologram)
-			HC.user.Hear(message, speaker, message_language, raw_message, radio_freq, spans, message_mods)
+	for(var/datum/holocall/holocall_to_update as anything in holo_calls)
+		if(holocall_to_update.connected_holopad == src)//if we answered this call originating from another holopad
+			if(speaker == holocall_to_update.hologram && holocall_to_update.user.client?.prefs.chat_on_map)
+				holocall_to_update.user.create_chat_message(speaker, message_language, raw_message, spans)
+			else
+				holocall_to_update.user.Hear(message, speaker, message_language, raw_message, radio_freq, spans, message_mods)
 
 	if(outgoing_call?.hologram && speaker == outgoing_call.user)
 		outgoing_call.hologram.say(raw_message)
@@ -461,7 +509,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 /obj/machinery/holopad/proc/SetLightsAndPower()
 	var/total_users = LAZYLEN(masters) + LAZYLEN(holo_calls)
 	update_use_power(total_users > 0 ? ACTIVE_POWER_USE : IDLE_POWER_USE)
-	update_mode_power_usage(ACTIVE_POWER_USE, HOLOPAD_PASSIVE_POWER_USAGE + (HOLOGRAM_POWER_USAGE * total_users))
+	update_mode_power_usage(ACTIVE_POWER_USE, active_power_usage + HOLOPAD_PASSIVE_POWER_USAGE + (HOLOGRAM_POWER_USAGE * total_users))
 	if(total_users || replay_mode)
 		set_light(2)
 	else
@@ -480,6 +528,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 /obj/machinery/holopad/proc/set_holo(mob/living/user, obj/effect/overlay/holo_pad_hologram/h)
 	LAZYSET(masters, user, h)
 	LAZYSET(holorays, user, new /obj/effect/overlay/holoray(loc))
+	set_can_hear_flags(CAN_HEAR_MASTERS)
 	var/mob/living/silicon/ai/AI = user
 	if(istype(AI))
 		AI.current = src
@@ -497,6 +546,8 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	if(istype(AI) && AI.current == src)
 		AI.current = null
 	LAZYREMOVE(masters, user) // Discard AI from the list of those who use holopad
+	if(!LAZYLEN(masters))
+		set_can_hear_flags(CAN_HEAR_MASTERS, set_flag = FALSE)
 	qdel(holorays[user])
 	LAZYREMOVE(holorays, user)
 	SetLightsAndPower()
@@ -584,6 +635,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	holder.selected_language = record.language
 	Hologram.mouse_opacity = MOUSE_OPACITY_TRANSPARENT//So you can't click on it.
 	Hologram.layer = FLY_LAYER//Above all the other objects/mobs. Or the vast majority of them.
+	Hologram.plane = ABOVE_GAME_PLANE
 	Hologram.set_anchored(TRUE)//So space wind cannot drag it.
 	Hologram.name = "Голограмма [record.caller_name]"//If someone decides to right click.
 	Hologram.set_light(2)	//hologram lighting
@@ -609,6 +661,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 		return
 	disk.record = new
 	record_mode = TRUE
+	set_can_hear_flags(CAN_HEAR_RECORD_MODE)
 	record_start = world.time
 	record_user = user
 	disk.record.set_caller_image(user)
@@ -678,6 +731,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	if(record_mode)
 		record_mode = FALSE
 		record_user = null
+		set_can_hear_flags(CAN_HEAR_RECORD_MODE, FALSE)
 
 /obj/machinery/holopad/proc/record_clear()
 	if(disk?.record)
@@ -708,6 +762,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	icon = 'icons/effects/96x96.dmi'
 	icon_state = "holoray"
 	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	density = FALSE
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
@@ -717,3 +772,7 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 
 #undef HOLOPAD_PASSIVE_POWER_USAGE
 #undef HOLOGRAM_POWER_USAGE
+#undef CAN_HEAR_MASTERS
+#undef CAN_HEAR_ACTIVE_HOLOCALLS
+#undef CAN_HEAR_RECORD_MODE
+#undef CAN_HEAR_ALL_FLAGS

@@ -13,9 +13,9 @@
 	var/can_approve_requests = TRUE
 	var/contraband = FALSE
 	var/self_paid = FALSE
-	var/safety_warning = "По соображениям безопасности, автоматическая подача челнока \
-		не может перевозить живые организмы, человеческие останки, классифицированное ядерное оружие, \
-		самонаводящиеся маяки или механизмы, содержащие любую форму искусственного интеллекта."
+	var/safety_warning = "По соображениям безопасности, шаттл снабжения не может перевозить живые организмы, \
+						человеческие останки, классифицированное ядерное вооружение, почту, недоставленные ящики с почтой, маячки с самонаведением, \
+						нестабильные собственные состояния, или машины, содержащие любую форму искусственного интеллекта."
 	var/blockade_warning = "Обнаружена блюспейс нестабильность. Движение челнока невозможно."
 	/// radio used by the console to send messages on supply channel
 	var/obj/item/radio/headset/radio
@@ -79,6 +79,7 @@
 	circuit.configure_machine(src)
 
 /obj/machinery/computer/cargo/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Cargo", name)
@@ -111,7 +112,8 @@
 			"cost" = SO.pack.get_cost(),
 			"id" = SO.id,
 			"orderer" = SO.orderer,
-			"paid" = !isnull(SO.paying_account) //paid by requester
+			"paid" = !isnull(SO.paying_account), //paid by requester
+			"dep_order" = SO.department_destination ? TRUE : FALSE
 		))
 
 	data["requests"] = list()
@@ -128,7 +130,6 @@
 
 /obj/machinery/computer/cargo/ui_static_data(mob/user)
 	var/list/data = list()
-	data["requestonly"] = requestonly
 	data["supplies"] = list()
 	for(var/pack in SSshuttle.supply_packs)
 		var/datum/supply_pack/P = SSshuttle.supply_packs[pack]
@@ -230,7 +231,7 @@
 					return
 
 			if(pack.goody && !self_paid)
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 				say("ОШИБКА: Малые ящики могут быть приобретены только частными аккаунтами.")
 				return
 
@@ -244,7 +245,7 @@
 					break
 
 			var/turf/T = get_turf(src)
-			var/datum/supply_order/SO = new(pack, name, rank, ckey, reason, account, applied_coupon)
+			var/datum/supply_order/SO = new(pack, name, rank, ckey, reason, account, null, applied_coupon)
 			SO.generateRequisition(T)
 			if(requestonly && !self_paid)
 				SSshuttle.requestlist += SO
@@ -259,15 +260,22 @@
 		if("remove")
 			var/id = text2num(params["id"])
 			for(var/datum/supply_order/SO in SSshuttle.shoppinglist)
-				if(SO.id == id)
-					if(SO.applied_coupon)
-						say("Купон возвращен.")
-						SO.applied_coupon.forceMove(get_turf(src))
-					SSshuttle.shoppinglist -= SO
-					. = TRUE
-					break
+				if(SO.id != id)
+					continue
+				if(SO.department_destination)
+					say("Только отдел заказавший это, может отменить заказ.")
+					return
+				if(SO.applied_coupon)
+					say("Купон возвращён.")
+					SO.applied_coupon.forceMove(get_turf(src))
+				SSshuttle.shoppinglist -= SO
+				. = TRUE
+				break
 		if("clear")
-			SSshuttle.shoppinglist.Cut()
+			for(var/datum/supply_order/cancelled_order in SSshuttle.shoppinglist)
+				if(cancelled_order.department_destination)
+					continue //don't cancel other department's orders
+				SSshuttle.shoppinglist -= cancelled_order
 			. = TRUE
 		if("approve")
 			var/id = text2num(params["id"])

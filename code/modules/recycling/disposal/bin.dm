@@ -78,9 +78,13 @@ GLOBAL_VAR_INIT(disposals_are_hungry, FALSE)
 	//this will get a copy of the air turf and take a SEND PRESSURE amount of air from it
 	var/atom/L = loc
 	var/datum/gas_mixture/env = new
-	env.copy_from(L.return_air())
-	var/datum/gas_mixture/removed = env.remove(SEND_PRESSURE + 1)
-	air_contents.merge(removed)
+	if(env && air_contents)
+		var/datum/gas_mixture/copied = L?.return_air()
+		if(copied)
+			env.copy_from(copied)
+		var/datum/gas_mixture/removed = env.remove(SEND_PRESSURE + 1)
+		if(removed)
+			air_contents.merge(removed)
 	trunk_check()
 
 /obj/machinery/disposal/attackby(obj/item/I, mob/user, params)
@@ -367,7 +371,6 @@ GLOBAL_LIST_EMPTY(disposal_bins)
 /obj/machinery/disposal/bin/update_overlays()
 	. = ..()
 
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	luminosity = 0
 
 	if(machine_stat & BROKEN)
@@ -385,15 +388,15 @@ GLOBAL_LIST_EMPTY(disposal_bins)
 	//check for items in disposal - occupied light
 	if(contents.len > 0)
 		. += "dispover-full"
-		SSvis_overlays.add_vis_overlay(src, icon, "dispover-full", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+		. += mutable_appearance(icon, "dispover-full", 0, EMISSIVE_PLANE, alpha)
 
 	//charging and ready light
 	if(pressure_charging)
 		. += "dispover-charge"
-		SSvis_overlays.add_vis_overlay(src, icon, "dispover-charge-glow", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+		. += mutable_appearance(icon, "dispover-charge-glow", 0, EMISSIVE_PLANE, alpha)
 	else if(full_pressure)
 		. += "dispover-ready"
-		SSvis_overlays.add_vis_overlay(src, icon, "dispover-ready-glow", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+		. += mutable_appearance(icon, "dispover-ready-glow", 0, EMISSIVE_PLANE, alpha)
 
 /obj/machinery/disposal/bin/proc/do_flush()
 	set waitfor = FALSE
@@ -420,25 +423,26 @@ GLOBAL_LIST_EMPTY(disposal_bins)
 	if(machine_stat & NOPOWER) // won't charge if no power
 		return
 
-	use_power(100) // base power usage
+	use_power(idle_power_usage) // base power usage
 
 	if(!pressure_charging) // if off or ready, no need to charge
 		return
 
 	// otherwise charge
-	use_power(500) // charging power usage
+	use_power(idle_power_usage) // charging power usage
 
 	var/atom/L = loc //recharging from loc turf
 
 	var/datum/gas_mixture/env = L.return_air()
 	var/pressure_delta = (SEND_PRESSURE*1.01) - air_contents.return_pressure()
 
-	if(env.return_temperature() > 0)
+	if(env && air_contents && env.return_temperature() > 0)
 		var/transfer_moles = 0.1 * pressure_delta*air_contents.return_volume()/(env.return_temperature() * R_IDEAL_GAS_EQUATION)
 
 		//Actually transfer the gas
 		var/datum/gas_mixture/removed = env.remove(transfer_moles)
-		air_contents.merge(removed)
+		if(removed)
+			air_contents.merge(removed)
 		air_update_turf()
 
 

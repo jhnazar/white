@@ -4,8 +4,8 @@
  * Writes one of multiple inputs to one of multiple outputs.
  */
 /obj/item/circuit_component/router
-	display_name = "Router"
-	desc = "Copies the input chosen by \"Input Selector\" to the output chosen by \"Output Selector\"."
+	display_name = "Маршрутизатор"
+	desc = "Копирует входные данные, выбранные \"Селектором входных данных\", в исходящие данные, выбранные \"Селектором выходных данных\"."
 	circuit_flags = CIRCUIT_FLAG_INPUT_SIGNAL|CIRCUIT_FLAG_OUTPUT_SIGNAL
 
 	var/datum/port/input/option/router_options
@@ -26,14 +26,7 @@
 	var/list/datum/port/output/outs
 
 /obj/item/circuit_component/router/populate_options()
-	var/static/component_options = list(
-		PORT_TYPE_ANY,
-		PORT_TYPE_STRING,
-		PORT_TYPE_NUMBER,
-		PORT_TYPE_LIST,
-		PORT_TYPE_ATOM,
-	)
-	router_options = add_option_port("Router Options", component_options)
+	router_options = add_option_port("Router Options", GLOB.wiremod_basic_types)
 
 /obj/item/circuit_component/router/populate_ports()
 	current_type = router_options.value
@@ -75,6 +68,6 @@
 	output.set_output(input.value)
 
 /obj/item/circuit_component/router/multiplexer
-	display_name = "Multiplexer"
-	desc = "Copies the input chosen by \"Input Selector\" to the output."
+	display_name = "Мультиплексор"
+	desc = "Копирует входные данные, выбранные с помощью \"Селектора входных данных\", в выходные данные."
 	output_port_amount = 1

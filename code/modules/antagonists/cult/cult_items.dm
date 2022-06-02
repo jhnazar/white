@@ -65,6 +65,7 @@
 	wound_bonus = -50
 	bare_wound_bonus = 20
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	attack_verb_continuous = list("атакует", "рубит", "втыкает", "разрезает", "кромсает", "разрубает", "нарезает", "культирует")
 	attack_verb_simple = list("атакует", "рубит", "втыкает", "разрезает", "кромсает", "разрубает", "нарезает", "культирует")
 
@@ -130,6 +131,7 @@
 	icon_state = "cultbastard"
 	inhand_icon_state = "cultbastard"
 	hitsound = 'sound/weapons/bladeslice.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	lefthand_file = 'icons/mob/inhands/64x64_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/64x64_righthand.dmi'
 	inhand_x_dimension = 64
@@ -212,19 +214,21 @@
 	if(dash_toggled && !proximity)
 		jaunt.Teleport(user, target)
 		return
-	if(proximity)
-		if(ishuman(target))
-			var/mob/living/carbon/human/H = target
-			if(H.stat != CONSCIOUS)
-				var/obj/item/soulstone/SS = new /obj/item/soulstone(src)
-				SS.attack(H, user)
-				if(!LAZYLEN(SS.contents))
-					qdel(SS)
-		if(istype(target, /obj/structure/constructshell) && contents.len)
-			var/obj/item/soulstone/SS = contents[1]
-			if(istype(SS))
-				SS.transfer_soul("CONSTRUCT",target,user)
-				qdel(SS)
+	if(!proximity)
+		return
+	if(ishuman(target))
+		var/mob/living/carbon/human/human_target = target
+		if(human_target.stat != CONSCIOUS)
+			var/obj/item/soulstone/stone = new /obj/item/soulstone(src)
+			stone.attack(human_target, user)
+			if(!LAZYLEN(stone.contents))
+				qdel(stone)
+	if(istype(target, /obj/structure/constructshell) && length(contents))
+		var/obj/item/soulstone/stone = contents[1]
+		if(!istype(stone))
+			stone.forceMove(drop_location())
+		else if(!stone.transfer_to_construct(target, user) && !(locate(/mob/living/simple_animal/shade) in stone))
+			qdel(stone)
 
 /datum/action/innate/dash/cult
 	name = "Rend the Veil"
@@ -507,7 +511,7 @@
 		return
 	if(totalcurses >= MAX_SHUTTLE_CURSES)
 		to_chat(user, span_warning("Пытаюсь shatter the orb, but it remains as solid as a rock!"))
-		to_chat(user, span_danger("<span class='big'>It seems that the blood cult has exhausted its ability to curse the emergency escape shuttle. It would be unwise to create more cursed orbs or to continue to try to shatter this one.</span>"))
+		to_chat(user, span_danger(span_big("It seems that the blood cult has exhausted its ability to curse the emergency escape shuttle. It would be unwise to create more cursed orbs or to continue to try to shatter this one.")))
 		return
 	if(locate(/obj/narsie) in SSpoints_of_interest.narsies)
 		to_chat(user, span_warning("Nar'Sie is already on this plane, there is no delaying the end of all things."))
@@ -543,13 +547,13 @@
 			"The shuttle's transponder is emitting the encoded message 'FEAR THE OLD BLOOD' in lieu of its assigned identification signal.")
 		var/message = pick_n_take(curses)
 		message += " The shuttle will be delayed by three minutes."
-		priority_announce("[message]", "System Failure", 'sound/misc/notice1.ogg')
+		priority_announce("[message]", "Системная ошибка", 'sound/misc/notice1.ogg')
 		if(MAX_SHUTTLE_CURSES-totalcurses <= 0)
-			to_chat(user, span_danger("<span class='big'>You sense that the emergency escape shuttle can no longer be cursed. It would be unwise to create more cursed orbs.</span>"))
+			to_chat(user, span_danger(span_big("You sense that the emergency escape shuttle can no longer be cursed. It would be unwise to create more cursed orbs.")))
 		else if(MAX_SHUTTLE_CURSES-totalcurses == 1)
-			to_chat(user, span_danger("<span class='big'>You sense that the emergency escape shuttle can only be cursed one more time.</span>"))
+			to_chat(user, span_danger(span_big("You sense that the emergency escape shuttle can only be cursed one more time.")))
 		else
-			to_chat(user, span_danger("<span class='big'>You sense that the emergency escape shuttle can only be cursed [MAX_SHUTTLE_CURSES-totalcurses] more times.</span>"))
+			to_chat(user, span_danger(span_big("You sense that the emergency escape shuttle can only be cursed [MAX_SHUTTLE_CURSES-totalcurses] more times.")))
 		qdel(src)
 
 #undef MAX_SHUTTLE_CURSES
@@ -648,7 +652,7 @@
 			to_chat(user, "<span class='cult italic'>[cultist_to_receive] is not a follower of the Geometer!</span>")
 			log_game("Void torch failed - target was deconverted")
 			return
-		if(A in user.GetAllContents())
+		if(A in user.get_all_contents())
 			to_chat(user, "<span class='cult italic'>[A] must be on a surface in order to teleport it!</span>")
 			return
 		to_chat(user, "<span class='cult italic'>You ignite [A] with <b>[src.name]</b>, turning it to ash, but through the torch's flames you see that [A] has reached [cultist_to_receive]!</span>")
@@ -873,7 +877,7 @@
 		return
 	var/C = user.client
 	if(ishuman(user) && C)
-		var/list/angle_vector = calculate_projectile_angle_and_pixel_offsets(user, params)
+		var/list/angle_vector = calculate_projectile_angle_and_pixel_offsets(user, A, params)
 		angle = angle_vector[1]
 	else
 		qdel(src)
@@ -927,7 +931,7 @@
 		playsound(src, 'sound/magic/exit_blood.ogg', 75, TRUE)
 		new /obj/effect/temp_visual/dir_setting/cult/phase(user.loc, user.dir)
 		var/turf/temp_target = get_turf_in_angle(set_angle, targets_from, 40)
-		for(var/turf/T in getline(targets_from,temp_target))
+		for(var/turf/T in get_line(targets_from,temp_target))
 			if (locate(/obj/effect/blessing, T))
 				temp_target = T
 				playsound(T, 'sound/machines/clockcult/ark_damage.ogg', 50, TRUE)

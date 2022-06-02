@@ -1,29 +1,31 @@
 
 /obj/proc/is_modular_computer()
-	return
+	return FALSE
+
+//item
+/obj/item/modular_computer/is_modular_computer()
+	return TRUE
+
+//machine
+/obj/machinery/modular_computer/is_modular_computer()
+	return TRUE
 
 /obj/proc/get_modular_computer_part(part_type)
 	return null
 
-/obj/item/modular_computer/is_modular_computer()
-	return TRUE
-
+//item
 /obj/item/modular_computer/get_modular_computer_part(part_type)
 	if(!part_type)
 		stack_trace("get_modular_computer_part() called without a valid part_type")
 		return null
 	return all_components[part_type]
 
-
-/obj/machinery/modular_computer/is_modular_computer()
-	return TRUE
-
+//machine
 /obj/machinery/modular_computer/get_modular_computer_part(part_type)
 	if(!part_type)
 		stack_trace("get_modular_computer_part() called without a valid part_type")
 		return null
 	return cpu?.all_components[part_type]
-
 
 /obj/proc/get_modular_computer_parts_examine(mob/user)
 	. = list()
@@ -36,12 +38,12 @@
 	if(ai_slot)
 		if(ai_slot.stored_card)
 			if(user_is_adjacent)
-				. += "<hr>It has a slot installed for an intelliCard which contains: [ai_slot.stored_card.name]"
+				. += "<hr>Здесь установлен слот для Интелкарты, в котором установлен: [ai_slot.stored_card.name]"
 			else
-				. += "<hr>It has a slot installed for an intelliCard, which appears to be occupied."
-			. += "<hr><span class='info'>Нажмите \"Alt\" для извлечения intelliCard.</span>"
+				. += "<hr>Здесь установлен слот для Интелкарты, который пуст."
+			. += "<hr><span class='info'>ПКМ для извлечения Интелкарты.</span>"
 		else
-			. += "<hr>It has a slot installed for an intelliCard."
+			. += "<hr>Здесь установлен слот для Интелкарты."
 
 	var/obj/item/computer_hardware/card_slot/card_slot = get_modular_computer_part(MC_CARD)
 	var/obj/item/computer_hardware/card_slot/card_slot2 = get_modular_computer_part(MC_CARD2)
@@ -52,15 +54,15 @@
 			var/obj/item/card/id/second_ID = card_slot2?.stored_card
 			var/multiple_cards = istype(first_ID) && istype(second_ID)
 			if(user_is_adjacent)
-				. += "It has [multiple_slots ? "two slots" : "a slot"] for identification cards installed[multiple_cards ? " which contain [first_ID] and [second_ID]" : ", one of which contains [first_ID ? first_ID : second_ID]"]."
+				. += "<hr>Здесь [multiple_slots ? "два слота" : "слот"] для ID-карты[multiple_cards ? ", которые содержат [first_ID] и [second_ID]" : ", один из которых содержит [first_ID ? first_ID : second_ID]"]."
 			else
-				. += "It has [multiple_slots ? "two slots" : "a slot"] for identification cards installed, [multiple_cards ? "both of which appear" : "and one of them appears"] to be occupied."
-			. += span_info("Нажмите \"Alt\" [src] для извлечения карты идентификации[multiple_cards ? "s":""].")
+				. += "<hr>Здесь [multiple_slots ? "два слота" : "слот"] для ID-карты, [multiple_cards ? "оба из них заняты" : "один из них занят"]."
+			. += span_info("\nПКМ для извлечения карт[multiple_cards ? "":"ы"] идентификации.")
 		else
-			. += "It has [multiple_slots ? "two slots" : "a slot"] installed for identification cards."
+			. += "<hr>Здесь [multiple_slots ? "два слота" : "слот"] для ID-карт."
 
 	var/obj/item/computer_hardware/printer/printer_slot = get_modular_computer_part(MC_PRINT)
 	if(printer_slot)
-		. += "It has a printer installed."
+		. += "<hr>Здесь есть принтер."
 		if(user_is_adjacent)
-			. += "The printer's paper levels are at: [printer_slot.stored_paper]/[printer_slot.max_paper].</span>]"
+			. += "\nУровень краски: [printer_slot.stored_paper]/[printer_slot.max_paper].</span>"

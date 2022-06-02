@@ -9,14 +9,13 @@
 #define STANDARD_DEVIATION 2*CARGO_CRATE_VALUE
 
 /obj/machinery/rnd/bepis
-	name = "\improper B.E.P.I.S. Chamber"
-	desc = "A high fidelity testing device which unlocks the secrets of the known universe using the two most powerful substances available to man: excessive amounts of electricity and capital."
+	name = "Б.Е.П.И.С"
+	desc = "Высокоточное тестирующее устройство, которое открывает секреты известной вселенной, используя два самых мощных вещества, доступных человеку: чрезмерное количество электричества и деньги."
 	icon = 'icons/obj/machines/bepis.dmi'
 	icon_state = "chamber"
 	density = TRUE
 	layer = ABOVE_MOB_LAYER
-	use_power = IDLE_POWER_USE
-	active_power_usage = 15000
+	plane = GAME_PLANE_UPPER
 	circuit = /obj/item/circuitboard/machine/bepis
 
 	var/banking_amount = 100
@@ -55,6 +54,7 @@
 		var/deposit_value = O.get_item_credit_value()
 		banked_cash += deposit_value
 		qdel(O)
+		playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 		say("Deposited [deposit_value] credits into storage.")
 		update_icon()
 		return
@@ -63,13 +63,16 @@
 		if(Card.registered_account)
 			account = Card.registered_account
 			account_name = Card.registered_name
+			playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 			say("New account detected. Console Updated.")
 		else
+			playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 			say("No account detected on card. Aborting.")
 		return
 	return ..()
 
 /obj/machinery/rnd/bepis/RefreshParts()
+	. = ..()
 	var/C = 0
 	var/M = 0
 	var/L = 0
@@ -92,13 +95,16 @@
 	deposit_value = banking_amount
 	if(deposit_value == 0)
 		update_icon()
+		playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 		say("Attempting to deposit 0 credits. Aborting.")
 		return
 	deposit_value = clamp(round(deposit_value, 1), 1, 10000)
 	if(!account)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 		say("Cannot find user account. Please swipe a valid ID.")
 		return
 	if(!account.has_money(deposit_value))
+		playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 		say("You do not possess enough credits.")
 		return
 	account.adjust_money(-deposit_value) //The money vanishes, not paid to any accounts.
@@ -106,6 +112,7 @@
 	log_econ("[deposit_value] credits were inserted into [src] by [account.account_holder]")
 	banked_cash += deposit_value
 	use_power(1000 * power_saver)
+	playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 	say("Cash deposit successful. There is [banked_cash] in the chamber.")
 	update_icon()
 	return
@@ -114,10 +121,12 @@
 	var/withdraw_value = 0
 	withdraw_value = banking_amount
 	if(withdraw_value > banked_cash)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 		say("Cannot withdraw more than stored funds. Aborting.")
 	else
 		banked_cash -= withdraw_value
 		new /obj/item/holochip(src.loc, withdraw_value)
+		playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 		say("Withdrawing [withdraw_value] credits from the chamber.")
 	update_icon()
 	return
@@ -140,6 +149,7 @@
 	gauss_major = (gaussian(major_threshold, std) - negative_cash_offset)	//This is the randomized profit value that this experiment has to surpass to unlock a tech.
 	gauss_minor = (gaussian(minor_threshold, std) - negative_cash_offset)	//And this is the threshold to instead get a minor prize.
 	gauss_real = (gaussian(banked_cash, std*inaccuracy_percentage) + positive_cash_offset)	//this is the randomized profit value that your experiment expects to give.
+	playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 	say("Real: [gauss_real]. Minor: [gauss_minor]. Major: [gauss_major].")
 	flick("chamber_flash",src)
 	update_icon()
@@ -249,6 +259,7 @@
 			if(use_power == IDLE_POWER_USE)
 				return
 			if(banked_cash == 0)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 20, TRUE)
 				say("Please deposit funds to begin testing.")
 				return
 			calcsuccess()
@@ -270,5 +281,6 @@
 				return
 			account_name = ""
 			account = null
+			playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 			say("Account settings reset.")
 	. = TRUE

@@ -2,7 +2,7 @@
 #define WELDER_FUEL_BURN_INTERVAL 26
 /obj/item/weldingtool
 	name = "сварочный аппарат"
-	desc = "Сварка стандартного исполнения, предоставленная компанией Нанотрейзен."
+	desc = "Сварка стандартного исполнения, предоставленная компанией NanoTrasen."
 	icon = 'white/valtos/icons/items.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
@@ -111,9 +111,8 @@
 	update_icon()
 
 /obj/item/weldingtool/proc/explode()
-	var/turf/T = get_turf(loc)
 	var/plasmaAmount = reagents.get_reagent_amount(/datum/reagent/toxin/plasma)
-	dyn_explosion(T, plasmaAmount/5)//20 plasma in a standard welder has a 4 power explosion. no breaches, but enough to kill/dismember holder
+	dyn_explosion(src, plasmaAmount/5, explosion_cause = src)//20 plasma in a standard welder has a 4 power explosion. no breaches, but enough to kill/dismember holder
 	qdel(src)
 
 /obj/item/weldingtool/attack(mob/living/carbon/human/H, mob/user)
@@ -143,7 +142,7 @@
 
 		if(!QDELETED(O) && isliving(O)) // can't ignite something that doesn't exist
 			var/mob/living/L = O
-			if(L.IgniteMob())
+			if(L.ignite_mob())
 				message_admins("[ADMIN_LOOKUPFLW(user)] set [key_name_admin(L)] on fire with [src] at [AREACOORD(user)]")
 				log_game("[key_name(user)] set [key_name(L)] on fire with [src] at [AREACOORD(user)]")
 
@@ -162,7 +161,7 @@
 
 		if(!QDELETED(O) && isliving(O)) // can't ignite something that doesn't exist
 			var/mob/living/L = O
-			if(L.IgniteMob())
+			if(L.ignite_mob())
 				message_admins("[ADMIN_LOOKUPFLW(user)] set [key_name_admin(L)] on fire with [src] at [AREACOORD(user)]")
 				log_game("[key_name(user)] set [key_name(L)] on fire with [src] at [AREACOORD(user)]")
 
@@ -353,7 +352,7 @@
 	return
 
 /obj/item/weldingtool/abductor
-	name = "чужеродная сварка"
+	name = "инопланетная сварка"
 	desc = "Инопланетный сварочный инструмент. Какое бы топливо он ни использовал, оно у него никогда не заканчивается."
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "welder"
@@ -376,8 +375,8 @@
 	custom_materials = list(/datum/material/iron=70, /datum/material/glass=120)
 
 /obj/item/weldingtool/experimental
-	name = "экспериментальный сварочный инструмент"
-	desc = "Экспериментальный сварочный аппарат, способный генерировать топливо и менее вредный для глаз."
+	name = "экспериментальный сварочный аппарат"
+	desc = "Экспериментальный сварочный аппарат, способный самостоятельно генерировать топливо и менее вредный для глаз."
 	icon_state = "exwelder"
 	inhand_icon_state = "exwelder"
 	max_fuel = 40

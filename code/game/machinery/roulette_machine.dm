@@ -24,10 +24,7 @@
 	icon = 'icons/obj/machines/roulette.dmi'
 	icon_state = "idle"
 	density = TRUE
-	use_power = IDLE_POWER_USE
 	anchored = FALSE
-	idle_power_usage = 100
-	active_power_usage = 10000
 	max_integrity = 500
 	armor = list(MELEE = 45, BULLET = 30, LASER = 30, ENERGY = 30, BOMB = 10, BIO = 30, RAD = 30, FIRE = 30, ACID = 30)
 	var/static/list/numbers = list("0" = "green", "1" = "red", "3" = "red", "5" = "red", "7" = "red", "9" = "red", "12" = "red", "14" = "red", "16" = "red",\
@@ -120,7 +117,7 @@
 			var/obj/item/card/id/player_card = W
 			if(player_card.registered_account.account_balance < chosen_bet_amount) //Does the player have enough funds
 				audible_message(span_warning("You do not have the funds to play! Lower your bet or get more money."))
-				playsound(src, 'sound/machines/buzz-two.ogg', 30, TRUE)
+				playsound(src, 'white/valtos/sounds/error2.ogg', 30, TRUE)
 				return FALSE
 			if(!chosen_bet_amount || isnull(chosen_bet_type))
 				return FALSE
@@ -191,6 +188,8 @@
 	playsound(src, 'sound/machines/roulettewheel.ogg', 50)
 	addtimer(CALLBACK(src, .proc/finish_play, player_id, bet_type, bet_amount, payout, rolled_number), 34) //4 deciseconds more so the animation can play
 	addtimer(CALLBACK(src, .proc/finish_play_animation), 30)
+
+	use_power(active_power_usage)
 
 /obj/machinery/roulette/proc/finish_play_animation()
 	icon_state = "idle"
@@ -320,7 +319,7 @@
 	if(my_card.registered_account.account_balance >= payout)
 		return TRUE //We got the betting amount
 	audible_message(span_warning("The bank account of [my_card.registered_account.account_holder] does not have enough funds to pay out the potential prize, contact them to fill up their account or lower your bet!"))
-	playsound(src, 'sound/machines/buzz-two.ogg', 30, TRUE)
+	playsound(src, 'white/valtos/sounds/error2.ogg', 30, TRUE)
 	return FALSE
 
 /obj/machinery/roulette/update_icon(payout, color, rolled_number, is_winner = FALSE)

@@ -20,7 +20,7 @@ In all, this is a lot like the monkey code. /N
 
 	switch(M.a_intent)
 
-		if ("help")
+		if (INTENT_HELP)
 			if(M == src && check_self_for_injuries())
 				return
 			set_resting(FALSE)
@@ -32,7 +32,7 @@ In all, this is a lot like the monkey code. /N
 			AdjustSleeping(-100)
 			visible_message(span_notice("[M.name] nuzzles [src] trying to wake [ru_na()] up!"))
 
-		if ("grab")
+		if (INTENT_GRAB)
 			grabbedby(M)
 
 		else
@@ -59,14 +59,14 @@ In all, this is a lot like the monkey code. /N
 		return FALSE
 
 	switch(M.a_intent)
-		if("help")
+		if(INTENT_HELP)
 			help_shake_act(M)
-		if("grab")
+		if(INTENT_GRAB)
 			grabbedby(M)
-		if ("harm")
+		if (INTENT_HARM)
 			M.do_attack_animation(src, ATTACK_EFFECT_PUNCH)
 			return TRUE
-		if("disarm")
+		if(INTENT_DISARM)
 			M.do_attack_animation(src, ATTACK_EFFECT_DISARM)
 			return TRUE
 	return FALSE
@@ -135,3 +135,6 @@ In all, this is a lot like the monkey code. /N
 
 /mob/living/carbon/alien/acid_act(acidpwr, acid_volume)
 	return FALSE//aliens are immune to acid.
+
+/mob/living/carbon/alien/on_fire_stack(delta_time, times_fired, datum/status_effect/fire_handler/fire_stacks/fire_handler)
+	adjust_bodytemperature(BODYTEMP_HEATING_MAX * 0.5 * delta_time)

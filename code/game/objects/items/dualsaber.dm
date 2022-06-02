@@ -6,8 +6,8 @@
 	icon_state = "dualsaber0"
 	lefthand_file = 'icons/mob/inhands/weapons/swords_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/swords_righthand.dmi'
-	name = "double-bladed energy sword"
-	desc = "Handle with care."
+	name = "двойной энергетический меч"
+	desc = "Держите аккуратно."
 	force = 3
 	throwforce = 5
 	throw_speed = 3
@@ -34,6 +34,7 @@
 	var/hacked = FALSE
 	var/list/possible_colors = list("red", "blue", "green", "purple")
 	var/wielded = FALSE // track wielded status on item
+	block_sounds = list('sound/weapons/bladeb.ogg')
 
 /obj/item/dualsaber/ComponentInitialize()
 	. = ..()
@@ -50,7 +51,7 @@
 			return COMPONENT_TWOHANDED_BLOCK_WIELD
 	wielded = TRUE
 	w_class = w_class_on
-	hitsound = 'sound/weapons/blade1.ogg'
+	hitsound = 'sound/weapons/blade2.ogg'
 	START_PROCESSING(SSobj, src)
 	set_light_on(TRUE)
 
@@ -147,7 +148,7 @@
 /obj/item/dualsaber/hit_reaction(mob/living/carbon/human/owner, atom/movable/hitby, attack_text = "атаку", final_block_chance = 0, damage = 0, attack_type = MELEE_ATTACK)
 	if(wielded)
 		return ..()
-	return 0
+	return FALSE
 
 /obj/item/dualsaber/process()
 	if(wielded)

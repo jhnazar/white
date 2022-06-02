@@ -20,6 +20,8 @@
 	icon_state = initial(icon_state) + "_active"
 	playsound(src, 'sound/effects/hit_on_shattered_glass.ogg', volume, TRUE)
 	SEND_SIGNAL(src, COMSIG_GRENADE_ARMED, det_time, delayoverride)
+	if(user)
+		SEND_SIGNAL(src, COMSIG_MOB_GRENADE_ARMED, user, src, det_time, delayoverride)
 	addtimer(CALLBACK(src, .proc/detonate), isnull(delayoverride)? det_time : delayoverride)
 
 /obj/item/grenade/gas_crystal/healium_crystal
@@ -47,8 +49,8 @@
 		if(floor_loc.air.return_temperature() > 370)
 			floor_loc.atmos_spawn_air("n2=[gas_amount / distance_from_center];TEMP=30")
 			floor_loc.MakeSlippery(TURF_WET_PERMAFROST, (5 / distance_from_center) MINUTES)
-		if(floor_loc.air.get_moles(/datum/gas/plasma) > 0.001)
-			floor_loc.air.adjust_moles(/datum/gas/plasma, -floor_loc.air.get_moles(/datum/gas/plasma) * 0.5 / distance_from_center)
+		if(floor_loc.air.get_moles(GAS_PLASMA) > 0.001)
+			floor_loc.air.adjust_moles(GAS_PLASMA, -floor_loc.air.get_moles(GAS_PLASMA) * 0.5 / distance_from_center)
 		for(var/mob/living/carbon/live_mob in turf_loc)
 			live_mob.adjustStaminaLoss(stamina_damage / distance_from_center)
 			live_mob.adjust_bodytemperature(-150 / distance_from_center)

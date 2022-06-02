@@ -29,6 +29,7 @@ GLOBAL_LIST_EMPTY(req_console_ckey_departments)
 	desc = "Консоль предназначенная для отправки запросов в различные отделы на станции."
 	icon = 'icons/obj/terminals.dmi'
 	icon_state = "req_comp0"
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.15
 	var/department = "Unknown" //The list of all departments on the station (Determined from this variable on each unit) Set this to the same thing if you want several consoles in one department
 	var/list/messages = list() //List of all messages
 	var/departmentType = 0 //bitflag
@@ -127,7 +128,7 @@ GLOBAL_LIST_EMPTY(req_console_ckey_departments)
 	GLOB.req_console_ckey_departments[ckey(department)] = department
 
 	Radio = new /obj/item/radio(src)
-	Radio.listening = 0
+	Radio.set_listening(FALSE)
 
 /obj/machinery/requests_console/Destroy()
 	QDEL_NULL(Radio)
@@ -203,7 +204,7 @@ GLOBAL_LIST_EMPTY(req_console_ckey_departments)
 			if(REQ_SCREEN_AUTHENTICATE)
 				dat += "<B>Авторизация сообщения</B><BR><BR>"
 				dat += "<b>Сообщение для [to_department]: </b>[message]<BR><BR>"
-				dat += "<div class='notice'>Вы можете аутентифицировать свое сообщение сейчас, отсканировав свою ID-карту или свою печать</div><BR>"
+				dat += "<div class='notice'>Можно аутентифицировать свое сообщение сейчас, отсканировав свою ID-карту или свою печать</div><BR>"
 				dat += "<b>Утверждено:</b> [msgVerified ? msgVerified : "<i>Не подтверждено</i>"]<br>"
 				dat += "<b>Отмечено:</b> [msgStamped ? msgStamped : "<i>Нет штампа</i>"]<br><br>"
 				dat += "<A href='?src=[REF(src)];send=[TRUE]'>Отправить сообщение</A><BR>"
@@ -281,7 +282,7 @@ GLOBAL_LIST_EMPTY(req_console_ckey_departments)
 			var/mob/living/L = usr
 			message = L.treat_message(message)
 		minor_announce(message, "[department] делает объявление", html_encode = FALSE)
-		GLOB.news_network.SubmitArticle(message, department, "Станционные Объявления", null)
+		GLOB.news_network.submit_article(message, department, "Станционные Объявления", null)
 		usr.log_talk(message, LOG_SAY, tag="station announcement from [src]")
 		message_admins("[ADMIN_LOOKUPFLW(usr)] has made a station announcement from [src] at [AREACOORD(usr)].")
 		deadchat_broadcast(" делает оповещение <span class='name'>[get_area_name(usr, TRUE)]</span>.", span_name("[usr.real_name]") , usr, message_type=DEADCHAT_ANNOUNCEMENT)
@@ -322,7 +323,7 @@ GLOBAL_LIST_EMPTY(req_console_ckey_departments)
 				radio_freq = FREQ_ENGINEERING
 			if("security")
 				radio_freq = FREQ_SECURITY
-			if("cargobay" || "mining")
+			if("cargobay", "mining")
 				radio_freq = FREQ_SUPPLY
 
 		var/datum/signal/subspace/messaging/rc/signal = new(src, list(

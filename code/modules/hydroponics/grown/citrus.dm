@@ -11,7 +11,7 @@
 // Lime
 /obj/item/seeds/lime
 	name = "Пачка семян лайма"
-	desc = "Это очень кислые семена."
+	desc = "Очень кислые семена."
 	icon_state = "seed-lime"
 	species = "lime"
 	plantname = "Lime Tree"
@@ -54,7 +54,7 @@
 /obj/item/food/grown/citrus/orange
 	seed = /obj/item/seeds/orange
 	name = "апельсин"
-	desc = "Это острый фрукт."
+	desc = "Пикантный фрукт."
 	icon_state = "orange"
 	juice_results = list(/datum/reagent/consumable/orangejuice = 0)
 	distill_reagent = /datum/reagent/consumable/ethanol/triple_sec
@@ -133,23 +133,23 @@
 	switch(seed.potency) //Combustible lemons are alot like IEDs, lots of flame, very little bang.
 		if(0 to 30)
 			update_mob()
-			explosion(src.loc,-1,-1,2, flame_range = 1)
+			explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 2, flame_range = 1)
 			qdel(src)
 		if(31 to 50)
 			update_mob()
-			explosion(src.loc,-1,-1,2, flame_range = 2)
+			explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 2, flame_range = 2)
 			qdel(src)
 		if(51 to 70)
 			update_mob()
-			explosion(src.loc,-1,-1,2, flame_range = 3)
+			explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 2, flame_range = 3)
 			qdel(src)
 		if(71 to 90)
 			update_mob()
-			explosion(src.loc,-1,-1,2, flame_range = 4)
+			explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 2, flame_range = 4)
 			qdel(src)
 		else
 			update_mob()
-			explosion(src.loc,-1,-1,2, flame_range = 5)
+			explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 2, flame_range = 5)
 			qdel(src)
 
 //3D Orange

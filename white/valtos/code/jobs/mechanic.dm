@@ -24,16 +24,13 @@
 	template_access = list(ACCESS_CAPTAIN, ACCESS_CE, ACCESS_CHANGE_IDS)
 	trim_icon = 'white/valtos/icons/card.dmi'
 
-/area/engineering/manufactory
-	name = "Фабрика"
-	icon_state = "engine"
 
 /datum/outfit/job/mechanic
 	name = "Mechanic"
 	jobtype = /datum/job/station_engineer/mechanic
 
 	belt = /obj/item/storage/belt/utility/full/mechanic
-	l_pocket = /obj/item/pda/engineering
+	l_pocket = /obj/item/modular_computer/tablet/pda/engineering
 	ears = /obj/item/radio/headset/headset_eng
 	uniform = /obj/item/clothing/under/rank/engineering/engineer
 	shoes = /obj/item/clothing/shoes/workboots
@@ -204,6 +201,7 @@
 
 
 /obj/machinery/copytech/RefreshParts()
+	. = ..()
 	var/T = 0
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
 		T += M.rating
@@ -266,7 +264,7 @@
 		for(var/mob/living/L in get_turf(src))
 			L.adjustFireLoss(10*delta_time)
 			L.set_fire_stacks(5)
-			L.IgniteMob()
+			L.ignite_mob()
 			playsound(L, 'sound/machines/shower/shower_mid1.ogg', 90, TRUE)
 
 /obj/machinery/copytech_platform/proc/update_cable()
@@ -280,6 +278,7 @@
 		siphoned_power += surpluspower
 
 /obj/machinery/copytech_platform/RefreshParts()
+	. = ..()
 	var/T = 0
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
 		T += M.rating
@@ -293,7 +292,7 @@
 		var/mob/living/L = AM
 		L.adjustFireLoss(20)
 		L.set_fire_stacks(5)
-		L.IgniteMob()
+		L.ignite_mob()
 		L.visible_message(span_danger("<b>[L]</b> прожаривается!"))
 		playsound(L, 'sound/machines/shower/shower_mid1.ogg', 90, TRUE)
 
@@ -372,11 +371,11 @@
 			sleep(1 SECONDS)
 			if(user)
 				to_chat(user, span_alert("Ну бл~"))
-				explosion(user, 0, 0, 1)
+				explosion(src, light_impact_range = 1)
 			if(isliving(user))
 				var/mob/living/L = user
 				L.gib()
-			explosion(src, 3, 7, 14)
+			explosion(src, devastation_range = 3, heavy_impact_range = 7, light_impact_range = 14)
 			return
 
 	say("Приступаю к процессу дезинтеграции объекта...")

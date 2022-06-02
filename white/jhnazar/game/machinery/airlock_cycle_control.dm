@@ -46,9 +46,6 @@
 	desc = "A machine designed to control the operation of cycling airlocks"
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "aac"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 4
-	active_power_usage = 8
 	power_channel = AREA_USAGE_ENVIRON
 	req_access = list(ACCESS_ATMOSPHERICS)
 	max_integrity = 250
@@ -197,7 +194,7 @@
 		var/matrix/TR = new
 		TR.Translate(0, 16)
 		TR.Multiply(new /matrix(s_dx, f_dx, 0, s_dy, f_dy, 0))
-		var/mutable_appearance/M = mutable_appearance(icon, "hologram-line", ABOVE_LIGHTING_LAYER, ABOVE_LIGHTING_PLANE)
+		var/mutable_appearance/M = mutable_appearance(icon, "hologram-line", plane = ABOVE_LIGHTING_PLANE)
 		M.transform = TR
 		add_overlay(M)
 
@@ -462,7 +459,7 @@
 				to_chat(user, span_notice("The wires have been [panel_open ? "exposed" : "unexposed"]."))
 				update_icon()
 				return
-			else if(istype(W, /obj/item/card/id) || istype(W, /obj/item/pda))// trying to unlock the interface with an ID card
+			else if(istype(W, /obj/item/card/id) || istype(W, /obj/item/modular_computer/tablet/pda))// trying to unlock the interface with an ID card
 				togglelock(user)
 				return
 			else if(panel_open && is_wire_tool(W))

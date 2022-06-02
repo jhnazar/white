@@ -14,10 +14,10 @@
 /obj/structure/emergency_shield/Initialize()
 	. = ..()
 	setDir(pick(GLOB.cardinals))
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 
 /obj/structure/emergency_shield/Destroy()
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	. = ..()
 
 /obj/structure/emergency_shield/Move()
@@ -69,6 +69,7 @@
 	max_integrity = 20
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = ABOVE_MOB_LAYER
+	plane = GAME_PLANE_UPPER
 
 /obj/structure/emergency_shield/cult/barrier
 	density = FALSE //toggled on right away by the parent rune
@@ -100,7 +101,7 @@
 */
 /obj/structure/emergency_shield/cult/barrier/proc/Toggle()
 	set_density(!density)
-	air_update_turf(TRUE, !density)
+	air_update_turf(!density)
 	invisibility = initial(invisibility)
 	if(!density)
 		invisibility = INVISIBILITY_OBSERVER
@@ -262,8 +263,6 @@
 	req_access = list(ACCESS_TELEPORTER)
 	flags_1 = CONDUCT_1
 	use_power = NO_POWER_USE
-	idle_power_usage = 100
-	active_power_usage = 5000
 	max_integrity = 300
 	var/active = FALSE
 	var/locked = TRUE

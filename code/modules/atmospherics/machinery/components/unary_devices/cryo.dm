@@ -17,7 +17,8 @@
 	// Must be tall, otherwise the filter will consider this as a 32x32 tile
 	// and will crop the head off.
 	icon_state = "mask_bg"
-	layer = MOB_LAYER + 0.01
+	layer = ABOVE_MOB_LAYER
+	plane = GAME_PLANE_UPPER
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	pixel_y = 22
 	appearance_flags = KEEP_TOGETHER
@@ -79,6 +80,10 @@
 	occupant_typecache = list(/mob/living/carbon, /mob/living/simple_animal)
 	processing_flags = NONE
 
+	use_power = IDLE_POWER_USE
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.75
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 1.5
+
 	showpipe = FALSE
 
 	var/autoeject = TRUE
@@ -131,6 +136,7 @@
 	..(dir, dir)
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/RefreshParts()
+	. = ..()
 	var/C
 	for(var/obj/item/stock_parts/matter_bin/M in component_parts)
 		C += M.rating
@@ -160,7 +166,7 @@
 		///Take the air composition inside the cryotube
 		var/datum/gas_mixture/air1 = airs[1]
 		env.merge(air1)
-		T.air_update_turf(FALSE, FALSE)
+		T.air_update_turf()
 
 	return ..()
 
@@ -191,8 +197,8 @@
 	plane = initial(plane)
 	icon_state = (state_open) ? "pod-open" : (on && is_operational) ? "pod-on" : "pod-off"
 
-GLOBAL_VAR_INIT(cryo_overlay_cover_on, mutable_appearance('icons/obj/cryogenics.dmi', "cover-on", layer = MOB_LAYER + 0.02))
-GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics.dmi', "cover-off", layer = MOB_LAYER + 0.02))
+GLOBAL_VAR_INIT(cryo_overlay_cover_on, mutable_appearance('icons/obj/cryogenics.dmi', "cover-on", layer = ABOVE_ALL_MOB_LAYER, plane = ABOVE_GAME_PLANE))
+GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics.dmi', "cover-off", layer = ABOVE_ALL_MOB_LAYER, plane = ABOVE_GAME_PLANE))
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/update_overlays()
 	. = ..()
@@ -215,6 +221,10 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 	SEND_SIGNAL(src, COMSIG_CRYO_SET_ON, new_value)
 	. = on
 	on = new_value
+	if(on)
+		update_use_power(ACTIVE_POWER_USE)
+	else
+		update_use_power(IDLE_POWER_USE)
 	update_icon()
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/on_set_is_operational(old_value)
@@ -228,6 +238,9 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 /obj/machinery/atmospherics/components/unary/cryo_cell/process(delta_time)
 	..()
 
+	if(state_open)
+		reagent_transfer = 0
+		return
 	if(!on)
 		return
 	if(!occupant)
@@ -275,11 +288,10 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 			reagent_transfer += 1
 			if(reagent_transfer >= CRYO_THROTTLE_CTR_MAX * efficiency) // Throttle reagent transfer (higher efficiency will transfer the same amount but consume less from the beaker).
 				reagent_transfer = 0
-		use_power(5000 * efficiency)
 
 	return 1
 
-/obj/machinery/atmospherics/components/unary/cryo_cell/process_atmos(delta_time)
+/obj/machinery/atmospherics/components/unary/cryo_cell/process_atmos()
 	..()
 
 	if(!on)
@@ -287,7 +299,7 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 
 	var/datum/gas_mixture/air1 = airs[1]
 
-	if(!nodes[1] || !airs[1] || air1.get_moles(/datum/gas/oxygen) < CRYO_MIN_GAS_MOLES) // Turn off if the machine won't work.
+	if(!nodes[1] || !airs[1] || air1.get_moles(GAS_O2) < CRYO_MIN_GAS_MOLES) // Turn off if the machine won't work.
 		var/msg = "Недостаточно криогенного газа, остановка."
 		radio.talk_into(src, msg, radio_channel)
 		set_on(FALSE)
@@ -307,8 +319,8 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 
 			var/heat = ((1 - cold_protection) * 0.1 + conduction_coefficient) * temperature_delta * (air_heat_capacity * heat_capacity / (air_heat_capacity + heat_capacity))
 
-			air1.set_temperature(clamp(air1.return_temperature() - heat * delta_time / air_heat_capacity, TCMB, MAX_TEMPERATURE))
-			mob_occupant.adjust_bodytemperature(heat * delta_time / heat_capacity, TCMB)
+			air1.set_temperature(clamp(air1.return_temperature() - heat / air_heat_capacity, TCMB, MAX_TEMPERATURE))
+			mob_occupant.adjust_bodytemperature(heat / heat_capacity, TCMB)
 
 			//lets have the core temp match the body temp in humans
 			if(ishuman(mob_occupant))
@@ -316,13 +328,15 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 				humi.adjust_coretemperature(humi.bodytemperature - humi.coretemperature)
 
 		if(consume_gas) // Transferring reagent costs us extra gas
-			air1.adjust_moles(/datum/gas/oxygen, -max(0, delta_time / efficiency + 1 / efficiency))
+			air1.adjust_moles(GAS_O2, -max(0, efficiency + 1 / efficiency))
 			consume_gas = FALSE
 		if(!consume_gas)
-			air1.adjust_moles(/datum/gas/oxygen, -max(0, delta_time / efficiency))
+			air1.adjust_moles(GAS_O2, -max(0, efficiency))
 
 		if(air1.return_temperature() > 2000)
 			take_damage(clamp((air1.return_temperature())/200, 10, 20), BURN)
+
+	update_parents()
 
 /obj/machinery/atmospherics/components/unary/cryo_cell/relaymove(mob/living/user, direction)
 	if(message_cooldown <= world.time)
@@ -552,7 +566,7 @@ GLOBAL_VAR_INIT(cryo_overlay_cover_off, mutable_appearance('icons/obj/cryogenics
 		if(node)
 			node.atmosinit()
 			node.addMember(src)
-		build_network()
+		SSair.add_to_rebuild_queue(src)
 
 #undef MAX_TEMPERATURE
 #undef CRYO_MULTIPLY_FACTOR

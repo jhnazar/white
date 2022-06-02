@@ -126,14 +126,14 @@
 	static_inventory += using
 
 //Borg Integrated Tablet
-	using = new /atom/movable/screen/robot/modPC()
+	using = new /atom/movable/screen/robot/modpc()
 	using.screen_loc = ui_borg_tablet
 	using.hud = src
 	static_inventory += using
 	robit.interfaceButton = using
 	if(robit.modularInterface)
 		using.vis_contents += robit.modularInterface
-	var/atom/movable/screen/robot/modPC/tabletbutton = using
+	var/atom/movable/screen/robot/modpc/tabletbutton = using
 	tabletbutton.robot = robit
 
 //Alerts
@@ -179,7 +179,6 @@
 
 	if(owner)
 		add_emote_panel(owner)
-		add_multiz_buttons(owner)
 
 /datum/hud/proc/toggle_show_robot_modules()
 	if(!iscyborg(mymob))
@@ -229,7 +228,6 @@
 				A.screen_loc = "CENTER[x]:16,SOUTH+[y]:7"
 			else
 				A.screen_loc = "CENTER+[x]:16,SOUTH+[y]:7"
-			A.layer = ABOVE_HUD_LAYER
 			A.plane = ABOVE_HUD_PLANE
 
 			x++
@@ -292,24 +290,26 @@
 		icon_state = "lamp_off"
 
 /atom/movable/screen/robot/lamp/Destroy()
-	robot.lampButton = null
-	robot = null
+	if(robot)
+		robot.lampButton = null
+		robot = null
 	return ..()
 
-/atom/movable/screen/robot/modPC
+/atom/movable/screen/robot/modpc
 	name = "Modular Interface"
 	icon_state = "template"
 	var/mob/living/silicon/robot/robot
 
-/atom/movable/screen/robot/modPC/Click()
+/atom/movable/screen/robot/modpc/Click()
 	. = ..()
 	if(.)
 		return
 	robot.modularInterface?.interact(robot)
 
-/atom/movable/screen/robot/modPC/Destroy()
-	robot.interfaceButton = null
-	robot = null
+/atom/movable/screen/robot/modpc/Destroy()
+	if(robot)
+		robot.interfaceButton = null
+		robot = null
 	return ..()
 
 /atom/movable/screen/robot/alerts

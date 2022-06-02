@@ -118,7 +118,7 @@
 				/obj/item/kitchen/knife/shiv/carrot = 1,
 				/obj/item/kitchen/knife = 1,
 				/obj/item/storage/wallet/random = 1,
-				/obj/item/pda = 1
+				/obj/item/modular_computer/tablet/pda = 1
 				)
 
 /obj/effect/spawner/lootdrop/gambling
@@ -593,15 +593,15 @@
 	lootcount = 5
 	fan_out_items = TRUE
 	loot = list(
-		/obj/item/stack/spacecash/c1 = 100,
-		/obj/item/stack/spacecash/c10 = 95,
-		/obj/item/stack/spacecash/c20 = 90,
-		/obj/item/stack/spacecash/c50 = 50,
+		/obj/item/stack/spacecash/c1 = 80,
+		/obj/item/stack/spacecash/c10 = 70,
+		/obj/item/stack/spacecash/c20 = 45,
+		/obj/item/stack/spacecash/c50 = 40,
 		/obj/item/stack/spacecash/c100 = 30,
-		/obj/item/stack/spacecash/c200 = 10,
-		/obj/item/stack/spacecash/c500 = 5,
-		/obj/item/stack/spacecash/c1000 = 2,
-		/obj/item/stack/spacecash/c10000 = 1
+		/obj/item/stack/spacecash/c200 = 20,
+		/obj/item/stack/spacecash/c500 = 10,
+		/obj/item/stack/spacecash/c1000 = 5,
+		/obj/item/stack/spacecash/c10000 = 3
 	)
 
 /// Space loot spawner. Couple of random bits of technology-adjacent stuff including anomaly cores and BEPIS techs.

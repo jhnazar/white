@@ -28,13 +28,13 @@ PROCESSING_SUBSYSTEM_DEF(quirks)
 							list("Ананасофил","Ананасофоб"), \
 							list("Толерантность к Алкоголю","Алкоголик"), \
 							list("Clown Fan","Mime Fan"), \
-							list("Картавый","Еврей","Украинец"), \
+							list("Картавый"), \
 							list("Bad Touch", "Friendly"))
 	return ..()
 
 /datum/controller/subsystem/processing/quirks/proc/SetupQuirks()
 	// Sort by Positive, Negative, Neutral; and then by name
-	var/list/quirk_list = sortList(subtypesof(/datum/quirk), /proc/cmp_quirk_asc)
+	var/list/quirk_list = sort_list(subtypesof(/datum/quirk), /proc/cmp_quirk_asc)
 
 	for(var/V in quirk_list)
 		var/datum/quirk/T = V

@@ -168,10 +168,11 @@
 	belt = /obj/item/gun/energy/e_gun
 	l_pocket = /obj/item/pen
 	back = /obj/item/storage/backpack/satchel
-	r_pocket = /obj/item/pda/heads
+	r_pocket = /obj/item/modular_computer/tablet/pda/heads
 	l_hand = /obj/item/clipboard
 	id = /obj/item/card/id/advanced/centcom
-	backpack_contents = list(/obj/item/stamp/centcom=1)
+	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+							/obj/item/stamp/centcom=1)
 	id_trim = /datum/id_trim/centcom/official
 
 /datum/outfit/centcom/centcom_official/pre_equip(mob/living/carbon/human/H)
@@ -185,10 +186,9 @@
 	if(visualsOnly)
 		return
 
-	var/obj/item/pda/heads/pda = H.r_store
-	pda.owner = H.real_name
-	pda.ownjob = "CentCom Official"
-	pda.update_label()
+	var/obj/item/modular_computer/tablet/pda/heads/pda = H.r_store
+	pda.saved_identification = H.real_name
+	pda.saved_job = "CentCom Official"
 
 	var/obj/item/card/id/W = H.wear_id
 	W.registered_name = H.real_name
@@ -206,7 +206,7 @@
 	name = "Охранник Инвизиторов"
 
 	suit = /obj/item/clothing/suit/space/hardsuit/ert/paranormal/inquisitor
-	suit_store = /obj/item/tank/internals/tactical/e_gun_taser //тактик
+	suit_store = /obj/item/tank/internals/tactical/e_gun_taser
 
 	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,
 		/obj/item/storage/box/handcuffs=1,

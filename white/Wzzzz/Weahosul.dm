@@ -67,7 +67,7 @@
 	knife_x_offset = 27
 	knife_y_offset = 13
 
-/obj/item/gun/ballistic/rifle/boltaction/kar98k/makeJamming() //прикручиваеца в инишалайзе
+/obj/item/gun/ballistic/rifle/boltaction/kar98k/make_jamming() //прикручиваеца в инишалайзе
 	return
 
 /obj/item/gun/ballistic/rifle/boltaction/kar98k/Initialize()
@@ -119,10 +119,11 @@
 	desc = "Настолько старая, что даже порох в патронах успевает быстро устаревать, пока находится в ней. Эта имеет оптический прицел."
 	icon_state = "kar98k_scope"
 	inhand_icon_state = "kar98k_scope"
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
 	actions_types = list()
+
+/obj/item/gun/ballistic/rifle/boltaction/kar98k/scope/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2.5)
 
 /obj/item/gun/ballistic/rifle/boltaction/kar98k/scope/update_icon(var/add_scope = FALSE)
 	if (bolt_locked == FALSE)
@@ -159,10 +160,10 @@
 
 /obj/item/ammo_box/magazine/wt550m9/mc9mmt
 	name = "top mounted magazine (9mm)"
-	ammo_type = /obj/item/ammo_casing/c9mm
+	ammo_type = /obj/item/ammo_casing/c9mmt
 	caliber = "9mm"
 
-/obj/item/ammo_casing/c9mm
+/obj/item/ammo_casing/c9mmt
 	desc = "A 9mm bullet casing."
 	caliber = "9mm"
 	projectile_type = /obj/projectile/bullet/c9mmt
@@ -196,7 +197,7 @@
 	armour_penetration = 0
 	sharpness = 5
 
-/obj/item/shovel/spade/wzzz
+/obj/item/shovel/spade/german
 	icon = 'white/Wzzzz/icons/Weea.dmi'
 	icon_state = "german_shovel2"
 	inhand_icon_state = "german_shovel2"

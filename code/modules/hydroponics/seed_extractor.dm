@@ -55,8 +55,8 @@
 
 
 /obj/machinery/seed_extractor
-	name = "seed extractor"
-	desc = "Extracts and bags seeds from produce."
+	name = "экстрактор семян"
+	desc = "Извлекает и упаковывает семена из урожая."
 	icon = 'icons/obj/hydroponics/equipment.dmi'
 	icon_state = "sextractor"
 	density = TRUE
@@ -68,6 +68,7 @@
 	var/seed_multiplier = 1
 
 /obj/machinery/seed_extractor/RefreshParts()
+	. = ..()
 	for(var/obj/item/stock_parts/matter_bin/B in component_parts)
 		max_seeds = initial(max_seeds) * B.rating
 	for(var/obj/item/stock_parts/manipulator/M in component_parts)

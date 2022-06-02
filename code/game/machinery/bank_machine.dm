@@ -2,7 +2,6 @@
 	name = "bank machine"
 	desc = "A machine used to deposit and withdraw station funds."
 	icon = 'goon/icons/obj/goon_terminals.dmi'
-	idle_power_usage = 100
 
 	var/siphoning = FALSE
 	var/next_warning = 0
@@ -16,6 +15,7 @@
 	radio = new(src)
 	radio.subspace_transmission = TRUE
 	radio.canhear_range = 0
+	radio.set_listening(FALSE)
 	radio.recalculateChannels()
 
 /obj/machinery/computer/bank_machine/Destroy()
@@ -62,6 +62,7 @@
 			next_warning = world.time + minimum_time_between_warnings
 
 /obj/machinery/computer/bank_machine/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "BankMachine", name)
@@ -97,5 +98,6 @@
 
 /obj/machinery/computer/bank_machine/proc/end_syphon()
 	siphoning = FALSE
-	new /obj/item/holochip(drop_location(), syphoning_credits) //get the loot
+	if(syphoning_credits)
+		new /obj/item/holochip(drop_location(), syphoning_credits) //get the loot
 	syphoning_credits = 0

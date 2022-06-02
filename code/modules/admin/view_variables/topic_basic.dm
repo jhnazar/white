@@ -35,11 +35,11 @@
 			if (!C)
 				return
 			if(!target)
-				to_chat(usr, span_warning("The object you tried to expose to [C] no longer exists (nulled or hard-deled)") , confidential = TRUE)
+				to_chat(usr, span_warning("The object you tried to expose to [C] no longer exists (nulled or hard-deled)"))
 				return
 			message_admins("[key_name_admin(usr)] Showed [key_name_admin(C)] a <a href='?_src_=vars;datumrefresh=[REF(target)]'>VV window</a>")
 			log_admin("Admin [key_name(usr)] Showed [key_name(C)] a VV window of a [target]")
-			to_chat(C, "[holder.fakekey ? "an Administrator" : "[usr.client.key]"] has granted you access to view a View Variables window", confidential = TRUE)
+			to_chat(C, "[holder.fakekey ? "an Administrator" : "[usr.client.key]"] has granted you access to view a View Variables window")
 			C.debug_variables(target)
 	if(check_rights(R_DEBUG))
 		if(href_list[VV_HK_DELETE])
@@ -51,20 +51,20 @@
 	if(href_list[VV_HK_MARK])
 		usr.client.mark_datum(target)
 	if(href_list[VV_HK_ADDCOMPONENT])
-		if(!check_rights(NONE))
+		if(!check_rights(R_DEBUG))
 			return
 		var/list/names = list()
-		var/list/componentsubtypes = sortList(subtypesof(/datum/component), /proc/cmp_typepaths_asc)
+		var/list/componentsubtypes = sort_list(subtypesof(/datum/component), /proc/cmp_typepaths_asc)
 		names += "---Components---"
 		names += componentsubtypes
 		names += "---Elements---"
-		names += sortList(subtypesof(/datum/element), /proc/cmp_typepaths_asc)
+		names += sort_list(subtypesof(/datum/element), /proc/cmp_typepaths_asc)
 		var/result = tgui_input_list(usr, "Choose a component/element to add", "better know what ur fuckin doin pal", names)
 		//var/result = input(usr, "Choose a component/element to add","better know what ur fuckin doin pal") as null|anything in names
 		if(!usr || !result || result == "---Components---" || result == "---Elements---")
 			return
 		if(QDELETED(src))
-			to_chat(usr, "That thing doesn't exist anymore!", confidential = TRUE)
+			to_chat(usr, "That thing doesn't exist anymore!")
 			return
 		var/list/lst = get_callproc_args()
 		if(!lst)

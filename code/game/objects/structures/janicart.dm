@@ -19,6 +19,11 @@
 /obj/structure/janitorialcart/Initialize()
 	. = ..()
 	create_reagents(100, OPENCONTAINER)
+	GLOB.janitor_devices += src
+
+/obj/structure/janitorialcart/Destroy()
+	GLOB.janitor_devices -= src
+	return ..()
 
 /obj/structure/janitorialcart/proc/wet_mop(obj/item/mop, mob/user)
 	if(reagents.total_volume < 1)
@@ -115,7 +120,7 @@
 
 	if(!length(items))
 		return
-	items = sortList(items)
+	items = sort_list(items)
 	var/pick = show_radial_menu(user, src, items, custom_check = CALLBACK(src, .proc/check_menu, user), radius = 38, require_near = TRUE)
 	if(!pick)
 		return

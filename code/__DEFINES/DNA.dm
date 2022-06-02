@@ -86,7 +86,8 @@
 #define DNA_HAIR_COLOR_BLOCK		1
 #define DNA_FACIAL_HAIR_COLOR_BLOCK	2
 #define DNA_SKIN_TONE_BLOCK			3
-#define DNA_EYE_COLOR_BLOCK			4
+#define DNA_EYE_COLOR_LEFT_BLOCK 	4
+#define DNA_EYE_COLOR_RIGHT_BLOCK 	4
 #define DNA_GENDER_BLOCK			5
 #define DNA_FACIAL_HAIRSTYLE_BLOCK	6
 #define DNA_HAIRSTYLE_BLOCK		7
@@ -110,8 +111,6 @@
 #define DIGITIGRADE		10
 #define NO_UNDERWEAR	11
 #define NOSTOMACH		12
-#define NOKIDNEYS		13
-#define NOGUTS			14
 #define NO_DNA_COPY     15
 #define DRINKSBLOOD		16
 /// Use this if you want to change the race's color without the player being able to pick their own color. AKA special color shifting
@@ -143,8 +142,6 @@
 #define ORGAN_SLOT_EYES "eye_sight"
 #define ORGAN_SLOT_LUNGS "lungs"
 #define ORGAN_SLOT_HEART "heart"
-#define ORGAN_SLOT_KIDNEYS "kidneys"
-#define ORGAN_SLOT_GUTS "guts"
 #define ORGAN_SLOT_ZOMBIE "zombie_infection"
 #define ORGAN_SLOT_THRUSTERS "thrusters"
 #define ORGAN_SLOT_HUD "eye_hud"
@@ -155,6 +152,7 @@
 #define ORGAN_SLOT_HEART_AID "heartdrive"
 #define ORGAN_SLOT_BRAIN_ANTIDROP "brain_antidrop"
 #define ORGAN_SLOT_BRAIN_ANTISTUN "brain_antistun"
+#define ORGAN_SLOT_BRAIN_BIOMONITOR "brain_biomonitor"
 #define ORGAN_SLOT_BRAIN_STATS "brain_stats"
 #define ORGAN_SLOT_TAIL "tail"
 #define ORGAN_SLOT_PARASITE_EGG "parasite_egg"
@@ -191,8 +189,6 @@ GLOBAL_LIST_INIT(organ_process_order, list(
 	ORGAN_SLOT_RIGHT_ARM_AUG,
 	ORGAN_SLOT_LEFT_ARM_AUG,
 	ORGAN_SLOT_STOMACH,
-	ORGAN_SLOT_KIDNEYS,
-	ORGAN_SLOT_GUTS,
 	ORGAN_SLOT_STOMACH_AID,
 	ORGAN_SLOT_BREATHING_TUBE,
 	ORGAN_SLOT_EARS,
@@ -209,6 +205,7 @@ GLOBAL_LIST_INIT(organ_process_order, list(
 	ORGAN_SLOT_HEART_AID,
 	ORGAN_SLOT_BRAIN_ANTIDROP,
 	ORGAN_SLOT_BRAIN_ANTISTUN,
+	ORGAN_SLOT_BRAIN_BIOMONITOR,
 	ORGAN_SLOT_TAIL,
 	ORGAN_SLOT_PARASITE_EGG,
 	ORGAN_SLOT_REGENERATIVE_CORE,

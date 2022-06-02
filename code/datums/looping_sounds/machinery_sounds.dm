@@ -136,6 +136,14 @@
 	volume = 50
 	falloff_distance = 5
 	falloff_exponent = 10
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/datum/looping_sound/firealarm
+	mid_sounds = list('sound/machines/FireAlarm1.ogg'=1,'sound/machines/FireAlarm2.ogg'=1,'sound/machines/FireAlarm3.ogg'=1,'sound/machines/FireAlarm4.ogg'=1 )
+	mid_length = 2.4 SECONDS
+	volume = 75
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /datum/looping_sound/pulse_engine
 	mid_sounds = list('white/valtos/sounds/pulseengine.ogg' = 1)
@@ -144,3 +152,15 @@
 	volume = 25
 	falloff_distance = 2
 	falloff_exponent = 20
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/datum/looping_sound/pump
+	start_sound = 'sound/machines/pump/pump_start.ogg'
+	start_length = 0.8 SECONDS
+	mid_sounds = 'sound/machines/pump/pump_mid.ogg'
+	mid_length = 1.3 SECONDS
+	end_sound = 'sound/machines/pump/pump_end.ogg'
+	falloff_distance = 2
+	falloff_exponent = 5
+	volume = 20

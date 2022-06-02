@@ -87,7 +87,7 @@
 	spread = 10
 
 /obj/item/gun/ballistic/automatic/fallout/assaultrifle
-	name = "assault rifle"
+	name = "штурмовая винтовка"
 	desc = "A general purpose, standard automatic assault rifle chambered in 5.56. Commonly used by pre-war US military forces."
 	icon_state = "assaultrifle"
 	inhand_icon_state = "assaultrifle"
@@ -111,11 +111,12 @@
 	can_unsuppress = FALSE
 	extra_damage = 20
 	extra_penetration = 0
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
 	fire_sound = 'sound/weapons/gun/smg/shot_suppressed.ogg'
 	spread = 6
+
+/obj/item/gun/ballistic/automatic/fallout/assaultrifle/infiltrator/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2)
 
 /obj/item/gun/ballistic/automatic/fallout/assaultrifle/chinese
 	name = "Chinese assault rifle"
@@ -144,13 +145,13 @@
 	fire_sound = 'white/valtos/sounds/fallout/gunsounds/marksman/marksman2.ogg'
 	can_suppress = FALSE
 	fire_delay = 6
-	burst_size = 1
 	extra_damage = 35
 	extra_penetration = 10
-	zoomable = TRUE
-	zoom_amt = 10
-	zoom_out_amt = 13
 	weapon_weight = WEAPON_HEAVY
+
+/obj/item/gun/ballistic/automatic/fallout/marksman/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 2)
 
 /obj/item/gun/ballistic/automatic/fallout/marksman/american
 	name = "All-American"
@@ -168,7 +169,6 @@
 	fire_delay = 4
 	extra_damage = 25
 	extra_penetration = 5
-	zoomable = FALSE
 
 /obj/item/gun/ballistic/automatic/fallout/marksman/service/survival
 	name = "Survivalist rifle"
@@ -197,8 +197,8 @@
 	inhand_icon_state = "sniper"
 	fire_sound = 'white/valtos/sounds/fallout/gunsounds/sniper/sniper2.ogg'
 	fire_delay = 6
-	extra_damage = 45
-	extra_penetration = 10
+	extra_damage = 65
+	extra_penetration = 50
 	mag_type = /obj/item/ammo_box/magazine/fallout/r308
 
 //Magazines

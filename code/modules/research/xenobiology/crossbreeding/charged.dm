@@ -168,7 +168,7 @@ Charged extracts:
 	if(!istype(H))
 		to_chat(user, span_warning("You must be a humanoid to use this!"))
 		return
-	var/racechoice = input(H, "Choose your slime subspecies.", "Slime Selection") as null|anything in sortList(subtypesof(/datum/species/jelly), /proc/cmp_typepaths_asc)
+	var/racechoice = input(H, "Choose your slime subspecies.", "Slime Selection") as null|anything in sort_list(subtypesof(/datum/species/jelly), /proc/cmp_typepaths_asc)
 	if(!racechoice)
 		to_chat(user, span_notice("You decide not to become a slime for now."))
 		return
@@ -223,7 +223,7 @@ Charged extracts:
 	addtimer(CALLBACK(src, .proc/boom), 50)
 
 /obj/item/slimecross/charged/oil/proc/boom()
-	explosion(get_turf(src), 2, 3, 4) //Much smaller effect than normal oils, but devastatingly strong where it does hit.
+	explosion(src, devastation_range = 2, heavy_impact_range = 3, light_impact_range = 4, explosion_cause = src) //Much smaller effect than normal oils, but devastatingly strong where it does hit.
 	qdel(src)
 
 /obj/item/slimecross/charged/black

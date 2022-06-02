@@ -1,6 +1,6 @@
 /obj/machinery/computer/apc_control
-	name = "power flow control console"
-	desc = "Used to remotely control the flow of power to different parts of the station."
+	name = "консоль управления энергопотреблением"
+	desc = "Используется для дистанционного управления подачи электроэнергии в различные части станции."
 	icon_screen = "solar"
 	icon_keyboard = "power_key"
 	req_access = list(ACCESS_CE)
@@ -40,6 +40,7 @@
 	return APC.z == z && !APC.malfhack && !APC.aidisabled && !(APC.obj_flags & EMAGGED) && !APC.machine_stat && !istype(APC.area, /area/ai_monitored) && !(APC.area.area_flags & NO_ALERTS)
 
 /obj/machinery/computer/apc_control/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	operator = user
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
@@ -153,7 +154,16 @@
 			var/obj/machinery/power/apc/target = locate(ref) in GLOB.apcs_list
 			if(!target)
 				return
-			target.vars[type] = target.setsubsystem(text2num(value))
+
+			value = target.setsubsystem(text2num(value))
+			switch(type) // Sanity check
+				if("equipment", "lighting", "environ")
+					target.vars[type] = value
+				else
+					message_admins("Warning: possible href exploit by [key_name(usr)] - attempted to set [html_encode(type)] on [target] to [html_encode(value)]")
+					log_game("Warning: possible href exploit by [key_name(usr)] - attempted to set [html_encode(type)] on [target] to [html_encode(value)]")
+					return
+
 			target.update_icon()
 			target.update()
 			var/setTo = ""

@@ -14,7 +14,7 @@
 	var/friction = 0.15		// lose this much speed every ptick
 	var/inertia = 1			// multiplier to mob speed, when increasing treadmill speed
 	var/throw_dist = 2		// distance to throw the person, worst case
-	var/power_gen = 40000	// amount of power output at max speed
+	var/power_gen = 80000	// amount of power output at max speed
 	var/list/mobs_running[0]
 	var/id = null			// for linking to monitor
 
@@ -52,7 +52,7 @@
 	// if 2fast, throw the person, otherwise they just slide off, if there's reasonable speed at all
 	if(speed)
 		var/dist = max(throw_dist * speed / MAX_SPEED, 1)
-		A.throw_at(get_distant_turf(get_turf(src), REVERSE_DIR(dir), dist), A.throw_range, A.throw_speed, src, 1)
+		A.throw_at(get_distant_turf(get_turf(src), REVERSE_DIR(dir), dist), A.throw_range, A.throw_speed)
 
 /obj/machinery/power/treadmill/process()
 	if(!anchored)

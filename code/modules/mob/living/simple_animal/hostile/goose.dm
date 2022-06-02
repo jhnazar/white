@@ -9,12 +9,12 @@
 	speak_chance = 0
 	turns_per_move = 5
 	butcher_results = list(/obj/item/food/meat/slab = 2)
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
-	response_harm_continuous = "kicks"
-	response_harm_simple = "kick"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
+	response_harm_continuous = "пинает"
+	response_harm_simple = "пинает"
 	emote_taunt = list("hisses")
 	taunt_chance = 30
 	speed = 0
@@ -27,7 +27,7 @@
 	attack_verb_simple = "щипает"
 	attack_sound = "goose"
 	attack_vis_effect = ATTACK_EFFECT_BITE
-	speak_emote = list("honks")
+	speak_emote = list("хонкает")
 	faction = list("neutral")
 	attack_same = TRUE
 	gold_core_spawnable = HOSTILE_SPAWN
@@ -78,12 +78,12 @@
 	real_name = "Birdboat"
 	desc = "It's a sick-looking goose, probably ate too much maintenance trash. Best not to move it around too much."
 	gender = MALE
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
-	response_harm_continuous = "kicks"
-	response_harm_simple = "kick"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
+	response_harm_continuous = "пинает"
+	response_harm_simple = "пинает"
 	gold_core_spawnable = NO_SPAWN
 	random_retaliate = FALSE
 	var/vomiting = FALSE
@@ -246,7 +246,7 @@
 	icon_icon = 'icons/mob/animal.dmi'
 	cooldown_time = 250
 
-/datum/action/cooldown/vomit/Trigger()
+/datum/action/cooldown/vomit/Trigger(trigger_flags)
 	if(!..())
 		return FALSE
 	if(!istype(owner, /mob/living/simple_animal/hostile/retaliate/goose/vomit))

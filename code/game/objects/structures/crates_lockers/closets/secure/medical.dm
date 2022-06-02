@@ -80,7 +80,8 @@
 	new /obj/item/clothing/under/rank/medical/chief_medical_officer(src)
 	new /obj/item/clothing/under/rank/medical/chief_medical_officer/skirt(src)
 	new /obj/item/clothing/shoes/sneakers/brown	(src)
-	new /obj/item/cartridge/cmo(src)
+	new /obj/item/gun/energy/e_gun/mini(src)
+	new /obj/item/computer_hardware/hard_drive/portable/command/cmo(src)
 	new /obj/item/radio/headset/heads/cmo(src)
 	new /obj/item/megaphone/command(src)
 	new /obj/item/defibrillator/compact/loaded(src)
@@ -121,6 +122,9 @@
 	new /obj/item/storage/box/medigels(src)
 	new /obj/item/ph_booklet(src)
 	new /obj/item/reagent_containers/dropper(src)
+	new /obj/item/reagent_containers/glass/bottle/basic_buffer(src)
+	new /obj/item/reagent_containers/glass/bottle/basic_buffer(src)
+	new /obj/item/reagent_containers/glass/bottle/acidic_buffer(src)
 	new /obj/item/reagent_containers/glass/bottle/acidic_buffer(src) //hopefully they get the hint
 
 /obj/structure/closet/secure_closet/chemical/heisenberg //contains one of each beaker, syringe etc.

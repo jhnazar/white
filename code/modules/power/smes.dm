@@ -15,8 +15,8 @@
 #define SMES_INPUT_ATTEMPT	9
 
 /obj/machinery/power/smes
-	name = "Сверхпроводящий накопитель магнитной энергии"
-	desc = "Сверхпроводящий накопитель магнитной энергии (СНМЭ)" //крутой перевод мммм
+	name = "Сверхмощный аккумуляторный каскад (СМЕС)"
+	desc = "Огромная батарея аккумуляторов, предназначеная для длительного хранения энергии, получаемой от источника питания и ее дальнейшего распределения по электрической сети."
 	icon = 'white/valtos/icons/power.dmi'
 	icon_state = "smes"
 	density = TRUE
@@ -62,6 +62,7 @@
 	update_icon()
 
 /obj/machinery/power/smes/RefreshParts()
+	SHOULD_CALL_PARENT(FALSE)
 	var/IO = 0
 	var/MC = 0
 	var/C

@@ -82,11 +82,11 @@
 	if(open)
 		if(pizza)
 			var/mutable_appearance/pizza_overlay = mutable_appearance(pizza.icon, pizza.icon_state)
-			pizza_overlay.pixel_y = -3
+			pizza_overlay.pixel_y = -2
 			. += pizza_overlay
 		if(bomb)
 			var/mutable_appearance/bomb_overlay = mutable_appearance(bomb.icon, bomb.icon_state)
-			bomb_overlay.pixel_y = 5
+			bomb_overlay.pixel_y = 8
 			. += bomb_overlay
 		return
 
@@ -361,6 +361,7 @@
 	QDEL_NULL(pizza)
 	if(ishuman(user))
 		attune_pizza(user)
+		to_chat(user, span_notice("Еще одна пицца внезапно появляется в коробке. Какого хрена?"))
 	. = ..()
 
 /obj/item/pizzabox/infinite/proc/attune_pizza(mob/living/carbon/human/noms) //tonight on "proc names I never thought I'd type"

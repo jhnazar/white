@@ -9,6 +9,7 @@
 	icon_dead = "base_dead"
 	icon_gib = "carp_gib"
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
+	movement_type = FLOATING
 	speak_chance = 0
 	turns_per_move = 5
 	butcher_results = list(/obj/item/food/fishmeat/carp = 2)
@@ -34,7 +35,7 @@
 	attack_verb_simple = "кусает"
 	attack_sound = 'sound/weapons/bite.ogg'
 	attack_vis_effect = ATTACK_EFFECT_BITE
-	speak_emote = list("gnashes")
+	speak_emote = list("скрежещет")
 	//Space carp aren't affected by cold.
 	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	minbodytemp = 0
@@ -76,6 +77,8 @@
 	. = ..()
 	ADD_TRAIT(src, TRAIT_SPACEWALK, INNATE_TRAIT)
 	add_cell_sample()
+	var/datum/action/small_sprite/action = new
+	action.Grant(src)
 
 /mob/living/simple_animal/hostile/carp/add_cell_sample()
 	AddElement(/datum/element/swabable, CELL_LINE_TABLE_CARP, CELL_VIRUS_TABLE_GENERIC_MOB, 1, 5)
@@ -196,7 +199,7 @@
 	real_name = "Lia"
 	desc = "A failed experiment of Nanotrasen to create weaponised carp technology. This less than intimidating carp now serves as the Head of Security's pet."
 	gender = FEMALE
-	speak_emote = list("squeaks")
+	speak_emote = list("пищит")
 	gold_core_spawnable = NO_SPAWN
 	faction = list("neutral")
 	health = 200
@@ -217,7 +220,7 @@
 	real_name = "Cayenne"
 	desc = "A failed Syndicate experiment in weaponized space carp technology, it now serves as a lovable mascot."
 	gender = FEMALE
-	speak_emote = list("squeaks")
+	speak_emote = list("пищит")
 	gold_core_spawnable = NO_SPAWN
 	faction = list(ROLE_SYNDICATE)
 	rarechance = 10

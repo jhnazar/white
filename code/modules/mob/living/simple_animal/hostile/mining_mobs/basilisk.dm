@@ -26,7 +26,7 @@
 	melee_damage_upper = 12
 	attack_verb_continuous = "вгрызается в"
 	attack_verb_simple = "вгрызается в"
-	speak_emote = list("chitters")
+	speak_emote = list("трепещет")
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	attack_vis_effect = ATTACK_EFFECT_BITE
 	aggro_vision_range = 9
@@ -64,11 +64,11 @@
 
 /mob/living/simple_animal/hostile/asteroid/basilisk/ex_act(severity, target)
 	switch(severity)
-		if(1)
+		if(EXPLODE_DEVASTATE)
 			gib()
-		if(2)
+		if(EXPLODE_HEAVY)
 			adjustBruteLoss(140)
-		if(3)
+		if(EXPLODE_LIGHT)
 			adjustBruteLoss(110)
 
 /mob/living/simple_animal/hostile/asteroid/basilisk/AttackingTarget()
@@ -110,7 +110,7 @@
 	attack_verb_continuous = "протыкает"
 	attack_verb_simple = "протыкает"
 	a_intent = INTENT_HARM
-	speak_emote = list("telepathically cries")
+	speak_emote = list("телепатически плачет")
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	attack_vis_effect = null // doesn't bite unlike the parent type.
 	stat_attack = HARD_CRIT
@@ -195,7 +195,7 @@
 		var/mob/living/L = target
 		if (istype(L))
 			L.adjust_fire_stacks(0.1)
-			L.IgniteMob()
+			L.ignite_mob()
 
 /obj/projectile/temp/basilisk/icewing
 	damage = 5

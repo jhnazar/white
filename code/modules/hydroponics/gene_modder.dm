@@ -26,6 +26,7 @@
 	var/max_instability = 10
 
 /obj/machinery/plantgenes/RefreshParts() // Comments represent the max you can set per tier, respectively. seeds.dm [219] clamps these for us but we don't want to mislead the viewer.
+	. = ..()
 	for(var/obj/item/stock_parts/manipulator/M in component_parts)
 		if(M.rating > 3)
 			max_potency = 95
@@ -433,8 +434,8 @@
  */
 
 /obj/item/disk/plantgene
-	name = "plant data disk"
-	desc = "A disk for storing plant genetic data."
+	name = "диск с ботаническими данными"
+	desc = "Диск для записи генетических данных растений."
 	icon_state = "datadisk_hydro"
 	custom_materials = list(/datum/material/iron=30, /datum/material/glass=10)
 	var/datum/plant_gene/gene

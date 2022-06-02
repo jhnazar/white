@@ -14,10 +14,10 @@
 /obj/item/toy/prize
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "ripleytoy"
-	verb_say = "beeps"
-	verb_ask = "beeps"
-	verb_exclaim = "beeps"
-	verb_yell = "beeps"
+	verb_say = "бипает"
+	verb_ask = "бипает"
+	verb_exclaim = "бипает"
+	verb_yell = "бипает"
 	w_class = WEIGHT_CLASS_SMALL
 	/// Timer when it'll be off cooldown
 	var/timer = 0
@@ -255,10 +255,10 @@
 	. = ..()
 	. += "<hr><span class='notice'>This toy's special attack is [special_attack_cry], [special_attack_type_message] </span>"
 	if(in_combat)
-		. += "\n<span class='notice'>This toy has a maximum health of [max_combat_health]. Currently, it's [combat_health].</span>"
-		. += "\n<span class='notice'>Its special move light is [special_attack_cooldown? "flashing red." : "green and is ready!"]</span>"
+		. += span_notice("\nThis toy has a maximum health of [max_combat_health]. Currently, it's [combat_health].")
+		. += span_notice("\nIts special move light is [special_attack_cooldown? "flashing red." : "green and is ready!"]")
 	else
-		. += "\n<span class='notice'>This toy has a maximum health of [max_combat_health].</span>"
+		. += span_notice("\nThis toy has a maximum health of [max_combat_health].")
 
 	if(wins || losses)
 		. += "<hr><span class='notice'>This toy has [wins] wins, and [losses] losses.</span>"

@@ -1,10 +1,11 @@
 /obj/machinery/computer/nanite_cloud_controller
-	name = "nanite cloud controller"
-	desc = "Stores and controls nanite cloud backups."
+	name = "облачный контролер нанитов"
+	desc = "Хранит в себе резервные копии облаков нанитных программ. Уничтожение может вызвать массовый отказ нанитов у активных пользователей."
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "nanite_cloud_controller"
 	circuit = /obj/item/circuitboard/computer/nanite_cloud_controller
 	icon_screen = "nanite_cloud_controller_screen"
+	icon_keyboard = null
 
 	var/obj/item/disk/nanite_program/disk
 	var/list/datum/nanite_cloud_backup/cloud_backups = list()
@@ -20,7 +21,7 @@
 	if(istype(I, /obj/item/disk/nanite_program))
 		var/obj/item/disk/nanite_program/N = I
 		if (user.transferItemToLoc(N, src))
-			to_chat(user, span_notice("You insert [N] into [src]."))
+			to_chat(user, span_notice("Вставляю [N] в [src]."))
 			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, FALSE)
 			if(disk)
 				eject(user)
@@ -30,7 +31,7 @@
 
 /obj/machinery/computer/nanite_cloud_controller/AltClick(mob/user)
 	if(disk && user.canUseTopic(src, !issilicon(user)))
-		to_chat(user, span_notice("You take out [disk] from [src]."))
+		to_chat(user, span_notice("Извлекаю [disk] из [src]."))
 		eject(user)
 	return
 
@@ -49,7 +50,7 @@
 
 /obj/machinery/computer/nanite_cloud_controller/proc/generate_backup(cloud_id, mob/user)
 	if(SSnanites.get_cloud_backup(cloud_id, TRUE))
-		to_chat(user, span_warning("Cloud ID already registered."))
+		to_chat(user, span_warning("Облако с заданным номером уже существует."))
 		return
 
 	var/datum/nanite_cloud_backup/backup = new(src)
@@ -59,6 +60,7 @@
 	investigate_log("[key_name(user)] created a new nanite cloud backup with id #[cloud_id]", INVESTIGATE_NANITES)
 
 /obj/machinery/computer/nanite_cloud_controller/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "NaniteCloudControl", name)

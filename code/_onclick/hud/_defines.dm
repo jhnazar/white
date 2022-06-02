@@ -69,10 +69,12 @@
 
 //Middle right (status indicators)
 #define ui_healthdoll "EAST-1:28,CENTER-2:13"
+#define ui_stamina "EAST-1:28,CENTER-2:13"
 #define ui_health "EAST-1:28,CENTER-1:15"
 #define ui_internal "EAST-1:28,CENTER-3:10"
 #define ui_mood "EAST-1:28,CENTER:17"
 #define ui_spacesuit "EAST-1:28,CENTER-3:10"
+#define ui_fixeye "EAST-1:28,CENTER-4:24"
 #define ui_relative_temp "EAST-1:24,CENTER+1:24"
 
 //Pop-up inventory
@@ -140,13 +142,12 @@
 #define ui_ai_announcement "SOUTH:6,WEST+7"
 #define ui_ai_shuttle "SOUTH:6,WEST+8"
 #define ui_ai_state_laws "SOUTH:6,WEST+9"
-#define ui_ai_pda_send "SOUTH:6,WEST+10"
-#define ui_ai_pda_log "SOUTH:6,WEST+11"
-#define ui_ai_take_picture "SOUTH:6,WEST+12"
-#define ui_ai_view_images "SOUTH:6,WEST+13"
-#define ui_ai_sensor "SOUTH:6,WEST+14"
-#define ui_ai_multicam "SOUTH:6,WEST+15"
-#define ui_ai_add_multicam "SOUTH:6,WEST+16"
+#define ui_ai_mod_int "SOUTH:6,WEST+10"
+#define ui_ai_take_picture "SOUTH:6,WEST+11"
+#define ui_ai_view_images "SOUTH:6,WEST+12"
+#define ui_ai_sensor "SOUTH:6,WEST+13"
+#define ui_ai_multicam "SOUTH+1:6,WEST+12"
+#define ui_ai_add_multicam "SOUTH+1:6,WEST+13"
 
 // pAI
 #define ui_pai_software "SOUTH:6,WEST"
@@ -158,10 +159,13 @@
 #define ui_pai_host_monitor "SOUTH:6,WEST+6"
 #define ui_pai_crew_manifest "SOUTH:6,WEST+7"
 #define ui_pai_state_laws "SOUTH:6,WEST+8"
-#define ui_pai_pda_send "SOUTH:6,WEST+9"
-#define ui_pai_pda_log "SOUTH:6,WEST+10"
-#define ui_pai_take_picture "SOUTH:6,WEST+12"
-#define ui_pai_view_images "SOUTH:6,WEST+13"
+#define ui_pai_mod_int "SOUTH:6,WEST+9"
+#define ui_pai_internal_gps "SOUTH:6,WEST+10"
+#define ui_pai_take_picture "SOUTH:6,WEST+11"
+#define ui_pai_view_images "SOUTH:6,WEST+12"
+#define ui_pai_radio "SOUTH:6,WEST+13"
+#define ui_pai_language_menu "SOUTH+1:8,WEST+12:31"
+#define ui_pai_navigate_menu "SOUTH+1:8,WEST+12:31"
 
 //Ghosts
 #define ui_ghost_jumptomob "SOUTH:6,CENTER-3:24"

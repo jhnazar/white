@@ -3,7 +3,7 @@
 	icon = 'icons/obj/janitor.dmi'
 	lefthand_file = 'icons/mob/inhands/misc/food_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/food_righthand.dmi'
-	desc = "Это мусор."
+	desc = "Просто мусор."
 	w_class = WEIGHT_CLASS_TINY
 	resistance_flags = FLAMMABLE
 	item_flags = NOBLUDGEON
@@ -112,7 +112,7 @@
 /obj/item/trash/can/food/pine_nuts
 	name = "canned pine nuts"
 	icon = 'icons/obj/food/canned.dmi'
-	icon_state = "pine_nuts_empty"
+	icon_state = "pinenutscan_empty"
 
 /obj/item/trash/spacers_sidekick
 	name = "\improper Spacer's Sidekick packet"

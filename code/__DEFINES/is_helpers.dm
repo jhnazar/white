@@ -34,6 +34,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define isclosedturf(A) (istype(A, /turf/closed))
 
+#define isnogenerationturf(A) (istype(A, /turf/open/floor/plating/asteroid/no_generation) || istype(A, /turf/open/floor/plating/no_generation))
+
 #define isindestructiblewall(A) (istype(A, /turf/closed/indestructible))
 
 #define iswallturf(A) (istype(A, /turf/closed/wall))
@@ -151,6 +153,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define iscogscarab(A) (istype(A, /mob/living/simple_animal/drone/cogscarab))
 
+#define isstunmob(A) (istype(A, /mob/living/simple_animal/hostile/zombie) || istype(A, /mob/living/simple_animal/hostile/alien) || istype(A, /mob/living/simple_animal/hostile/poison/giant_spider) || istype(A, /mob/living/simple_animal/hostile/clown) || istype(A, /mob/living/simple_animal/hostile/netherworld) || istype(A, /mob/living/simple_animal/hostile/blob) || istype(A, /mob/living/simple_animal/hostile/ratvar))
+
 //Misc mobs
 #define isobserver(A) (istype(A, /mob/dead/observer))
 
@@ -193,7 +197,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define ismedicalmecha(A) (istype(A, /obj/vehicle/sealed/mecha/medical))
 
-#define ismopable(A) (A && (A.layer <= HIGH_SIGIL_LAYER)) //If something can be cleaned by floor-cleaning devices such as mops or clean bots
+#define ismopable(A) (A && (A.layer <= FLOOR_CLEAN_LAYER)) //If something can be cleaned by floor-cleaning devices such as mops or clean bots
 
 #define isorgan(A) (istype(A, /obj/item/organ))
 
@@ -206,6 +210,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define isprojectile(A) (istype(A, /obj/projectile))
 
 #define isgun(A) (istype(A, /obj/item/gun))
+
+#define isinstrument(A) (istype(A, /obj/item/instrument) || istype(A, /obj/structure/musician))
 
 #define is_reagent_container(O) (istype(O, /obj/item/reagent_containers))
 
@@ -249,5 +255,9 @@ GLOBAL_LIST_INIT(book_types, typecacheof(list(
 #define is_shadow_or_thrall(M) (is_thrall(M) || is_shadow(M))
 
 #define isIPC(A) (is_species(A, /datum/species/ipc))
+#define isandroid(A) (is_species(A, /datum/species/android))
 
 #define isspacepod(A) (istype(A, /obj/spacepod))
+
+// Xen mobs
+#define isxenmob(A) (istype(A, /mob/living/simple_animal/hostile/blackmesa/xen))

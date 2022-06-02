@@ -1,4 +1,3 @@
-import { toArray } from 'common/collections';
 import { useBackend, useSharedState } from '../backend';
 import { AnimatedNumber, Box, Button, Flex, LabeledList, Section, Table, Tabs } from '../components';
 import { formatMoney } from '../format';
@@ -135,7 +134,7 @@ export const CargoCatalog = (props, context) => {
     self_paid,
     app_cost,
   } = data;
-  const supplies = toArray(data.supplies);
+  const supplies = Object.values(data.supplies);
   const [
     activeSupplyName,
     setActiveSupplyName,
@@ -356,18 +355,26 @@ const CargoCart = (props, context) => {
                   <b>[Оплачено с карты]</b>
                 )}
               </Table.Cell>
-              <Table.Cell collapsing textAlign="right">
-                {formatMoney(entry.cost)} кредитов
-              </Table.Cell>
-              <Table.Cell collapsing>
-                {can_send &&(
-                  <Button
-                    icon="minus"
-                    onClick={() => act('remove', {
-                      id: entry.id,
-                    })} />
-                )}
-              </Table.Cell>
+              {entry.dep_order && (
+                <Table.Cell collapsing textAlign="right">
+                  {formatMoney(entry.cost)} кредитов заработано на доставке
+                </Table.Cell>
+              ) || (
+                <>
+                  <Table.Cell collapsing textAlign="right">
+                    {formatMoney(entry.cost)} кредитов
+                  </Table.Cell>
+                  <Table.Cell collapsing>
+                    {can_send &&(
+                      <Button
+                        icon="minus"
+                        onClick={() => act('remove', {
+                          id: entry.id,
+                        })} />
+                    )}
+                  </Table.Cell>
+                </>
+              )}
             </Table.Row>
           ))}
         </Table>

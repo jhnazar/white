@@ -9,9 +9,9 @@
 	earliest_start = 25 MINUTES
 
 /datum/round_event/meteor_wave
-	announceWhen = 	150
-	startWhen = 	1
-	endWhen = 		151
+	startWhen = 6
+	endWhen = 66
+	announceWhen = 1
 	var/list/wave_type
 	var/wave_name = "normal"
 	var/start_x
@@ -40,13 +40,17 @@
 		meteor.meteor_types = wave_type
 		meteor.start_x = start_x + rand(-600, 600)
 		meteor.start_y = start_y + rand(-600, 600)
-		meteor.position.x = meteor.start_x
-		meteor.position.y = meteor.start_y
+		MOVE_ORBITAL_BODY(meteor, meteor.start_x, meteor.start_y)
 		//Calculate velocity
 		meteor.velocity.x = (station_target.position.x - meteor.start_x * 10) / meteor_time
 		meteor.velocity.y = (station_target.position.y - meteor.start_y * 10) / meteor_time
 		meteor.end_tick = world.time + meteor_time
 		station_target.RegisterReference(meteor)
+
+/datum/round_event/meteor_wave/on_admin_trigger()
+	if(alert(usr, "Trigger meteors instantly? (This will not change the alert, just send them quicker. Nobody will ever notice!)", "Meteor Trigger", "Yes", "No") == "Yes")
+		announceWhen = 1
+		meteor_time = 1 MINUTES
 
 /datum/round_event/meteor_wave/proc/determine_wave_type()
 	if(!wave_name)
@@ -91,7 +95,7 @@
 /datum/round_event_control/meteor_wave/catastrophic
 	name = "Meteor Wave: Catastrophic"
 	typepath = /datum/round_event/meteor_wave/catastrophic
-	weight = 15
+	weight = 30
 	min_players = 20
 	max_occurrences = 60
 	earliest_start = 45 MINUTES

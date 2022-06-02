@@ -2,13 +2,14 @@
 
 /obj/item/wallframe/picture
 	name = "рамка картины"
-	desc = "Лучший способ показать всем ваши лучшие смертельные ловушки."
+	desc = "Лучший способ показать всем лучшие смертельные ловушки."
 	icon = 'icons/obj/decals.dmi'
 	custom_materials = list(/datum/material/wood = 2000)
 	flags_1 = 0
 	icon_state = "frame-overlay"
 	result_path = /obj/structure/sign/picture_frame
 	var/obj/item/photo/displayed
+	pixel_shift = 30
 
 /obj/item/wallframe/picture/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/photo))
@@ -83,9 +84,6 @@ FRAME_DEFINE(centcom)
 	LAZYADD(SSpersistence.photo_frames, src)
 	if(dir)
 		setDir(dir)
-	if(building)
-		pixel_x = (dir & 3)? 0 : (dir == 4 ? -30 : 30)
-		pixel_y = (dir & 3)? (dir ==1 ? -30 : 30) : 0
 
 /obj/structure/sign/picture_frame/Destroy()
 	LAZYREMOVE(SSpersistence.photo_frames, src)

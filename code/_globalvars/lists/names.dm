@@ -27,12 +27,15 @@ GLOBAL_LIST_INIT(nightmare_names, world.file2list("strings/names/nightmare.txt")
 GLOBAL_LIST_INIT(megacarp_first_names, world.file2list("strings/names/megacarp1.txt"))
 GLOBAL_LIST_INIT(megacarp_last_names, world.file2list("strings/names/megacarp2.txt"))
 
+GLOBAL_LIST_INIT(last_names_slavic, world.file2list("strings/names/last_slav.txt")) // surnames for sobr/omon
+
 GLOBAL_LIST_INIT(verbs, world.file2list("strings/names/verbs.txt"))
 GLOBAL_LIST_INIT(ing_verbs, world.file2list("strings/names/ing_verbs.txt"))
 GLOBAL_LIST_INIT(adverbs, world.file2list("strings/names/adverbs.txt"))
 GLOBAL_LIST_INIT(adjectives, world.file2list("strings/names/adjectives.txt"))
 GLOBAL_LIST_INIT(gross_adjectives,  world.file2list("strings/names/gross_adjectives.txt"))
 GLOBAL_LIST_INIT(dream_strings, world.file2list("strings/dreamstrings.txt"))
+GLOBAL_LIST_INIT(ru_ban_words, world.file2list("strings/mati.txt")) // actually not ban
 //loaded on startup because of "
 //would include in rsc if ' was used
 

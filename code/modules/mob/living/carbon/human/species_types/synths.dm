@@ -3,8 +3,8 @@
 	id = "synth"
 	say_mod = "бип-бупает" //inherited from a user's real species
 	sexes = 0
-	species_traits = list(NOTRANSSTING, NOGUTS, NOKIDNEYS) //all of these + whatever we inherit from the real species
-	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_VIRUSIMMUNE,TRAIT_NODISMEMBER,TRAIT_NOLIMBDISABLE,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP)
+	species_traits = list(NOTRANSSTING) //all of these + whatever we inherit from the real species
+	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_VIRUSIMMUNE,TRAIT_NODISMEMBER,TRAIT_NOLIMBDISABLE,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP,TRAIT_NOHYDRATION)
 	inherent_biotypes = MOB_ROBOTIC|MOB_HUMANOID
 	meat = null
 	damage_overlay_type = "synth"

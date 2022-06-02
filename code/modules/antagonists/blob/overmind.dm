@@ -16,6 +16,7 @@ GLOBAL_LIST_EMPTY(blob_nodes)
 	see_in_dark = 8
 	invisibility = INVISIBILITY_OBSERVER
 	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	see_invisible = SEE_INVISIBLE_LIVING
 	pass_flags = PASSBLOB
 	faction = list(ROLE_BLOB)
@@ -97,7 +98,16 @@ GLOBAL_LIST_EMPTY(blob_nodes)
 				to_chat(src, "<b><font color=\"[blobstrain.color]\">[blobstrain.name]</b></font> [blobstrain.effectdesc]")
 
 /mob/camera/blob/can_z_move(direction, turf/start, turf/destination, z_move_flags = NONE, mob/living/rider)
-	return FALSE
+	if(placed) // The blob can't expand vertically (yet)
+		return FALSE
+	. = ..()
+	if(!.)
+		return
+	var/turf/target_turf = .
+	if(!is_valid_turf(target_turf)) // Allows unplaced blobs to travel through station z-levels
+		if(z_move_flags & ZMOVE_FEEDBACK)
+			to_chat(src, "Нельзя выбрать данную позицию. Переместитесь в другое место и попробуйте снова.")
+		return null
 
 /mob/camera/blob/proc/is_valid_turf(turf/T)
 	var/area/A = get_area(T)
@@ -118,7 +128,7 @@ GLOBAL_LIST_EMPTY(blob_nodes)
 			qdel(src)
 	else if(!victory_in_progress && (blobs_legit.len >= blobwincount))
 		victory_in_progress = TRUE
-		priority_announce("Угроза достигла критической массы. Station loss is imminent.", "Биологическая тревога")
+		priority_announce("Угроза достигла критической массы. Потеря станции неизбежна.", "Биологическая тревога")
 		set_security_level("delta")
 		max_blob_points = INFINITY
 		blob_points = INFINITY
@@ -257,7 +267,7 @@ GLOBAL_LIST_EMPTY(blob_nodes)
 
 	src.log_talk(message, LOG_SAY)
 
-	var/message_a = say_quote(message)
+	var/message_a = say_quote(capitalize(message))
 	var/rendered = span_big("<font color=\"#EE4000\"><b>\[Телепатия\] [name](<font color=\"[blobstrain.color]\">[blobstrain.name]</font>)</b> [message_a]</font>")
 
 	for(var/mob/M in GLOB.mob_list)

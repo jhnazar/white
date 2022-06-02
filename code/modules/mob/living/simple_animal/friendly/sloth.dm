@@ -5,18 +5,18 @@
 	icon_state = "sloth"
 	icon_living = "sloth"
 	icon_dead = "sloth_dead"
-	speak_emote = list("yawns")
-	emote_hear = list("snores.","yawns.")
-	emote_see = list("dozes off.", "looks around sleepily.")
+	speak_emote = list("зевает")
+	emote_hear = list("храпит.","зевает.")
+	emote_see = list("отрубается.", "смотрит спяще.")
 	speak_chance = 1
 	turns_per_move = 5
 	butcher_results = list(/obj/item/food/meat/slab = 3)
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
-	response_harm_continuous = "kicks"
-	response_harm_simple = "kick"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
+	response_harm_continuous = "пинает"
+	response_harm_simple = "пинает"
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	gold_core_spawnable = FRIENDLY_SPAWN
 	melee_damage_lower = 18

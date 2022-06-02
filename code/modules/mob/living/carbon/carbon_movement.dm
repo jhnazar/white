@@ -28,10 +28,15 @@
 			set_nutrition(NUTRITION_LEVEL_FED - 1)	//just less than feeling vigorous
 		else if(nutrition && stat != DEAD)
 			adjust_nutrition(-(HUNGER_FACTOR/10))
-			hydration -= HYDRATION_LOSS_PER_LIFE
 			if(m_intent == MOVE_INTENT_RUN)
 				adjust_nutrition(-(HUNGER_FACTOR/10))
-				hydration -= HYDRATION_LOSS_PER_LIFE
+
+		if(HAS_TRAIT(src, TRAIT_NOHYDRATION))
+			hydration = HYDRATION_LEVEL_START_MIN
+		else if(hydration && stat != DEAD)
+			hydration -= HYDRATION_LOSS_PER_MOVE
+			if(m_intent == MOVE_INTENT_RUN)
+				hydration -= HYDRATION_LOSS_PER_MOVE
 
 
 /mob/living/carbon/set_usable_legs(new_value)

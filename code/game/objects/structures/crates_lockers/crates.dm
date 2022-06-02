@@ -15,6 +15,7 @@
 	open_sound_volume = 35
 	close_sound_volume = 50
 	drag_slowdown = 0
+	door_anim_time = 0 // no animation
 	var/crate_climb_time = 20
 	var/obj/item/paper/fluff/jobs/cargo/manifest/manifest
 
@@ -85,7 +86,7 @@
 
 /obj/structure/closet/crate/coffin
 	name = "гроб"
-	desc = "Это погребальный сосуд для тел тех, кто сейчас в лучшем мире."
+	desc = "Погребальный сосуд для тел тех, кто сейчас в лучшем мире."
 	icon_state = "coffin"
 	resistance_flags = FLAMMABLE
 	max_integrity = 70
@@ -251,8 +252,10 @@
 
 /obj/structure/closet/crate/goldcrate/PopulateContents()
 	..()
-	for(var/i in 1 to 3)
+	for(var/i in 1 to 10)
 		new /obj/item/stack/sheet/mineral/gold(src, 1, FALSE)
+	for(var/i in 1 to 5)
+		new /obj/item/coin/gold(src)
 	new /obj/item/storage/belt/champion(src)
 
 /obj/structure/closet/crate/silvercrate
@@ -260,6 +263,8 @@
 
 /obj/structure/closet/crate/silvercrate/PopulateContents()
 	..()
+	for(var/i in 1 to 10)
+		new /obj/item/stack/sheet/mineral/silver(src, 1, FALSE)
 	for(var/i in 1 to 5)
 		new /obj/item/coin/silver(src)
 

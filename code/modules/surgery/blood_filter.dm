@@ -34,7 +34,8 @@
 			target.reagents.remove_reagent(chem.type, min(chem.volume * 0.22 + 2, 10))
 	display_results(user, target, span_notice("Закончив фильтрацию крови [skloname(target.name, RODITELNI, target.gender)] [tool] издает короткий звон.") ,
 		span_notice("Закончив качать мою кровь [tool] издает короткий звон.") ,
-		"Закончив качать [tool] издает короткий звон.")
+		span_notice("Закончив качать [tool] издает короткий звон.") ,
+		playsound(get_turf(target), 'sound/machines/ping.ogg', 25, TRUE, falloff_exponent = 12, falloff_distance = 1))
 	return ..()
 
 /datum/surgery_step/filter_blood/failure(mob/user, mob/living/carbon/target, target_zone, obj/item/tool, datum/surgery/surgery)

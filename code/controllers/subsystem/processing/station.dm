@@ -15,18 +15,19 @@ PROCESSING_SUBSYSTEM_DEF(station)
 /datum/controller/subsystem/processing/station/Initialize(timeofday)
 
 	//If doing unit tests we don't do none of that trait shit ya know?
-	#ifndef UNIT_TESTS
+	// Autowiki also wants consistent outputs, for example making sure the vending machine page always reports the normal products
+	#if !defined(UNIT_TESTS) && !defined(AUTOWIKI)
 	SetupTraits()
 	#endif
 
-	if(prob(70))
-		announcer = new /datum/centcom_announcer/default
-	else if(prob(70))
-		announcer = new /datum/centcom_announcer/va
-	else if(prob(1))
-		announcer = new /datum/centcom_announcer/xrenoid
-	else
-		announcer = new /datum/centcom_announcer/intern
+	var/datum/centcom_announcer/announcer_datum = pick(
+		/datum/centcom_announcer/default,
+		/datum/centcom_announcer/va,
+		/datum/centcom_announcer/xrenoid,
+		/datum/centcom_announcer/intern,
+		/datum/centcom_announcer/gayse)
+
+	announcer = new announcer_datum
 
 	return ..()
 

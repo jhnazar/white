@@ -24,8 +24,8 @@
 
 
 /obj/item/computer_hardware/recharger/apc_recharger
-	name = "Автоматический контроллер питания"
-	desc = "Устройство, которое заряжает подключенное устройство по беспроводной сети от ближайшего АКП."
+	name = "модуль паразитного питания"
+	desc = "Устройство, которое заряжает подключенное устройство по беспроводной сети от ближайшего АЦП."
 	icon_state = "charger_APC"
 	w_class = WEIGHT_CLASS_SMALL // Can't be installed into tablets/PDAs
 
@@ -52,8 +52,8 @@
 	icon_state = "charger_wire"
 	w_class = WEIGHT_CLASS_NORMAL
 
-/obj/item/computer_hardware/recharger/wired/can_install(obj/item/modular_computer/M, mob/living/user = null)
-	if(ismachinery(M.physical) && M.physical.anchored)
+/obj/item/computer_hardware/recharger/wired/can_install(obj/item/modular_computer/install_into, mob/living/user = null)
+	if(ismachinery(install_into.physical) && install_into.physical.anchored)
 		return ..()
 	to_chat(user, span_warning("<b>[src.name]</b> несовместимо с портативными компьютерами!"))
 	return FALSE

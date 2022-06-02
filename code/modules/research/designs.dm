@@ -24,7 +24,7 @@ other types of metals and chemistry for reagents).
 	/// Name of the created object
 	var/name = "Name"
 	/// Description of the created object
-	var/desc = "Desc"
+	var/desc = null
 	/// The ID of the design. Used for quick reference. Alphanumeric, lower-case, no symbols
 	var/id = DESIGN_ID_IGNORE
 	/// Bitflags indicating what machines this design is compatable with. ([IMPRINTER]|[PROTOLATHE]|[AUTOLATHE]|[MECHFAB]|[BIOGENERATOR]|[LIMBGROWER]|[SMELTER]|[NANITE_COMPILER])
@@ -86,13 +86,19 @@ other types of metals and chemistry for reagents).
 	sheet.send(user)
 	return sheet.icon_tag(id)
 
+/// Returns the description of the design
+/datum/design/proc/get_description()
+	var/obj/object_build_item_path = build_path
+
+	return isnull(desc) ? initial(object_build_item_path.desc) : desc
+
 ////////////////////////////////////////
 //Disks for transporting design datums//
 ////////////////////////////////////////
 
 /obj/item/disk/design_disk
-	name = "Component Design Disk"
-	desc = "A disk for storing device design data for construction in lathes."
+	name = "диск для записи чертежей"
+	desc = "Диск для хранения конструктивных данных устройства для изготовления в автолатах."
 	icon_state = "datadisk1"
 	custom_materials = list(/datum/material/iron =300, /datum/material/glass =100)
 	var/list/blueprints = list()
@@ -106,7 +112,7 @@ other types of metals and chemistry for reagents).
 		blueprints += null
 
 /obj/item/disk/design_disk/adv
-	name = "Advanced Component Design Disk"
-	desc = "A disk for storing device design data for construction in lathes. This one has extra storage space."
+	name = "продвинутый диск для записи чертежей"
+	desc = "Диск для хранения конструктивных данных устройства для изготовления в автолатах. Продвинутая версия обладает большей емкостью."
 	custom_materials = list(/datum/material/iron =300, /datum/material/glass = 100, /datum/material/silver = 50)
 	max_blueprints = 5

@@ -60,7 +60,6 @@
 	name = "beam of solar energy"
 	icon_state = "solar_beam"
 	icon = 'icons/effects/beam.dmi'
-	layer = LIGHTING_LAYER
 	duration = 5
 	randomdir = FALSE
 
@@ -94,7 +93,7 @@
 	return ..()
 
 /datum/status_effect/seedling_beam_indicator/tick()
-	var/target_angle = Get_Angle(owner, target)
+	var/target_angle = get_angle(owner, target)
 	var/matrix/final = matrix()
 	final.Turn(target_angle)
 	seedling_screen_object.transform = final
@@ -122,7 +121,7 @@
 /mob/living/simple_animal/hostile/jungle/seedling/proc/WarmupAttack()
 	if(combatant_state == SEEDLING_STATE_NEUTRAL)
 		combatant_state = SEEDLING_STATE_WARMUP
-		walk(src,0)
+		SSmove_manager.stop_looping(src)
 		update_icons()
 		var/target_dist = get_dist(src,target)
 		var/living_target_check = isliving(target)
@@ -162,7 +161,7 @@
 			K.transform = final
 			living_target.adjustFireLoss(30)
 			living_target.adjust_fire_stacks(0.2)//Just here for the showmanship
-			living_target.IgniteMob()
+			living_target.ignite_mob()
 			playsound(living_target,'sound/weapons/sear.ogg', 50, TRUE)
 			addtimer(CALLBACK(src, .proc/AttackRecovery), 5)
 			return

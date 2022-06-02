@@ -77,7 +77,7 @@
 	greyscale_config_inhand_left = null
 	greyscale_config_inhand_right = null
 	greyscale_config_worn = null
-	can_adjust = FALSE
+	can_adjust = TRUE
 
 /obj/item/clothing/under/color/blue
 	name = "синий комбинезон"

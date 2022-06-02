@@ -1,6 +1,6 @@
 /obj/item/mmi
 	name = "\improper Man-Machine Interface"
-	desc = "Мягкое сокращение Воина, MMI, скрывает истинный ужас этого чудовища, которое, тем не менее, стало стандартным для станций Нанотрейзен."
+	desc = "Мягкое сокращение Воина, MMI, скрывает истинный ужас этого чудовища, которое, тем не менее, стало стандартным для станций NanoTrasen."
 	icon = 'icons/obj/assemblies.dmi'
 	icon_state = "mmi_off"
 	w_class = WEIGHT_CLASS_NORMAL
@@ -17,7 +17,7 @@
 /obj/item/mmi/Initialize()
 	. = ..()
 	radio = new(src) //Spawns a radio inside the MMI.
-	radio.broadcasting = FALSE //researching radio mmis turned the robofabs into radios because this didnt start as 0.
+	radio.set_broadcasting(FALSE) //researching radio mmis turned the robofabs into radios because this didnt start as 0.
 	laws.set_laws_config()
 
 /obj/item/mmi/Destroy()
@@ -103,8 +103,8 @@
 
 /obj/item/mmi/attack_self(mob/user)
 	if(!brain)
-		radio.on = !radio.on
-		to_chat(user, span_notice("[radio.on==1 ? "Включаю" : "Выключаю"] рацию [src]."))
+		radio.set_on(!radio.is_on())
+		to_chat(user, span_notice("[radio.is_on() ? "Включаю" : "Выключаю"] рацию [src]."))
 	else
 		eject_brain(user)
 		update_icon()
@@ -203,12 +203,12 @@
 
 	if(brainmob.stat)
 		to_chat(brainmob, span_warning("Не могу сделать это в таком состоянии!"))
-	if(!radio.on)
+	if(!radio.is_on())
 		to_chat(brainmob, span_warning("Рацию то выключили!"))
 		return
 
-	radio.listening = !radio.listening
-	to_chat(brainmob, span_notice("Прослушивание [radio.listening ? "теперь" : "больше не"] работает."))
+	radio.set_listening(!radio.get_listening())
+	to_chat(brainmob, span_notice("Прослушивание [radio.get_listening() ? "теперь" : "больше не"] работает."))
 
 /obj/item/mmi/emp_act(severity)
 	. = ..()
@@ -218,11 +218,11 @@
 		return
 	else
 		switch(severity)
-			if(1)
+			if(EXPLODE_DEVASTATE)
 				brainmob.emp_damage = min(brainmob.emp_damage + rand(20,30), 30)
-			if(2)
+			if(EXPLODE_HEAVY)
 				brainmob.emp_damage = min(brainmob.emp_damage + rand(10,20), 30)
-			if(3)
+			if(EXPLODE_LIGHT)
 				brainmob.emp_damage = min(brainmob.emp_damage + rand(0,10), 30)
 		brainmob.emote("alarm")
 
@@ -234,7 +234,7 @@
 /obj/item/mmi/examine(mob/user)
 	. = ..()
 	if(radio)
-		. += "<hr><span class='notice'>Здесь есть переключатель рации и он в положении [radio.on ? "выкл" : "вкл"].[brain ? " Внутри находится [brain]." : null]</span>"
+		. += "<hr><span class='notice'>Здесь есть переключатель рации и он в положении [radio.is_on() ? "выкл" : "вкл"].[brain ? " Внутри находится [brain]." : null]</span>"
 	if(brainmob)
 		var/mob/living/brain/B = brainmob
 		. += "<hr>"
@@ -284,4 +284,4 @@
 /obj/item/mmi/syndie/Initialize()
 	. = ..()
 	laws = new /datum/ai_laws/syndicate_override()
-	radio.on = FALSE
+	radio.set_on(FALSE)

@@ -15,12 +15,10 @@
 
 	spawn(-1)
 		client.crawler_sanity_check()
-		//spawn(10 SECONDS)
-		//	to_chat(src, "<div class='examine_block'><span class='greenannounce'><center> .: CRAWLER CONTROL SYSTEM :. </center></span><hr><span class='[crsc ? "greenannounce" : "boldwarning"]'><center> ВХОД [crsc ? "РАЗРЕШЁН" : "БЫЛ ЗАПИСАН НАШЕЙ СИСТЕМОЙ \[<a href='https://crawler.station13.ru/?ckey=[client?.ckey]'>?</a>\] \[<a href='https://station13.ru/ru/purgatory'>ЧТО ЭТО?</a>\]"] </center></span></div>")
 
 	var/motd = global.config.motd
-	if(motd)
-		to_chat(src, "<div class=\"motd\">[motd]</div>", handle_whitespace=FALSE)
+	if(motd && !GLOB.violence_mode_activated)
+		to_chat(src, "<div class=\"motd\">[motd]</div>")
 
 	if(GLOB.admin_notice)
 		to_chat(src, span_notice("<b>ВАЖНАЯ ЗАМЕТКА:</b>\n \t [GLOB.admin_notice]"))
@@ -60,4 +58,4 @@
 	client.update_metabalance_cache()
 	client.proverka_na_pindosov()
 
-	client.show_lobby()
+	client?.show_lobby()

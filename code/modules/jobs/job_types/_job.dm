@@ -51,7 +51,7 @@
 
 	//The amount of good boy points playing this role will earn you towards a higher chance to roll antagonist next round
 	//can be overridden by antag_rep.txt config
-	var/antag_rep = 10
+	var/antag_rep = 3
 
 	var/paycheck = PAYCHECK_MINIMAL
 	var/paycheck_department = ACCOUNT_CIV
@@ -145,10 +145,23 @@
 
 	if(istype(src, /datum/job/ai) || istype(src, /datum/job/cyborg))
 		return
+
+	equip_gear(H, C, FALSE)
+
+	//// новый год 2022
+	if(SSevents.holidays && SSevents.holidays[NEW_YEAR])
+		var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
+		H.put_in_hands(garl)
+		H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
+	//// новый год 2022
+
+/datum/job/proc/equip_gear(mob/living/H, client/our_client, only_view = TRUE)
+	if(GLOB.violence_mode_activated)
+		return
 	var/mob/living/carbon/human/human = H
 	var/list/gear_leftovers = list()
-	if(M.client && LAZYLEN(M.client.prefs.equipped_gear))
-		for(var/gear in M.client.prefs.equipped_gear)
+	if(our_client && LAZYLEN(our_client.prefs.equipped_gear))
+		for(var/gear in our_client.prefs.equipped_gear)
 			var/datum/gear/G = GLOB.gear_datums[gear]
 			if(G)
 				var/permitted = FALSE
@@ -166,61 +179,55 @@
 				if(G.species_whitelist && !(human.dna.species.id in G.species_whitelist))
 					permitted = FALSE
 
-				if(!permitted)
-					to_chat(M, span_warning("Не удалость пронести <b>[G.display_name]</b> на станцию!"))
+				if(!permitted && !only_view)
+					to_chat(our_client, span_warning("Не удалость пронести <b>[G.display_name]</b> на станцию!"))
 					continue
 
 				if(G.slot)
-					if(H.equip_to_slot_or_del(G.spawn_item(H), G.slot))
-						to_chat(M, span_notice("Экипируем [G.display_name]!"))
+					var/obj/item/item_in_slot = H.get_item_by_slot(G.slot)
+					if(H.dropItemToGround(item_in_slot, force = FALSE, silent = TRUE, invdrop = FALSE))
+						if(H.equip_to_slot_if_possible(G.spawn_item(H), G.slot, bypass_equip_delay_self = TRUE))
+							if(!only_view)
+								to_chat(our_client, span_notice("Экипируем [G.display_name]!"))
+						else
+							H.equip_to_slot_if_possible(item_in_slot, G.slot, bypass_equip_delay_self = TRUE)
+							gear_leftovers += G
 					else
 						gear_leftovers += G
 				else
 					gear_leftovers += G
 			else
-				M.client.prefs.equipped_gear -= gear
+				our_client.prefs.equipped_gear -= gear
 
-	if(gear_leftovers.len)
+	if(!only_view && gear_leftovers.len)
 		for(var/datum/gear/G in gear_leftovers)
-			var/metadata = M.client.prefs.equipped_gear[G.id]
+			var/metadata = our_client.prefs.equipped_gear[G.id]
 			var/obj/item = G.spawn_item(null, metadata)
 			var/atom/placed_in = human.equip_or_collect(item)
 
 			if(istype(placed_in))
 				if(isturf(placed_in))
-					to_chat(M, span_notice("[capitalize(G.display_name)] находится в [placed_in]!"))
+					to_chat(our_client, span_notice("[capitalize(G.display_name)] находится в [placed_in]!"))
 				else
-					to_chat(M, "<span class='noticed'>[capitalize(G.display_name)] находится на [placed_in.name]]")
+					to_chat(our_client, "<span class='noticed'>[capitalize(G.display_name)] находится на [placed_in.name]]")
 				continue
 
 			if(H.equip_to_appropriate_slot(item))
-				to_chat(M, span_notice("[capitalize(G.display_name)] находится где-то на мне!"))
+				to_chat(our_client, span_notice("[capitalize(G.display_name)] удалось успешно пронести!"))
 				continue
 			if(H.put_in_hands(item))
-				to_chat(M, span_notice("[capitalize(G.display_name)] у меня в руках!"))
+				to_chat(our_client, span_notice("[capitalize(G.display_name)] у меня в руках!"))
 				continue
 
 			var/obj/item/storage/B = (locate() in H)
 			if(B && item)
 				item.forceMove(B)
-				to_chat(M, span_notice("[capitalize(G.display_name)] в [B.name]!"))
+				to_chat(our_client, span_notice("[capitalize(G.display_name)] в [B.name]!"))
 				continue
 
-			to_chat(M, span_danger("Что-то пришлось оставить..."))
+			to_chat(our_client, span_danger("Что-то пришлось оставить..."))
 			qdel(item)
-	//// новый год 2022
-	if(SSevents.holidays && SSevents.holidays[NEW_YEAR])
-		var/obj/item/storage/backpack/b = locate() in H.contents
-		var/givegift = pick(/obj/item/storage/box/festive/cartonbox,
-							/obj/item/storage/box/festive/cartonbox/alt,
-							/obj/item/storage/box/festive/cartonbox/meshok)
-		var/obj/item/stack/garland_pack/fifty/garl = new(get_turf(H))
 
-		if(b)
-			new givegift(b)
-		H.put_in_hands(garl)
-		H.equip_to_slot(garl, ITEM_SLOT_BACKPACK)
-	//// новый год 2022
 /datum/job/proc/announce(mob/living/carbon/human/H, announce_captaincy = FALSE)
 	if(head_announce)
 		announce_head(H, head_announce)
@@ -248,7 +255,7 @@
 /datum/job/proc/equip(mob/living/carbon/human/H, visualsOnly = FALSE, announce = TRUE, latejoin = FALSE, datum/outfit/outfit_override = null, client/preference_source, is_captain = FALSE)
 	if(!H)
 		return FALSE
-	if(CONFIG_GET(flag/enforce_human_authority) && ((title in GLOB.command_positions) || (title in GLOB.security_positions)))
+	if(CONFIG_GET(flag/enforce_human_authority) && (title in GLOB.command_positions))
 		if(H.dna.species.id != "human")
 			H.set_species(/datum/species/human)
 			H.apply_pref_name("human", preference_source)
@@ -273,10 +280,13 @@
 	H.dna.species.after_equip_job(src, H, visualsOnly)
 
 	if(latejoin && SSjob.forced_name)
-		if(SSjob.forced_name == "KEY")
-			H.fully_replace_character_name(H.real_name, "[H.key]")
-		else
-			H.fully_replace_character_name(H.real_name, "[SSjob.forced_name] \Roman[SSjob.forced_num]")
+		switch(SSjob.forced_name)
+			if("KEY")
+				H.fully_replace_character_name(H.real_name, "[H.key]")
+			if("TATAR")
+				H.fully_replace_character_name(H.real_name, get_funny_name(3))
+			else
+				H.fully_replace_character_name(H.real_name, "[SSjob.forced_name] \Roman[SSjob.forced_num]")
 		SSjob.forced_num++
 
 	if(!visualsOnly && announce)
@@ -316,7 +326,7 @@
 	return TRUE
 
 /datum/job/proc/radio_help_message(mob/M)
-	to_chat(M, "\n<span class='smallnotice'>Если добавить :h перед сообщением, то получится говорить в канал отдела. Чтобы увидеть другие каналы, стоит посмотреть на наушник.</span>")
+	to_chat(M, span_smallnotice("\nЕсли добавить :h перед сообщением, то получится говорить в канал отдела. Чтобы увидеть другие каналы, стоит посмотреть на наушник."))
 
 /datum/outfit/job
 	name = "Standard Gear"
@@ -326,7 +336,7 @@
 	uniform = /obj/item/clothing/under/color/grey
 	id = /obj/item/card/id/advanced
 	ears = /obj/item/radio/headset
-	belt = /obj/item/pda
+	belt = /obj/item/modular_computer/tablet/pda
 	back = /obj/item/storage/backpack
 	shoes = /obj/item/clothing/shoes/sneakers/black
 	box = /obj/item/storage/box/survival
@@ -386,11 +396,14 @@
 			B.bank_cards += C
 		H.sec_hud_set_ID()
 
-	var/obj/item/pda/PDA = H.get_item_by_slot(pda_slot)
+	var/obj/item/modular_computer/tablet/pda/PDA = H.get_item_by_slot(pda_slot)
 	if(istype(PDA))
-		PDA.owner = H.real_name
-		PDA.ownjob = J.title
-		PDA.update_label()
+		PDA.saved_identification = C.registered_name
+		PDA.saved_job = C.assignment
+
+		var/obj/item/computer_hardware/identifier/id = PDA.all_components[MC_IDENTIFY]
+		if(id)
+			id.UpdateDisplay()
 
 	if(H.client?.prefs.playtime_reward_cloak)
 		neck = /obj/item/clothing/neck/cloak/skill_reward/playing

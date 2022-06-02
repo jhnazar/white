@@ -36,12 +36,10 @@
 	for (var/alert in alerts)
 		clear_alert(alert, TRUE)
 	if(observers?.len)
-		for(var/M in observers)
-			var/mob/dead/observe = M
+		for(var/mob/dead/observe as anything in observers)
 			observe.reset_perspective(null)
 	qdel(hud_used)
 	QDEL_LIST(client_colours)
-	clear_client_in_contents() //Gotta do this here as well as Logout, since client will be null by the time it gets there, cause of that ghostize
 	ghostize() //False, since we're deleting it currently
 	if(mind?.current == src) //Let's just be safe yeah? This will occasionally be cleared, but not always. Can't do it with ghostize without changing behavior
 		mind.set_current(null)
@@ -97,22 +95,67 @@
 	tag = "mob_[next_mob_id++]"
 
 /**
+ * set every hud image in the given category active so other people with the given hud can see it.
+ * Arguments:
+ * * hud_category - the index in our active_hud_list corresponding to an image now being shown.
+ * * update_huds - if FALSE we will just put the hud_category into active_hud_list without actually updating the atom_hud datums subscribed to it
+ * * exclusive_hud - if given a reference to an atom_hud, will just update that hud instead of all global ones attached to that category.
+ * This is because some atom_hud subtypes arent supposed to work via global categories, updating normally would affect all of these which we dont want.
+ */
+/atom/proc/set_hud_image_active(hud_category, update_huds = TRUE, datum/atom_hud/exclusive_hud)
+	if(!istext(hud_category) || !hud_list?[hud_category] || active_hud_list?[hud_category])
+		return FALSE
+
+	LAZYSET(active_hud_list, hud_category, hud_list[hud_category])
+
+	if(!update_huds)
+		return TRUE
+
+	if(exclusive_hud)
+		exclusive_hud.add_single_hud_category_on_atom(src, hud_category)
+	else
+		for(var/datum/atom_hud/hud_to_update as anything in GLOB.huds_by_category[hud_category])
+			hud_to_update.add_single_hud_category_on_atom(src, hud_category)
+
+	return TRUE
+
+///sets every hud image in the given category inactive so no one can see it
+/atom/proc/set_hud_image_inactive(hud_category, update_huds = TRUE, datum/atom_hud/exclusive_hud)
+	if(!istext(hud_category))
+		return FALSE
+
+	LAZYREMOVE(active_hud_list, hud_category)
+
+	if(!update_huds)
+		return TRUE
+
+	if(exclusive_hud)
+		exclusive_hud.remove_single_hud_category_on_atom(src, hud_category)
+	else
+		for(var/datum/atom_hud/hud_to_update as anything in GLOB.huds_by_category[hud_category])
+			hud_to_update.remove_single_hud_category_on_atom(src, hud_category)
+
+	return TRUE
+
+/**
  * Prepare the huds for this atom
  *
- * Goes through hud_possible list and adds the images to the hud_list variable (if not already
- * cached)
+ * Goes through hud_possible list and adds the images to the hud_list variable (if not already cached)
  */
 /atom/proc/prepare_huds()
+	if(hud_list) // I choose to be lienient about people calling this proc more then once
+		return
 	hud_list = list()
 	for(var/hud in hud_possible)
 		var/hint = hud_possible[hud]
-		switch(hint)
-			if(HUD_LIST_LIST)
-				hud_list[hud] = list()
-			else
-				var/image/I = image('icons/mob/hud.dmi', src, "")
-				I.appearance_flags = RESET_COLOR|RESET_TRANSFORM
-				hud_list[hud] = I
+		if(hint == HUD_LIST_LIST)
+			hud_list[hud] = list()
+
+		else
+			var/image/I = image('icons/mob/hud.dmi', src, "")
+			I.appearance_flags = RESET_COLOR|RESET_TRANSFORM
+			hud_list[hud] = I
+		set_hud_image_active(hud, update_huds = FALSE) //by default everything is active. but dont add it to huds to keep control.
 
 /**
  * Some kind of debug verb that gives atmosphere environment details
@@ -130,7 +173,7 @@
 	t +=	span_danger("Температура: [environment.return_temperature()] \n")
 	for(var/id in environment.get_gases())
 		if(environment.get_moles(id))
-			t+=span_notice("[GLOB.meta_gas_info[id][META_GAS_NAME]]: [environment.get_moles(id)] \n")
+			t+=span_notice("[GLOB.gas_data.names[id]]: [environment.get_moles(id)] \n")
 
 	to_chat(usr, t)
 
@@ -138,7 +181,7 @@
  * Return the desc of this mob for a photo
  */
 /mob/proc/get_photo_description(obj/item/camera/camera)
-	return "a ... thing?"
+	return "э... что это?"
 
 /**
  * Show a message to this mob (visual or audible)
@@ -212,19 +255,24 @@
 
 		//This entire if/else chain could be in two lines but isn't for readibilties sake.
 		var/msg = message
+		var/msg_type = MSG_VISUAL
+
 		if(M.see_invisible < invisibility)//if src is invisible to M
 			msg = blind_message
+			msg_type = MSG_AUDIBLE
 		else if(T != loc && T != src) //if src is inside something and not a turf.
 			msg = blind_message
+			msg_type = MSG_AUDIBLE
 		else if(M.lighting_alpha > LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE && T.is_softly_lit() && !in_range(T,M)) //if it is too dark, unless we're right next to them.
 			msg = blind_message
+			msg_type = MSG_AUDIBLE
 		if(!msg)
 			continue
 
 		if(visible_message_flags & EMOTE_MESSAGE && runechat_prefs_check(M, visible_message_flags) && !M.is_blind())
 			M.create_chat_message(src, raw_message = raw_msg, runechat_flags = visible_message_flags)
 
-		M.show_message(msg, MSG_VISUAL, blind_message, MSG_AUDIBLE)
+		M.show_message(msg, msg_type, blind_message, MSG_AUDIBLE)
 
 
 ///Adds the functionality to self_message.
@@ -294,7 +342,7 @@
 
 
 ///Is the mob incapacitated
-/mob/proc/incapacitated(ignore_restraints = FALSE, ignore_grab = FALSE, ignore_stasis = FALSE)
+/mob/proc/incapacitated(flags)
 	return
 
 /**
@@ -403,36 +451,41 @@
  * reset_perspective() set eye to common default : mob on turf, loc otherwise
  * reset_perspective(thing) set the eye to the thing (if it's equal to current default reset to mob perspective)
  */
-/mob/proc/reset_perspective(atom/A)
-	if(client)
-		if(A)
-			if(ismovable(A))
-				//Set the the thing unless it's us
-				if(A != src)
-					client.perspective = EYE_PERSPECTIVE
-					client.eye = A
-				else
-					client.eye = client.mob
-					client.perspective = MOB_PERSPECTIVE
-			else if(isturf(A))
-				//Set to the turf unless it's our current turf
-				if(A != loc)
-					client.perspective = EYE_PERSPECTIVE
-					client.eye = A
-				else
-					client.eye = client.mob
-					client.perspective = MOB_PERSPECTIVE
+/mob/proc/reset_perspective(atom/new_eye)
+	SEND_SIGNAL(src, COMSIG_MOB_RESET_PERSPECTIVE)
+	if(!client)
+		return
+
+	if(new_eye)
+		if(ismovable(new_eye))
+			//Set the new eye unless it's us
+			if(new_eye != src)
+				client.perspective = EYE_PERSPECTIVE
+				client.eye = new_eye
 			else
-				//Do nothing
-		else
-			//Reset to common defaults: mob if on turf, otherwise current loc
-			if(isturf(loc))
 				client.eye = client.mob
 				client.perspective = MOB_PERSPECTIVE
-			else
+		else if(isturf(new_eye))
+			//Set to the turf unless it's our current turf
+			if(new_eye != loc)
 				client.perspective = EYE_PERSPECTIVE
-				client.eye = loc
-		return 1
+				client.eye = new_eye
+			else
+				client.eye = client.mob
+				client.perspective = MOB_PERSPECTIVE
+		else
+			return TRUE //no setting eye to stupid things like areas or whatever
+	else
+		//Reset to common defaults: mob if on turf, otherwise current loc
+		if(isturf(loc))
+			client.eye = client.mob
+			client.perspective = MOB_PERSPECTIVE
+		else
+			client.perspective = EYE_PERSPECTIVE
+			client.eye = loc
+	/// Signal sent after the eye has been successfully updated, with the client existing.
+	SEND_SIGNAL(src, COMSIG_MOB_RESET_PERSPECTIVE)
+	return TRUE
 
 /**
  * Examine a mob
@@ -513,7 +566,7 @@
 		examine_delay_length *= 2
 
 	if(examine_delay_length > 0 && !do_after(src, examine_delay_length, target = examined_thing))
-		to_chat(src, span_notice("Не понятно че это. ДА КАК ОН НАЗВАЛ МОЮ МАТЬ?!"))
+		to_chat(src, span_notice("Начинаю осматривать что-то... ДА КАК ОН НАЗВАЛ МОЮ МАТЬ?!"))
 		return FALSE
 
 	//now we touch the thing we're examining
@@ -706,14 +759,18 @@
 	set name = "❗ Переродиться"
 	set category = "OOC"
 
-	if (CONFIG_GET(flag/norespawn) && (!check_rights_for(usr.client, R_ADMIN) || tgui_alert(usr, "Respawn configs disabled. Do you want to use your permissions to circumvent it?", "Respawn", list("Yes", "No")) != "Yes"))
+	var/pd = text2num(GLOB.phoenix_donations?[client?.ckey])
+
+	if(pd <= 0 && (CONFIG_GET(flag/norespawn) && (!check_rights_for(usr.client, R_ADMIN) || tgui_alert(usr, "Хуй сосал?", "Respawn", list("Да", "Нет")) != "Да")))
 		return
 
-	if ((stat != DEAD || !( SSticker )))
+	if((stat != DEAD || !( SSticker )))
 		to_chat(usr, span_boldnotice("Живу!"))
 		return
 
-	client.is_respawned = TRUE
+	if(pd)
+		GLOB.phoenix_donations[client.ckey]--
+		to_chat(usr, span_boldnotice("Использован Феникс! Осталось [GLOB.phoenix_donations[client.ckey]] зарядов."))
 
 	log_game("[key_name(usr)] used abandon mob.")
 
@@ -963,7 +1020,27 @@
 			LAZYREMOVE(mob_spell_list, S)
 			qdel(S)
 	if(client)
-		client << output(null, "statbrowser:check_spells")
+		client.stat_panel.send_message("check_spells")
+
+/**
+ * Checks to see if the mob can block magic
+ *
+ * args:
+ * * casted_magic_flags (optional) A bitfield with the types of magic resistance being checked (see flags at: /datum/component/anti_magic)
+ * * charge_cost (optional) The cost of charge to block a spell that will be subtracted from the protection used
+**/
+/mob/proc/can_block_magic(casted_magic_flags = NONE, charge_cost = 1)
+	if(casted_magic_flags == NONE) // magic with the NONE flag is immune to blocking
+		return FALSE
+
+	var/is_magic_blocked = anti_magic_check()
+
+	if(casted_magic_flags && HAS_TRAIT(src, TRAIT_ANTIMAGIC))
+		is_magic_blocked = TRUE
+	if(HAS_TRAIT(src, TRAIT_HOLY))
+		is_magic_blocked = TRUE
+
+	return is_magic_blocked
 
 ///Return any anti magic atom on this mob that matches the magic type
 /mob/proc/anti_magic_check(magic = TRUE, holy = FALSE, tinfoil = FALSE, chargecost = 1, self = FALSE)
@@ -1024,6 +1101,7 @@
 	var/datum/dna/mob_dna = has_dna()
 	if(mob_dna?.check_mutation(TK) && tkMaxRangeCheck(src, A))
 		return TRUE
+	return FALSE
 
 ///Can the mob use Topic to interact with machines
 /mob/proc/canUseTopic(atom/movable/M, be_close=FALSE, no_dexterity=FALSE, no_tk=FALSE, need_hands = FALSE, floor_okay=FALSE)
@@ -1072,14 +1150,20 @@
  *
  * Calling this proc without an oldname will only update the mob and skip updating the pda, id and records ~Carn
  */
-/mob/proc/fully_replace_character_name(oldname,newname)
+/mob/proc/fully_replace_character_name(oldname, newname)
 	if(!newname)
 		log_message("[src] failed name change from [oldname] as no new name was specified", LOG_OWNERSHIP)
+		return FALSE
+	if(oldname == newname)
+		log_message("[src] failed name change as the new name was the same as the old one: [oldname]", LOG_OWNERSHIP)
+		return FALSE
+	if(!istext(newname) && !isnull(newname))
+		stack_trace("[src] attempted to change its name from [oldname] to the non string value [newname]")
 		return FALSE
 
 	log_message("[src] name changed from [oldname] to [newname]", LOG_OWNERSHIP)
 
-	log_played_names(ckey,newname)
+	log_played_names(ckey, newname)
 
 	real_name = newname
 	name = newname
@@ -1108,7 +1192,7 @@
 
 ///update the ID name of this mob
 /mob/proc/replace_identification_name(oldname,newname)
-	var/list/searching = GetAllContents()
+	var/list/searching = get_all_contents()
 	var/search_id = 1
 	var/search_pda = 1
 
@@ -1125,11 +1209,13 @@
 					break
 				search_id = 0
 
-		else if( search_pda && istype(A, /obj/item/pda) )
-			var/obj/item/pda/PDA = A
-			if(PDA.owner == oldname)
-				PDA.owner = newname
-				PDA.update_label()
+		else if( search_pda && istype(A, /obj/item/modular_computer/tablet/pda) )
+			var/obj/item/modular_computer/tablet/pda/PDA = A
+			if(PDA.saved_identification == oldname)
+				PDA.saved_identification = newname
+				var/obj/item/computer_hardware/identifier/display = PDA.all_components[MC_IDENTIFY]
+				if(display)
+					display.UpdateDisplay()
 				if(!search_id)
 					break
 				search_pda = 0
@@ -1138,6 +1224,10 @@
 	return
 
 /mob/proc/update_health_hud()
+	return
+
+/// Changes the stamina HUD based on new information
+/mob/proc/update_stamina_hud()
 	return
 
 ///Update the lighting plane and sight of this mob (sends COMSIG_MOB_UPDATE_SIGHT)
@@ -1167,17 +1257,31 @@
 		client.mouse_pointer_icon = client.mouse_override_icon
 
 
-///This mob is abile to read books
+/// This mob is abile to read books
 /mob/proc/is_literate()
 	return FALSE
-///Can this mob read (is literate and not blind)
+
+/**
+ * Checks if there is enough light where the mob is located
+ *
+ * Args:
+ *  light_amount (optional) - A decimal amount between 1.0 through 0.0 (default is 0.2)
+**/
+/mob/proc/has_light_nearby(light_amount = LIGHTING_TILE_IS_DARK)
+	var/turf/mob_location = get_turf(src)
+	return mob_location.get_lumcount() > light_amount
+
+/// Can this mob read (is literate and not blind)
 /mob/proc/can_read(obj/O)
 	if(is_blind())
-		to_chat(src, span_warning("Пытаясь прочитать [O], внезапно вы чувствуете себя слишком тупым!"))
-		return
+		to_chat(src, span_warning("Пытаюсь прочитать [O], но ничего не вижу!"))
+		return FALSE
 	if(!is_literate())
-		to_chat(src, span_notice("Пытаюсь read [O], but can't comprehend any of it."))
-		return
+		to_chat(src, span_notice("Пытаюсь прочитать [O], но внезапно понимаю, что не умею читать."))
+		return FALSE
+	if(!has_light_nearby() && !HAS_TRAIT(src, TRAIT_NIGHT_VISION))
+		to_chat(src, span_warning("Слишком темно для чтения!"))
+		return FALSE
 	return TRUE
 
 /**
@@ -1361,9 +1465,71 @@
 	SIGNAL_HANDLER
 	set_active_storage(null)
 
+/// Cleanup proc that's called when a mob loses a client, either through client destroy or logout
+/// Logout happens post client del, so we can't just copypaste this there. This keeps things clean and consistent
+/mob/proc/become_uncliented()
+	if(!canon_client)
+		return
+
+	for(var/foo in canon_client.player_details.post_logout_callbacks)
+		var/datum/callback/CB = foo
+		CB.Invoke()
+
+	if(canon_client?.movingmob)
+		LAZYREMOVE(canon_client.movingmob.client_mobs_in_contents, src)
+		canon_client.movingmob = null
+
+	clear_important_client_contents()
+	canon_client = null
+
 ///Clears the client in contents list of our current "eye". Prevents hard deletes
 /mob/proc/clear_client_in_contents()
 	if(client?.movingmob) //In the case the client was transferred to another mob and not deleted.
 		client.movingmob.client_mobs_in_contents -= src
 		UNSETEMPTY(client.movingmob.client_mobs_in_contents)
 		client.movingmob = null
+
+/mob/proc/look_into_distance(atom/A, params)
+	if(!client)
+		to_chat(src, span_warning("Не могу."))
+		return
+	if(HAS_TRAIT_FROM(src, TRAIT_LOOKING_INTO_DISTANCE, "verb"))
+		unperform_zoom(A, params)
+	else if((get_dist(src, A) <= world.view))
+		perform_zoom(A, params)
+		to_chat(src, span_notice("Смотрю в даль."))
+
+/mob/proc/perform_zoom(atom/A, params, silent = FALSE)
+	if(!client)
+		return
+	ADD_TRAIT(src, TRAIT_LOOKING_INTO_DISTANCE, "verb")
+	SEND_SIGNAL(src, COMSIG_FIXEYE_UNLOCK)
+	SEND_SIGNAL(src, COMSIG_FIXEYE_ENABLE, TRUE, TRUE)
+	SEND_SIGNAL(src, COMSIG_FIXEYE_LOCK)
+	RegisterSignal(src, COMSIG_MOB_LOGOUT, .proc/kill_zoom, override = TRUE)
+	var/distance = min(get_dist(src, A), 7)
+	var/direction = get_dir(src, A)
+	var/x_offset = 0
+	var/y_offset = 0
+	if(direction & NORTH)
+		y_offset = distance*world.icon_size
+	if(direction & SOUTH)
+		y_offset = -distance*world.icon_size
+	if(direction & EAST)
+		x_offset = distance*world.icon_size
+	if(direction & WEST)
+		x_offset = -distance*world.icon_size
+	animate(client, pixel_x = pixel_x + x_offset, pixel_y = pixel_y + y_offset, time = 7, easing = SINE_EASING)
+
+/mob/proc/unperform_zoom(atom/A, params, silent = FALSE)
+	REMOVE_TRAIT(src, TRAIT_LOOKING_INTO_DISTANCE, "verb")
+	SEND_SIGNAL(src, COMSIG_FIXEYE_UNLOCK)
+	SEND_SIGNAL(src, COMSIG_FIXEYE_DISABLE, TRUE, TRUE)
+	UnregisterSignal(src, COMSIG_MOB_LOGOUT)
+	if(client)
+		animate(client, pixel_x = initial(client.pixel_x), pixel_y = initial(client.pixel_y), time = 7, easing = SINE_EASING)
+
+/mob/proc/kill_zoom(mob/living/source)
+	SIGNAL_HANDLER
+
+	INVOKE_ASYNC(src, .proc/unperform_zoom)

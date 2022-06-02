@@ -118,6 +118,9 @@
 	var/loc_temp = get_temperature(environment)
 	var/divisor = 10 /// The divisor controls how fast body temperature changes, lower causes faster changes
 
+	if(client)
+		handle_temp_color(loc_temp)
+
 	var/temp_delta = loc_temp - bodytemperature
 	if(abs(temp_delta) > 50) // If the difference is great, reduce the divisor for faster stabilization
 		divisor = 5
@@ -143,7 +146,7 @@
 		REMOVE_TRAIT(src, TRAIT_IMMOBILIZED, SLIME_COLD)
 
 	if(stat != DEAD)
-		var/bz_percentage = environment.total_moles() ? (environment.get_moles(/datum/gas/bz) / environment.total_moles()) : 0
+		var/bz_percentage = environment.total_moles() ? (environment.get_moles(GAS_BZ) / environment.total_moles()) : 0
 		var/stasis = (bz_percentage >= 0.05 && bodytemperature < (T0C + 100)) || force_stasis
 
 		switch(stat)

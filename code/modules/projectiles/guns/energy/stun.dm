@@ -11,6 +11,7 @@
 	desc = "Устройство для запуска шаров сжатой болевой энергии по живым целям."
 	icon = 'icons/obj/guns/projectile.dmi'
 	icon_state = "painser"
+	inhand_icon_state = "painser"
 	fire_sound = 'sound/weapons/taser.ogg'
 	inhand_icon_state = "painser"
 	mag_type = /obj/item/ammo_box/magazine/internal/boltaction/taser
@@ -44,7 +45,7 @@
 	can_charge = FALSE
 	use_cyborg_cell = TRUE
 
-/obj/item/gun/energy/e_gun/advtaser/cyborg/makeJamming()
+/obj/item/gun/energy/e_gun/advtaser/cyborg/make_jamming()
 	return
 
 /obj/item/gun/energy/disabler
@@ -65,7 +66,7 @@
 	can_charge = FALSE
 	use_cyborg_cell = TRUE
 
-/obj/item/gun/energy/disabler/cyborg/makeJamming()
+/obj/item/gun/energy/disabler/cyborg/make_jamming()
 	return
 
 /obj/item/gun/energy/taser/triser

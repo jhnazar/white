@@ -4,7 +4,7 @@
 	reward = CARGO_CRATE_VALUE * 15
 	wanted_types = list(/obj/item/tank)
 	var/moles_required = 20 // A full tank is 28 moles, but CentCom ignores that fact.
-	var/gas_type = /datum/gas/pluoxium
+	var/gas_type = GAS_PLUOXIUM
 
 /datum/bounty/item/engineering/gas/applies_to(obj/O)
 	if(!..())
@@ -15,22 +15,12 @@
 /datum/bounty/item/engineering/gas/nitryl_tank
 	name = "Полная канистра Нитрила"
 	description = "Персонал станции 88, не являющиеся людьми, были вызван для тестирования препаратов, улучшающих их эффективность. Отправьте им резервуар, полный нитрила, чтобы они могли начать эксперимент."
-	gas_type = /datum/gas/nitryl
-
-/datum/bounty/item/engineering/gas/freon_tank
-	name = "Полная канистра Фреона"
-	description = "Суперматерия Станции 33 начала процесс деламинации. Доставьте баллон с фреоновым газом, чтобы помочь им остановить его!"
-	gas_type = /datum/gas/freon
+	gas_type = GAS_NITRYL
 
 /datum/bounty/item/engineering/gas/tritium_tank
 	name = "Полная канистра Трития"
 	description = "Станция 49 надеется начать свою исследовательскую программу. Отправьте им канистру, полную трития."
-	gas_type = /datum/gas/tritium
-
-/datum/bounty/item/engineering/gas/hydrogen_tank
-	name = "Полная канистра Водорода"
-	description = "Наш отдел исследований и разработок занимается разработкой более эффективных электрических батарей, использующих водород в качестве катализатора. Отправьте нам полный бак Гидрогена."
-	gas_type = /datum/gas/hydrogen
+	gas_type = GAS_TRITIUM
 
 /datum/bounty/item/engineering/energy_ball
 	name = "Удержанный шар теслы"
@@ -44,20 +34,14 @@
 	var/obj/energy_ball/T = O
 	return !T.miniball
 
-/datum/bounty/item/engineering/gas/zauker_tank
-	name = "Полная канистра Циклон Б"
-	description = "Главная планета \[REDACTED] была выбрана в качестве полигона для испытания нового оружия, в котором используется газ Циклон Б. Отправьте нам полный бак. (20 моль)"
-	reward = CARGO_CRATE_VALUE * 20
-	gas_type = /datum/gas/zauker
-
 /datum/bounty/item/engineering/emitter
 	name = "Эмиттер"
 	description = "Мы думаем, что в конструкции эмиттера вашей станции может быть дефект, основанный на огромном количестве отслоений, которые, похоже, видит ваш сектор. Отправьте нам один из ваших."
-	reward = 100
+	reward = CARGO_CRATE_VALUE * 100
 	wanted_types = list(/obj/machinery/power/emitter)
 
 /datum/bounty/item/engineering/hydro_tray
 	name = "Гидропонические лотки"
 	description = "Лаборанты пытаются выяснить, как снизить потребление энергии лотками для гидропоники, но мы поджарили последний. Сделаете один для нас?"
-	reward = 70
+	reward = CARGO_CRATE_VALUE * 70
 	wanted_types = list(/obj/machinery/hydroponics/constructable)

@@ -1,6 +1,6 @@
 /obj/item/storage/belt
-	name = "пояс"
-	desc = "Может хранить разные штуки."
+	name = "универсальный пояс"
+	desc = "Может хранить любые предметы маленького размера."
 	icon = 'icons/obj/clothing/belts.dmi'
 	icon_state = "utility"
 	inhand_icon_state = "utility"
@@ -32,8 +32,6 @@
 /obj/item/storage/belt/utility
 	name = "пояс с инструментами" //Carn: utility belt is nicer, but it bamboozles the text parsing.
 	desc = "Хранит инструменты."
-	icon = 'white/valtos/icons/clothing/belts.dmi'
-	worn_icon = 'white/valtos/icons/clothing/mob/belt.dmi'
 	icon_state = "utility"
 	inhand_icon_state = "utility"
 	worn_icon_state = "utility"
@@ -69,6 +67,8 @@
 		/obj/item/assembly/signaler,
 		/obj/item/lightreplacer,
 		/obj/item/construction/rcd,
+		/obj/item/construction/rld,
+		/obj/item/rcd_ammo,
 		/obj/item/pipe_dispenser,
 		/obj/item/inducer,
 		/obj/item/plunger,
@@ -144,6 +144,7 @@
 	icon_state = "medical"
 	inhand_icon_state = "medical"
 	worn_icon_state = "medical"
+	content_overlays = TRUE
 
 /obj/item/storage/belt/medical/ComponentInitialize()
 	. = ..()
@@ -279,7 +280,7 @@
 
 /obj/item/storage/belt/mining
 	name = "разгрузка исследователя"
-	desc = "Универсальная разгрузка, которую ценят как шахтеры, так и охотники."
+	desc = "Универсальная вместительная разгрузка, которую ценят как шахтеры, так и охотники."
 	icon_state = "explorer1"
 	inhand_icon_state = "explorer1"
 	worn_icon_state = "explorer1"
@@ -288,9 +289,9 @@
 /obj/item/storage/belt/mining/ComponentInitialize()
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
-	STR.max_items = 6
+	STR.max_items = 14
 	STR.max_w_class = WEIGHT_CLASS_NORMAL
-	STR.max_combined_w_class = 20
+	STR.max_combined_w_class = 28
 	STR.set_holdable(list(
 		/obj/item/crowbar,
 		/obj/item/screwdriver,
@@ -302,6 +303,9 @@
 		/obj/item/stack/cable_coil,
 		/obj/item/analyzer,
 		/obj/item/extinguisher/mini,
+		/obj/item/forcefield_projector,
+		/obj/item/construction/rld,
+		/obj/item/rcd_ammo,
 		/obj/item/radio,
 		/obj/item/clothing/gloves,
 		/obj/item/resonator,
@@ -314,7 +318,18 @@
 		/obj/item/lighter,
 		/obj/item/storage/fancy/cigarettes,
 		/obj/item/reagent_containers/food/drinks/bottle,
+		/obj/item/ammo_box,
+		/obj/item/healthanalyzer,
 		/obj/item/stack/medical,
+		/obj/item/surgical_drapes,
+		/obj/item/scalpel,
+		/obj/item/circular_saw,
+		/obj/item/bonesetter,
+		/obj/item/surgicaldrill,
+		/obj/item/retractor,
+		/obj/item/cautery,
+		/obj/item/hemostat,
+		/obj/item/blood_filter,
 		/obj/item/kitchen/knife,
 		/obj/item/reagent_containers/hypospray,
 		/obj/item/gps,
@@ -323,6 +338,7 @@
 		/obj/item/t_scanner/adv_mining_scanner,
 		/obj/item/reagent_containers/pill,
 		/obj/item/storage/pill_bottle,
+		/obj/item/reagent_containers/medigel,
 		/obj/item/stack/ore,
 		/obj/item/reagent_containers/food/drinks,
 		/obj/item/organ/regenerative_core,
@@ -500,6 +516,17 @@
 		/obj/item/ammo_box/magazine/wt550m9 = 4,
 	), src)
 
+/obj/item/storage/belt/military/assault/rockets
+	name = "ракетопояс"
+
+/obj/item/storage/belt/military/assault/rockets/PopulateContents()
+	new /obj/item/ammo_casing/caseless/rocket/hedp(src)
+	new /obj/item/ammo_casing/caseless/rocket/hedp(src)
+	new /obj/item/ammo_casing/caseless/rocket(src)
+	new /obj/item/ammo_casing/caseless/rocket(src)
+	new /obj/item/ammo_casing/caseless/rocket(src)
+	new /obj/item/ammo_casing/caseless/rocket(src)
+
 /obj/item/storage/belt/grenade
 	name = "пояс гренадёра"
 	desc = "Пояс хранящий гранаты. Бабах."
@@ -621,8 +648,8 @@
 		))
 
 /obj/item/storage/belt/fannypack
-	name = "поясная сумка"
-	desc = "Придурковатая поясная сумка для хранения мелких вещей."
+	name = "Барсетка"
+	desc = "Эй! Это не косметичка - это мужская сумка!."
 	icon_state = "fannypack_leather"
 	inhand_icon_state = "fannypack_leather"
 	worn_icon_state = "fannypack_leather"

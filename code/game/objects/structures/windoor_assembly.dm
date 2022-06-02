@@ -34,17 +34,17 @@
 	if(set_dir)
 		setDir(set_dir)
 	ini_dir = dir
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 
 	var/static/list/loc_connections = list(
 		COMSIG_ATOM_EXIT = .proc/on_exit,
 	)
 
-	AddElement(/datum/element/connect_loc, loc_connections)
+	AddComponent(/datum/component/connect_loc_behalf, src, loc_connections)
 
 /obj/structure/windoor_assembly/Destroy()
 	set_density(FALSE)
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	return ..()
 
 /obj/structure/windoor_assembly/Move()
@@ -100,10 +100,12 @@
 				if(W.use_tool(src, user, 40, volume=50))
 					to_chat(user, span_notice("You disassemble the windoor assembly."))
 					var/obj/item/stack/sheet/rglass/RG = new (get_turf(src), 5)
-					RG.add_fingerprint(user)
+					if (!QDELETED(RG))
+						RG.add_fingerprint(user)
 					if(secure)
 						var/obj/item/stack/rods/R = new (get_turf(src), 4)
-						R.add_fingerprint(user)
+						if (!QDELETED(R))
+							R.add_fingerprint(user)
 					qdel(src)
 				return
 

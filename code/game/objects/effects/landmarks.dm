@@ -3,7 +3,8 @@
 	icon = 'icons/effects/landmarks_static.dmi'
 	icon_state = "x2"
 	anchored = TRUE
-	layer = MID_LANDMARK_LAYER
+	layer = TURF_LAYER
+	plane = GAME_PLANE
 	invisibility = INVISIBILITY_ABSTRACT
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 
@@ -56,6 +57,20 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 /obj/effect/landmark/start/assistant
 	name = "Assistant"
 	icon_state = "Assistant" //icon_state is case sensitive. why are all of these capitalized? because fuck you that's why
+
+/obj/effect/landmark/start/combatant
+	name = "Combantant"
+	icon_state = "Assistant"
+	jobspawn_override = TRUE
+	delete_after_roundstart = FALSE
+
+/obj/effect/landmark/start/combatant/red
+	name = "Combantant: Red"
+	color = "#ff0000"
+
+/obj/effect/landmark/start/combatant/blue
+	name = "Combantant: Blue"
+	color = "#0000ff"
 
 /obj/effect/landmark/start/assistant/override
 	jobspawn_override = TRUE
@@ -115,15 +130,8 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "Exploration Crew"
 
 /obj/effect/landmark/start/security_officer
-	name = "Russian Officer"
-	icon_state = "Russian Officer"
-
-/obj/effect/landmark/start/security_officer/New()
-	if (prob(50)) //lazy bitch
-		name = "Security Officer"
-		if (prob(75))
-			name = "Veteran"
-	..()
+	name = "Security Officer"
+	icon_state = "Security Officer"
 
 /obj/effect/landmark/start/botanist
 	name = "Botanist"
@@ -448,7 +456,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/start/new_player)
 /obj/effect/landmark/event_spawn
 	name = "generic event spawn"
 	icon_state = "generic_event"
-	layer = HIGH_LANDMARK_LAYER
+	layer = OBJ_LAYER
 
 
 /obj/effect/landmark/event_spawn/New()
@@ -483,7 +491,6 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/start/new_player)
 /obj/effect/landmark/yohei_beacon
 	name = "yohei beacon"
 	icon_state = "generic_event"
-	layer = HIGH_LANDMARK_LAYER
 
 /obj/effect/landmark/yohei_beacon/New()
 	..()
@@ -491,4 +498,16 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark/start/new_player)
 
 /obj/effect/landmark/yohei_beacon/Destroy()
 	GLOB.yohei_beacons -= src
+	return ..()
+
+/obj/effect/landmark/bomb_plant_location
+	name = "bomb plant marker"
+	icon_state = "x"
+
+/obj/effect/landmark/bomb_plant_location/New()
+	..()
+	GLOB.violence_bomb_locations += src
+
+/obj/effect/landmark/bomb_plant_location/Destroy()
+	GLOB.violence_bomb_locations -= src
 	return ..()

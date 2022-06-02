@@ -33,11 +33,6 @@
 	path = /obj/item/clothing/head/beret
 	cost = 100
 
-/datum/gear/hat/blue_beret
-	display_name = "Берет, синий"
-	path = /obj/item/clothing/head/beret/blue
-	cost = 100
-
 /datum/gear/hat/black_beret
 	display_name = "Берет, чёрный"
 	path = /obj/item/clothing/head/beret/black
@@ -51,7 +46,7 @@
 /datum/gear/hat/karabakh
 	display_name = "шлем рейнджера Карабаха"
 	path = /obj/item/clothing/head/helmet/alt/ranger
-	cost = 2499
+	cost = 4000
 
 /datum/gear/hat/kabuto
 	display_name = "кабуто"
@@ -66,3 +61,8 @@
 /datum/gear/hat/widehat/red
 	display_name = "красная широкая шляпа"
 	path = /obj/item/clothing/head/costume/widehat/red
+
+/datum/gear/hat/chronos
+	display_name = "Военный берет Новой Мекки"
+	path = /obj/item/clothing/head/beret/chronos
+	cost = 7500

@@ -16,6 +16,7 @@
 	close_sound = 'sound/machines/cardboard_box.ogg'
 	open_sound_volume = 35
 	close_sound_volume = 35
+	enable_door_overlay = FALSE
 	var/move_speed_multiplier = 1
 	var/move_delay = FALSE
 	var/egged = 0
@@ -50,7 +51,7 @@
 		egged = world.time + SNAKE_SPAM_TICKS
 		for(var/mob/living/L in alerted)
 			if(!L.stat)
-				if(!L.incapacitated(ignore_restraints = 1))
+				if(!L.incapacitated(IGNORE_RESTRAINTS))
 					L.face_atom(src)
 				L.do_alert_animation()
 		playsound(loc, 'sound/machines/chime.ogg', 50, FALSE, -5)

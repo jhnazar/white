@@ -7,7 +7,7 @@
 	taste_description = "железо"
 	taste_mult = 1.3
 	glass_icon_state = "glass_red"
-	glass_name = "glass of tomato juice"
+	glass_name = "стакан tomato juice"
 	glass_desc = "Are you sure this is tomato juice?"
 	shot_glass_icon_state = "shotglassred"
 	penetrates_skin = NONE
@@ -142,6 +142,7 @@
 		src.data |= data.Copy()
 
 /datum/reagent/vaccine/fungal_tb
+	name = "Вакцина от грибкового туберкулеза"
 
 /datum/reagent/vaccine/fungal_tb/New(data)
 	. = ..()
@@ -161,7 +162,7 @@
 	taste_description = "вода"
 	var/cooling_temperature = 2
 	glass_icon_state = "glass_clear"
-	glass_name = "glass of water"
+	glass_name = "стакан water"
 	glass_desc = "The father of all refreshments."
 	shot_glass_icon_state = "shotglassclear"
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
@@ -220,6 +221,9 @@
 
 /datum/reagent/water/expose_mob(mob/living/exposed_mob, methods=TOUCH, reac_volume)//Splashing people with water can help put them out!
 	. = ..()
+	if(isandroid(exposed_mob) || isIPC(exposed_mob))
+		exposed_mob.electrocute_act(rand(10, 15), "Воды на микросхемах", 1, SHOCK_NOGLOVES)
+		playsound(exposed_mob, "sparks", 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 	if(methods & TOUCH)
 		exposed_mob.extinguish_mob() // extinguish removes all fire stacks
 
@@ -235,29 +239,6 @@
 		//You don't belong in this world, monster!
 		chems.remove_reagent(/datum/reagent/water, chems.get_reagent_amount(src.type))
 
-/datum/reagent/toxin/urine
-	name = "Моча"
-	enname = "Urine"
-	description = "Почти святая вода."
-	color = "#f8ff7a" // rgb: 224, 232, 239
-	glass_icon_state  = "glass_clear"
-	glass_name = "стакан мочи"
-	glass_desc = "Моча."
-	taste_description = "моча"
-	ph = 10
-	toxpwr = 0.8
-	hydration_factor = DRINK_HYDRATION_FACTOR_LOW
-
-/datum/reagent/toxin/urine/expose_turf(turf/exposed_turf, reac_volume)
-	. = ..()
-	if(isspaceturf(exposed_turf))
-		return
-
-	var/obj/effect/decal/cleanable/urine/reagentdecal = new(exposed_turf)
-	reagentdecal = locate() in exposed_turf
-	if(reagentdecal)
-		reagentdecal.reagents.add_reagent(/datum/reagent/toxin/urine, reac_volume)
-
 /datum/reagent/water/holywater
 	name = "Святая Вода"
 	enname = "Holy Water"
@@ -265,7 +246,7 @@
 	special_sound = 'white/valtos/sounds/drink/hallelujah.ogg'
 	color = "#E0E8EF" // rgb: 224, 232, 239
 	glass_icon_state  = "glass_clear"
-	glass_name = "glass of holy water"
+	glass_name = "стакан holy water"
 	glass_desc = "A glass of holy water."
 	self_consuming = TRUE //divine intervention won't be limited by the lack of a liver
 	ph = 7.5 //God is alkaline
@@ -372,7 +353,7 @@
 	taste_description = "горящая вода"
 	var/cooling_temperature = 2
 	glass_icon_state = "glass_clear"
-	glass_name = "glass of oxygenated water"
+	glass_name = "стакан oxygenated water"
 	glass_desc = "The father of all refreshments. Surely it tastes great, right?"
 	shot_glass_icon_state = "shotglassclear"
 	ph = 6.2
@@ -439,7 +420,7 @@
 
 /datum/reagent/hellwater/on_mob_life(mob/living/carbon/M, delta_time, times_fired)
 	M.set_fire_stacks(min(M.fire_stacks + (1.5 * delta_time), 5))
-	M.IgniteMob()			//Only problem with igniting people is currently the commonly available fire suits make you immune to being on fire
+	M.ignite_mob()			//Only problem with igniting people is currently the commonly available fire suits make you immune to being on fire
 	M.adjustToxLoss(1, 0)
 	M.adjustFireLoss(1, 0)		//Hence the other damages... ain't I a bastard?
 	M.adjustOrganLoss(ORGAN_SLOT_BRAIN, 2.5 * delta_time, 150)
@@ -1261,7 +1242,7 @@
 	color = "#660000" // rgb: 102, 0, 0
 	taste_description = "валовой металл"
 	glass_icon_state = "dr_gibb_glass"
-	glass_name = "glass of welder fuel"
+	glass_name = "стакан welder fuel"
 	glass_desc = "Unless you're an industrial tool, this is probably not safe for consumption."
 	penetrates_skin = NONE
 	ph = 4
@@ -1316,7 +1297,6 @@
 	. = ..()
 	if(methods & (TOUCH|VAPOR))
 		exposed_mob.wash(clean_types)
-		exposed_mob.wash_poo()
 		exposed_mob.RemoveElement(/datum/element/glitch)
 
 /datum/reagent/space_cleaner/ez_clean
@@ -1675,6 +1655,24 @@
 	L.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/halon)
 	REMOVE_TRAIT(L, TRAIT_RESISTHEAT, type)
 	return ..()
+
+/datum/reagent/zauker
+	name = "Заукер"
+	enname = "Zauker"
+	description = "An unstable gas that is toxic to all living beings."
+	reagent_state = GAS
+	metabolization_rate = REAGENTS_METABOLISM * 0.5
+	color = "90560B"
+	taste_description = "bitter"
+	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
+
+/datum/reagent/zauker/on_mob_life(mob/living/breather, delta_time, times_fired)
+	breather.adjustBruteLoss(6 * REM * delta_time, FALSE)
+	breather.adjustOxyLoss(1 * REM * delta_time, FALSE)
+	breather.adjustFireLoss(2 * REM * delta_time, FALSE)
+	breather.adjustToxLoss(2 * REM * delta_time, FALSE)
+	..()
+	return TRUE
 
 /////////////////////////Colorful Powder////////////////////////////
 //For colouring in /proc/mix_color_from_reagents
@@ -2643,7 +2641,7 @@
 	name = "Органическая Жижа"
 	enname = "Organic Slurry"
 	description = "A mixture of various colors of fluid. Induces vomiting."
-	glass_name = "glass of ...yuck!"
+	glass_name = "стакан ...yuck!"
 	glass_desc = "It smells like a carcass, and doesn't look much better."
 	color = "#545000"
 	taste_description = "внутренности"
@@ -2884,7 +2882,7 @@
 	taste_mult = 1.3
 	taste_description = "tiny legs scuttling down the back of your throat."
 	metabolization_rate = 5 * REAGENTS_METABOLISM //1u per second
-	glass_name = "glass of ants"
+	glass_name = "стакан ants"
 	glass_desc = "Bottoms up...?"
 	ph = 4.6 // Ants contain Formic Acid
 	/// How much damage the ants are going to be doing (rises with each tick the ants are in someone's body)
@@ -2946,3 +2944,23 @@
 	kronkus_enjoyer.adjustOrganLoss(ORGAN_SLOT_HEART, 0.1)
 	kronkus_enjoyer.adjustStaminaLoss(-2, FALSE)
 
+/datum/reagent/brimdust
+	name = "Brimdust"
+	description = "A brimdemon's dust. Consumption is not recommended, although plants like it."
+	reagent_state = SOLID
+	color = "#522546"
+	taste_description = "burning"
+	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
+
+/datum/reagent/brimdust/on_mob_life(mob/living/carbon/carbon, delta_time, times_fired)
+	. = ..()
+	carbon.adjustFireLoss((ispodperson(carbon) ? -1 : 1) * delta_time)
+
+/datum/reagent/brimdust/on_hydroponics_apply(obj/item/seeds/myseed, datum/reagents/chems, obj/machinery/hydroponics/mytray, mob/user)
+	. = ..()
+	if(chems.has_reagent(src.type, 1))
+		mytray.adjustWeeds(-1)
+		mytray.adjustPests(-1)
+		mytray.adjustHealth(round(chems.get_reagent_amount(src.type) * 1))
+		if(myseed)
+			myseed.adjust_potency(round(chems.get_reagent_amount(src.type) * 0.5))

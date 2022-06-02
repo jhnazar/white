@@ -1,13 +1,13 @@
 /obj/machinery/particle_accelerator/control_box
 	name = "консоль управления ускорителем частиц"
-	desc = "Это контролирует плотность частиц."
+	desc = "Контролирует плотность частиц."
 	icon = 'icons/obj/machines/particle_accelerator.dmi'
 	icon_state = "control_box"
 	anchored = FALSE
 	density = TRUE
 	use_power = NO_POWER_USE
-	idle_power_usage = 500
-	active_power_usage = 10000
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.4
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 10
 	dir = NORTH
 	mouse_opacity = MOUSE_OPACITY_OPAQUE
 	var/strength_upper_limit = 2
@@ -170,7 +170,7 @@
 
 /obj/machinery/particle_accelerator/control_box/proc/toggle_power()
 	active = !active
-	investigate_log("turned [active?"<font color='green'>ON</font>":"<font color='red'>OFF</font>"] by [usr ? key_name(usr) : "outside forces"] at [AREACOORD(src)]", INVESTIGATE_SINGULO)
+	investigate_log("turned [active?"<font color='green'>ON</font>":span_red("OFF")] by [usr ? key_name(usr) : "outside forces"] at [AREACOORD(src)]", INVESTIGATE_SINGULO)
 	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? ADMIN_LOOKUPFLW(usr) : "outside forces"] in [ADMIN_VERBOSEJMP(src)]")
 	log_game("PA Control Computer turned [active ?"ON":"OFF"] by [usr ? "[key_name(usr)]" : "outside forces"] at [AREACOORD(src)]")
 	if(active)

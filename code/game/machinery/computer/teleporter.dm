@@ -1,6 +1,6 @@
 /obj/machinery/computer/teleporter
-	name = "teleporter control console"
-	desc = "Used to control a linked teleportation Hub and Station."
+	name = "Консоль управления телепортом"
+	desc = "Используется для управления связанными телепортационной аркой и станцией."
 	icon_screen = "teleport"
 	icon_keyboard = "teleport_key"
 	light_color = LIGHT_COLOR_BLUE
@@ -39,6 +39,7 @@
 	return power_station
 
 /obj/machinery/computer/teleporter/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Teleporter", name)
@@ -183,7 +184,7 @@
 	var/list/targets = get_targets()
 
 	if (regime_set == "Teleporter")
-		var/desc = input("Please select a location to lock in.", "Locking Computer") as null|anything in sortList(targets)
+		var/desc = input("Please select a location to lock in.", "Locking Computer") as null|anything in sort_list(targets)
 		set_teleport_target(targets[desc])
 		var/turf/target_turf = get_turf(targets[desc])
 		log_game("[key_name(user)] has set the teleporter target to [targets[desc]] at [AREACOORD(target_turf)]")
@@ -192,7 +193,7 @@
 			to_chat(user, span_alert("No active connected stations located."))
 			return
 
-		var/desc = input("Please select a station to lock in.", "Locking Computer") as null|anything in sortList(targets)
+		var/desc = input("Please select a station to lock in.", "Locking Computer") as null|anything in sort_list(targets)
 		var/obj/machinery/teleport/station/target_station = targets[desc]
 		if(!target_station || !target_station.teleporter_hub)
 			return
@@ -234,19 +235,19 @@
 	update_trigger = add_input_port("Update Targets", PORT_TYPE_SIGNAL)
 
 	current_target = add_output_port("Current Target", PORT_TYPE_STRING)
-	possible_targets = add_output_port("Possible Targets", PORT_TYPE_LIST)
+	possible_targets = add_output_port("Possible Targets", PORT_TYPE_LIST(PORT_TYPE_ANY))
 	on_fail = add_output_port("Failed", PORT_TYPE_SIGNAL)
 
-/obj/item/circuit_component/teleporter_control_console/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/teleporter_control_console/register_usb_parent(atom/movable/shell)
 	. = ..()
 
-	if (istype(parent, /obj/machinery/computer/teleporter))
-		attached_console = parent
+	if (istype(shell, /obj/machinery/computer/teleporter))
+		attached_console = shell
 
 		RegisterSignal(attached_console, COMSIG_TELEPORTER_NEW_TARGET, .proc/on_teleporter_new_target)
 		update_targets()
 
-/obj/item/circuit_component/teleporter_control_console/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/teleporter_control_console/unregister_usb_parent(atom/movable/shell)
 	UnregisterSignal(attached_console, COMSIG_TELEPORTER_NEW_TARGET)
 	attached_console = null
 	return attached_console

@@ -234,7 +234,7 @@
 
 /obj/item/surgical_drapes
 	name = "хирургическая простыня"
-	desc = "Хирургические простыни марки Нанотрейзен обеспечивают оптимальную безопасность и защиту от инфекций."
+	desc = "Хирургические простыни марки NanoTrasen обеспечивают оптимальную безопасность и защиту от инфекций."
 	icon = 'icons/obj/surgery.dmi'
 	icon_state = "surgical_drapes"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
@@ -296,7 +296,7 @@
 	return
 
 /obj/item/surgical_processor //allows medical cyborgs to scan and initiate advanced surgeries
-	name = "Хирургический процессор"
+	name = "хирургический процессор"
 	desc = "Устройство для сканирования и запуска операций с диска или операционного компьютера."
 	icon = 'icons/obj/device.dmi'
 	icon_state = "spectrometer"
@@ -522,3 +522,7 @@
 	attack_verb_simple = list("pumps", "siphons")
 	tool_behaviour = TOOL_BLOODFILTER
 	toolspeed = 1
+
+/obj/item/blood_filter/augment
+	toolspeed = 0.5
+

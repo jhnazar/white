@@ -65,7 +65,7 @@
 	var/list/new_hidden_turfs
 	if(hidden)
 		new_hidden_turfs = list()
-		for(var/i in 1 to old_turfs.len)
+		for(var/i in 1 to length(old_turfs))
 			CHECK_TICK
 			var/turf/oldT = old_turfs[i]
 			if(old_turfs[oldT] & MOVE_TURF)
@@ -124,10 +124,8 @@
 		var/area/old_area = oldT.loc
 		var/move_mode = old_area.beforeShuttleMove(shuttle_areas)											//areas
 
-		var/list/old_contents = oldT.contents
-		for(var/k in 1 to old_contents.len)
+		for(var/atom/movable/moving_atom as anything in oldT.contents)
 			CHECK_TICK
-			var/atom/movable/moving_atom = old_contents[k]
 			if(moving_atom.loc != oldT) //fix for multi-tile objects
 				continue
 			move_mode = moving_atom.beforeShuttleMove(newT, rotation, move_mode, src)						//atoms
@@ -161,7 +159,7 @@
 			shuttle_area.onShuttleMove(oldT, newT, underlying_old_area)										//areas
 
 /obj/docking_port/mobile/proc/cleanup_runway(obj/docking_port/stationary/new_dock, list/old_turfs, list/new_turfs, list/areas_to_move, list/moved_atoms, rotation, movement_direction, area/underlying_old_area)
-	underlying_old_area.afterShuttleMove()
+	underlying_old_area.afterShuttleMove(0)
 
 	// Parallax handling
 	// This needs to be done before the atom after move
@@ -177,9 +175,21 @@
 		CHECK_TICK
 		if(!(old_turfs[old_turfs[i]] & MOVE_TURF))
 			continue
-		var/turf/oldT = old_turfs[i]
-		var/turf/newT = new_turfs[i]
-		newT.afterShuttleMove(oldT, rotation)																//turfs
+		var/turf/old_turf = old_turfs[i]
+		var/turf/new_turf = new_turfs[i]
+		new_turf.afterShuttleMove(old_turf, rotation) //turfs
+		var/turf/new_ceiling = get_step_multiz(new_turf, UP) // check if a ceiling is needed
+		if(new_ceiling)
+			// generate ceiling
+			if(istype(new_ceiling, /turf/open/openspace)) // why is this needed? because we have 2 different typepaths for openspace
+				new_ceiling.ChangeTurf(/turf/open/floor/engine/hull/shipceiling, list(/turf/open/openspace))
+			else if (istype(new_ceiling, /turf/open/openspace/airless))
+				new_ceiling.ChangeTurf(/turf/open/floor/engine/hull/shipceiling, list(/turf/open/openspace/airless))
+		var/turf/old_ceiling = get_step_multiz(old_turf, UP)
+		if(old_ceiling && istype(old_ceiling, /turf/open/floor/engine/hull/shipceiling)) // check if a ceiling was generated previously
+			// remove old ceiling
+			var/turf/open/floor/engine/hull/shipceiling/old_shuttle_ceiling = old_ceiling
+			old_shuttle_ceiling.ChangeTurf(old_shuttle_ceiling.old_turf_type)
 
 	for(var/i in 1 to moved_atoms.len)
 		CHECK_TICK

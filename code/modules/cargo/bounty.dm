@@ -3,7 +3,7 @@ GLOBAL_LIST_EMPTY(bounties_list)
 /datum/bounty
 	var/name
 	var/description
-	var/reward = 100 // In credits.
+	var/reward = CARGO_CRATE_VALUE * 10 // In credits.
 	var/claimed = FALSE
 	var/high_priority = FALSE
 
@@ -107,7 +107,7 @@ GLOBAL_LIST_EMPTY(bounties_list)
 		setup_bounties()
 
 	var/list/matched_one = FALSE
-	for(var/thing in reverseRange(AM.GetAllContents()))
+	for(var/thing in reverseRange(AM.get_all_contents()))
 		var/matched_this = FALSE
 		for(var/datum/bounty/B in GLOB.bounties_list)
 			if(B.applies_to(thing))

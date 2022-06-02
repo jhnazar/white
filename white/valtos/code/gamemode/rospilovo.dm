@@ -155,6 +155,7 @@
 	icon = 'white/valtos/icons/rospilovo/ausflora.dmi'
 	icon_state = "firstbush_1"
 	alpha = 225
+	max_integrity = 5
 
 /obj/structure/flora/ausbushes/rospilovo/Initialize()
 	if(icon_state == "firstbush_1")
@@ -480,7 +481,6 @@
 	desc = "Большой старый ящик."
 	opacity = 1
 	density = 1
-	layer = MASSIVE_OBJ_LAYER
 
 /obj/structure/rospilovo/propane
 	name = "пропан"
@@ -494,7 +494,6 @@
 	icon = 'white/valtos/icons/rospilovo/decorations_32x64.dmi'
 	icon_state = "stolb"
 	desc = "Столб с висящими остатками проводов."
-	layer = MASSIVE_OBJ_LAYER
 	density = 0
 
 /obj/structure/rospilovo/propane/dual
@@ -866,6 +865,8 @@
 	area_flags = NOTELEPORT
 	has_gravity = TRUE
 	mood_bonus = -25
+	base_lighting_alpha = 255
+	base_lighting_color = COLOR_WHITE
 	mood_message = span_red("Тут не очень приятно!\n")
 
 /area/awaymission/rospilovo/deathtrap

@@ -43,6 +43,7 @@
 
 	var/attack_hand_interact = TRUE //interact on attack hand.
 	var/quickdraw = FALSE //altclick interact
+	var/pocket_belt = FALSE	//Разрешает открывать емкость в кармане
 
 	var/datum/action/item_action/storage_gather_mode/modeswitch_action
 
@@ -50,7 +51,7 @@
 	var/screen_max_columns = 7 //These two determine maximum screen sizes.
 	var/screen_max_rows = INFINITY
 	var/screen_pixel_x = 16 //These two are pixel values for screen loc of boxes and closer
-	var/screen_pixel_y = 16
+	var/screen_pixel_y = 24
 	var/screen_start_x = 4 //These two are where the storage starts being rendered, screen_loc wise.
 	var/screen_start_y = 2
 	//End
@@ -797,17 +798,18 @@
 		playsound(A, "rustle", 50, TRUE, -5)
 
 	if(ishuman(user))
-		var/mob/living/carbon/human/H = user
-		if(H.l_store == A && !H.get_active_held_item()) //Prevents opening if it's in a pocket.
-			. = COMPONENT_CANCEL_ATTACK_CHAIN
-			INVOKE_ASYNC(H, /mob.proc/put_in_hands, A)
-			H.l_store = null
-			return
-		if(H.r_store == A && !H.get_active_held_item())
-			. = COMPONENT_CANCEL_ATTACK_CHAIN
-			INVOKE_ASYNC(H, /mob.proc/put_in_hands, A)
-			H.r_store = null
-			return
+		if(!pocket_belt)	//	Разрешение на открытие в кармане
+			var/mob/living/carbon/human/H = user
+			if(H.l_store == A && !H.get_active_held_item()) //Prevents opening if it's in a pocket.
+				. = COMPONENT_CANCEL_ATTACK_CHAIN
+				INVOKE_ASYNC(H, /mob.proc/put_in_hands, A)
+				H.l_store = null
+				return
+			if(H.r_store == A && !H.get_active_held_item())
+				. = COMPONENT_CANCEL_ATTACK_CHAIN
+				INVOKE_ASYNC(H, /mob.proc/put_in_hands, A)
+				H.r_store = null
+				return
 
 	if(A.loc == user)
 		. = COMPONENT_CANCEL_ATTACK_CHAIN
@@ -843,7 +845,10 @@
 
 
 /datum/component/storage/proc/open_storage(mob/user)
-	if(!isliving(user) || !user.CanReach(parent) || user.incapacitated())
+	if(!user.CanReach(parent))
+		user.balloon_alert(user, "can't reach!")
+		return FALSE
+	if(!isliving(user) || user.incapacitated())
 		return FALSE
 	if(locked)
 		to_chat(user, span_warning("Похоже <b>[parent]</b> заблокирован!"))
@@ -868,6 +873,8 @@
 
 	if(open_storage(user))
 		return COMPONENT_CANCEL_ATTACK_CHAIN
+	if(LAZYACCESS(modifiers, RIGHT_CLICK))
+		return COMPONENT_SECONDARY_CANCEL_ATTACK_CHAIN
 
 /datum/component/storage/proc/on_open_storage_attackby(datum/source, obj/item/weapon, mob/user, params)
 	SIGNAL_HANDLER

@@ -18,7 +18,7 @@
 	build_type = PROTOLATHE | MECHFAB
 	construction_time = 40
 	materials = list(/datum/material/iron = 6000, /datum/material/glass = 1000, /datum/material/plastic = 2000)
-	category = list("Снаряжение", "Медицинское снаряжение")
+	category = list("Снаряжение", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Экипировка")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -31,8 +31,10 @@
 	construction_time = 40
 	materials = list(/datum/material/iron = 6000, /datum/material/glass = 6000)
 	category = list("Кибернетика", "Медицинские разработки")
-	sub_category = list("Протезирование")
+	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+// 	Плохие конечности
 
 /datum/design/robot_low_arm_left
 	name = "Бюджетный протез левой руки"
@@ -82,11 +84,61 @@
 	sub_category = list("Протезирование")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
 
+// 	Хорошие конечности
+
+/datum/design/robot_good_arm_left
+	name = "Продвинутый протез левой руки"
+	desc = "Металлическая кибер-конечность. По физическим показателям она явно превосходит органику."
+	id = "robot_good_arm_left"
+	build_path = /obj/item/bodypart/l_arm/robot
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 100
+	materials = list(/datum/material/iron=10000)
+	category = list("Кибернетика", "Медицинские разработки")
+	sub_category = list("Протезирование")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/robot_good_arm_right
+	name = "Продвинутый протез правой руки"
+	desc = "Металлическая кибер-конечность. По физическим показателям она явно превосходит органику."
+	id = "robot_good_arm_right"
+	build_path = /obj/item/bodypart/r_arm/robot
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 100
+	materials = list(/datum/material/iron=10000)
+	category = list("Кибернетика", "Медицинские разработки")
+	sub_category = list("Протезирование")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/robot_good_leg_left
+	name = "Продвинутый протез левой ноги"
+	desc = "Металлическая кибер-конечность. По физическим показателям она явно превосходит органику."
+	id = "robot_good_leg_left"
+	build_path = /obj/item/bodypart/l_leg/robot
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 100
+	materials = list(/datum/material/iron=10000)
+	category = list("Кибернетика", "Медицинские разработки")
+	sub_category = list("Протезирование")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/robot_good_leg_right
+	name = "Продвинутый протез правой ноги"
+	desc = "Металлическая кибер-конечность. По физическим показателям она явно превосходит органику."
+	id = "robot_good_leg_right"
+	build_path = /obj/item/bodypart/r_leg/robot
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 100
+	materials = list(/datum/material/iron=10000)
+	category = list("Кибернетика", "Медицинские разработки")
+	sub_category = list("Протезирование")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
 /datum/design/body_bag
 	name = "Мешок для трупов"
 	desc = "Полиэтиленовый пакет, предназначенный для хранения и транспортировки трупов."
 	id = "body_bag"
-	build_path = /obj/structure/closet/body_bag
+	build_path = /obj/item/bodybag
 	build_type = PROTOLATHE | MECHFAB
 	construction_time = 40
 	materials = list(/datum/material/plastic = 2000)
@@ -117,6 +169,56 @@
 	category = list("initial", "Медицина", "Медицинские разработки", "Фармацевтика")
 	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/handbeltsmodif
+	name = "Комплект модернизации: Энергетические захваты"
+	desc = "Комплект для установки комплекса хардлайт-прожекторов на стазисную кровать. Прожекторы создают хардлайт-ремни, фиксирующие пациента на стазис-кровати и не дающие ему встать, пока лечащий врач не разрешит. Или пока энергия не закончится."
+	id = "handbeltsmodif"
+	build_type = MECHFAB
+	construction_time = 40
+	materials = list(/datum/material/iron = 4000, /datum/material/plastic = 4000, /datum/material/glass = 2000)
+	build_path = /obj/item/handbeltsmodif
+	category = list("Медицинское оборудование")
+	sub_category = list("Реанимация и хирургия")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/medipenal
+	name = "Пенал для медипенов"
+	desc = "Компактный и очень удобный пенал вмещающий до 5 медипенов, специальная клипса позволяет закрепить его на карманах или поясе, а с его маленькими габаритами он поместится в коробке или аптечке."
+	id = "medipenal"
+	build_path = /obj/item/storage/belt/medipenal
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
+	materials = list(/datum/material/iron = 1000, /datum/material/glass = 1000, /datum/material/plastic = 2000)
+	category = list("Медицинское снаряжение")
+	sub_category = list("Экипировка")
+	departmental_flags = DEPARTMENTAL_FLAG_SECURITY | DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/solnce
+	name = "МК-Солнце"
+	desc = "Многофункциональный медицинский комплекс \"Солнце\". Передовая военная разработка в области экстренной полевой медицины. Для начала работы необходимо нажать кнопку инициации выбора модуля, после чего установить соответствующие расходные материалы."
+	id = "solnce"
+	build_path = /obj/item/solnce
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
+	materials = list(/datum/material/iron = 5000, /datum/material/glass = 2000, /datum/material/gold = 2000, /datum/material/silver = 3000, /datum/material/titanium = 1000, /datum/material/uranium = 500, /datum/material/plasma = 1000, /datum/material/bluespace = 1000, /datum/material/plastic = 2000)
+	category = list("Медицинское снаряжение")
+	sub_category = list("Экипировка")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+/datum/design/biomonitor
+	name = "Имплант биомонитора"
+	desc = "Этот кибернетический мозговой имплант подключается к кровеносной и нервной системе носителя для определения его физического состояния и химанализа крови. Для активации необходимо мысленно <b>ОСМОТРЕТЬ СЕБЯ</b>."
+	id = "ci-biomonitor"
+	build_path = /obj/item/organ/cyberimp/brain/biomonitor
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 60
+	materials = list(/datum/material/iron = 600, /datum/material/glass = 600, /datum/material/silver = 400)
+	category = list("Импланты", "Медицинские разработки")
+	sub_category = list("Кибер Импланты")
+	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
+
+// Операции
 
 /*
 /datum/design/surgery/toxin_healing //PLEASE ACCOUNT FOR UNIQUE HEALING BRANCHES IN THE hptech HREF (currently 2 for Brute/Burn; Combo is bonus)

@@ -1,6 +1,6 @@
 //Code for the interceptor circuit
 /obj/machinery/telecomms/receiver/proc/Options_Menu()
-	var/dat = "<br>Remote control: <a href='?src=[REF(src)];toggle_remote_control=1'>[GLOB.remote_control ? "<font color='green'><b>ENABLED</b></font>" : "<font color='red'><b>DISABLED</b></font>"]</a>"
+	var/dat = "<br>Remote control: <a href='?src=[REF(src)];toggle_remote_control=1'>[GLOB.remote_control ? "<font color='green'><b>ENABLED</b></font>" : span_red("<b>DISABLED</b>")]</a>"
 	dat += "<br>Broadcasting signals: "
 	for(var/i in GLOB.ic_speakers)
 		var/obj/item/integrated_circuit_old/I = i
@@ -33,7 +33,7 @@
 //makeshift receiver used for the circuit, so that we don't
 //have to edit radio.dm and other shit
 /obj/machinery/telecomms/receiver/circuit
-	idle_power_usage = 0
+	use_power = NO_POWER_USE
 	var/obj/item/integrated_circuit_old/input/tcomm_interceptor/holder
 
 /obj/machinery/telecomms/receiver/circuit/receive_signal(datum/signal/signal)

@@ -147,13 +147,14 @@ GENE SCANNER
 	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 // Used by the PDA medical scanner too
-/proc/healthscan(mob/user, mob/living/M, mode = SCANNER_VERBOSE, advanced = FALSE)
-	if(user.incapacitated())
-		return
+/proc/healthscan(mob/user, mob/living/M, mode = SCANNER_VERBOSE, advanced = FALSE, tochat = TRUE)
+	if(!M.getorganslot(ORGAN_SLOT_BRAIN_BIOMONITOR))
+		if(user.incapacitated())
+			return
 
-	if(user.is_blind())
-		to_chat(user, span_warning("You realize that your scanner has no accessibility support for the blind!"))
-		return
+		if(user.is_blind())
+			to_chat(user, span_warning("Этот сканер не адаптирован для слепых! Я буду жаловаться в профсоюз!"))
+			return
 
 	// the final list of strings to render
 	var/render_list = list()
@@ -180,21 +181,21 @@ GENE SCANNER
 
 	// Husk detection
 	if(advanced && HAS_TRAIT_FROM(M, TRAIT_HUSK, BURN))
-		render_list += "<span class='alert ml-1'>Subject has been husked by severe burns.</span>\n"
+		render_list += "<span class='alert ml-1'>Жертва была хаскирована из ожогов высшей степени тяжести.</span>\n"
 	else if (advanced && HAS_TRAIT_FROM(M, TRAIT_HUSK, CHANGELING_DRAIN))
-		render_list += "<span class='alert ml-1'>Subject has been husked by dessication.</span>\n"
+		render_list += "<span class='alert ml-1'>Жертва была хаскирована из за иссушения кровеносной и лимфатической системы.</span>\n"
 	else if(HAS_TRAIT(M, TRAIT_HUSK))
-		render_list += "<span class='alert ml-1'>Subject has been husked.</span>\n"
+		render_list += "<span class='alert ml-1'>Жертва была хаскирована.</span>\n"
 
 	// Damage descriptions
 	if(brute_loss > 10)
-		render_list += "<span class='alert ml-1'>[brute_loss > 50 ? "Серьёзные" : "Небольшие"] повреждения тканей.</span>\n"
+		render_list += "<span class='alert ml-1'>Обнаружены [brute_loss > 50 ? "Серьёзные" : "Небольшие"] физические раны.</span>\n"
 	if(fire_loss > 10)
-		render_list += "<span class='alert ml-1'>[fire_loss > 50 ? "Серьёзные" : "Небольшие"] ожоги обнаружены.</span>\n"
+		render_list += "<span class='alert ml-1'>Обнаружены [fire_loss > 50 ? "Серьёзные" : "Небольшие"] ожоги.</span>\n"
 	if(oxy_loss > 10)
-		render_list += "<span class='info ml-1'><span class='alert'>[oxy_loss > 50 ? "Серьёзное" : "Небольшое"] удушье обнаружено.</span>\n"
+		render_list += "<span class='info ml-1'><span class='alert'>Обнаружено [oxy_loss > 50 ? "Серьёзное" : "Небольшое"] удушье.</span>\n"
 	if(tox_loss > 10)
-		render_list += "<span class='alert ml-1'>[tox_loss > 50 ? "Серьёзный" : "Небольшой"] объём токсинов обнаружен.</span>\n"
+		render_list += "<span class='alert ml-1'>Обнаружен [tox_loss > 50 ? "Серьёзный" : "Небольшой"] объём токсинов.</span>\n"
 	if(M.getStaminaLoss())
 		render_list += "<span class='alert ml-1'>Пациент страдает от переутомления.</span>\n"
 		if(advanced)
@@ -216,10 +217,6 @@ GENE SCANNER
 			render_list += "<span class='alert ml-1'>Нет печени.</span>\n"
 		if (!(NOSTOMACH in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_STOMACH))
 			render_list += "<span class='alert ml-1'>Нет желудка.</span>\n"
-		if (!(NOKIDNEYS in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_KIDNEYS))
-			render_list += "<span class='alert ml-1'>Нет почек.</span>\n"
-		if (!(NOGUTS in the_dudes_species.species_traits) && !the_dude.getorganslot(ORGAN_SLOT_GUTS))
-			render_list += "<span class='alert ml-1'>Нет кишок.</span>\n"
 
 	if(iscarbon(M))
 		var/mob/living/carbon/C = M
@@ -252,7 +249,7 @@ GENE SCANNER
 			render_list += "<span class='info ml-1'>Уровень облучения: [M.radiation]%.</span>\n"
 
 	if(advanced && M.hallucinating())
-		render_list += "<span class='info ml-1'>Пациент под трипом.</span>\n"
+		render_list += "<span class='info ml-1'>Пациент под воздействием галлюциногенов.</span>\n"
 
 	// Body part damage report
 	if(iscarbon(M) && mode == SCANNER_VERBOSE)
@@ -393,12 +390,40 @@ GENE SCANNER
 				render_list += "<div class='ml-2'>Тип: [W.name]\nТяжесть: [W.severity_text()]</div>\n" // \nRecommended Treatment: [W.treat_text] выкинул рекомендованное лечение - слишком громоздко,less lines than in woundscan() so we don't overload people trying to get basic med info
 			render_list += "</span>"
 
+
+// Застрявшие предметы, паралич и потерянные конечности
+	if(iscarbon(M))
+		var/mob/living/carbon/C = M
+		var/list/missing = list(BODY_ZONE_HEAD, BODY_ZONE_CHEST, BODY_ZONE_R_ARM, BODY_ZONE_L_ARM, BODY_ZONE_R_LEG, BODY_ZONE_L_LEG)
+		var/list/disabled = list()
+		for(var/X in C.bodyparts)
+			var/obj/item/bodypart/BP = X
+			if(BP.bodypart_disabled)
+				disabled += BP
+			missing -= BP.body_zone
+			for(var/obj/item/I in BP.embedded_objects)
+				if(I.isEmbedHarmless())
+					render_list += "<span class='alert ml-1'><b>Внимание: В [BP.name] пациента торчит [I].</b></span>\n"
+				else
+					render_list += "<span class='alert ml-1'><b>Внимание: В [BP.name] пациента застрял [I].</b></span>\n"
+		for(var/X in disabled)
+			var/obj/item/bodypart/BP = X
+			if(!(BP.get_damage(include_stamina = FALSE) >= BP.max_damage)) //Stamina is disabling the limb
+				render_list += "<span class='alert ml-1'><b>Внимание: [BP.name] парализована.</b></span>\n"
+
+		for(var/t in missing)
+			render_list += "<span class='alert ml-1'><b>Внимание: [parse_zone(t)] пациента отсутствует.</b></span>\n"
+		render_list += "\n"
+
+
+	// Болезни
 	for(var/thing in M.diseases)
 		var/datum/disease/D = thing
 		if(!(D.visibility_flags & HIDDEN_SCANNER))
 			render_list += "<span class='alert ml-1'><b>Внимание: [D.form] обнаружена</b>\n\
 			<div class='ml-2'>Название: [D.name].\nТип: [D.spread_text].\nСтадия: [D.stage]/[D.max_stages].\nВозможное лекарство: [D.cure_text]</div>\
 			</span>" // divs do not need extra linebreak
+
 
 	// Blood Level
 	if(M.has_dna())
@@ -430,14 +455,17 @@ GENE SCANNER
 			render_list += "<span class='notice ml-2'>[cyberimp_detect]</span>\n"
 
 	SEND_SIGNAL(M, COMSIG_NANITE_SCAN, user, FALSE)
-	to_chat(user, jointext(render_list, ""), trailing_newline = FALSE) // we handled the last <br> so we don't need handholding
+	if(tochat)
+		to_chat(user, jointext(render_list, "")) // we handled the last <br> so we don't need handholding
+	else
+		return(jointext(render_list, ""))
 
 /proc/chemscan(mob/living/user, mob/living/M)
 	if(user.incapacitated())
 		return
 
 	if(user.is_blind())
-		to_chat(user, span_warning("You realize that your scanner has no accessibility support for the blind!"))
+		to_chat(user, span_warning("Я полностью слеп и не вижу показателей анализатора!"))
 		return
 
 	if(istype(M) && M.reagents)
@@ -478,7 +506,7 @@ GENE SCANNER
 		if(M.has_status_effect(/datum/status_effect/eigenstasium))
 			render_list += "<span class='notice ml-1'>Subject is temporally unstable. Stabilising agent is recommended to reduce disturbances.</span>\n"
 
-		to_chat(user, jointext(render_list, ""), trailing_newline = FALSE) // we handled the last <br> so we don't need handholding
+		to_chat(user, jointext(render_list, "")) // we handled the last <br> so we don't need handholding
 
 /obj/item/healthanalyzer/verb/toggle_mode()
 	set name = "Switch Verbosity"
@@ -543,7 +571,7 @@ GENE SCANNER
 		to_chat(user, span_warning("<b>[src.name]</b> displays an eerily high-definition frowny face, chastizing you for asking it for too much encouragement."))
 		greedy = TRUE
 	else
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 		if(isliving(user))
 			var/mob/living/L = user
 			to_chat(L, span_warning("<b>[src.name]</b> makes a disappointed buzz and pricks your finger for being greedy. Ow!"))
@@ -555,7 +583,7 @@ GENE SCANNER
 	user.visible_message(span_notice("[user] scans [patient] for serious injuries.") , span_notice("You scan [patient] for serious injuries."))
 
 	if(!istype(patient))
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		to_chat(user, span_notice("<b>[src.name]</b> makes a sad buzz and briefly displays a frowny face, indicating it can't scan [patient]."))
 		return
 
@@ -624,36 +652,36 @@ GENE SCANNER
 	else
 		to_chat(user, span_alert("Давление: [round(pressure, 0.01)] кПа"))
 	if(total_moles)
-		var/o2_concentration = environment.get_moles(/datum/gas/oxygen)/total_moles
-		var/n2_concentration = environment.get_moles(/datum/gas/nitrogen)/total_moles
-		var/co2_concentration = environment.get_moles(/datum/gas/carbon_dioxide)/total_moles
-		var/plasma_concentration = environment.get_moles(/datum/gas/plasma)/total_moles
+		var/o2_concentration = environment.get_moles(GAS_O2)/total_moles
+		var/n2_concentration = environment.get_moles(GAS_N2)/total_moles
+		var/co2_concentration = environment.get_moles(GAS_CO2)/total_moles
+		var/plasma_concentration = environment.get_moles(GAS_PLASMA)/total_moles
 
 		if(abs(n2_concentration - N2STANDARD) < 20)
-			to_chat(user, span_info("Азот: [round(n2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/nitrogen), 0.01)] моль)"))
+			to_chat(user, span_info("Азот: [round(n2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_N2), 0.01)] моль)"))
 		else
-			to_chat(user, span_alert("Азот: [round(n2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/nitrogen), 0.01)] моль)"))
+			to_chat(user, span_alert("Азот: [round(n2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_N2), 0.01)] моль)"))
 
 		if(abs(o2_concentration - O2STANDARD) < 2)
-			to_chat(user, span_info("Кислород: [round(o2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/oxygen), 0.01)] моль)"))
+			to_chat(user, span_info("Кислород: [round(o2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_O2), 0.01)] моль)"))
 		else
-			to_chat(user, span_alert("Кислород: [round(o2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/oxygen), 0.01)] моль)"))
+			to_chat(user, span_alert("Кислород: [round(o2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_O2), 0.01)] моль)"))
 
 		if(co2_concentration > 0.01)
-			to_chat(user, span_alert("CO2: [round(co2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/carbon_dioxide), 0.01)] моль)"))
+			to_chat(user, span_alert("CO2: [round(co2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_CO2), 0.01)] моль)"))
 		else
-			to_chat(user, span_info("CO2: [round(co2_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/carbon_dioxide), 0.01)] моль)"))
+			to_chat(user, span_info("CO2: [round(co2_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_CO2), 0.01)] моль)"))
 
 		if(plasma_concentration > 0.005)
-			to_chat(user, span_alert("Плазма: [round(plasma_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/plasma), 0.01)] моль)"))
+			to_chat(user, span_alert("Плазма: [round(plasma_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_PLASMA), 0.01)] моль)"))
 		else
-			to_chat(user, span_info("Плазма: [round(plasma_concentration*100, 0.01)] % ([round(environment.get_moles(/datum/gas/plasma), 0.01)] моль)"))
+			to_chat(user, span_info("Плазма: [round(plasma_concentration*100, 0.01)] % ([round(environment.get_moles(GAS_PLASMA), 0.01)] моль)"))
 
 		for(var/id in environment.get_gases())
 			if(id in GLOB.hardcoded_gases)
 				continue
 			var/gas_concentration = environment.get_moles(id)/total_moles
-			to_chat(user, span_alert("[GLOB.meta_gas_info[id][META_GAS_NAME]]: [round(gas_concentration*100, 0.01)] % ([round(environment.get_moles(id), 0.01)] моль)"))
+			to_chat(user, span_alert("[GLOB.gas_data.names[id]]: [round(gas_concentration*100, 0.01)] % ([round(environment.get_moles(id), 0.01)] моль)"))
 		to_chat(user, span_info("Температура: [round(environment.return_temperature()-T0C, 0.01)] &deg;C ([round(environment.return_temperature(), 0.01)] K)"))
 
 /obj/item/analyzer/AltClick(mob/user) //Barometer output for measuring when the next storm happens
@@ -749,7 +777,7 @@ GENE SCANNER
 
 			for(var/id in air_contents.get_gases())
 				var/gas_concentration = air_contents.get_moles(id) / total_moles
-				render_list += span_notice("[GLOB.meta_gas_info[id][META_GAS_NAME]]: [round(gas_concentration*100, 0.01)] % ([round(air_contents.get_moles(id), 0.01)] моль)")
+				render_list += span_notice("[GLOB.gas_data.names[id]]: [round(gas_concentration*100, 0.01)] % ([round(air_contents.get_moles(id), 0.01)] моль)")
 			render_list += span_notice("Температура: [round(temperature - T0C,0.01)] &deg;C ([round(temperature, 0.01)] K)")
 		else
 			render_list += airs.len > 1 ? span_notice("Эта ячейка пуста!")  : span_notice("В [target] ничего нет!")
@@ -793,9 +821,9 @@ GENE SCANNER
 					\n<span class='notice'>[T.colour] [T.is_adult ? "взрослый" : "молодой"] слайм</span>\
 					\nНасыщенность: [T.nutrition]/[T.get_max_nutrition()]"
 	if (T.nutrition < T.get_starve_nutrition())
-		to_render += "\n<span class='warning'>Внимание: слайм голодает!</span>"
+		to_render += span_warning("\nВнимание: слайм голодает!")
 	else if (T.nutrition < T.get_hunger_nutrition())
-		to_render += "\n<span class='warning'>Внимание: слайм хочет кушать</span>"
+		to_render += span_warning("\nВнимание: слайм хочет кушать")
 	to_render += "\nШанс электрошока: [T.powerlevel]\nЗдоровье: [round(T.health/T.maxHealth,0.01)*100]%"
 	if (T.slime_mutation[4] == T.colour)
 		to_render += "\nЭтот слайм больше не хочет развиваться."
@@ -915,7 +943,7 @@ GENE SCANNER
 	for(var/A in buffer)
 		options += get_display_name(A)
 
-	var/answer = input(user, "Analyze Potential", "Sequence Analyzer")  as null|anything in sortList(options)
+	var/answer = input(user, "Analyze Potential", "Sequence Analyzer")  as null|anything in sort_list(options)
 	if(answer && ready && user.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
 		var/sequence
 		for(var/A in buffer) //this physically hurts but i dont know what anything else short of an assoc list

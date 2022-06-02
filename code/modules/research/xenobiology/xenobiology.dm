@@ -342,7 +342,7 @@
 		if(SLIME_ACTIVATE_MINOR)
 			to_chat(user, span_notice("You activate [src]. You start feeling colder!"))
 			user.extinguish_mob()
-			user.adjust_fire_stacks(-20)
+			user.adjust_wet_stacks(20)
 			user.reagents.add_reagent(/datum/reagent/consumable/frostoil,4)
 			user.reagents.add_reagent(/datum/reagent/medicine/cryoxadone,5)
 			return 100
@@ -412,7 +412,7 @@
 	name = "light pink slime extract"
 	icon_state = "light pink slime extract"
 	effectmod = "loyal"
-	color_slime = "lightpink"
+	color_slime = "light pink"
 	activate_reagents = list(/datum/reagent/toxin/plasma)
 
 /obj/item/slime_extract/lightpink/activate(mob/living/carbon/human/user, datum/species/jelly/luminescent/species, activation_type)
@@ -474,7 +474,7 @@
 			user.visible_message(span_warning("[user] skin starts pulsing and glowing ominously...") , span_userdanger("You feel unstable..."))
 			if(do_after(user, 60, target = user))
 				to_chat(user, span_userdanger("You explode!"))
-				explosion(get_turf(user), 1 ,3, 6)
+				explosion(user, devastation_range = 1, heavy_impact_range = 3, light_impact_range = 6, explosion_cause = src)
 				user.gib()
 				return
 			to_chat(user, span_notice("You stop feeding [src], and the feeling passes."))
@@ -482,7 +482,7 @@
 /obj/item/slime_extract/adamantine
 	name = "adamantine slime extract"
 	icon_state = "adamantine slime extract"
-	effectmod = "crystalline"
+	effectmod = "crystalized"
 	color_slime = "adamantine"
 	activate_reagents = list(/datum/reagent/toxin/plasma)
 

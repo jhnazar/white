@@ -27,7 +27,7 @@
 
 	var/recharge_timerid
 
-/obj/item/gun/energy/kinetic_accelerator/makeJamming()
+/obj/item/gun/energy/kinetic_accelerator/make_jamming()
 	return
 
 /obj/item/gun/energy/kinetic_accelerator/examine(mob/user)
@@ -37,7 +37,7 @@
 		. += "\n<span class='info'>Можно использовать <b>ломик</b> для изъятия модификаций.</span><hr>"
 		for(var/A in modkits)
 			var/obj/item/borg/upgrade/modkit/M = A
-			. += "\n<span class='notice'>Здесь установлен [M.name]. Использует <b>[M.cost]%</b> мощности.</span>"
+			. += span_notice("\nЗдесь установлен [M.name]. Использует <b>[M.cost]%</b> мощности.")
 
 /obj/item/gun/energy/kinetic_accelerator/crowbar_act(mob/living/user, obj/item/I)
 	. = TRUE
@@ -130,7 +130,7 @@
 
 	var/carried = 0
 	if(!unique_frequency)
-		for(var/obj/item/gun/energy/kinetic_accelerator/K in loc.GetAllContents())
+		for(var/obj/item/gun/energy/kinetic_accelerator/K in loc.get_all_contents())
 			if(!K.unique_frequency)
 				carried++
 
@@ -159,6 +159,13 @@
 	if(!can_shoot())
 		. += "[icon_state]_empty"
 
+/obj/item/gun/energy/kinetic_accelerator/mega
+	name = "мега протокинетический ускоритель"
+	icon_state = "kineticgun_m"
+	inhand_icon_state = "kineticgun_mega"
+	desc = "Самозарядный, дальнобойный инструмент, наносящий повышенный урон при низком давлении. Этот был улучшен с плазменным магмитом."
+	max_mod_capacity = 200
+
 //Casing
 /obj/item/ammo_casing/energy/kinetic
 	projectile_type = /obj/projectile/kinetic
@@ -170,7 +177,7 @@
 	..()
 	if(loc && istype(loc, /obj/item/gun/energy/kinetic_accelerator))
 		var/obj/item/gun/energy/kinetic_accelerator/KA = loc
-		KA.modify_projectile(BB)
+		KA.modify_projectile(loaded_projectile)
 
 //Projectiles
 /obj/projectile/kinetic
@@ -181,6 +188,7 @@
 	flag = BOMB
 	range = 3
 	log_override = TRUE
+	var/power = 1
 
 	var/pressure_decrease_active = FALSE
 	var/pressure_decrease = 0.25
@@ -223,7 +231,7 @@
 			M.projectile_strike(src, target_turf, target, kinetic_gun)
 	if(ismineralturf(target_turf))
 		var/turf/closed/mineral/M = target_turf
-		M.gets_drilled(firer, TRUE)
+		M.attempt_drill(firer, FALSE, power)
 		if(iscarbon(firer))
 			var/mob/living/carbon/carbon_firer = firer
 			var/skill_modifier = 1
@@ -235,6 +243,11 @@
 
 	K.color = color
 
+//mecha_kineticgun version of the projectile
+/obj/projectile/kinetic/mech
+	damage = 50
+	range = 6
+	pressure_decrease = 0.3
 
 //Modkits
 /obj/item/borg/upgrade/modkit
@@ -260,7 +273,7 @@
 
 
 /obj/item/borg/upgrade/modkit/attackby(obj/item/A, mob/user)
-	if(istype(A, /obj/item/gun/energy/kinetic_accelerator) && !issilicon(user))
+	if(istype(A, /obj/item/gun/energy/kinetic_accelerator) && !issilicon(user) && (!istype(A, /obj/item/gun/energy/kinetic_accelerator/super_kinetic_accelerator))) //Супер кинетик идет в дупу
 		install(A, user)
 	else
 		..()
@@ -346,16 +359,16 @@
 /obj/item/borg/upgrade/modkit/cooldown
 	name = "уменьшение времени перезарядки"
 	desc = "Уменьшает время восстановления кинетического ускорителя. Не рассчитано на использование шахтёрском роботе."
-	modifier = 3.2
+	modifier = 0.745
 	minebot_upgrade = FALSE
 
 /obj/item/borg/upgrade/modkit/cooldown/install(obj/item/gun/energy/kinetic_accelerator/KA, mob/user)
 	. = ..()
 	if(.)
-		KA.overheat_time -= modifier
+		KA.overheat_time *= modifier
 
 /obj/item/borg/upgrade/modkit/cooldown/uninstall(obj/item/gun/energy/kinetic_accelerator/KA)
-	KA.overheat_time += modifier
+	KA.overheat_time /= modifier
 	..()
 
 /obj/item/borg/upgrade/modkit/cooldown/minebot
@@ -364,11 +377,19 @@
 	icon_state = "door_electronics"
 	icon = 'icons/obj/module.dmi'
 	denied_type = /obj/item/borg/upgrade/modkit/cooldown/minebot
-	modifier = 10
+	modifier = 0.5
 	cost = 0
 	minebot_upgrade = TRUE
 	minebot_exclusive = TRUE
 
+//Hardness
+/obj/item/borg/upgrade/modkit/hardness
+	name = "бронебойность"
+	desc = "Увеличивает пробивную силу кинетического ускорителя, позволяя уничтожать более крепкие породы."
+	cost = 10
+
+/obj/item/borg/upgrade/modkit/hardness/modify_projectile(obj/projectile/kinetic/K)
+	K.power += modifier
 
 //AoE blasts
 /obj/item/borg/upgrade/modkit/aoe
@@ -405,11 +426,14 @@
 		for(var/T in RANGE_TURFS(1, target_turf) - target_turf)
 			if(ismineralturf(T))
 				var/turf/closed/mineral/M = T
-				M.gets_drilled(K.firer, TRUE)
+				M.attempt_drill(K.firer, TRUE)
 	if(modifier)
 		for(var/mob/living/L in range(1, target_turf) - K.firer - target)
 			var/armor = L.run_armor_check(K.def_zone, K.flag, "", "", K.armour_penetration)
-			L.apply_damage(K.damage*modifier, K.damage_type, K.def_zone, armor)
+			var/effective_modifier = modifier
+			if(K.pressure_decrease_active)
+				effective_modifier *= K.pressure_decrease
+			L.apply_damage(K.damage*effective_modifier, K.damage_type, K.def_zone, armor)
 			to_chat(L, span_userdanger("В меня попадает [K.name]!"))
 
 /obj/item/borg/upgrade/modkit/aoe/turfs
@@ -440,7 +464,7 @@
 	name = "быстрый ретранслятор"
 	desc = "Четвертирует время восстановления кинетического ускорителя при попадании в живую цель, но значительно увеличивает базовое время восстановления."
 	denied_type = /obj/item/borg/upgrade/modkit/cooldown/repeater
-	modifier = -14 //Makes the cooldown 3 seconds(with no cooldown mods) if you miss. Don't miss.
+	modifier = 1.875 //Makes the cooldown 3 seconds(with no cooldown mods) if you miss. Don't miss.
 	cost = 50
 
 /obj/item/borg/upgrade/modkit/cooldown/repeater/projectile_strike_predamage(obj/projectile/kinetic/K, turf/target_turf, atom/target, obj/item/gun/energy/kinetic_accelerator/KA)

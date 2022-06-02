@@ -85,7 +85,7 @@ GLOBAL_VAR(clockcult_eminence)
 	return ..()
 
 /datum/game_mode/clockcult/generate_report()
-	return "Подразделение Центрального Командования по делам высших измерений недавно исследовало огромный аномальный всплеск энергии, исходящий от нейтронной звезды недалеко от вашего сектора. В настоящее время предполагается, что древняя группа фанатиков, восхваляющая \
+	return "Подразделение Центрального Командования по делам высших измерений недавно исследовало огромный аномальный всплеск энергии, исходящий от нейтронной звезды недалеко от сектора. В настоящее время предполагается, что древняя группа фанатиков, восхваляющая \
 	жуткое божество, сделанное из латуни и других устаревших материалов, злоупотребляет энергией умирающей звезды, чтобы нарушить границы измерений. Завеса синего космоса в вашем текущем местоположении срывается, что делает его главной целью для опасных людей, \
 	злоупотребляющих пространственным запретом. О любых доказательствах взлома блюспейс-полей следует сообщать вашему местному капеллану и центральному командованию, если соединение все еще доступно на момент обнаружения."
 
@@ -106,16 +106,6 @@ GLOBAL_VAR(clockcult_eminence)
 
 /datum/game_mode/clockcult/proc/check_cult_victory()
 	return GLOB.ratvar_risen
-
-/datum/game_mode/proc/update_clockcult_icons_added(datum/mind/cult_mind)
-	var/datum/atom_hud/antag/culthud = GLOB.huds[ANTAG_HUD_CLOCKWORK]
-	culthud.join_hud(cult_mind.current)
-	set_antag_hud(cult_mind.current, "clockwork")
-
-/datum/game_mode/proc/update_clockcult_icons_removed(datum/mind/cult_mind)
-	var/datum/atom_hud/antag/culthud = GLOB.huds[ANTAG_HUD_CLOCKWORK]
-	culthud.leave_hud(cult_mind.current)
-	set_antag_hud(cult_mind.current, null)
 
 //==========================
 //==== Clock cult procs ====
@@ -182,7 +172,7 @@ GLOBAL_VAR(clockcult_eminence)
 		msg = sanitize(msg)
 	if(sender)
 		if(say)
-			sender.say("#[text2ratvar(msg)]")
+			INVOKE_ASYNC(sender, /atom/movable.proc/say, "#[text2ratvar(msg)]")
 		msg = sender.treat_message(msg)
 		var/datum/antagonist/servant_of_ratvar/SoR = is_servant_of_ratvar(sender)
 		var/prefix = "Механический брат"

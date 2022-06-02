@@ -137,9 +137,9 @@ IF YOU MODIFY THE PRODUCTS LIST OF A MACHINE, MAKE SURE TO UPDATE ITS RESUPPLY C
 	///Bills we accept?
 	var/obj/item/stack/spacecash/bill
 	///Default price of items if not overridden
-	var/default_price = 5
+	var/default_price = CARGO_CRATE_VALUE * 5
 	///Default price of premium items if not overridden
-	var/extra_price = 15
+	var/extra_price = CARGO_CRATE_VALUE * 7
 	///Whether our age check is currently functional
 	var/age_restrictions = TRUE
 	/**
@@ -211,7 +211,7 @@ IF YOU MODIFY THE PRODUCTS LIST OF A MACHINE, MAKE SURE TO UPDATE ITS RESUPPLY C
 	else if(circuit && (circuit.onstation != onstation)) //check if they're not the same to minimize the amount of edited values.
 		onstation = circuit.onstation //if it was constructed outside mapload, sync the vendor up with the circuit's var so you can't bypass price requirements by moving / reconstructing it off station.
 	Radio = new /obj/item/radio(src)
-	Radio.listening = 0
+	Radio.set_listening(FALSE)
 
 /obj/machinery/vending/Destroy()
 	QDEL_NULL(wires)
@@ -224,6 +224,7 @@ IF YOU MODIFY THE PRODUCTS LIST OF A MACHINE, MAKE SURE TO UPDATE ITS RESUPPLY C
 	return !shut_up
 
 /obj/machinery/vending/RefreshParts()         //Better would be to make constructable child
+	SHOULD_CALL_PARENT(FALSE)
 	if(!component_parts)
 		return
 
@@ -261,9 +262,8 @@ IF YOU MODIFY THE PRODUCTS LIST OF A MACHINE, MAKE SURE TO UPDATE ITS RESUPPLY C
 	if(!light_mask)
 		return
 
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	if(!(machine_stat & BROKEN) && powered())
-		SSvis_overlays.add_vis_overlay(src, icon, light_mask, EMISSIVE_LAYER, EMISSIVE_PLANE)
+		. += mutable_appearance(icon, light_mask, 0, EMISSIVE_PLANE)
 
 /obj/machinery/vending/obj_break(damage_flag)
 	. = ..()
@@ -494,6 +494,8 @@ GLOBAL_LIST_EMPTY(vending_products)
 					freebie(user, 2)
 				if(16 to 25)
 					freebie(user, 1)
+				if(26 to 75)
+					return
 				if(76 to 90)
 					tilt(user)
 				if(91 to 100)
@@ -521,6 +523,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	visible_message(span_danger("[src] прыгает!"))
 	tilted = TRUE
 	layer = ABOVE_MOB_LAYER
+	plane = GAME_PLANE_UPPER
 
 	var/crit_case
 	if(crit)
@@ -633,6 +636,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 
 	tilted = FALSE
 	layer = initial(layer)
+	plane = initial(plane)
 
 	var/matrix/M = matrix()
 	M.Turn(0)
@@ -718,7 +722,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 			return
 
 	if(tilted && !user.buckled && !isAI(user))
-		to_chat(user, span_notice("Начинаю настраивать [src]."))
+		to_chat(user, span_notice("Поднимаю [src]."))
 		if(do_after(user, 50, target=src))
 			untilt(user)
 		return
@@ -898,11 +902,6 @@ GLOBAL_LIST_EMPTY(vending_products)
 			flick(icon_deny,src)
 			vend_ready = TRUE
 			return
-		else if(!C.registered_account.account_job)
-			say("Счета отделов не подходят для оплаты.")
-			flick(icon_deny, src)
-			vend_ready = TRUE
-			return
 		else if(age_restrictions && R.age_restricted && (!C.registered_age || C.registered_age < AGE_MINOR))
 			say("Слишком малый возраст для покупки [R.name].")
 			if(!(usr in GLOB.narcd_underages))
@@ -932,7 +931,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 		purchase_message_cooldown = world.time + 5 SECONDS
 		//This is not the best practice, but it's safe enough here since the chances of two people using a machine with the same ref in 5 seconds is fuck low
 		last_shopper = REF(usr)
-	use_power(5)
+	use_power(active_power_usage)
 	if(icon_vend) //Show the vending animation if needed
 		flick(icon_vend,src)
 	playsound(src, 'sound/machines/machine_vend.ogg', 50, TRUE, extrarange = -3)
@@ -1074,7 +1073,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 /obj/machinery/vending/proc/canLoadItem(obj/item/I, mob/user)
 	return FALSE
 
-/obj/machinery/vending/onTransitZ()
+/obj/machinery/vending/on_changed_z_level(turf/old_turf, turf/new_turf)
 	return
 
 /obj/machinery/vending/hitby(atom/movable/AM, skipcatch, hitpush, blocked, datum/thrownthing/throwingdatum)
@@ -1092,7 +1091,8 @@ GLOBAL_LIST_EMPTY(vending_products)
 	return ..()
 
 /obj/machinery/vending/custom
-	name = "Custom Vendor"
+	name = "частный торговый автомат"
+	desc = "Комерция в действии!"
 	icon_state = "robotics"
 	icon_deny = "robotics-deny"
 	max_integrity = 400
@@ -1191,7 +1191,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 					vending_machine_input[N] = max(vending_machine_input[N] - 1, 0)
 					S.forceMove(drop_location())
 					loaded_items--
-					use_power(5)
+					use_power(active_power_usage)
 					vend_ready = TRUE
 					updateUsrDialog()
 					return
@@ -1205,7 +1205,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 					vending_machine_input[N] = max(vending_machine_input[N] - 1, 0)
 					S.forceMove(drop_location())
 					loaded_items--
-					use_power(5)
+					use_power(active_power_usage)
 					if(last_shopper != REF(usr) || purchase_message_cooldown < world.time)
 						say("Спасибо за местную покупку в [S]!")
 						purchase_message_cooldown = world.time + 5 SECONDS
@@ -1244,7 +1244,7 @@ GLOBAL_LIST_EMPTY(vending_products)
 	if(T)
 		for(var/obj/item/I in contents)
 			I.forceMove(T)
-		explosion(T, -1, 0, 3)
+		explosion(src, devastation_range = -1, light_impact_range = 3)
 	return ..()
 
 /obj/machinery/vending/custom/unbreakable

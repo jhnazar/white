@@ -5,8 +5,12 @@
 	icon_state = "fuckyou"
 	max_integrity = 300
 	armor = list(MELEE = 30, BULLET = 30, LASER = 30, ENERGY = 0, BOMB = 30, BIO = 0, RAD = 0, FIRE = 60, ACID = 60)
+	layer = VEHICLE_LAYER
+	plane = GAME_PLANE_FOV_HIDDEN
 	density = TRUE
 	anchored = FALSE
+	blocks_emissive = EMISSIVE_BLOCK_GENERIC
+	pass_flags_self = PASSMACHINE
 	COOLDOWN_DECLARE(cooldown_vehicle_move)
 	var/list/mob/occupants				//mob = bitflags of their control level.
 	///Maximum amount of passengers plus drivers
@@ -51,7 +55,7 @@
 		if(25 to 50)
 			. += "\nВыглядит серьёзно повреждённым."
 		if(0 to 25)
-			. += "\n<span class='warning'>Вот-вот развалится!</span>"
+			. += span_warning("\nВот-вот развалится!")
 
 /obj/vehicle/proc/is_key(obj/item/I)
 	return istype(I, key_type)

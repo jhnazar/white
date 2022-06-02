@@ -49,9 +49,10 @@
 #define AIRLOCK_INTEGRITY_N			 300 // Normal airlock integrity
 #define AIRLOCK_INTEGRITY_MULTIPLIER 1.5 // How much reinforced doors health increases
 /// How much extra health airlocks get when braced with a seal
-#define AIRLOCK_SEAL_MULTIPLIER		 2
+#define AIRLOCK_SEAL_MULTIPLIER		 3
+#define AIRLOCK_SEAL_ARMOR_MULT		 2
 #define AIRLOCK_DAMAGE_DEFLECTION_N  21  // Normal airlock damage deflection
-#define AIRLOCK_DAMAGE_DEFLECTION_R  30  // Reinforced airlock damage deflection
+#define AIRLOCK_DAMAGE_DEFLECTION_R  42  // Reinforced airlock damage deflection
 
 #define AIRLOCK_DENY_ANIMATION_TIME (0.6 SECONDS) /// The amount of time for the airlock deny animation to show
 
@@ -84,8 +85,6 @@
 	var/lights = TRUE // bolt lights show by default
 	var/aiDisabledIdScanner = FALSE
 	var/aiHacking = FALSE
-	var/closeOtherId //Cyclelinking for airlocks that aren't on the same x or y coord as the target.
-	var/obj/machinery/door/airlock/closeOther
 	var/obj/item/electronics/airlock/electronics
 	COOLDOWN_DECLARE(shockCooldown)
 	var/obj/item/note //Any papers pinned to the airlock
@@ -121,9 +120,6 @@
 	wires = set_wires()
 	if(frequency)
 		set_frequency(frequency)
-
-	if(closeOtherId != null)
-		addtimer(CALLBACK(.proc/update_other_id), 5)
 	if(glass)
 		airlock_material = "glass"
 	if(security_level > AIRLOCK_SECURITY_IRON)
@@ -134,13 +130,21 @@
 		max_integrity = normal_integrity
 	if(damage_deflection == AIRLOCK_DAMAGE_DEFLECTION_N && security_level > AIRLOCK_SECURITY_IRON)
 		damage_deflection = AIRLOCK_DAMAGE_DEFLECTION_R
+
 	prepare_huds()
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.add_to_hud(src)
+		diag_hud.add_atom_to_hud(src)
+
 	diag_hud_set_electrified()
 
 	RegisterSignal(src, COMSIG_MACHINERY_BROKEN, .proc/on_break)
 	RegisterSignal(src, COMSIG_COMPONENT_NTNET_RECEIVE, .proc/ntnet_receive)
+
+	// Click on the floor to close airlocks
+	var/static/list/connections = list(
+		COMSIG_ATOM_ATTACK_HAND = .proc/on_attack_hand
+	)
+	AddElement(/datum/element/connect_loc, connections)
 
 	return INITIALIZE_HINT_LATELOAD
 
@@ -171,18 +175,14 @@
 				panel_open = TRUE
 	if(cutAiWire)
 		wires.cut(WIRE_AI)
+	if(name == initial(name))
+		name = get_area_name(src, TRUE)
 	update_icon()
 
 
 /obj/machinery/door/airlock/connect_to_shuttle(obj/docking_port/mobile/port, obj/docking_port/stationary/dock)
 	if(id_tag)
 		id_tag = "[port.id]_[id_tag]"
-
-/obj/machinery/door/airlock/proc/update_other_id()
-	for(var/obj/machinery/door/airlock/A in GLOB.airlocks)
-		if(A.closeOtherId == closeOtherId && A != src)
-			closeOther = A
-			break
 
 /obj/machinery/door/airlock/proc/cyclelinkairlock()
 	if (cyclelinkedairlock)
@@ -337,7 +337,7 @@
 	QDEL_NULL(note)
 	QDEL_NULL(seal)
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.remove_from_hud(src)
+		diag_hud.remove_atom_from_hud(src)
 	return ..()
 
 /obj/machinery/door/airlock/handle_atom_del(atom/A)
@@ -767,6 +767,11 @@
 /obj/machinery/door/airlock/attack_paw(mob/user)
 	return attack_hand(user)
 
+/obj/machinery/door/airlock/proc/on_attack_hand(atom/source, mob/user, list/modifiers)
+	SIGNAL_HANDLER
+	INVOKE_ASYNC(src, /atom/proc/attack_hand, user, modifiers)
+	return COMPONENT_CANCEL_ATTACK_CHAIN
+
 /obj/machinery/door/airlock/attack_hand(mob/user)
 	. = ..()
 	if(.)
@@ -974,12 +979,12 @@
 	else if(istype(C, /obj/item/door_seal)) //adding the seal
 		var/obj/item/door_seal/airlockseal = C
 		if(!density)
-			to_chat(user, span_warning("[capitalize(src.name)] должен быть закрыт, прежде чем запечатывать его!"))
+			to_chat(user, span_warning("[capitalize(src.name)] должен быть закрыт, прежде чем блокировать его!"))
 			return
 		if(seal)
-			to_chat(user, span_warning("[capitalize(src.name)] уже запечатан!"))
+			to_chat(user, span_warning("[capitalize(src.name)] уже заблокирован!"))
 			return
-		user.visible_message(span_notice("[user] начинает запечатывать [src].") , span_notice("Начинаю запечатывать [src]."))
+		user.visible_message(span_notice("[user] начинает блокировать [src].") , span_notice("Начинаю блокировать [src]..."))
 		playsound(src, 'sound/items/jaws_pry.ogg', 30, TRUE)
 		if(!do_after(user, airlockseal.seal_time, target = src))
 			return
@@ -987,15 +992,16 @@
 			to_chat(user, span_warning("[capitalize(src.name)] должен быть закрыт, прежде чем запечатывать его!"))
 			return
 		if(seal)
-			to_chat(user, span_warning("[capitalize(src.name)] уже запечатан!"))
+			to_chat(user, span_warning("[capitalize(src.name)] уже заблокирован!"))
 			return
 		if(!user.transferItemToLoc(airlockseal, src))
 			to_chat(user, span_warning("Не могу запечатать [airlockseal]!"))
 			return
 		playsound(src, 'sound/machines/airlockforced.ogg', 30, TRUE)
-		user.visible_message(span_notice("[user] запечатывает [src].") , span_notice("Запечатываю [src]."))
+		user.visible_message(span_notice("[user] блокирует [src].") , span_notice("Блокирую [src]."))
 		seal = airlockseal
 		modify_max_integrity(max_integrity * AIRLOCK_SEAL_MULTIPLIER)
+		damage_deflection = (damage_deflection * AIRLOCK_SEAL_ARMOR_MULT)
 		update_icon()
 
 	else if(istype(C, /obj/item/paper) || istype(C, /obj/item/photo))
@@ -1061,9 +1067,9 @@
 		return FALSE
 	var/obj/item/door_seal/airlockseal = seal
 	if(!ishuman(user))
-		to_chat(user, span_warning("У меня не хватает ловкости для снятия печати!"))
+		to_chat(user, span_warning("Я не понимаю как это работает!"))
 		return TRUE
-	user.visible_message(span_notice("[user] начинает распечатывать [src].") , span_notice("Начинаю снимать пневматическую заглушку [src]."))
+	user.visible_message(span_notice("[user] начинает разблокировать [src].") , span_notice("Начинаю снимать пневматический замок с [src]..."))
 	playsound(src, 'sound/machines/airlockforced.ogg', 30, TRUE)
 	if(!do_after(user, airlockseal.unseal_time, target = src))
 		return TRUE
@@ -1071,9 +1077,10 @@
 		return TRUE
 	playsound(src, 'sound/items/jaws_pry.ogg', 30, TRUE)
 	airlockseal.forceMove(get_turf(user))
-	user.visible_message(span_notice("[user] распечатывает [src].") , span_notice("Успешно снимаю пневматическую заглушку [src]."))
+	user.visible_message(span_notice("[user] разблокировывает [src].") , span_notice("Снимаю пневматический замок с [src]."))
 	seal = null
 	modify_max_integrity(max_integrity / AIRLOCK_SEAL_MULTIPLIER)
+	damage_deflection = (damage_deflection / AIRLOCK_SEAL_ARMOR_MULT)
 	update_icon()
 	return TRUE
 
@@ -1142,14 +1149,11 @@
 			return FALSE
 		use_power(50)
 		playsound(src, doorOpen, 30, TRUE)
-
-		if(closeOther != null && istype(closeOther, /obj/machinery/door/airlock/) && !closeOther.density)
-			closeOther.close()
 	else
 		playsound(src, 'sound/machines/airlockforced.ogg', 30, TRUE)
 
 	if(autoclose)
-		autoclose_in(normalspeed ? 150 : 15)
+		autoclose_in(normalspeed ? 8 SECONDS : 1.5 SECONDS)
 
 	if(!density)
 		return TRUE
@@ -1162,7 +1166,7 @@
 	sleep(4)
 	set_density(FALSE)
 	flags_1 &= ~PREVENT_CLICK_UNDER_1
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	sleep(1)
 	layer = OPEN_DOOR_LAYER
 	update_icon(AIRLOCK_OPEN, 1)
@@ -1207,12 +1211,12 @@
 	if(air_tight)
 		set_density(TRUE)
 		flags_1 |= PREVENT_CLICK_UNDER_1
-		air_update_turf(TRUE, TRUE)
+		air_update_turf(TRUE)
 	sleep(1)
 	if(!air_tight)
 		set_density(TRUE)
 		flags_1 |= PREVENT_CLICK_UNDER_1
-		air_update_turf(TRUE, TRUE)
+		air_update_turf(TRUE)
 	sleep(4)
 	if(dangerous_close)
 		crush()
@@ -1241,7 +1245,7 @@
 		return
 
 	// reads from the airlock painter's `available paintjob` list. lets the player choose a paint option, or cancel painting
-	var/current_paintjob = input(user, "Выбираем будущий образ шлюза.") as null|anything in sortList(painter.available_paint_jobs)
+	var/current_paintjob = input(user, "Выбираем будущий образ шлюза.") as null|anything in sort_list(painter.available_paint_jobs)
 	if(!current_paintjob) // if the user clicked cancel on the popup, return
 		return
 
@@ -1408,7 +1412,7 @@
 	switch(the_rcd.mode)
 		if(RCD_DECONSTRUCT)
 			if(seal)
-				to_chat(user, span_notice("Печать [src] должна быть снята."))
+				to_chat(user, span_notice("Пневматический замок [src] должн быть снят."))
 				return FALSE
 			if(security_level != AIRLOCK_SECURITY_NONE)
 				to_chat(user, span_notice("Укрепления [src] должны быть удалены для продолжения."))
@@ -1428,11 +1432,7 @@
 	if(!note)
 		return
 	else if(istype(note, /obj/item/paper))
-		var/obj/item/paper/pinned_paper = note
-		if(pinned_paper.info && pinned_paper.show_written_words)
-			return "note_words"
-		else
-			return "note"
+		return "note"
 	else if(istype(note, /obj/item/photo))
 		return "photo"
 
@@ -1622,6 +1622,7 @@
 #undef AIRLOCK_INTEGRITY_N
 #undef AIRLOCK_INTEGRITY_MULTIPLIER
 #undef AIRLOCK_SEAL_MULTIPLIER
+#undef AIRLOCK_SEAL_ARMOR_MULT
 #undef AIRLOCK_DAMAGE_DEFLECTION_N
 #undef AIRLOCK_DAMAGE_DEFLECTION_R
 

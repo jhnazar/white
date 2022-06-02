@@ -1,15 +1,13 @@
 /obj/machinery/public_nanite_chamber
-	name = "public nanite chamber"
-	desc = "A device that can rapidly implant cloud-synced nanites without an external operator."
+	name = "публичная нанитная камера"
+	desc = "Устройство для автоматической инъекции нанитного облака с заданым номером. Объем вводимых нанитов значительно ниже чем у стандартной камеры."
 	circuit = /obj/item/circuitboard/machine/public_nanite_chamber
 	icon = 'icons/obj/machines/nanite_chamber.dmi'
 	icon_state = "nanite_chamber"
 	layer = ABOVE_WINDOW_LAYER
-	use_power = IDLE_POWER_USE
 	anchored = TRUE
 	density = TRUE
-	idle_power_usage = 5000
-	active_power_usage = 30000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 10
 
 	var/cloud_id = 1
 	var/locked = FALSE
@@ -23,6 +21,7 @@
 	occupant_typecache = GLOB.typecache_living
 
 /obj/machinery/public_nanite_chamber/RefreshParts()
+	. = ..()
 	var/obj/item/circuitboard/machine/public_nanite_chamber/board = circuit
 	if(board)
 		cloud_id = board.cloud_id
@@ -48,6 +47,7 @@
 	addtimer(CALLBACK(src, .proc/set_busy, TRUE, "[initial(icon_state)]_active"),20)
 	addtimer(CALLBACK(src, .proc/set_busy, TRUE, "[initial(icon_state)]_falling"),60)
 	addtimer(CALLBACK(src, .proc/complete_injection, locked_state, attacker),80)
+	use_power(active_power_usage)
 
 /obj/machinery/public_nanite_chamber/proc/complete_injection(locked_state, mob/living/attacker)
 	//TODO MACHINE DING
@@ -111,7 +111,7 @@
 
 /obj/machinery/public_nanite_chamber/proc/toggle_open(mob/user)
 	if(panel_open)
-		to_chat(user, span_notice("Close the maintenance panel first."))
+		to_chat(user, span_notice("Сначала необходимо закрыть панель обслуживания."))
 		return
 
 	if(state_open)
@@ -119,7 +119,7 @@
 		return
 
 	else if(locked)
-		to_chat(user, span_notice("The bolts are locked down, securing the door shut."))
+		to_chat(user, span_notice("Болты опущены, надежно фиксируя капсулу."))
 		return
 
 	open_machine()
@@ -132,15 +132,15 @@
 		return
 	user.changeNext_move(CLICK_CD_BREAKOUT)
 	user.last_special = world.time + CLICK_CD_BREAKOUT
-	user.visible_message(span_notice("You see [user] kicking against the door of [src]!") , \
-		span_notice("You lean on the back of [src] and start pushing the door open... (this will take about [DisplayTimeText(breakout_time)].)") , \
-		span_hear("You hear a metallic creaking from [src]."))
+	user.visible_message(span_notice("Я вижу как [user] истерично долбится в дверь нанитной камеры, пытаясь выбраться!") , \
+		span_notice("Упираюсь спиной о борт нанитной камеры и пытаюсь выбить дверь ногой... (это займет у меня [DisplayTimeText(breakout_time)].)") , \
+		span_hear("Я слышу металический шум из нанитной камеры."))
 	if(do_after(user,(breakout_time), target = src))
 		if(!user || user.stat != CONSCIOUS || user.loc != src || state_open || !locked || busy)
 			return
 		locked = FALSE
-		user.visible_message(span_warning("[user] successfully broke out of [src]!") , \
-			span_notice("You successfully break out of [src]!"))
+		user.visible_message(span_warning("[user] с судорожным вздохом выбирается из нанитной камеры!") , \
+			span_notice("У меня получилось выбраться из нанитной камеры!"))
 		open_machine()
 
 /obj/machinery/public_nanite_chamber/close_machine(mob/living/carbon/user, mob/living/attacker)

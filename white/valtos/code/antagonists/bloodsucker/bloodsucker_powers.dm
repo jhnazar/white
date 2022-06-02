@@ -52,7 +52,7 @@
 //	spells.dm  /add_ranged_ability()  <--- How we take over the mouse click to use a power on a target.
 
 
-/datum/action/bloodsucker/Trigger()
+/datum/action/bloodsucker/Trigger(trigger_flags)
 
 	// Active? DEACTIVATE AND END!
 	if (active && CheckCanDeactivate(TRUE))
@@ -110,7 +110,7 @@
 	// Incap?
 	if (must_be_capacitated)
 		var/mob/living/L = owner
-		if (L.incapacitated(ignore_restraints=TRUE,ignore_grab=TRUE) || !(L.mobility_flags & MOBILITY_STAND) && !can_be_immobilized)
+		if (L.incapacitated(IGNORE_RESTRAINTS|IGNORE_GRAB) || !(L.mobility_flags & MOBILITY_STAND) && !can_be_immobilized)
 			if (display_error)
 				to_chat(owner, span_warning("Not while you're incapacitated!"))
 			return FALSE
@@ -226,7 +226,7 @@
 	bs_proc_holder.linked_power = src
 
 // Click power: Begin Aim
-/datum/action/bloodsucker/targeted/Trigger()
+/datum/action/bloodsucker/targeted/Trigger(trigger_flags)
 
 	if (active && CheckCanDeactivate(TRUE))
 		DeactivateRangedAbility()

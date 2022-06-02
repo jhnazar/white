@@ -99,7 +99,7 @@
 
 
 /obj/item/station_charter/flag
-	name = "знамя Нанотрейзен"
+	name = "знамя NanoTrasen"
 	icon = 'icons/obj/banner.dmi'
 	name_type = "planet"
 	icon_state = "banner"
@@ -115,7 +115,7 @@
 	minor_announce("[ureal_name] переименовывает нашу станцию в [station_name()]", "Капитанское знамя", 0)
 	log_game("[ukey] has renamed the planet as [station_name()].")
 	name = "знамя [station_name()]"
-	desc = "На баннере изображен официальный герб Нанотрейзен, означающий, что [station_name()] принадлежит капитану [uname] во имя корпорации."
+	desc = "На баннере изображен официальный герб NanoTrasen, означающий, что [station_name()] принадлежит капитану [uname] во имя корпорации."
 	SSblackbox.record_feedback("text", "station_renames", 1, "[station_name()]")
 	if(!unlimited_uses)
 		used = TRUE
@@ -123,8 +123,8 @@
 #undef STATION_RENAME_TIME_LIMIT
 
 /obj/item/station_charter/revolution
-	name = "revolutionary banner"
-	desc = "A banner symbolizing a bloody victory over treacherous tyrants."
+	name = "знамя революции"
+	desc = "Знамя, символизирующее кровавую победу над вероломными тиранами."
 	icon = 'icons/obj/banner.dmi'
 	icon_state = "banner_revolution"
 	inhand_icon_state = "banner-red"
@@ -142,7 +142,7 @@
 
 /obj/item/station_charter/revolution/attack_self(mob/living/user)
 	if(COOLDOWN_FINISHED(src, cutoff) && !used)
-		to_chat(user, "<span class='warning'>You have lost the victorious fervor to declare a new name.</span>")
+		to_chat(user, span_warning("You have lost the victorious fervor to declare a new name."))
 		return
 	. = ..()
 

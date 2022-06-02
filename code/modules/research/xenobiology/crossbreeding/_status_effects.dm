@@ -462,7 +462,7 @@
 /datum/status_effect/stabilized/grey/tick()
 	for(var/mob/living/simple_animal/slime/S in range(1, get_turf(owner)))
 		if(!(owner in S.Friends))
-			to_chat(owner, "<span class='notice'>[linked_extract] pulses gently as it communicates with [S].</span>")
+			to_chat(owner, span_notice("[linked_extract] pulses gently as it communicates with [S]."))
 			S.set_friendship(owner, 1)
 	return ..()
 
@@ -523,7 +523,7 @@
 	else
 		cooldown = max_cooldown
 		var/list/sheets = list()
-		for(var/obj/item/stack/sheet/S in owner.GetAllContents())
+		for(var/obj/item/stack/sheet/S in owner.get_all_contents())
 			if(S.amount < S.max_amount)
 				sheets += S
 
@@ -547,7 +547,7 @@
 		return ..()
 	cooldown = max_cooldown
 	var/list/batteries = list()
-	for(var/obj/item/stock_parts/cell/C in owner.GetAllContents())
+	for(var/obj/item/stock_parts/cell/C in owner.get_all_contents())
 		if(C.charge < C.maxcharge)
 			batteries += C
 	if(batteries.len)
@@ -593,7 +593,7 @@
 
 /datum/status_effect/stabilized/darkblue/tick()
 	if(owner.fire_stacks > 0 && prob(80))
-		owner.adjust_fire_stacks(-1)
+		owner.adjust_wet_stacks(1)
 		if(owner.fire_stacks <= 0)
 			to_chat(owner, span_notice("[linked_extract] coats you in a watery goo, extinguishing the flames."))
 	var/obj/O = owner.get_active_held_item()
@@ -858,7 +858,7 @@
 
 /datum/status_effect/stabilized/oil/tick()
 	if(owner.stat == DEAD)
-		explosion(get_turf(owner),1,2,4,flame_range = 5)
+		explosion(owner, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 4, flame_range = 5, explosion_cause = src)
 	return ..()
 
 /datum/status_effect/stabilized/black

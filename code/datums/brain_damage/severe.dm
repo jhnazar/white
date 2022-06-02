@@ -134,10 +134,10 @@
 	if(owner.drowsyness)
 		sleep_chance += 3
 	if(DT_PROB(0.5 * sleep_chance, delta_time))
-		to_chat(owner, span_warning("Вы засыпаете..."))
+		to_chat(owner, span_warning("Засыпаю..."))
 		owner.Sleeping(60)
 	else if(!owner.drowsyness && DT_PROB(sleep_chance, delta_time))
-		to_chat(owner, span_warning("Вы очень устали..."))
+		to_chat(owner, span_warning("Хочется спать..."))
 		owner.drowsyness += 10
 
 /datum/brain_trauma/severe/monophobia
@@ -179,7 +179,7 @@
 		return
 
 	var/high_stress = (stress > 60) //things get psychosomatic from here on
-	switch(rand(1,6))
+	switch(rand(1,5))
 		if(1)
 			if(!high_stress)
 				to_chat(owner, span_warning("Мне плохо..."))
@@ -272,7 +272,7 @@
 	gain_text = span_warning("Что-то забыл... Что-то важное?")
 	lose_text = span_notice("Груз сняли с моего ума. Чудно.")
 	random_gain = FALSE
-	var/trigger_phrase = "Нанотрейзен"
+	var/trigger_phrase = "NanoTrasen"
 
 /datum/brain_trauma/severe/hypnotic_trigger/New(phrase)
 	..()

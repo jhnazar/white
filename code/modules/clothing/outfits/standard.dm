@@ -234,7 +234,7 @@
 	l_pocket = /obj/item/melee/energy/sword/saber
 	l_hand = /obj/item/storage/secure/briefcase
 	id = /obj/item/card/id/advanced/chameleon/black
-	belt = /obj/item/pda/heads
+	belt = /obj/item/modular_computer/tablet/pda/heads
 	id_trim = /datum/id_trim/reaper_assassin
 
 /datum/outfit/assassin/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
@@ -255,10 +255,9 @@
 	SEND_SIGNAL(sec_briefcase, COMSIG_TRY_STORAGE_INSERT, new /obj/item/ammo_box/a357, null, TRUE, TRUE)
 	SEND_SIGNAL(sec_briefcase, COMSIG_TRY_STORAGE_INSERT, new /obj/item/grenade/c4/x4, null, TRUE, TRUE)
 
-	var/obj/item/pda/heads/pda = H.belt
-	pda.owner = H.real_name
-	pda.ownjob = "Reaper"
-	pda.update_label()
+	var/obj/item/modular_computer/tablet/pda/heads/pda = H.belt
+	pda.saved_identification = H.real_name
+	pda.saved_job = "Reaper"
 
 	var/obj/item/card/id/W = H.wear_id
 	W.registered_name = H.real_name
@@ -270,17 +269,23 @@
 
 	suit = /obj/item/clothing/suit/toggle/armor/vest/centcom_formal
 	shoes = /obj/item/clothing/shoes/combat/swat
-	gloves = /obj/item/clothing/gloves/tackler/combat/insulated
+	gloves = /obj/item/clothing/gloves/color/captain/centcom
 	ears = /obj/item/radio/headset/headset_cent/commander
-	glasses = /obj/item/clothing/glasses/sunglasses 
+	glasses = /obj/item/clothing/glasses/sunglasses
 	mask = /obj/item/clothing/mask/cigarette/cigar/cohiba
-	head = /obj/item/clothing/head/centom_cap
-	belt = /obj/item/gun/ballistic/revolver/mateba
+	head = /obj/item/clothing/head/centcom_cap
+	belt = /obj/item/gun/ballistic/automatic/pistol/deagle
+	neck = /obj/item/clothing/neck/cloak/cape
 	r_pocket = /obj/item/lighter
-	l_pocket = /obj/item/ammo_box/a357
+	l_pocket = /obj/item/ammo_box/magazine/m50
 	back = /obj/item/storage/backpack/satchel/leather
 	id = /obj/item/card/id/advanced/centcom
 	id_trim = /datum/id_trim/centcom/commander
+	backpack_contents = list(/obj/item/storage/box/survival/engineer=1,\
+							/obj/item/ammo_box/magazine/m50=2,\
+							/obj/item/stamp/centcom=1,\
+							/obj/item/clipboard=1)
+
 
 /datum/outfit/centcom/commander/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -290,6 +295,37 @@
 		uniform = /obj/item/clothing/under/rank/centcom/centcom_skirt
 
 /datum/outfit/centcom/commander/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
+	if(visualsOnly)
+		return
+
+	var/obj/item/card/id/W = H.wear_id
+	W.registered_name = H.real_name
+	W.update_label()
+	W.update_icon()
+	..()
+
+
+/datum/outfit/centcom/grand_admiral
+	name = "Гранд-адмирал ЦК"
+
+	uniform = /obj/item/clothing/under/rank/centcom/commander/grand
+	suit = null
+	shoes = /obj/item/clothing/shoes/combat/swat
+	gloves = /obj/item/clothing/gloves/color/captain/centcom/admiral
+	ears = /obj/item/radio/headset/headset_cent/commander
+	glasses = /obj/item/clothing/glasses/sunglasses
+	mask = /obj/item/clothing/mask/cigarette/cigar/havana
+	head = /obj/item/clothing/head/centhat/admiral/grand
+	neck = /obj/item/clothing/neck/cloak/cape/grand
+	belt = /obj/item/gun/energy/pulse/pistol
+	r_pocket = /obj/item/lighter
+	l_pocket = /obj/item/melee/energy/sword/saber/green
+	back = /obj/item/storage/backpack/satchel/leather
+	id = /obj/item/card/id/advanced/centcom
+	id_trim = /datum/id_trim/centcom/commander
+	backpack_contents = list(/obj/item/restraints/handcuffs/cable/zipties=1)
+
+/datum/outfit/centcom/grand_admiral/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	if(visualsOnly)
 		return
 
@@ -526,3 +562,8 @@
 	W.registered_name = H.real_name
 	W.update_label()
 	W.update_icon()
+
+	if(!visualsOnly)	//	Пишу на Дриммейкере за Еду
+		var/obj/item/organ/cyberimp/chest/nutriment/plus/L = new/obj/item/organ/cyberimp/chest/nutriment/plus(H)
+		L.Insert(H, null, 1)
+

@@ -78,7 +78,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 /obj/item/match/attack(mob/living/carbon/M, mob/living/carbon/user)
 	if(!isliving(M))
 		return
-	if(lit && M.IgniteMob())
+	if(lit && M.ignite_mob())
 		message_admins("[ADMIN_LOOKUPFLW(user)] поджег [key_name_admin(M)] on fire with [src] at [AREACOORD(user)]")
 		log_game("[key_name(user)] set [key_name(M)] on fire with [src] at [AREACOORD(user)]")
 	var/obj/item/clothing/mask/cigarette/cig = help_light_cig(M)
@@ -196,13 +196,13 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	if(reagents.get_reagent_amount(/datum/reagent/toxin/plasma)) // the plasma explodes when exposed to fire
 		var/datum/effect_system/reagents_explosion/e = new()
 		e.set_up(round(reagents.get_reagent_amount(/datum/reagent/toxin/plasma) / 2.5, 1), get_turf(src), 0, 0)
-		e.start()
+		e.start(src)
 		qdel(src)
 		return
 	if(reagents.get_reagent_amount(/datum/reagent/fuel)) // the fuel explodes, too, but much less violently
 		var/datum/effect_system/reagents_explosion/e = new()
 		e.set_up(round(reagents.get_reagent_amount(/datum/reagent/fuel) / 5, 1), get_turf(src), 0, 0)
-		e.start()
+		e.start(src)
 		qdel(src)
 		return
 	// allowing reagents to react after being lit
@@ -224,7 +224,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 /obj/item/clothing/mask/cigarette/extinguish()
 	if(!lit)
 		return
-	name = copytext_char(name, 5) //5 == length_char("lit ") + 1
+	name = copytext_char(name, 8) //8 == length_char("зажжённая ") + 1
 	attack_verb_continuous = null
 	attack_verb_simple = null
 	hitsound = null
@@ -237,7 +237,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	lit = FALSE
 	if(ismob(loc))
 		var/mob/living/M = loc
-		to_chat(M, span_notice("Your [name] goes out."))
+		to_chat(M, span_notice("[capitalize(name)] гаснет."))
 		M.update_inv_wear_mask()
 		M.update_inv_hands()
 
@@ -268,12 +268,12 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	var/turf/location = get_turf(src)
 	var/mob/living/M = loc
 	if(isliving(loc))
-		M.IgniteMob()
+		M.ignite_mob()
 	smoketime -= delta_time
 	if(smoketime <= 0)
 		new type_butt(location)
 		if(ismob(loc))
-			to_chat(M, span_notice("Your [name] goes out."))
+			to_chat(M, span_notice("Твоя [name] гаснет."))
 		qdel(src)
 		return
 	open_flame()
@@ -315,25 +315,25 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 // Cigarette brands.
 
 /obj/item/clothing/mask/cigarette/space_cigarette
-	desc = "A Space Cigarette brand cigarette."
+	desc = "Сигарета марки 'Космические Сигареты'."
 
 /obj/item/clothing/mask/cigarette/dromedary
-	desc = "A DromedaryCo brand cigarette. Contrary to popular belief, does not contain Calomel, but is reported to have a watery taste."
+	desc = "Сигарета марки DromedaryCo. Вопреки распространенному мнению, не содержит Каломел, но, как сообщается, имеет водянистый вкус."
 	list_reagents = list(/datum/reagent/drug/nicotine = 13, /datum/reagent/water = 5) //camel has water
 
 /obj/item/clothing/mask/cigarette/uplift
-	desc = "An Uplift Smooth brand cigarette. Smells refreshing."
+	desc = "Сигарета марки Uplift Smooth. Запах освежающий."
 	list_reagents = list(/datum/reagent/drug/nicotine = 13, /datum/reagent/consumable/menthol = 5)
 
 /obj/item/clothing/mask/cigarette/robust
-	desc = "A Robust brand cigarette."
+	desc = "Сигарета марки Robust."
 
 /obj/item/clothing/mask/cigarette/robustgold
-	desc = "A Robust Gold brand cigarette."
+	desc = "Сигарета марки Robust Gold."
 	list_reagents = list(/datum/reagent/drug/nicotine = 15, /datum/reagent/gold = 3) // Just enough to taste a hint of expensive metal.
 
 /obj/item/clothing/mask/cigarette/carp
-	desc = "A Carp Classic brand cigarette. A small label on its side indicates that it does NOT contain carpotoxin."
+	desc = "Сигарета марки Carp Classic. Небольшая этикетка на боку указывает, что она НЕ содержит карпотоксина."
 
 /obj/item/clothing/mask/cigarette/carp/Initialize()
 	. = ..()
@@ -342,18 +342,18 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	reagents?.add_reagent(/datum/reagent/toxin/carpotoxin , 3) // They lied
 
 /obj/item/clothing/mask/cigarette/syndicate
-	desc = "An unknown brand cigarette."
+	desc = "Сигарета неизвестной марки."
 	chem_volume = 60
 	smoketime = 2 * 60
 	smoke_all = TRUE
 	list_reagents = list(/datum/reagent/drug/nicotine = 10, /datum/reagent/medicine/omnizine = 15)
 
 /obj/item/clothing/mask/cigarette/shadyjims
-	desc = "A Shady Jim's Super Slims cigarette."
+	desc = "Сигарета марки Shady Jim's Super Slims."
 	list_reagents = list(/datum/reagent/drug/nicotine = 15, /datum/reagent/toxin/lipolicide = 4, /datum/reagent/ammonia = 2, /datum/reagent/toxin/plantbgone = 1, /datum/reagent/toxin = 1.5)
 
 /obj/item/clothing/mask/cigarette/xeno
-	desc = "A Xeno Filtered brand cigarette."
+	desc = "Сигарета марки Xeno Filtered."
 	list_reagents = list (/datum/reagent/drug/nicotine = 20, /datum/reagent/medicine/regen_jelly = 15, /datum/reagent/drug/krokodil = 4)
 
 // Rollies.
@@ -730,7 +730,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 		. = ..()
 
 /obj/item/lighter/attack(mob/living/carbon/M, mob/living/carbon/user)
-	if(lit && M.IgniteMob())
+	if(lit && M.ignite_mob())
 		message_admins("[ADMIN_LOOKUPFLW(user)] set [key_name_admin(M)] on fire with [src] at [AREACOORD(user)]")
 		log_game("[key_name(user)] set [key_name(M)] on fire with [src] at [AREACOORD(user)]")
 	var/obj/item/clothing/mask/cigarette/cig = help_light_cig(M)
@@ -843,10 +843,10 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 //VAPE NATION//
 ///////////////
 /obj/item/clothing/mask/vape
-	name = "\improper E-Cigarette"
-	desc = "A classy and highly sophisticated electronic cigarette, for classy and dignified gentlemen. A warning label reads \"Warning: Do not fill with flammable materials.\""//<<< i'd vape to that.
+	name = "электронная сигарета"
+	desc = "Стильная и крайне изысканная электронная сигарета, для таких же стильных и изысканных джентельменов. На предупреждающей этикетке написано: \"ВНИМАНИЕ: Не заполняйте горючими веществами.\""//<<< i'd vape to that.
 	icon = 'icons/obj/clothing/masks.dmi'
-	icon_state = "red_vape"
+	icon_state = "redVape"
 	inhand_icon_state = null
 	w_class = WEIGHT_CLASS_TINY
 	var/chem_volume = 100
@@ -867,14 +867,14 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	reagents.add_reagent(/datum/reagent/drug/nicotine, 50)
 	if(!param_color)
 		param_color = pick("red","blue","black","white","green","purple","yellow","orange")
-	icon_state = "[param_color]_vape"
+	icon_state = "[param_color]Vape"
 	inhand_icon_state = "[param_color]_vape"
 
 /obj/item/clothing/mask/vape/attackby(obj/item/O, mob/user, params)
 	if(O.tool_behaviour == TOOL_SCREWDRIVER)
 		if(!screw)
 			screw = TRUE
-			to_chat(user, span_notice("You open the cap on [src]."))
+			to_chat(user, span_notice("Вскрываю крышку [src]."))
 			reagents.flags |= OPENCONTAINER
 			if(obj_flags & EMAGGED)
 				add_overlay("vapeopen_high")
@@ -884,7 +884,7 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 				add_overlay("vapeopen_low")
 		else
 			screw = FALSE
-			to_chat(user, span_notice("You close the cap on [src]."))
+			to_chat(user, span_notice("Закрываю крышку [src]."))
 			reagents.flags &= ~(OPENCONTAINER)
 			cut_overlays()
 
@@ -893,16 +893,16 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 			if(!super)
 				cut_overlays()
 				super = TRUE
-				to_chat(user, span_notice("You increase the voltage of [src]."))
+				to_chat(user, span_notice("Увеличиваю напряжение [src]."))
 				add_overlay("vapeopen_med")
 			else
 				cut_overlays()
 				super = FALSE
-				to_chat(user, span_notice("You decrease the voltage of [src]."))
+				to_chat(user, span_notice("Уменьшаю напряжение [src]."))
 				add_overlay("vapeopen_low")
 
 		if(screw && (obj_flags & EMAGGED))
-			to_chat(user, span_warning("[capitalize(src.name)] can't be modified!"))
+			to_chat(user, span_warning("[capitalize(src.name)] нельзя модифицировать!"))
 		else
 			..()
 
@@ -913,30 +913,30 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 			cut_overlays()
 			obj_flags |= EMAGGED
 			super = FALSE
-			to_chat(user, span_warning("You maximize the voltage of [src]."))
+			to_chat(user, span_warning("Увеличиваю напряжение [src] до максимума!"))
 			add_overlay("vapeopen_high")
 			var/datum/effect_system/spark_spread/sp = new /datum/effect_system/spark_spread //for effect
 			sp.set_up(5, 1, src)
-			sp.start()
+			sp.start(src)
 		else
-			to_chat(user, span_warning("[capitalize(src.name)] is already emagged!"))
+			to_chat(user, span_warning("[capitalize(src.name)] уже взломан!"))
 	else
-		to_chat(user, span_warning("You need to open the cap to do that!"))
+		to_chat(user, span_warning("Сначала надо открыть крышку!"))
 
 /obj/item/clothing/mask/vape/attack_self(mob/user)
 	if(reagents.total_volume > 0)
-		to_chat(user, span_notice("You empty [src] of all reagents."))
+		to_chat(user, span_notice("Опустошаю содержимое [src] от всех реагентов."))
 		reagents.clear_reagents()
 
 /obj/item/clothing/mask/vape/equipped(mob/user, slot)
 	. = ..()
 	if(slot == ITEM_SLOT_MASK)
 		if(!screw)
-			to_chat(user, span_notice("You start puffing on the vape."))
+			to_chat(user, span_notice("Начинаю парить."))
 			reagents.flags &= ~(NO_REACT)
 			START_PROCESSING(SSobj, src)
 		else //it will not start if the vape is opened.
-			to_chat(user, span_warning("You need to close the cap first!"))
+			to_chat(user, span_warning("Сначала надо закрыть крышку!"))
 
 /obj/item/clothing/mask/vape/dropped(mob/user)
 	. = ..()
@@ -956,12 +956,12 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 				if(reagents.get_reagent_amount(/datum/reagent/fuel))
 					//HOT STUFF
 					C.adjust_fire_stacks(2)
-					C.IgniteMob()
+					C.ignite_mob()
 
 				if(reagents.get_reagent_amount(/datum/reagent/toxin/plasma)) // the plasma explodes when exposed to fire
 					var/datum/effect_system/reagents_explosion/e = new()
 					e.set_up(round(reagents.get_reagent_amount(/datum/reagent/toxin/plasma) / 2.5, 1), get_turf(src), 0, 0)
-					e.start()
+					e.start(src)
 					qdel(src)
 				return
 		reagents.remove_any(REAGENTS_METABOLISM)
@@ -970,13 +970,13 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	var/mob/living/M = loc
 
 	if(isliving(loc))
-		M.IgniteMob()
+		M.ignite_mob()
 
 	vapetime += delta_time
 
 	if(!reagents.total_volume)
 		if(ismob(loc))
-			to_chat(M, span_warning("[capitalize(src.name)] is empty!"))
+			to_chat(M, span_warning("[capitalize(src.name)] пуст!"))
 			STOP_PROCESSING(SSobj, src)
 			//it's reusable so it won't unequip when empty
 		return
@@ -985,13 +985,13 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	if(super && vapetime >= vapedelay)//Time to start puffing those fat vapes, yo.
 		var/datum/effect_system/smoke_spread/chem/smoke_machine/s = new
 		s.set_up(reagents, 1, 24, loc)
-		s.start()
+		s.start(src)
 		vapetime -= vapedelay
 
 	if((obj_flags & EMAGGED) && vapetime >= vapedelay)
 		var/datum/effect_system/smoke_spread/chem/smoke_machine/s = new
 		s.set_up(reagents, 4, 24, loc)
-		s.start()
+		s.start(src)
 		vapetime -= vapedelay
 		if(prob(5))//small chance for the vape to break and deal damage if it's emagged
 			playsound(get_turf(src), 'sound/effects/pop_expl.ogg', 50, FALSE)
@@ -999,8 +999,8 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 			M.Paralyze(300)
 			var/datum/effect_system/spark_spread/sp = new /datum/effect_system/spark_spread
 			sp.set_up(5, 1, src)
-			sp.start()
-			to_chat(M, span_userdanger("[capitalize(src.name)] suddenly explodes in your mouth!"))
+			sp.start(src)
+			to_chat(M, span_userdanger("[capitalize(src.name)] внезапно взрывается в моем рту!"))
 			qdel(src)
 			return
 

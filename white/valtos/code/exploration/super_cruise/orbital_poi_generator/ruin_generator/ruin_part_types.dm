@@ -127,8 +127,9 @@
 	weight = 4
 
 /datum/map_template/ruin_part/shuttledock
-	file_name = "13x17_shuttledock"
+	file_name = "13x18_shuttledock"
 	weight = 2
+	max_occurances = 1
 
 /datum/map_template/ruin_part/kitchen
 	file_name = "9x13_kitchen"
@@ -160,11 +161,12 @@
 	file_name = "13x13_supermatter_containment"
 	weight = 4
 	max_occurances = 1
-
-/datum/map_template/ruin_part/gateway
+/*
+/datum/map_template/ruin_part/gateway	// Потенциальный способ заражения станции
 	file_name = "5x9_gateway"
 	weight = 1
 	max_occurances = 1
+*/
 
 /datum/map_template/ruin_part/shower
 	file_name = "5x5_shower"
@@ -415,6 +417,12 @@
 	loot_room = TRUE
 	max_occurances = 1
 
+/datum/map_template/ruin_part/medlab
+	file_name = "13x13_medlab"
+	weight = 5
+	loot_room = TRUE
+	max_occurances = 1
+
 /datum/map_template/ruin_part/cratestorage
 	file_name = "13x9_cratestorage"
 	weight = 3
@@ -438,6 +446,7 @@
 /datum/map_template/ruin_part/teleporter_two
 	file_name = "9x9_teleporter"
 	weight = 1
+	max_occurances = 1
 
 /datum/map_template/ruin_part/charliestation_mini
 	file_name = "17x17_charliecrew"
@@ -450,10 +459,12 @@
 /datum/map_template/ruin_part/abandonedzoo
 	file_name = "19x19_abandonedzoo"
 	weight = 3
+	max_occurances = 1
 
 /datum/map_template/ruin_part/bigderelict
 	file_name = "40x34_bigderelict"
 	weight = 3
+	max_occurances = 1
 
 /datum/map_template/ruin_part/corgasteroid
 	file_name = "41x41_corgasteroid"
@@ -485,6 +496,21 @@
 	file_name = "21x17_shuttledock"
 	weight = 4
 	max_occurances = 1
+
+//	Ресурсные комнаты
+
+/datum/map_template/ruin_part/miner		//	Есть все виды ресурсов, но в виде руды и в небольших количествах
+	file_name = "9x9_minerroom"
+	weight = 3
+	max_occurances = 1
+
+/datum/map_template/ruin_part/vault		//	Много Золота, Серебра и Алмазов
+	file_name = "11x11_vault"
+	weight = 3
+	max_occurances = 1
+
+
+// 	Обитаемые
 
 /datum/map_template/ruin_part/charliestation
 	file_name = "69x45_charliestation"

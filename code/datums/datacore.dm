@@ -162,6 +162,15 @@
 		"Синтетики" = GLOB.nonhuman_positions,
 		"Гости" = GLOB.scum_positions
 	)
+	if(GLOB.violence_mode_activated)
+		manifest_out = list(
+			"Красные",
+			"Синие"
+		)
+		departments = list(
+			"Красные" = GLOB.combatant_red_positions,
+			"Синие" = GLOB.combatant_blue_positions
+		)
 	for(var/datum/data/record/t in GLOB.data_core.general)
 		var/name = t.fields["name"]
 		var/rank = t.fields["rank"]
@@ -193,12 +202,12 @@
 	var/list/manifest = get_manifest()
 	var/dat = {"
 	<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /><style>
-		body{background:#090909;color:#a2acb7;font-family:Tahoma}
-		.manifest {border-collapse:collapse;border-right:1px solid #666;font-size:14px;text-align:center}
-		.manifest td,th{border:1px solid #666;background-color:#050505;color:#aaa;padding:.25em}
-		.manifest th{height:1em;background-color:#090909;color:#fff}
-		.manifest tr.head th{background-color:#111}
-		.manifest tr.alt td{background-color:#090909}
+		body{background:#090309;color:#a25ca7;font-family:Tahoma}
+		.manifest {border-collapse:collapse;border-right:1px solid #646;font-size:14px;text-align:center}
+		.manifest td,th{border:1px solid #646;background-color:#050205;color:#a8a;padding:.25em}
+		.manifest th{height:1em;background-color:#090309;color:#faf}
+		.manifest tr.head th{background-color:#101}
+		.manifest tr.alt td{background-color:#090309}
 	</style></head>
 	<table class="manifest" width='350px'>
 	<tr class='head'><th>Имя</th><th>Должность</th></tr>
@@ -317,6 +326,51 @@
 		L.fields["mindref"]		= H.mind
 		locked += L
 	return
+
+/**
+ * Supporing proc for getting general records
+ * and using them as pAI ui data. This gets
+ * medical information - or what I would deem
+ * medical information - and sends it as a list.
+ *
+ * @return - list(general_records_out)
+ */
+/datum/datacore/proc/get_general_records()
+	if(!GLOB.data_core.general)
+		return list()
+	/// The array of records
+	var/list/general_records_out = list()
+	for(var/datum/data/record/gen_record as anything in GLOB.data_core.general)
+		/// The object containing the crew info
+		var/list/crew_record = list()
+		crew_record["ref"] = REF(gen_record)
+		crew_record["name"] = gen_record.fields["name"]
+		crew_record["physical_health"] = gen_record.fields["p_stat"]
+		crew_record["mental_health"] = gen_record.fields["m_stat"]
+		general_records_out += list(crew_record)
+	return general_records_out
+
+/**
+ * Supporing proc for getting secrurity records
+ * and using them as pAI ui data. Sends it as a
+ * list.
+ *
+ * @return - list(security_records_out)
+ */
+/datum/datacore/proc/get_security_records()
+	if(!GLOB.data_core.security)
+		return list()
+	/// The array of records
+	var/list/security_records_out = list()
+	for(var/datum/data/record/sec_record as anything in GLOB.data_core.security)
+		/// The object containing the crew info
+		var/list/crew_record = list()
+		crew_record["ref"] = REF(sec_record)
+		crew_record["name"] = sec_record.fields["name"]
+		crew_record["status"] = sec_record.fields["criminal"] // wanted status
+		crew_record["crimes"] = length(sec_record.fields["crim"])
+		security_records_out += list(crew_record)
+	return security_records_out
 
 /datum/datacore/proc/get_id_photo(mob/living/carbon/human/H, client/C, show_directions = list(SOUTH))
 	var/datum/job/J = SSjob.GetJob(H.mind.assigned_role)

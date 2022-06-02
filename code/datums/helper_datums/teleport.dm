@@ -27,13 +27,15 @@
 	if (isnull(precision))
 		precision = 0
 
+	SEND_SIGNAL(teleatom, COMSIG_MOVABLE_TELEPORTED, destination, channel)
+
 	switch(channel)
 		if(TELEPORT_CHANNEL_BLUESPACE)
 			if(istype(teleatom, /obj/item/storage/backpack/holding))
 				precision = rand(1,100)
 
 			var/static/list/bag_cache = typecacheof(/obj/item/storage/backpack/holding)
-			var/list/bagholding = typecache_filter_list(teleatom.GetAllContents(), bag_cache)
+			var/list/bagholding = typecache_filter_list(teleatom.get_all_contents(), bag_cache)
 			if(bagholding.len)
 				precision = max(rand(1,100)*bagholding.len,100)
 				if(isliving(teleatom))
@@ -133,11 +135,11 @@
 		// Can most things breathe?
 		if(trace_gases)
 			continue
-		if(A.get_moles(/datum/gas/oxygen) < 16)
+		if(A.get_moles(GAS_O2) < 16)
 			continue
-		if(A.get_moles(/datum/gas/plasma))
+		if(A.get_moles(GAS_PLASMA))
 			continue
-		if(A.get_moles(/datum/gas/carbon_dioxide) >= 10)
+		if(A.get_moles(GAS_CO2) >= 10)
 			continue
 
 		// Aim for goldilocks temperatures and pressure

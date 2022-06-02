@@ -16,7 +16,8 @@
 		battery = new battery_type(src)
 
 /obj/item/computer_hardware/battery/Destroy()
-	battery = null
+	if(battery)
+		QDEL_NULL(battery)
 	return ..()
 
 ///What happens when the battery is removed (or deleted) from the module, through try_eject() or not.
@@ -71,27 +72,27 @@
 	maxcharge = 750
 
 /obj/item/stock_parts/cell/computer/advanced
-	name = "Усовершенствованная батарея"
-	desc = "Усовершенствованная батарея, часто используемая в большинстве ноутбуков. Она слишком велика для установки в устройства меньшего размера."
+	name = "Продвинутая батарея"
+	desc = "Продвинутая батарея, часто используемая в большинстве ноутбуков. Она слишком велика для установки в устройства меньшего размера."
 	icon_state = "cell"
 	w_class = WEIGHT_CLASS_SMALL
 	maxcharge = 1500
 
 /obj/item/stock_parts/cell/computer/super
-	name = "Супербаттарея"
-	desc = "Усовершенствованная батарея, часто используемая в ноутбуках высокого класса"
+	name = "Супер баттарея"
+	desc = "Продвинутая батарея, часто используемая в ноутбуках высокого класса"
 	icon_state = "cell"
 	w_class = WEIGHT_CLASS_SMALL
 	maxcharge = 2000
 
 /obj/item/stock_parts/cell/computer/micro
-	name = "Микробатарея"
+	name = "Микро батарея"
 	desc = "Маленькая батарея, обычно используемая в большинстве портативных микрокомпьютеров."
 	icon_state = "cell_micro"
 	maxcharge = 500
 
 /obj/item/stock_parts/cell/computer/nano
-	name = "Нанобатарея"
+	name = "Нано батарея"
 	desc = "Крошечная батарея, обычно встречающаяся в портативных микрокомпьютерах младших моделей."
 	icon_state = "cell_micro"
 	maxcharge = 300

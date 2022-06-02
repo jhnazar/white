@@ -2,7 +2,7 @@
 
 /obj/item/clothing/neck/cloak
 	name = "коричневый плащ"
-	desc = "Это плащ, который можно носить на шее."
+	desc = "Плащ, который можно носить на шее."
 	icon = 'icons/obj/clothing/cloaks.dmi'
 	icon_state = "qmcloak"
 	inhand_icon_state = "qmcloak"
@@ -48,6 +48,29 @@
 	name = "плащ главы персонала"
 	desc = "Носится начальником отдела кадров. Слабо пахнет бюрократией."
 	icon_state = "hopcloak"
+
+/obj/item/clothing/neck/cloak/hop
+	name = "плащ главы персонала"
+	desc = "Носится начальником отдела кадров. Слабо пахнет бюрократией."
+	icon_state = "hopcloak"
+
+/obj/item/clothing/neck/cloak/hop
+	name = "плащ главы персонала"
+	desc = "Носится начальником отдела кадров. Слабо пахнет бюрократией."
+	icon_state = "hopcloak"
+
+/obj/item/clothing/neck/cloak/cape
+	name = "admiral's cape"
+	desc = "A sizable green cape with gold connects."
+	icon_state = "admiralcape"
+	w_class = WEIGHT_CLASS_SMALL
+	body_parts_covered = CHEST|GROIN|LEGS|ARMS
+	flags_inv = HIDESUITSTORAGE
+
+/obj/item/clothing/neck/cloak/cape/grand
+	name = "grand admiral's cape"
+	desc = "A sizable white cape with gold connects."
+	icon_state = "grand_admiral"
 
 /obj/item/clothing/suit/hooded/cloak/goliath
 	name = "плащ голиафа"
@@ -199,7 +222,7 @@
 
 /obj/item/clothing/neck/cloak/skill_reward/playing
 	name = "плащ легендарного ветерана"
-	desc = "Его носят только мудрейшие из сотрудников. Этот легендарный плащ можно получить только заключив трудовой договор с Нанотранзен на срок более <b>пяти тысяч часов</b>. Этот статусный символ представляет существо, которое лучше вас почти во всех измеримых областях, только и всего."
+	desc = "Его носят только мудрейшие из сотрудников. Этот легендарный плащ можно получить только заключив трудовой договор с NanoTrasen на срок более <b>пяти тысяч часов</b>. Этот статусный символ представляет существо, которое лучше вас почти во всех измеримых областях, только и всего."
 	icon_state = "playercloak"
 
 /obj/item/clothing/neck/cloak/skill_reward/playing/check_wearable(mob/user)
@@ -210,3 +233,9 @@
 	desc = "Этот плащ носят только те, кто умеет правильно стрелять. Конечно, легендарный уровень, сказали бы вы, но только вдумайтесь какой человек его получил. Разве он достоит вообще СТРЕЛЯТЬ? Взгляните на него, это же просто глупый РЕБЁНОК с оружием. Тьфу."
 	icon_state = "rangedcloak"
 	associated_skill_path = /datum/skill/ranged
+
+/obj/item/clothing/neck/cloak/skill_reward/medic
+	name = "плащ легендарного врача"
+	desc = "Если вы увидите обладателя этого плаща, то будьте уверены - вы в надежных руках. Настоящий бог от медицины, способный реанимировать даже мумию прохлаждающуюся в саркофаге с позапрошлого тысячелетия."
+	icon_state = "healercloak"
+	associated_skill_path = /datum/skill/surgery

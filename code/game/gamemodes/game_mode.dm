@@ -56,8 +56,8 @@
 
 
 /datum/game_mode/proc/announce() //Shows the gamemode's name and a fast description.
-	message_admins("<b>The gamemode is: <span class='[announce_span]'>[name]</span>!</b>")
-	message_admins("<b>[announce_text]</b>")
+	to_chat(world, "<b>Режим: <span class='[announce_span]'>[name]</span>!</b>")
+	to_chat(world, "<b>[announce_text]</b>")
 
 
 ///Checks to see if the game can be setup and ran with the current number of players or whatnot.
@@ -301,7 +301,7 @@
 	intercepttext += generate_station_trait_report()
 	print_command_report(intercepttext, "Отчёт Безопасности Центрального Командования", announce=FALSE)
 	priority_announce("Сводная информация была скопирована и распечатана на всех коммуникационных консолях.", "Вражеская связь перехвачена. Уровень безопасности повышен.", ANNOUNCER_INTERCEPT)
-	if(GLOB.security_level < SEC_LEVEL_BLUE)
+	if(SSsecurity_level.current_level < SEC_LEVEL_BLUE)
 		set_security_level(SEC_LEVEL_BLUE)
 
 
@@ -339,7 +339,7 @@
 		p_ckey = ckey(mind.key)
 		total_tickets += min(SSpersistence.antag_rep[p_ckey] + DEFAULT_ANTAG_TICKETS, MAX_TICKETS_PER_ROLL)
 
-	var/antag_select = rand(1,total_tickets)
+	var/antag_select = rand(1, total_tickets)
 	var/current = 1
 
 	for(var/datum/mind/mind in candidates)

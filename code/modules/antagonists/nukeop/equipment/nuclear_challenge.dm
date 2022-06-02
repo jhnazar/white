@@ -10,9 +10,9 @@
 	inhand_icon_state = "radio"
 	lefthand_file = 'icons/mob/inhands/misc/devices_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/devices_righthand.dmi'
-	desc = "Аппарат для объявления войны. Используйте его, чтобы объявить ваше намерение вести боевые действия на станции вашего противника. \
+	desc = "Аппарат для объявления войны. Используйте его, чтобы объявить ваше намерение вести боевые действия на станции противника. \
 			Это задержит ваш шаттл на 20 минут, давая экипажу время на подготовку, однако это привлечет внимание некоторых влиятельных фигур в Синдикате, которые поддержат вас большим количеством телекристаллов. \
-			Должно быть использовано не позже, чем через 5 минут, иначе ваши благодетели потеряют интерес."
+			Должно быть использовано не позже, чем через 5 минут, иначе благодетели потеряют интерес."
 	var/declaring_war = FALSE
 	var/uplink_type = /obj/item/uplink/nuclear
 
@@ -58,7 +58,7 @@
 
 	distribute_tc()
 
-	GLOB.shuttle_docking_jammed = TRUE
+//	GLOB.shuttle_docking_jammed = TRUE
 
 	CONFIG_SET(number/shuttle_refuel_delay, max(CONFIG_GET(number/shuttle_refuel_delay), CHALLENGE_SHUTTLE_DELAY))
 	SSblackbox.record_feedback("amount", "nuclear_challenge_mode", 1)
@@ -83,7 +83,7 @@
 		to_chat(usr, span_warning("Invalid war declaration."))
 		return
 
-	priority_announce(war_declaration, title = "Declaration of War", sound = 'sound/machines/alarm.ogg', has_important_message = TRUE)
+	priority_announce(war_declaration, title = "Объявление войны", sound = sound('sound/machines/alarm.ogg'), has_important_message = TRUE)
 
 	for(var/V in GLOB.syndicate_shuttle_boards)
 		var/obj/item/circuitboard/computer/syndicate_shuttle/board = V
@@ -91,7 +91,7 @@
 
 	distribute_tc()
 
-	GLOB.shuttle_docking_jammed = TRUE
+//	GLOB.shuttle_docking_jammed = TRUE
 
 	CONFIG_SET(number/shuttle_refuel_delay, max(CONFIG_GET(number/shuttle_refuel_delay), CHALLENGE_SHUTTLE_DELAY))
 
@@ -140,7 +140,7 @@
 		to_chat(user, span_boldwarning("Вы уже объявляете войну!"))
 		return FALSE
 	if(!user.onSyndieBase())
-		to_chat(user, span_boldwarning("Вы должны быть на своей базе для объявления войны."))
+		to_chat(user, span_boldwarning("Требуется быть на своей базе для объявления войны."))
 		return FALSE
 	if(world.time-SSticker.round_start_time > CHALLENGE_TIME_LIMIT)
 		to_chat(user, span_boldwarning("Слишком поздно. Ваши благодетели заняты уже другими вещами. Придётся обходиться с тем, что имеется под рукой."))

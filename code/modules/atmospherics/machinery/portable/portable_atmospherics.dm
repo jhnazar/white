@@ -29,14 +29,14 @@
 	return ..()
 
 /obj/machinery/portable_atmospherics/ex_act(severity, target)
-	if(severity == 1 || target == src)
+	if(severity >= EXPLODE_DEVASTATE || target == src)
 		if(resistance_flags & INDESTRUCTIBLE)
 			return //Indestructable cans shouldn't release air
 
 		//This explosion will destroy the can, release its air.
 		var/turf/T = get_turf(src)
 		T.assume_air(air_contents)
-		T.air_update_turf(FALSE, FALSE)
+		T.air_update_turf()
 
 	return ..()
 
@@ -99,7 +99,7 @@
 	. = ..()
 	if(holding)
 		. += "<hr><span class='notice'>[capitalize(src.name)] содержит [holding]. ПКМ [src] для быстрого изъятия.</span>"+\
-			"\n<span class='notice'>Нажми на [src.name] держа бак в руке для горячей замены [holding].</span>"
+			span_notice("\nНажми на [src.name] держа бак в руке для горячей замены [holding].")
 
 /obj/machinery/portable_atmospherics/proc/replace_tank(mob/living/user, close_valve, obj/item/tank/new_tank)
 	if(!user)
@@ -162,14 +162,9 @@
 
 /obj/machinery/portable_atmospherics/rad_act(strength)
 	. = ..()
-	if (air_contents.get_moles(/datum/gas/carbon_dioxide) && air_contents.get_moles(/datum/gas/oxygen))
-		strength = min(strength,air_contents.get_moles(/datum/gas/carbon_dioxide)*1000,air_contents.get_moles(/datum/gas/oxygen)*2000) //Ensures matter is conserved properly
-		air_contents.set_moles(/datum/gas/carbon_dioxide, max(air_contents.get_moles(/datum/gas/carbon_dioxide)-(strength * 0.001),0))
-		air_contents.set_moles(/datum/gas/oxygen, max(air_contents.get_moles(/datum/gas/oxygen)-(strength * 0.0005),0))
-		air_contents.adjust_moles(/datum/gas/pluoxium, strength * 0.004)
-		air_update_turf()
-	if (air_contents.get_moles(/datum/gas/hydrogen))
-		strength = min(strength, air_contents.get_moles(/datum/gas/hydrogen) * 1000)
-		air_contents.set_moles(/datum/gas/hydrogen, max(air_contents.get_moles(/datum/gas/hydrogen) - (strength * 0.001), 0))
-		air_contents.adjust_moles(/datum/gas/tritium, (strength * 0.001))
+	if (air_contents.get_moles(GAS_CO2) && air_contents.get_moles(GAS_O2))
+		strength = min(strength,air_contents.get_moles(GAS_CO2)*1000,air_contents.get_moles(GAS_O2)*2000) //Ensures matter is conserved properly
+		air_contents.set_moles(GAS_CO2, max(air_contents.get_moles(GAS_CO2)-(strength * 0.001),0))
+		air_contents.set_moles(GAS_O2, max(air_contents.get_moles(GAS_O2)-(strength * 0.0005),0))
+		air_contents.adjust_moles(GAS_PLUOXIUM, strength * 0.004)
 		air_update_turf()

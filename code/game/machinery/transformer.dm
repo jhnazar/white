@@ -6,7 +6,9 @@
 	icon = 'icons/obj/recycling.dmi'
 	icon_state = "separator-AO1"
 	layer = ABOVE_ALL_MOB_LAYER // Overhead
+	plane = ABOVE_GAME_PLANE
 	density = FALSE
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 5
 	var/transform_dead = 0
 	var/transform_standing = 0
 	var/cooldown_duration = 600 // 1 minute
@@ -75,7 +77,7 @@
 		return
 
 	if(!transform_dead && H.stat == DEAD)
-		playsound(src.loc, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+		playsound(src.loc, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 		return
 
 	// Activate the cooldown
@@ -90,7 +92,7 @@
 	// Sleep for a couple of ticks to allow the human to see the pain
 	sleep(5)
 
-	use_power(5000) // Use a lot of power.
+	use_power(active_power_usage) // Use a lot of power.
 	var/mob/living/silicon/robot/R = H.Robotize()
 	R.cell = new /obj/item/stock_parts/cell/upgraded/plus(R, robot_cell_charge)
 

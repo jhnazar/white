@@ -15,7 +15,7 @@
 /obj/structure/plasticflaps/Initialize()
 	. = ..()
 	alpha = 0
-	SSvis_overlays.add_vis_overlay(src, icon, icon_state, ABOVE_MOB_LAYER, plane, dir, add_appearance_flags = RESET_ALPHA) //you see mobs under it, but you hit them like they are above it
+	SSvis_overlays.add_vis_overlay(src, icon, icon_state, ABOVE_MOB_LAYER, GAME_PLANE_UPPER, dir, add_appearance_flags = RESET_ALPHA) //you see mobs under it, but you hit them like they are above it
 
 /obj/structure/plasticflaps/examine(mob/user)
 	. = ..()
@@ -47,7 +47,8 @@
 				return TRUE
 			to_chat(user, span_notice("You cut apart [src]."))
 			var/obj/item/stack/sheet/plastic/five/P = new(loc)
-			P.add_fingerprint(user)
+			if (!QDELETED(P))
+				P.add_fingerprint(user)
 			qdel(src)
 		return TRUE
 
@@ -106,10 +107,10 @@
 
 /obj/structure/plasticflaps/Initialize()
 	. = ..()
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 
 /obj/structure/plasticflaps/Destroy()
 	var/atom/oldloc = loc
 	. = ..()
 	if (oldloc)
-		oldloc.air_update_turf(TRUE, FALSE)
+		oldloc.air_update_turf(TRUE)

@@ -24,6 +24,7 @@
 	// changes, only the Random Golem type can be chosen
 	limbs_id = "golem"
 	fixed_mut_color = "aaa"
+	swimming_component = /datum/component/swimming/golem
 	var/info_text = "Будучи <span class='danger'>железным големом</span>, я не имею какой-либо характерной черты."
 	var/random_eligible = TRUE //If false, the golem subtype can't be made through golem mutation toxin
 
@@ -107,7 +108,7 @@
 			boom_warning = FALSE
 
 	if(H.bodytemperature > 850 && H.on_fire && prob(25))
-		explosion(get_turf(H), 1, 2, 4, flame_range = 5)
+		explosion(H, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 4, flame_range = 5, explosion_cause = src)
 		if(H)
 			H.gib()
 	if(H.fire_stacks < 2) //flammable
@@ -138,7 +139,7 @@
 			to_chat(owner, span_notice("Поджёг себя!"))
 		else
 			to_chat(owner, span_warning("Пытаюсь поджечь себя, но моя затея не удалась..."))
-		H.IgniteMob() //firestacks are already there passively
+		H.ignite_mob() //firestacks are already there passively
 
 //Harder to hurt
 /datum/species/golem/diamond

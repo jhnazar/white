@@ -49,8 +49,8 @@
 			. += "<hr><span class='warning'>The stand's <b>griddle</b> is completely broken!</span>"
 		else
 			. += "<hr><span class='notice'>The stand's <b>griddle</b> is intact.</span>"
-		. += "\n<span class='notice'>The stand's <b>fridge</b> seems fine.</span>" //weirdly enough, these fridges don't break
-		. += "\n<span class='notice'>The stand's <b>table</b> seems fine.</span>"
+		. += span_notice("\nThe stand's <b>fridge</b> seems fine.") //weirdly enough, these fridges don't break
+		. += span_notice("\nThe stand's <b>table</b> seems fine.")
 
 /obj/machinery/food_cart/proc/pack_up()
 	if(!unpacked)
@@ -88,7 +88,7 @@
 		return
 	var/obj/item/card/id/id_card = user.get_idcard(hand_first = TRUE)
 	if(!check_access(id_card))
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 30, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 30, TRUE)
 		return
 	to_chat(user, span_notice("You attempt to [unpacked ? "pack up" :"unpack"] [src]..."))
 	if(!do_after(user, 5 SECONDS, src))
@@ -138,3 +138,4 @@
 	icon = 'icons/obj/3x3.dmi'
 	icon_state = "stand"
 	layer = ABOVE_MOB_LAYER//big mobs will still go over the tent, this is fine and cool
+	plane = GAME_PLANE_UPPER

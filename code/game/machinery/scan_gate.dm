@@ -19,12 +19,10 @@
 #define SCANGATE_ZOMBIE			"zombie"
 
 /obj/machinery/scanner_gate
-	name = "scanner gate"
-	desc = "A gate able to perform mid-depth scans on any organisms who pass under it."
+	name = "сканирующая арка"
+	desc = "Устройство сканирующее проходящих сквозь него пользователей и подающее звуковой сигнал при заданных параметрах."
 	icon = 'icons/obj/machines/scangate.dmi'
 	icon_state = "scangate"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 50
 	circuit = /obj/item/circuitboard/machine/scanner_gate
 
 	var/scanline_timer
@@ -169,6 +167,7 @@
 		alarm_beep()
 	else
 		set_scanline("scanning", 10)
+	use_power(active_power_usage)
 
 /obj/machinery/scanner_gate/proc/alarm_beep()
 	if(next_beep <= world.time)

@@ -2,15 +2,13 @@
 #define SYMPTOM_DETAILS 2
 
 /obj/machinery/computer/pandemic
-	name = "ПанД.Е.М.И.Я 2200"
+	name = "П.А.Н.Д.Е.М.И.К.А 2200"
 	desc = "Используется при работе с вирусами."
 	density = TRUE
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "pandemic0"
 	icon_keyboard = null
 	base_icon_state = "pandemic"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 20
 	resistance_flags = ACID_PROOF
 	circuit = /obj/item/circuitboard/computer/pandemic
 
@@ -36,7 +34,7 @@
 			is_close = TRUE
 		else
 			. += "It has a beaker inside it."
-		. += "\n<span class='info'>ПКМ to eject [is_close ? beaker : "the beaker"].</span>"
+		. += span_info("\nПКМ to eject [is_close ? beaker : "the beaker"].")
 
 /obj/machinery/computer/pandemic/AltClick(mob/user)
 	. = ..()
@@ -75,7 +73,7 @@
 		if(istype(D, /datum/disease/advance))
 			var/datum/disease/advance/A = D
 			var/disease_name = SSdisease.get_disease_name(A.GetDiseaseID())
-			this["can_rename"] = ((disease_name == "Unknown") && A.mutable)
+			this["can_rename"] = ((disease_name == "Неизвестно") && A.mutable)
 			this["name"] = disease_name
 			this["is_adv"] = TRUE
 			this["symptoms"] = list()
@@ -131,9 +129,9 @@
 
 /obj/machinery/computer/pandemic/update_icon_state()
 	if(machine_stat & BROKEN)
-		icon_state = (beaker ? "mixer1_b" : "mixer0_b")
+		icon_state = (beaker ? "pandemic1_b" : "pandemic0_b")
 	else
-		icon_state = "mixer[(beaker) ? "1" : "0"][powered() ? "" : "_nopower"]"
+		icon_state = "pandemic[(beaker) ? "1" : "0"][powered() ? "" : "_nopower"]"
 
 /obj/machinery/computer/pandemic/update_overlays()
 	. = ..()
@@ -147,6 +145,7 @@
 		update_icon()
 
 /obj/machinery/computer/pandemic/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Pandemic", name)
@@ -210,6 +209,7 @@
 			if(!istype(A) || !A.mutable)
 				to_chat(usr, span_warning("ОШИБКА: Невозможно воспроизвести штамм вируса."))
 				return
+			use_power(active_power_usage)
 			A = A.Copy()
 			var/list/data = list("viruses" = list(A))
 			var/obj/item/reagent_containers/glass/bottle/B = new(drop_location())
@@ -225,6 +225,7 @@
 		if("create_vaccine_bottle")
 			if (wait)
 				return
+			use_power(active_power_usage)
 			var/id = params["index"]
 			var/datum/disease/D = SSdisease.archive_diseases[id]
 			var/obj/item/reagent_containers/glass/bottle/B = new(drop_location())

@@ -5,8 +5,8 @@
 	state_open = FALSE
 	icon = 'white/valtos/icons/64x64_autodoc.dmi'
 	icon_state = "autodoc_machine"
-	verb_say = "states"
-	idle_power_usage = 500
+	verb_say = "констатирует"
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 10
 	circuit = /obj/item/circuitboard/machine/organdoc
 	var/obj/item/organ/storedorgan
 	var/organ_type = /obj/item/organ
@@ -18,6 +18,7 @@
 	update_icon()
 
 /obj/machinery/organdoc/RefreshParts()
+	. = ..()
 	var/max_time = 350
 	for(var/obj/item/stock_parts/L in component_parts)
 		max_time -= (L.rating*10)
@@ -81,7 +82,7 @@
 		occupant.visible_message(span_notice("Органдок завершает хирургическую процедуру") , span_notice("Органдок вставляет орган в моё тело."))
 	playsound(src, 'sound/machines/microwave/microwave-end.ogg', 100, 0)
 	processing = FALSE
-	use_power(5000)
+	use_power(active_power_usage)
 	open_machine()
 
 /obj/machinery/organdoc/open_machine(mob/user)
@@ -171,6 +172,7 @@
 	name = "Плата Орган-Дока МК IIX"
 	desc = "Автоматический хирургически комплекс специализированный на имплантационных и трансплантационных операциях."
 	build_path = /obj/machinery/organdoc
+	icon_state = "medical"
 	req_components = list(/obj/item/scalpel/advanced = 1,
 		/obj/item/retractor/advanced = 1,
 		/obj/item/cautery/advanced = 1,

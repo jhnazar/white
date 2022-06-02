@@ -15,7 +15,7 @@
 	inhand_icon_state = "banner"
 	lefthand_file = 'icons/mob/inhands/equipment/banners_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
-	desc = "Баннер с логотипом Нанотрейзен."
+	desc = "Баннер с логотипом NanoTrasen."
 	slowdown = 2
 	throw_speed = 0
 	throw_range = 1
@@ -145,7 +145,7 @@
 	name = "Точка знамени"
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "banner"
-	desc = "Сюда вставляется знамя Нанотрейзен."
+	desc = "Сюда вставляется знамя NanoTrasen."
 	layer = LOW_ITEM_LAYER
 	var/obj/item/ctf/flag
 
@@ -368,7 +368,7 @@
 		for(var/key in ctf_gear)
 			chosen_class = ctf_gear[key]
 	else if(ctf_gear.len > 3) //a lot of choices, so much that we can't use a basic alert
-		var/result = input(new_team_member, "Select a class.", "CTF") as null|anything in sortList(ctf_gear)
+		var/result = input(new_team_member, "Select a class.", "CTF") as null|anything in sort_list(ctf_gear)
 		if(!result || !(GLOB.ghost_role_flags & GHOSTROLE_MINIGAME) || (new_team_member.ckey in recently_dead_ckeys) || !isobserver(new_team_member.mob))
 			return //picked nothing, admin disabled it, cheating to respawn faster, cheating to respawn... while in game?
 		chosen_class = ctf_gear[result]
@@ -916,7 +916,7 @@
 
 /obj/machinery/control_point
 	name = "Точка контроля"
-	desc = "Это надо захватить."
+	desc = "Вот это надо захватить."
 	icon = 'icons/obj/machines/dominator.dmi'
 	icon_state = "dominator"
 	resistance_flags = INDESTRUCTIBLE

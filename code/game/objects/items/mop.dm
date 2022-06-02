@@ -22,7 +22,11 @@
 /obj/item/mop/Initialize()
 	. = ..()
 	create_reagents(mopcap)
+	GLOB.janitor_devices += src
 
+/obj/item/mop/Destroy(force)
+	GLOB.janitor_devices -= src
+	return ..()
 
 /obj/item/mop/proc/clean(turf/A, mob/living/cleaner)
 	if(reagents.has_reagent(/datum/reagent/water, 1) || reagents.has_reagent(/datum/reagent/water/holywater, 1) || reagents.has_reagent(/datum/reagent/consumable/ethanol/vodka, 1) || reagents.has_reagent(/datum/reagent/space_cleaner, 1))
@@ -66,8 +70,11 @@
 			clean(T, user)
 
 
-/obj/effect/attackby(obj/item/I, mob/user, params)
-	if(istype(I, /obj/item/mop) || istype(I, /obj/item/soap))
+/obj/effect/attackby(obj/item/weapon, mob/user, params)
+	if(SEND_SIGNAL(weapon, COMSIG_ITEM_ATTACK_EFFECT, src, user, params) & COMPONENT_NO_AFTERATTACK)
+		return TRUE
+
+	if(istype(weapon, /obj/item/mop) || istype(weapon, /obj/item/soap))
 		return
 	else
 		return ..()
@@ -86,8 +93,8 @@
 	insertable = FALSE
 
 /obj/item/mop/advanced
-	desc = "Самый передовой инструмент в арсенале хранителя, в комплекте с конденсатором для смачивания! Просто подумайте обо всех внутренностях, которые вы очистите с этим!"
 	name = "продвинутая швабра"
+	desc = "Самый передовой инструмент в арсенале уборщика, в комплекте с влагоуловителем для смачивания! Просто представьте сколько размозженных голов и кровавых луж, вы сможете ей убрать!"
 	mopcap = 10
 	icon_state = "advmop"
 	inhand_icon_state = "mop"

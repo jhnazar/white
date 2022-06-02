@@ -26,8 +26,7 @@ DEFINE_BITFIELD(smoothing_flags, list(
 
 #define QUEUE_SMOOTH(thing_to_queue) if(thing_to_queue.smoothing_flags & (SMOOTH_CORNERS|SMOOTH_BITMASK)) {SSicon_smooth.add_to_queue(thing_to_queue)}
 
-#define QUEUE_SMOOTH_NEIGHBORS(thing_to_queue) for(var/neighbor in orange(1, thing_to_queue)) {var/atom/atom_neighbor = neighbor; QUEUE_SMOOTH(atom_neighbor)}
-
+#define QUEUE_SMOOTH_NEIGHBORS(thing_to_queue) for(var/atom/atom_neighbor as anything in orange(1, thing_to_queue)) {QUEUE_SMOOTH(atom_neighbor)}
 
 /**SMOOTHING GROUPS
  * Groups of things to smooth with.
@@ -140,4 +139,6 @@ DEFINE_BITFIELD(smoothing_flags, list(
 
 #define SMOOTH_GROUP_METALFOAM S_OBJ(71)	///obj/structure/foamedmetal
 
-#define MAX_S_OBJ SMOOTH_GROUP_METALFOAM //Always match this value with the one above it.
+#define SMOOTH_GROUP_OPENSPACE S_OBJ(72)	///turf/open/openspace
+
+#define MAX_S_OBJ SMOOTH_GROUP_OPENSPACE //Always match this value with the one above it.

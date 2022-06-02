@@ -148,7 +148,6 @@
 //Debug proc used to highlight bounding area
 /obj/docking_port/proc/highlight(_color = "#f00")
 	invisibility = 0
-	layer = GHOST_LAYER
 	var/list/L = return_coords()
 	var/turf/T0 = locate(L[1],L[2],z)
 	var/turf/T1 = locate(L[3],L[4],z)
@@ -582,7 +581,7 @@
 			continue
 		var/area/old_area = oldT.loc
 		underlying_area.contents += oldT
-		oldT.change_area(old_area, underlying_area)
+		oldT.transfer_area_lighting(old_area, underlying_area)
 		oldT.empty(FALSE)
 
 		// Here we locate the bottommost shuttle boundary and remove all turfs above it
@@ -598,7 +597,7 @@
 	// Loop over mobs
 	for(var/t in return_turfs())
 		var/turf/T = t
-		for(var/mob/living/M in T.GetAllContents())
+		for(var/mob/living/M in T.get_all_contents())
 			// If they have a mind and they're not in the brig, they escaped
 			if(M.mind && !istype(t, /turf/open/floor/plasteel/shuttle/red) && !istype(t, /turf/open/floor/mineral/plastitanium/red/brig))
 				M.mind.force_escaped = TRUE
@@ -733,7 +732,7 @@
 		if(!T || !istype(T.loc, area_type))
 			continue
 		for (var/atom/movable/movable as anything in T)
-			if (length(movable.client_mobs_in_contents))
+			if (movable.client_mobs_in_contents)
 				movable.update_parallax_contents()
 
 /obj/docking_port/mobile/proc/check_transit_zone()

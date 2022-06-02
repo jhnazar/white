@@ -30,7 +30,7 @@
 	attack_verb_simple = "кусает"
 	attack_sound = 'sound/weapons/bite.ogg'
 	attack_vis_effect = ATTACK_EFFECT_BITE
-	speak_emote = list("pines")
+	speak_emote = list("соснявит")
 	emote_taunt = list("growls")
 	taunt_chance = 20
 
@@ -57,10 +57,10 @@
 	if(is_tree && isopenturf(loc))
 		var/turf/open/T = src.loc
 		if(T.air)
-			var/co2 = T.air.get_moles(/datum/gas/carbon_dioxide)
+			var/co2 = T.air.get_moles(GAS_CO2)
 			if(co2 > 0 && DT_PROB(13, delta_time))
 				var/amt = min(co2, 9)
-				T.air.adjust_moles(/datum/gas/carbon_dioxide, -amt)
+				T.air.adjust_moles(GAS_CO2, -amt)
 				T.atmos_spawn_air("o2=[amt]")
 
 /mob/living/simple_animal/hostile/tree/AttackingTarget()
@@ -88,14 +88,14 @@
 	response_help_continuous = "rubs"
 	response_help_simple = "rub"
 	loot = list(/obj/item/stack/rods)
-	speak_emote = list("polls")
+	speak_emote = list("вопрошает")
 	faction = list()
 	atmos_requirements = list("min_oxy" = 0, "max_oxy" = 0, "min_tox" = 0, "max_tox" = 0, "min_co2" = 0, "max_co2" = 0, "min_n2" = 0, "max_n2" = 0)
 	is_tree = FALSE
 
 /mob/living/simple_animal/hostile/tree/festivus/attack_hand(mob/living/carbon/human/M)
 	. = ..()
-	if(M.a_intent == "help")
+	if(M.a_intent == INTENT_HELP)
 		visible_message(span_warning("[capitalize(src.name)] crackles with static electricity!"))
 		for(var/obj/item/stock_parts/cell/C in range(2, get_turf(src)))
 			C.give(75)

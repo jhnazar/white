@@ -9,11 +9,11 @@
 	name = "космос"
 	intact = 0
 
-	temperature = TCMB
+	initial_temperature = TCMB
 	thermal_conductivity = OPEN_HEAT_TRANSFER_COEFFICIENT
 	heat_capacity = 700000
 
-	var/static/datum/gas_mixture/immutable/space/space_gas = new
+	var/static/datum/gas_mixture/immutable/space/space_gas
 	plane = PLANE_SPACE
 	layer = SPACE_LAYER
 	light_power = 0.25
@@ -24,8 +24,10 @@
 /turf/open/space/basic/Initialize() // fast enough
 	SHOULD_CALL_PARENT(FALSE)
 	icon_state = SPACE_ICON_STATE
+	if(!space_gas)
+		space_gas = new
 	air = space_gas
-	update_air_ref()
+	update_air_ref(0)
 	vis_contents.Cut()
 	visibilityChanged()
 	flags_1 |= INITIALIZED_1
@@ -40,8 +42,10 @@
 /turf/open/space/Initialize()
 	SHOULD_CALL_PARENT(FALSE)
 	icon_state = SPACE_ICON_STATE
+	if(!space_gas)
+		space_gas = new
 	air = space_gas
-	update_air_ref()
+	update_air_ref(0)
 	vis_contents.Cut() //removes inherited overlays
 	visibilityChanged()
 
@@ -61,9 +65,6 @@
 	var/area/our_area = loc
 	if(our_area.static_lighting && always_lit) //Only provide your own lighting if the area doesn't for you
 		add_overlay(GLOB.fullbright_overlay)
-
-	if(requires_activation)
-		SSair.add_to_active(src, TRUE)
 
 	if (light_system == STATIC_LIGHT && light_power && light_range)
 		update_light()
@@ -167,19 +168,19 @@
 		else
 			to_chat(user, span_warning("Надо бы опору сначала сделать. Подойдёт несколько прутьев."))
 
-/turf/open/space/Entered(atom/movable/A)
+/turf/open/space/Entered(atom/movable/arrived)
 	. = ..()
-	if ((!(A) || src != A.loc))
+	if(!arrived || src != arrived.loc)
 		return
 
-	if(destination_z && destination_x && destination_y && !A.pulledby && !A.currently_z_moving)
+	if(destination_z && destination_x && destination_y && !arrived.pulledby && !arrived.currently_z_moving)
 		var/tx = destination_x
 		var/ty = destination_y
 		var/turf/DT = locate(tx, ty, destination_z)
 		var/itercount = 0
 		while(DT.density || istype(DT.loc,/area/shuttle)) // Extend towards the center of the map, trying to look for a better place to arrive
 			if (itercount++ >= 100)
-				log_game("SPACE Z-TRANSIT ERROR: Could not find a safe place to land [A] within 100 iterations.")
+				log_game("SPACE Z-TRANSIT ERROR: Could not find a safe place to land [arrived] within 100 iterations.")
 				break
 			if (tx < 128)
 				tx++
@@ -191,9 +192,9 @@
 				ty--
 			DT = locate(tx, ty, destination_z)
 
-		A.zMove(null, DT, ZMOVE_ALLOW_BUCKLED)
+		arrived.zMove(null, DT, ZMOVE_ALLOW_BUCKLED)
 
-		var/atom/movable/current_pull = A.pulling
+		var/atom/movable/current_pull = arrived.pulling
 		while (current_pull)
 			var/turf/target_turf = get_step(current_pull.pulledby.loc, REVERSE_DIR(current_pull.pulledby.dir)) || current_pull.pulledby.loc
 			current_pull.zMove(null, target_turf, ZMOVE_ALLOW_BUCKLED)

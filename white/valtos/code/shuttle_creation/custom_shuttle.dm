@@ -1,6 +1,6 @@
 /obj/machinery/computer/shuttle_flight/custom_shuttle
-	name = "nanotrasen shuttle flight controller"
-	desc = "A terminal used to fly shuttles defined by the Shuttle Zoning Designator"
+	name = "консоль управления шатлом"
+	desc = "Терминал управления шатлом из комплекта Сделай сам - шатлостроение."
 	circuit = /obj/item/circuitboard/computer/shuttle/flight_control
 	icon_screen = "shuttle"
 	icon_keyboard = "tech_key"
@@ -101,7 +101,7 @@
 				var/datum/orbital_object/z_linked/beacon/z_linked = new /datum/orbital_object/z_linked/beacon/ruin/stranded_shuttle(new /datum/orbital_vector(shuttleObject.position.x, shuttleObject.position.y))
 				z_linked.name = "Заблудший [shuttleObject]"
 				if(!z_linked)
-					say("Невозможно остановить шаттл, свяжитесь с Нанотрейзен.")
+					say("Невозможно остановить шаттл, свяжитесь с NanoTrasen.")
 					return
 				shuttleObject.commence_docking(z_linked, TRUE)
 		shuttleObject.docking_frozen = TRUE
@@ -176,7 +176,6 @@
 	max_integrity = 250
 	icon = 'icons/turf/shuttle.dmi'
 	icon_state = "burst_plasma"
-	idle_power_usage = 150
 	circuit = /obj/item/circuitboard/machine/shuttle/engine
 	var/icon_state_closed = "burst_plasma"
 	var/icon_state_open = "burst_plasma_open"

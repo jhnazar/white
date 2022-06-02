@@ -107,9 +107,9 @@ Chilling extracts:
 	for(var/turf/open/T in A)
 		var/datum/gas_mixture/G = T.air
 		if(istype(G))
-			G.set_moles(/datum/gas/plasma, 0)
+			G.set_moles(GAS_PLASMA, 0)
 			filtered = TRUE
-			T.air_update_turf(FALSE, FALSE)
+			T.air_update_turf()
 	if(filtered)
 		user.visible_message(span_notice("Cracks spread throughout [src], and some air is sucked in!"))
 	else
@@ -288,7 +288,7 @@ Chilling extracts:
 	addtimer(CALLBACK(src, .proc/boom), 50)
 
 /obj/item/slimecross/chilling/oil/proc/boom()
-	explosion(get_turf(src), -1, -1, 10, 0) //Large radius, but mostly light damage, and no flash.
+	explosion(src, devastation_range = -1, heavy_impact_range = -1, light_impact_range = 10, explosion_cause = src) //Large radius, but mostly light damage, and no flash.
 	qdel(src)
 
 /obj/item/slimecross/chilling/black

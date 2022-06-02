@@ -149,7 +149,7 @@
 /turf/open/floor/plating/snowed/icemoon,
 /area/icemoon/surface/outdoors)
 "aI" = (
-/obj/item/pda/engineering{
+/obj/item/modular_computer/tablet/pda/engineering{
 	note = "To-do: Check on singularity status. Get a pint at eat. Nag the research manager for RCDs."
 	},
 /turf/open/floor/plating/asteroid/snow/icemoon,
@@ -491,7 +491,7 @@
 	},
 /obj/machinery/power/apc/unlocked{
 	dir = 4;
-	pixel_x = 26
+	pixel_x = 24
 	},
 /obj/structure/cable,
 /turf/open/floor/plasteel/icemoon,
@@ -543,11 +543,6 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/icemoon,
 /area/icemoon/surface/outdoors)
-"bF" = (
-/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden,
-/obj/structure/cable,
-/turf/open/floor/plasteel/icemoon,
-/area/icemoon/surface/outdoors)
 "bG" = (
 /obj/effect/turf_decal/trimline/yellow/filled/warning{
 	dir = 4
@@ -569,7 +564,7 @@
 /turf/open/floor/plasteel/icemoon,
 /area/icemoon/surface/outdoors)
 "bI" = (
-/obj/item/pda/clear{
+/obj/item/modular_computer/tablet/pda/clear{
 	note = "Chief's asked me to check on the machinery inside PDA. He's also worried about Build, but i'm sure Harry'll handle the construction. I just need to work on Internals. Fuck i'm hungry"
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden{
@@ -844,10 +839,6 @@
 /turf/open/floor/plasteel/icemoon,
 /area/icemoon/surface/outdoors)
 "cx" = (
-/obj/machinery/atmospherics/pipe/smart/manifold4w/green/visible,
-/turf/open/floor/plasteel/icemoon,
-/area/icemoon/surface/outdoors)
-"cy" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/green/visible,
 /turf/open/floor/plasteel/icemoon,
 /area/icemoon/surface/outdoors)
@@ -1716,7 +1707,7 @@ aj
 aj
 aj
 aU
-bF
+bp
 aj
 bX
 ck
@@ -1738,10 +1729,10 @@ aj
 aj
 aj
 bq
-bF
+bp
 bY
-bF
-bF
+bp
+bp
 cL
 cX
 di

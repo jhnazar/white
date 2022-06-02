@@ -8,14 +8,9 @@
 	pass_flags_self = PASSCLOSEDTURF
 	gender = FEMALE
 
-/turf/closed/Initialize()
-	. = ..()
-	update_air_ref()
-
 /turf/closed/AfterChange()
 	. = ..()
 	SSair.high_pressure_delta -= src
-	update_air_ref()
 
 /turf/closed/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
 	return FALSE
@@ -112,7 +107,6 @@
 	desc = "Поколение странных увлечений."
 	icon = 'icons/runtime/default_title.dmi'
 	icon_state = "station_intact"
-	layer = SPLASHSCREEN_LAYER
 	plane = SPLASHSCREEN_PLANE
 	bullet_bounce_sound = null
 	maptext_height = 480
@@ -123,15 +117,6 @@
 /turf/closed/indestructible/splashscreen/New()
 	SStitle.splash_turf = src
 	..()
-
-/turf/closed/indestructible/splashscreen/Click()
-	..()
-	if(isnewplayer(usr))
-		if(winexists(usr, "pdec"))
-			if(winget(usr, "pdec", "is-visible") == "true")
-				winset(usr, "pdec", "is-visible=false")
-			else
-				winset(usr, "pdec", "is-visible=true")
 
 /turf/closed/indestructible/splashscreen/vv_edit_var(var_name, var_value)
 	. = ..()

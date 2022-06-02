@@ -1,6 +1,6 @@
 /datum/job/security_officer
 	title = "Security Officer"
-	ru_title = "Офицер"
+	ru_title = "Офицер Безопасности"
 	auto_deadmin_role_flags = DEADMIN_POSITION_SECURITY
 	department_head = list("Head of Security")
 	faction = "Station"
@@ -14,8 +14,8 @@
 
 	outfit = /datum/outfit/job/security
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_JOURNEYMAN)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_JOURNEYMAN)
+	skills = list(/datum/skill/ranged = SKILL_EXP_JOURNEYMAN, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_JOURNEYMAN, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
 
 	paycheck = PAYCHECK_HARD
 	paycheck_department = ACCOUNT_SEC
@@ -126,7 +126,7 @@ GLOBAL_LIST_INIT(available_depts, list(SEC_DEPT_ENGINEERING, SEC_DEPT_MEDICAL, S
 	name = "Security Officer"
 	jobtype = /datum/job/security_officer
 
-	belt = /obj/item/pda/security
+	belt = /obj/item/modular_computer/tablet/pda/security
 	ears = /obj/item/radio/headset/headset_sec/alt
 	uniform = /obj/item/clothing/under/rank/security/officer
 	gloves = /obj/item/clothing/gloves/color/black
@@ -136,7 +136,6 @@ GLOBAL_LIST_INIT(available_depts, list(SEC_DEPT_ENGINEERING, SEC_DEPT_MEDICAL, S
 	l_pocket = /obj/item/restraints/handcuffs
 	r_pocket = /obj/item/assembly/flash/handheld
 	suit_store = /obj/item/gun/energy/disabler
-	backpack_contents = list(/obj/item/modular_computer/tablet/preset/cheap=1)
 
 	backpack = /obj/item/storage/backpack/security
 	satchel = /obj/item/storage/backpack/satchel/sec
@@ -150,10 +149,11 @@ GLOBAL_LIST_INIT(available_depts, list(SEC_DEPT_ENGINEERING, SEC_DEPT_MEDICAL, S
 
 	id_trim = /datum/id_trim/job/security_officer
 
+
 /obj/item/radio/headset/headset_sec/alt/department/Initialize()
 	. = ..()
 	wires = new/datum/wires/radio(src)
-	secure_radio_connections = new
+	secure_radio_connections = list()
 	recalculateChannels()
 
 /obj/item/radio/headset/headset_sec/alt/department/engi

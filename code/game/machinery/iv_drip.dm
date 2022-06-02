@@ -2,13 +2,14 @@
 #define IV_INJECTING 1
 ///Universal IV that can drain blood or feed reagents over a period of time from or to a replaceable container
 /obj/machinery/iv_drip
-	name = "\improper IV drip"
-	desc = "An IV drip with an advanced infusion pump that can both drain blood into and inject liquids from attached containers. Blood packs are processed at an accelerated rate. Right-Click to change the transfer rate."
+	name = "капельница"
+	desc = "Капельница для внутривенного вливания с усовершенствованным инфузионным насосом, который позволяет как сливать кровь, так и вводить жидкости из прикрепленных контейнеров. Пакеты с кровью вводятся в ускоренном темпе. ПКМ для изменения скорости потока."
 	icon = 'icons/obj/iv_drip.dmi'
 	icon_state = "iv_drip"
 	base_icon_state = "iv_drip"
 	anchored = FALSE
 	mouse_drag_pointer = MOUSE_ACTIVE_POINTER
+	use_power = NO_POWER_USE
 	///Who are we sticking our needle in?
 	var/mob/living/carbon/attached
 	///Are we donating or injecting?
@@ -87,14 +88,14 @@
 		return
 
 	if(!target.has_dna())
-		to_chat(usr, span_danger("The drip beeps: Warning, incompatible creature!"))
+		to_chat(usr, span_danger("Капельница пищит: Внимание, несовместимое существо!"))
 		return
 
 	if(Adjacent(target) && usr.Adjacent(target))
 		if(get_reagent_holder())
 			attach_iv(target, usr)
 		else
-			to_chat(usr, span_warning("There's nothing attached to the IV drip!"))
+			to_chat(usr, span_warning("К капельнице ничего не присоединено!"))
 
 
 /obj/machinery/iv_drip/attackby(obj/item/W, mob/user, params)
@@ -108,7 +109,7 @@
 		if(!user.transferItemToLoc(W, src))
 			return
 		reagent_container = W
-		to_chat(user, span_notice("You attach [W] to [src]."))
+		to_chat(user, span_notice("Присоединяю [W] к [src]."))
 		user.log_message("attached a [W] to [src] at [AREACOORD(src)] containing ([reagent_container.reagents.log_list()])", LOG_ATTACK)
 		add_fingerprint(user)
 		update_appearance()
@@ -126,7 +127,7 @@
 		return PROCESS_KILL
 
 	if(!(get_dist(src, attached) <= 1 && isturf(attached.loc)))
-		to_chat(attached, span_userdanger("The IV drip needle is ripped out of you!"))
+		to_chat(attached, span_userdanger("Из меня выпала игла для капельницы!"))
 		attached.apply_damage(3, BRUTE, pick(BODY_ZONE_R_ARM, BODY_ZONE_L_ARM))
 		detach_iv()
 		return PROCESS_KILL
@@ -170,7 +171,7 @@
 	if(!ishuman(user))
 		return
 	if(attached)
-		visible_message(span_notice("[attached] is detached from [src]."))
+		visible_message(span_notice("[attached] отделяется от [src]."))
 		detach_iv()
 		return
 	else if(reagent_container)
@@ -185,17 +186,17 @@
 
 	if(dripfeed)
 		dripfeed = FALSE
-		to_chat(usr, span_notice("You loosen the valve to speed up the [src]."))
+		to_chat(usr, span_notice("Ослабляю клапан, чтобы ускорить [src]."))
 	else
 		dripfeed = TRUE
-		to_chat(usr, span_notice("You tighten the valve to slowly drip-feed the contents of [src]."))
+		to_chat(usr, span_notice("Затягиваю клапан, чтобы медленно, покапельно подавать содержимое [src]."))
 	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 ///called when an IV is attached
 /obj/machinery/iv_drip/proc/attach_iv(mob/living/target, mob/user)
-	usr.visible_message(span_warning("[usr] attaches [src] to [target]."), span_notice("You attach [src] to [target]."))
+	usr.visible_message(span_warning("[usr] присоединяет [src] к [target]."), span_notice("Присоединяю [src] к [target]."))
 	var/datum/reagents/container = get_reagent_holder()
-	log_combat(usr, target, "attached", src, "containing: ([container.log_list()])")
+	log_combat(usr, target, "присоединено", src, "содержит: ([container.log_list()])")
 	add_fingerprint(usr)
 	attached = target
 	START_PROCESSING(SSmachines, src)
@@ -219,7 +220,7 @@
 	set src in view(1)
 
 	if(!isliving(usr))
-		to_chat(usr, span_warning("You can't do that!"))
+		to_chat(usr, span_warning("Не могу это сделать!"))
 		return
 	if (!usr.canUseTopic())
 		return
@@ -236,14 +237,14 @@
 	set src in view(1)
 
 	if(!isliving(usr))
-		to_chat(usr, span_warning("You can't do that!"))
+		to_chat(usr, span_warning("Не могу это сделать!"))
 		return
 	if (!usr.canUseTopic())
 		return
 	if(usr.incapacitated())
 		return
 	mode = !mode
-	to_chat(usr, span_notice("The IV drip is now [mode ? "injecting" : "taking blood"]."))
+	to_chat(usr, span_notice("Капельница теперь [mode ? "вводит" : "берет кровь"]."))
 	update_appearance()
 
 /obj/machinery/iv_drip/examine(mob/user)
@@ -251,24 +252,24 @@
 	if(get_dist(user, src) > 2)
 		return
 
-	. += "<hr>[src] is [mode ? "injecting" : "taking blood"]."
+	. += "<hr>[src] [mode ? "вводит" : "берет кровь"]."
 
 	if(reagent_container)
 		if(reagent_container.reagents && reagent_container.reagents.reagent_list.len)
-			. += span_notice("<hr>Attached is \a [reagent_container] with [reagent_container.reagents.total_volume] units of liquid.")
+			. += span_notice("<hr>Здесь закреплен [reagent_container] и в нем осталось [reagent_container.reagents.total_volume] единиц раствора.")
 		else
-			. += "<hr><span class='notice'>Attached is an empty [reagent_container.name].</span>"
+			. += "<hr><span class='notice'>Здесь закреплен пустой [reagent_container.name].</span>"
 	else if(use_internal_storage)
-		. += "<hr><span class='notice'>It has an internal chemical storage.</span>"
+		. += "<hr><span class='notice'>Здесь встроенное хранилище.</span>"
 	else
-		. += "<hr><span class='notice'>No chemicals are attached.</span>"
+		. += "<hr><span class='notice'>Бак пуст.</span>"
 
-	. += "<hr><span class='notice'>[attached ? attached : "No one"] is attached.</span>"
+	. += "<hr><span class='notice'>[attached ? attached : "Не"] подключена.</span>"
 
 
 /obj/machinery/iv_drip/saline
-	name = "saline drip"
-	desc = "An all-you-can-drip saline canister designed to supply a hospital without running out, with a scary looking pump rigged to inject saline into containers, but filling people directly might be a bad idea."
+	name = "бак с физраствором"
+	desc = "Канистра с физиологическим раствором, предназначенная для снабжения целого госпиталя, с устрашающего вида насосом, приспособленным для впрыскивания физиологического раствора в контейнеры. Подключать людей к нему напрямую явно не стоит."
 	icon_state = "saline"
 	base_icon_state = "saline"
 	density = TRUE
@@ -289,8 +290,8 @@
 
 ///modified IV that can be anchored and takes plumbing in- and output
 /obj/machinery/iv_drip/plumbing
-	name = "automated IV drip"
-	desc = "A modified IV drip with plumbing connects. Reagents received from the connect are injected directly into their bloodstream, blood that is drawn goes to the internal storage and then into the ducting."
+	name = "автоматическая капельница"
+	desc = "Модифицированная капельница с химфаб соединениями. Реагенты, получаемые через штуцер, вводятся непосредственно в кровоток, а забираемая кровь поступает во внутреннее хранилище."
 	icon_state = "plumb"
 	base_icon_state = "plumb"
 

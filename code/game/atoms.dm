@@ -7,7 +7,7 @@
 /atom
 	layer = TURF_LAYER
 	plane = GAME_PLANE
-	appearance_flags = TILE_BOUND
+	appearance_flags = TILE_BOUND|LONG_GLIDE
 
 	/// pass_flags that we are. If any of this matches a pass_flag on a moving thing, by default, we let them through.
 	var/pass_flags_self = NONE
@@ -30,8 +30,12 @@
 	///Reagents holder
 	var/datum/reagents/reagents = null
 
-	///This atom's HUD (med/sec, etc) images. Associative list.
+	///all of this atom's HUD (med/sec, etc) images. Associative list of the form: list(hud category = hud image or images for that category).
+	///most of the time hud category is associated with a single image, sometimes its associated with a list of images.
+	///not every hud in this list is actually used. for ones available for others to see, look at active_hud_list.
 	var/list/image/hud_list = null
+	///all of this atom's HUD images which can actually be seen by players with that hud
+	var/list/image/active_hud_list = null
 	///HUD images that this atom can provide.
 	var/list/hud_possible
 
@@ -123,6 +127,9 @@
 	var/greyscale_config
 	///A string of hex format colors to be used by greyscale sprites, ex: "#0054aa#badcff"
 	var/greyscale_colors
+
+	///Holds merger groups currently active on the atom. Do not access directly, use GetMergeGroup() instead.
+	var/list/datum/merger/mergers
 
 	///Icon-smoothing behavior.
 	var/smoothing_flags = NONE
@@ -273,7 +280,7 @@
 	if(alternate_appearances)
 		for(var/K in alternate_appearances)
 			var/datum/atom_hud/alternate_appearance/AA = alternate_appearances[K]
-			AA.remove_from_hud(src)
+			AA.remove_atom_from_hud(src)
 
 	if(reagents)
 		QDEL_NULL(reagents)
@@ -303,7 +310,7 @@
 		if((a_incidence_s < 90 && a_incidence_s < 90 - P.ricochet_incidence_leeway) || (a_incidence_s > 270 && a_incidence_s -270 > P.ricochet_incidence_leeway))
 			return FALSE
 	var/new_angle_s = SIMPLIFY_DEGREES(face_angle + incidence_s)
-	P.setAngle(new_angle_s)
+	P.set_angle(new_angle_s)
 	return TRUE
 
 /// Whether the mover object can avoid being blocked by this atom, while arriving from (or leaving through) the border_dir.
@@ -443,11 +450,25 @@
 
 ///Take air from the passed in gas mixture datum
 /atom/proc/assume_air(datum/gas_mixture/giver)
-	qdel(giver)
+	return null
+
+/atom/proc/assume_air_moles(datum/gas_mixture/giver, moles)
+	return null
+
+/atom/proc/assume_air_ratio(datum/gas_mixture/giver, ratio)
 	return null
 
 ///Remove air from this atom
 /atom/proc/remove_air(amount)
+	return null
+
+/atom/proc/remove_air_ratio(ratio)
+	return null
+
+/atom/proc/transfer_air(datum/gas_mixture/taker, amount)
+	return null
+
+/atom/proc/transfer_air_ratio(datum/gas_mixture/taker, ratio)
 	return null
 
 ///Return the current air environment in this atom
@@ -624,8 +645,8 @@
 					for(var/datum/reagent/R in reagents.reagent_list)
 						. += "\n[round(R.volume, 0.01)] единиц [R.name]"
 					if(reagents.is_reacting)
-						. += "\n<span class='warning'>Сейчас бурлит!</span>"
-					. += "\n<span class='notice'>Кислотность раствора [round(reagents.ph, 0.01)], его температура [reagents.chem_temp]K.</span>"
+						. += span_warning("\nСейчас бурлит!")
+					. += span_notice("\nКислотность раствора [round(reagents.ph, 0.01)], его температура [reagents.chem_temp]K.")
 				else //Otherwise, just show the total volume
 					var/total_volume = 0
 					for(var/datum/reagent/R in reagents.reagent_list)
@@ -639,17 +660,10 @@
 			else
 				. += span_danger("Он пуст.")
 
-	if(ishuman(user))
-		if(user.stat == CONSCIOUS && !user.eye_blind)
-			user.visible_message(span_small("<b>[user]</b> смотрит на <b>[skloname(name, VINITELNI, gender)]</b>.") , span_small("Смотрю на <b>[src.name]</b>.") , null, COMBAT_MESSAGE_RANGE)
-		if(user.status_traits)
-			if(HAS_TRAIT(user, TRAIT_JEWISH))
-				var/datum/export_report/ex = export_item_and_contents(src, EXPORT_PIRATE | EXPORT_CARGO | EXPORT_CONTRABAND, dry_run=TRUE)
-				var/price = 0
-				for(var/x in ex.total_amount)
-					price += ex.total_value[x]
-				. += "<hr>"
-				. += span_danger("<b>Цена: [price] кредит[get_num_string(price)].</b>")
+	if(iscarbon(user))
+		var/mob/living/carbon/C = user
+		if(C.stat == CONSCIOUS && !C.eye_blind && !C.is_eyes_covered())
+			C.visible_message(span_small("<b>[C]</b> смотрит на <b>[skloname(name, VINITELNI, gender)]</b>."), span_small("Смотрю на <b>[src.name]</b>."), null, COMBAT_MESSAGE_RANGE)
 
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
 
@@ -768,6 +782,10 @@
 	SHOULD_CALL_PARENT(TRUE)
 	if(greyscale_colors && greyscale_config)
 		icon = SSgreyscale.GetColoredIconByType(greyscale_config, greyscale_colors)
+	if(!smoothing_flags) // This is a bitfield but we're just checking that some sort of smoothing is happening
+		return
+	update_atom_colour()
+	QUEUE_SMOOTH(src)
 
 /**
  * An atom we are buckled or is contained within us has tried to move
@@ -1075,7 +1093,8 @@
  */
 /atom/proc/setDir(newdir)
 	SHOULD_CALL_PARENT(TRUE)
-	SEND_SIGNAL(src, COMSIG_ATOM_DIR_CHANGE, dir, newdir)
+	if(SEND_SIGNAL(src, COMSIG_ATOM_DIR_CHANGE, dir, newdir) & COMPONENT_NO_DIR_CHANGE)
+		return
 	dir = newdir
 
 /**
@@ -1270,7 +1289,7 @@
 						if(!valid_id)
 							to_chat(usr, span_warning("A reagent with that ID doesn't exist!"))
 				if("Choose from a list")
-					chosen_id = input(usr, "Choose a reagent to add.", "Choose a reagent.") as null|anything in sortList(subtypesof(/datum/reagent), /proc/cmp_typepaths_asc)
+					chosen_id = input(usr, "Choose a reagent to add.", "Choose a reagent.") as null|anything in sort_list(subtypesof(/datum/reagent), /proc/cmp_typepaths_asc)
 				if("I'm feeling lucky")
 					chosen_id = pick(subtypesof(/datum/reagent))
 			if(chosen_id)
@@ -1707,9 +1726,9 @@
 
 /atom/proc/add_filter(name,priority,list/params)
 	LAZYINITLIST(filter_data)
-	var/list/p = params.Copy()
-	p["priority"] = priority
-	filter_data[name] = p
+	var/list/copied_parameters = params.Copy()
+	copied_parameters["priority"] = priority
+	filter_data[name] = copied_parameters
 	update_filters()
 
 /atom/proc/update_filters()
@@ -1939,7 +1958,7 @@
 		T = get_turf(src)
 
 	if(!T)
-		return 0
+		return FALSE
 
 	var/list/forced_gravity = list()
 	SEND_SIGNAL(src, COMSIG_ATOM_HAS_GRAVITY, T, forced_gravity)
@@ -1952,10 +1971,12 @@
 		return max_grav
 
 	if(isspaceturf(T)) // Turf never has gravity
-		return 0
+		return FALSE
 	if(istype(T, /turf/open/openspace)) //openspace in a space area doesn't get gravity
 		if(istype(get_area(T), /area/space))
-			return 0
+			return FALSE
+		else if (istype(SSmapping.get_turf_below(T), /turf/open/space))
+			return FALSE
 
 	var/area/A = get_area(T)
 	if(A.has_gravity) // Areas which always has gravity
@@ -2086,20 +2107,6 @@
 
 	return TRUE
 
-/*
-//Update the screentip to reflect what we're hoverin over
-/atom/MouseEntered(location, control, params)
-	. = ..()
-	// Statusbar
-	status_bar_set_text(usr, name)
-	// Screentips
-	if(usr?.hud_used)
-		if(!usr.client?.prefs.screentip_pref || (flags_1 & NO_SCREENTIPS_1))
-			usr.hud_used.screentip_text.maptext = ""
-		else
-			usr.hud_used.screentip_text.maptext = MAPTEXT("<span style='text-align: center'><span style='font-size: 32px'><span style='color:[usr.client.prefs.screentip_color]: 32px'>[name]</span>")
-*/
-/*
 /// Gets a merger datum representing the connected blob of objects in the allowed_types argument
 /atom/proc/GetMergeGroup(id, list/allowed_types)
 	RETURN_TYPE(/datum/merger)
@@ -2110,4 +2117,21 @@
 		new /datum/merger(id, allowed_types, src)
 		candidate = mergers[id]
 	return candidate
-*/
+
+/**
+ * This proc is used for telling whether something can pass by this atom in a given direction, for use by the pathfinding system.
+ *
+ * Trying to generate one long path across the station will call this proc on every single object on every single tile that we're seeing if we can move through, likely
+ * multiple times per tile since we're likely checking if we can access said tile from multiple directions, so keep these as lightweight as possible.
+ *
+ * For turfs this will only be used if pathing_pass_method is TURF_PATHING_PASS_PROC
+ *
+ * Arguments:
+ * * ID- An ID card representing what access we have (and thus if we can open things like airlocks or windows to pass through them). The ID card's physical location does not matter, just the reference
+ * * to_dir- What direction we're trying to move in, relevant for things like directional windows that only block movement in certain directions
+ * * caller- The movable we're checking pass flags for, if we're making any such checks
+ **/
+/atom/proc/CanAStarPass(obj/item/card/id/ID, to_dir, atom/movable/caller)
+	if(caller && (caller.pass_flags & pass_flags_self))
+		return TRUE
+	. = !density

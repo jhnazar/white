@@ -79,7 +79,6 @@
 /area/ctf)
 "dD" = (
 /obj/effect/turf_decal/delivery,
-/obj/machinery/bounty_board/directional/south,
 /obj/structure/table/reinforced,
 /turf/open/floor/plating,
 /area/ctf)
@@ -202,7 +201,6 @@
 /area/ctf)
 "ld" = (
 /obj/effect/turf_decal/bot,
-/obj/machinery/bounty_board/directional/south,
 /obj/structure/table/reinforced,
 /turf/open/floor/plating,
 /area/ctf)
@@ -581,11 +579,6 @@
 	dir = 8
 	},
 /turf/open/floor/mineral/plastitanium,
-/area/ctf)
-"Hc" = (
-/obj/effect/turf_decal/bot,
-/obj/structure/table/reinforced,
-/turf/open/floor/plating,
 /area/ctf)
 "Hl" = (
 /obj/effect/turf_decal/siding/wood{
@@ -1258,7 +1251,7 @@ ZQ
 bR
 Ig
 Jg
-Hc
+ld
 qT
 Gt
 SH
@@ -2250,7 +2243,7 @@ ww
 lA
 MK
 si
-Hc
+ld
 qT
 Gt
 SH

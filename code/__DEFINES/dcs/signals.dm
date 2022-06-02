@@ -67,6 +67,9 @@
 ///from SSsecurity_level when the security level changes : (new_level)
 #define COMSIG_SECURITY_LEVEL_CHANGED "security_level_changed"
 
+///from SSshuttle when the supply shuttle starts spawning orders : ()
+#define COMSIG_SUPPLY_SHUTTLE_BUY "supply_shuttle_buy"
+
 //////////////////////////////////////////////////////////////////
 
 // /datum signals
@@ -361,6 +364,10 @@
 #define COMSIG_ATOM_SINGULARITY_TRY_MOVE "atom_singularity_try_move"
 	/// When returned from `COMSIG_ATOM_SINGULARITY_TRY_MOVE`, the singularity will move to that turf
 	#define SINGULARITY_TRY_MOVE_BLOCK (1 << 0)
+///from base of atom/experience_pressure_difference(): (pressure_difference, direction, pressure_resistance_prob_delta)
+#define COMSIG_ATOM_PRE_PRESSURE_PUSH "atom_pre_pressure_push"
+	///prevents pressure movement
+	#define COMSIG_ATOM_BLOCKS_PRESSURE (1<<0)
 
 /////////////////
 
@@ -416,7 +423,8 @@
 #define COMSIG_TURF_ON_SHUTTLE_MOVE "turf_on_shuttle_move"
 ///from /turf/open/temperature_expose(datum/gas_mixture/air, exposed_temperature)
 #define COMSIG_TURF_EXPOSE "turf_expose"
-
+///from /turf/proc/immediate_calculate_adjacent_turfs()
+#define COMSIG_TURF_CALCULATED_ADJACENT_ATMOS "turf_calculated_adjacent_atmos"
 ///from /datum/element/decal/Detach(): (description, cleanable, directional, mutable_appearance/pic)
 #define COMSIG_TURF_DECAL_DETACHED "turf_decal_detached"
 
@@ -425,7 +433,7 @@
 ///from base of atom/movable/Moved(): (/atom)
 #define COMSIG_MOVABLE_PRE_MOVE "movable_pre_move"
 	#define COMPONENT_MOVABLE_BLOCK_PRE_MOVE (1<<0)
-///from base of atom/movable/Moved(): (/atom, dir)
+///from base of atom/movable/Moved(): (atom/old_loc, dir, forced, list/old_locs)
 #define COMSIG_MOVABLE_MOVED "movable_moved"
 ///from base of atom/movable/update_loc(): (/atom/oldloc)
 #define COMSIG_MOVABLE_LOCATION_CHANGE "location_changed"
@@ -435,6 +443,9 @@
 #define COMSIG_MOVABLE_CROSS_OVER "movable_cross_am"
 ///from base of atom/movable/Bump(): (/atom)
 #define COMSIG_MOVABLE_BUMP "movable_bump"
+///from base of atom/movable/newtonian_move(): (inertia_direction)
+#define COMSIG_MOVABLE_NEWTONIAN_MOVE "movable_newtonian_move"
+	#define COMPONENT_MOVABLE_NEWTONIAN_BLOCK (1<<0)
 ///from base of atom/movable/throw_impact(): (/atom/hit_atom, /datum/thrownthing/throwingdatum)
 #define COMSIG_MOVABLE_IMPACT "movable_impact"
 	#define COMPONENT_MOVABLE_IMPACT_FLIP_HITPUSH (1<<0) //if true, flip if the impact will push what it hits
@@ -458,7 +469,7 @@
 #define COMSIG_MOVABLE_POST_THROW "movable_post_throw"
 ///from base of datum/thrownthing/finalize(): (obj/thrown_object, datum/thrownthing) used for when a throw is finished
 #define COMSIG_MOVABLE_THROW_LANDED "movable_throw_landed"
-///from base of atom/movable/onTransitZ(): (old_z, new_z)
+///from base of atom/movable/on_changed_z_level(): (turf/old_turf, turf/new_turf)
 #define COMSIG_MOVABLE_Z_CHANGED "movable_ztransit"
 ///called when the movable is placed in an unaccessible area, used for stationloving: ()
 #define COMSIG_MOVABLE_SECLUDED_LOCATION "movable_secluded"
@@ -496,6 +507,8 @@
 #define COMSIG_BUCKLED_CAN_Z_MOVE "ridden_pre_can_z_move"
 	#define COMPONENT_RIDDEN_STOP_Z_MOVE 1
 	#define COMPONENT_RIDDEN_ALLOW_Z_MOVE 2
+///Called when a movable is teleported from `do_teleport()`: (destination, channel)
+#define COMSIG_MOVABLE_TELEPORTED "movable_teleported"
 
 // /mob signals
 
@@ -525,8 +538,16 @@
 #define COMSIG_MOB_CLIENT_PRE_MOVE "mob_client_pre_move"
 	/// Should always match COMPONENT_MOVABLE_BLOCK_PRE_MOVE as these are interchangeable and used to block movement.
 	#define COMSIG_MOB_CLIENT_BLOCK_PRE_MOVE COMPONENT_MOVABLE_BLOCK_PRE_MOVE
+	/// From base of /client/Move()
+#define COMSIG_MOB_CLIENT_PRE_LIVING_MOVE "mob_client_pre_living_move"
+	/// Should we stop the current living movement attempt
+	#define COMSIG_MOB_CLIENT_BLOCK_PRE_LIVING_MOVE COMPONENT_MOVABLE_BLOCK_PRE_MOVE
 /// From base of /client/Move()
 #define COMSIG_MOB_CLIENT_MOVED "mob_client_moved"
+/// From base of /client/proc/change_view() (mob/source, new_size)
+#define COMSIG_MOB_CLIENT_CHANGE_VIEW "mob_client_change_view"
+/// From base of /mob/proc/reset_perspective() (mob/source)
+#define COMSIG_MOB_RESET_PERSPECTIVE "mob_reset_perspective"
 
 ///from base of obj/allowed(mob/M): (/obj) returns bool, if TRUE the mob has id access to the obj
 #define COMSIG_MOB_ALLOWED "mob_allowed"
@@ -557,10 +578,6 @@
 	#define SPEECH_MESSAGE 1
 	// #define SPEECH_BUBBLE_TYPE 2
 	#define SPEECH_SPANS 3
-	/* #define SPEECH_SANITIZE 4
-	#define SPEECH_LANGUAGE 5
-	#define SPEECH_IGNORE_SPAM 6
-	#define SPEECH_FORCED 7 */
 
 ///from /mob/say_dead(): (mob/speaker, message)
 #define COMSIG_MOB_DEADSAY "mob_deadsay"
@@ -581,7 +598,7 @@
 #define COMSIG_LIVING_DOORCRUSHED "living_doorcrush"
 ///from base of mob/living/resist() (/mob/living)
 #define COMSIG_LIVING_RESIST "living_resist"
-///from base of mob/living/IgniteMob() (/mob/living)
+///from base of mob/living/ignite_mob() (/mob/living)
 #define COMSIG_LIVING_IGNITED "living_ignite"
 ///from base of mob/living/extinguish_mob() (/mob/living)
 #define COMSIG_LIVING_EXTINGUISHED "living_extinguished"
@@ -601,6 +618,8 @@
 #define COMSIG_LIVING_SET_BODY_POSITION  "living_set_body_position"
 ///From post-can inject check of syringe after attack (mob/user)
 #define COMSIG_LIVING_TRY_SYRINGE "living_try_syringe"
+///From living/Life(). (deltatime, times_fired)
+#define COMSIG_LIVING_LIFE "living_life"
 
 ///Sent when bloodcrawl ends in mob/living/phasein(): (phasein_decal)
 #define COMSIG_LIVING_AFTERPHASEIN "living_phasein"
@@ -799,10 +818,19 @@
 /// from /obj/machinery/atmospherics/components/unary/cryo_cell/set_on(bool): (on)
 #define COMSIG_CRYO_SET_ON "cryo_set_on"
 
+/// from /obj/machinery/fire_alarm/reset(), /obj/machinery/fire_alarm/alarm(): (status)
+#define COMSIG_FIREALARM_ON_TRIGGER "firealarm_trigger"
+#define COMSIG_FIREALARM_ON_RESET "firealarm_reset"
+
 // /obj/machinery/atmospherics/components/binary/valve signals
 
 /// from /obj/machinery/atmospherics/components/binary/valve/toggle(): (on)
 #define COMSIG_VALVE_SET_OPEN "valve_toggled"
+
+// /obj access signals
+
+#define COMSIG_OBJ_ALLOWED "door_try_to_activate"
+	#define COMPONENT_OBJ_ALLOW (1<<0)
 
 // /obj/machinery/door/airlock signals
 
@@ -881,6 +909,8 @@
 #define COMSIG_ITEM_OFFER_TAKEN "item_offer_taken"
 	///Interrupts the offer acceptance
 	#define COMPONENT_OFFER_TAKE_INTERRUPT (1<<0)
+/// sent from obj/effect/attackby(): (/obj/effect/hit_effect, /mob/living/attacker, params)
+#define COMSIG_ITEM_ATTACK_EFFECT "item_effect_attacked"
 
 ///from base of [/obj/item/proc/tool_check_callback]: (mob/living/user)
 #define COMSIG_TOOL_IN_USE "tool_in_use"
@@ -903,6 +933,15 @@
 #define COMSIG_CLOSET_INSERT "closet_insert"
 	///used to interrupt insertion
 	#define COMPONENT_CLOSET_INSERT_INTERRUPT (1<<0)
+
+///From open: (forced)
+#define COMSIG_CLOSET_PRE_OPEN "closet_pre_open"
+	#define BLOCK_OPEN (1<<0)
+///From open: (forced)
+#define COMSIG_CLOSET_POST_OPEN "closet_post_open"
+
+///a deliver_first element closet was successfully delivered
+#define COMSIG_CLOSET_DELIVERED "crate_delivered"
 
 ///Eigenstasium
 ///From base of [/datum/controller/subsystem/eigenstates/proc/use_eigenlinked_atom]: (var/target)
@@ -969,13 +1008,13 @@
 #define COMSIG_IMPLANT_EXISTING_UPLINK "implant_uplink_exists"
 	//This uses all return values of COMSIG_IMPLANT_OTHER
 
-// /obj/item/pda signals
+// /obj/item/modular_computer/tablet/pda signals
 
 ///called on pda when the user changes the ringtone: (mob/living/user, new_ringtone)
-#define COMSIG_PDA_CHANGE_RINGTONE "pda_change_ringtone"
+#define COMSIG_TABLET_CHANGE_ID "comsig_tablet_change_id"
 	#define COMPONENT_STOP_RINGTONE_CHANGE (1<<0)
-#define COMSIG_PDA_CHECK_DETONATE "pda_check_detonate"
-	#define COMPONENT_PDA_NO_DETONATE (1<<0)
+#define COMSIG_TABLET_CHECK_DETONATE "pda_check_detonate"
+	#define COMPONENT_TABLET_NO_DETONATE (1<<0)
 
 // /obj/item/radio signals
 
@@ -989,6 +1028,10 @@
 
 // /obj/item/gun signals
 
+///called in /obj/item/gun/fire_gun (user, target, flag, params)
+#define COMSIG_GUN_TRY_FIRE "gun_try_fire"
+	#define COMPONENT_CANCEL_GUN_FIRE (1<<0)
+
 ///called in /obj/item/gun/process_fire (src, target, params, zone_override)
 #define COMSIG_MOB_FIRED_GUN "mob_fired_gun"
 ///called in /obj/item/gun/process_fire (user, target, params, zone_override)
@@ -1000,6 +1043,10 @@
 
 // /obj/effect/proc_holder/spell signals
 
+///called from /obj/effect/proc_holder/spell/cast_check (src)
+#define COMSIG_MOB_PRE_CAST_SPELL "mob_cast_spell"
+	/// Return to cancel the cast from beginning.
+	#define COMPONENT_CANCEL_SPELL (1<<0)
 ///called from /obj/effect/proc_holder/spell/perform (src)
 #define COMSIG_MOB_CAST_SPELL "mob_cast_spell"
 
@@ -1012,6 +1059,8 @@
 
 ///called in /obj/item/gun/process_fire (user, target, params, zone_override)
 #define COMSIG_GRENADE_DETONATE "grenade_prime"
+//called from many places in grenade code (armed_by, nade, det_time, delayoverride)
+#define COMSIG_MOB_GRENADE_ARMED "grenade_mob_armed"
 ///called in /obj/item/gun/process_fire (user, target, params, zone_override)
 #define COMSIG_GRENADE_ARMED "grenade_armed"
 
@@ -1071,9 +1120,18 @@
 // /datum/song signals
 
 ///sent to the instrument when a song starts playing
-#define COMSIG_SONG_START "song_start"
+#define COMSIG_INSTRUMENT_START "instrument_start"
 ///sent to the instrument when a song stops playing
-#define COMSIG_SONG_END "song_end"
+#define COMSIG_INSTRUMENT_END "instrument_end"
+///sent to the instrument on /should_stop_playing(): (atom/player). Return values can be found in DEFINES/song.dm
+#define COMSIG_INSTRUMENT_SHOULD_STOP_PLAYING "instrument_should_stop_playing"
+///sent to the instrument (and player if available) when a song repeats (datum/song)
+#define COMSIG_INSTRUMENT_REPEAT "instrument_repeat"
+///sent to the instrument when tempo changes, skipped on new. (datum/song)
+#define COMSIG_INSTRUMENT_TEMPO_CHANGE "instrument_tempo_change"
+
+///when an atom starts playing a song datum (datum/song)
+#define COMSIG_ATOM_STARTING_INSTRUMENT "atom_starting_instrument"
 
 /*******Component Specific Signals*******/
 //Janitor
@@ -1301,14 +1359,20 @@
 #define COMSIG_ITEM_ATTACK_SECONDARY "item_pre_attack_secondary"
 ///from base of obj/item/afterattack(): (atom/target, mob/user, params)
 #define COMSIG_ITEM_AFTERATTACK "item_afterattack"
+///from base of obj/item/afterattack_secondary(): (atom/target, mob/user, proximity_flag, click_parameters)
+#define COMSIG_ITEM_AFTERATTACK_SECONDARY "item_afterattack_secondary"
 ///from base of obj/item/attack_qdeleted(): (atom/target, mob/user, params)
 #define COMSIG_ITEM_ATTACK_QDELETED "item_attack_qdeleted"
 ///from base of atom/attack_hand(): (mob/user, modifiers)
 #define COMSIG_MOB_ATTACK_HAND "mob_attack_hand"
+//from base of turf/attack_hand(): (mob/user, modifiers)
+#define COMSIG_MOB_ATTACK_HAND_TURF "mob_attack_hand_turf"
 ///from base of /obj/item/attack(): (mob/M, mob/user)
 #define COMSIG_MOB_ITEM_ATTACK "mob_item_attack"
 ///from base of obj/item/afterattack(): (atom/target, mob/user, proximity_flag, click_parameters)
 #define COMSIG_MOB_ITEM_AFTERATTACK "mob_item_afterattack"
+///from base of obj/item/afterattack_secondary(): (atom/target, obj/item/weapon, proximity_flag, click_parameters)
+#define COMSIG_MOB_ITEM_AFTERATTACK_SECONDARY "mob_item_afterattack_secondary"
 ///from base of obj/item/attack_qdeleted(): (atom/target, mob/user, proxiumity_flag, click_parameters)
 #define COMSIG_MOB_ITEM_ATTACK_QDELETED "mob_item_attack_qdeleted"
 ///from base of mob/RangedAttack(): (atom/A, modifiers)
@@ -1325,7 +1389,9 @@
 #define COMSIG_HUMAN_EARLY_UNARMED_ATTACK "human_early_unarmed_attack"
 ///from mob/living/carbon/human/UnarmedAttack(): (atom/target, proximity, modifiers)
 #define COMSIG_HUMAN_MELEE_UNARMED_ATTACK "human_melee_unarmed_attack"
-
+//from /mob/living/carbon/human/proc/check_shields(): (atom/hit_by, damage, attack_text, attack_type, armour_penetration)
+#define COMSIG_HUMAN_CHECK_SHIELDS "human_check_shields"
+	#define SHIELD_BLOCK (1<<0)
 
 // Aquarium related signals
 #define COMSIG_AQUARIUM_BEFORE_INSERT_CHECK "aquarium_about_to_be_inserted"
@@ -1394,6 +1460,15 @@
 /// Called when the integrated circuit's shell is set.
 #define COMSIG_CIRCUIT_SET_SHELL "circuit_set_shell"
 
+/// Called when the integrated circuit is locked.
+#define COMSIG_CIRCUIT_SET_LOCKED "circuit_set_locked"
+
+/// Called right before the integrated circuit data is converted to json. Allows modification to the data right before it is returned.
+#define COMSIG_CIRCUIT_PRE_SAVE_TO_JSON "circuit_pre_save_to_json"
+
+/// Called when the integrated circuit is loaded.
+#define COMSIG_CIRCUIT_POST_LOAD "circuit_post_load"
+
 /// Sent to an atom when a [/obj/item/usb_cable] attempts to connect to something. (/obj/item/usb_cable/usb_cable, /mob/user)
 #define COMSIG_ATOM_USB_CABLE_TRY_ATTACH "usb_cable_try_attach"
 	/// Attaches the USB cable to the atom. If the USB cables moves away, it will disconnect.
@@ -1421,6 +1496,12 @@
 /// Called in /obj/structure/moneybot/add_money(). (to_add)
 #define COMSIG_MONEYBOT_ADD_MONEY "moneybot_add_money"
 
+/// Called in /obj/structure/dispenserbot/add_item(). (obj/item/to_add)
+#define COMSIG_DISPENSERBOT_ADD_ITEM "moneybot_add_item"
+
+/// Called in /obj/structure/dispenserbot/remove_item(). (obj/item/to_remove)
+#define COMSIG_DISPENSERBOT_REMOVE_ITEM "moneybot_remove_item"
+
 /// Called when somebody passes through a scanner gate and it triggers
 #define COMSIG_SCANGATE_PASS_TRIGGER "scangate_pass_trigger"
 
@@ -1443,6 +1524,9 @@
 #define COMSIG_ALARM_TRIGGERED "comsig_alarm_triggered"
 ///Send when an alarm source is cleared (alarm_type, area/source_area)
 #define COMSIG_ALARM_CLEARED "comsig_alarm_clear"
+// Area fire signals
+/// Sent when an area's fire var changes: (fire_value)
+#define COMSIG_AREA_FIRE_CHANGED "area_fire_set"
 // Vacuum signals
 /// Called on a bag being attached to a vacuum parent
 #define COMSIG_VACUUM_BAG_ATTACH "comsig_vacuum_bag_attach"
@@ -1465,6 +1549,9 @@
 ///Called when the ticker sets up the game for start
 #define COMSIG_TICKER_ENTER_SETTING_UP "comsig_ticker_enter_setting_up"
 
+///Called when the ticker fails to set up the game for start
+#define COMSIG_TICKER_ERROR_SETTING_UP "comsig_ticker_error_setting_up"
+
 /// Called when the round has started, but before GAME_STATE_PLAYING
 #define COMSIG_TICKER_ROUND_STARTING "comsig_ticker_round_starting"
 
@@ -1475,3 +1562,104 @@
 #define COMSIG_ADDED_POINT_OF_INTEREST "added_point_of_interest"
 /// Sent from base of /datum/controller/subsystem/points_of_interest/proc/on_poi_element_removed : (atom/old_poi)
 #define COMSIG_REMOVED_POINT_OF_INTEREST "removed_point_of_interest"
+
+/// Called on a mob attempting to use a ladder to go in either direction.  (entrance_ladder, exit_ladder, going_up)
+#define COMSIG_LADDER_TRAVEL "ladder-travel"
+	#define LADDER_TRAVEL_BLOCK (1<<0)
+
+/// Called on a mob when they start riding a vehicle (obj/vehicle)
+#define COMSIG_VEHICLE_RIDDEN "vehicle-ridden"
+	/// Return this to signal that the mob should be removed from the vehicle
+	#define EJECT_FROM_VEHICLE (1<<0)
+
+///from [/datum/move_loop/start_loop] ():
+#define COMSIG_MOVELOOP_START "moveloop_start"
+///from [/datum/move_loop/stop_loop] ():
+#define COMSIG_MOVELOOP_STOP "moveloop_stop"
+///from [/datum/move_loop/process] ():
+#define COMSIG_MOVELOOP_PREPROCESS_CHECK "moveloop_preprocess_check"
+	#define MOVELOOP_SKIP_STEP (1<<0)
+///from [/datum/move_loop/process] (succeeded, visual_delay):
+#define COMSIG_MOVELOOP_POSTPROCESS "moveloop_postprocess"
+//from [/datum/move_loop/has_target/jps/recalculate_path] ():
+#define COMSIG_MOVELOOP_JPS_REPATH "moveloop_jps_repath"
+
+// Antagonist signals
+/// Called on the mind when an antagonist is being gained, after the antagonist list has updated (datum/antagonist/antagonist)
+#define COMSIG_ANTAGONIST_GAINED "antagonist_gained"
+
+/// Called on the mind when an antagonist is being removed, after the antagonist list has updated (datum/antagonist/antagonist)
+#define COMSIG_ANTAGONIST_REMOVED "antagonist_removed"
+
+/// Heretic signals
+
+/// From /obj/item/clothing/mask/madness_mask/process : (amount)
+#define COMSIG_HERETIC_MASK_ACT "void_mask_act"
+
+/// From /obj/item/melee/touch_attack/mansus_fist/on_mob_hit : (mob/living/source, mob/living/target)
+#define COMSIG_HERETIC_MANSUS_GRASP_ATTACK "mansus_grasp_attack"
+	/// Default behavior is to use a charge, so return this to blocks the mansus fist from being consumed after use.
+	#define COMPONENT_BLOCK_CHARGE_USE (1<<0)
+/// From /obj/item/melee/touch_attack/mansus_fist/afterattack_secondary : (mob/living/source, atom/target)
+#define COMSIG_HERETIC_MANSUS_GRASP_ATTACK_SECONDARY "mansus_grasp_attack_secondary"
+	/// Default behavior is to continue attack chain and do nothing else, so return this to use up a charge after use.
+	#define COMPONENT_USE_CHARGE (1<<0)
+
+/// From /obj/item/melee/sickly_blade/afterattack (with proximity) : (mob/living/source, mob/living/target)
+#define COMSIG_HERETIC_BLADE_ATTACK "blade_attack"
+/// From /obj/item/melee/sickly_blade/afterattack (without proximity) : (mob/living/source, mob/living/target)
+#define COMSIG_HERETIC_RANGED_BLADE_ATTACK "ranged_blade_attack"
+
+// Yes, they do support this
+
+// from /client/proc/change_view() : (new_size)
+#define COMSIG_VIEW_SET "view_set"
+
+//spatial grid signals
+
+///Called from base of /datum/controller/subsystem/spatial_grid/proc/enter_cell: (/atom/movable)
+#define SPATIAL_GRID_CELL_ENTERED(contents_type) "spatial_grid_cell_entered_[contents_type]"
+///Called from base of /datum/controller/subsystem/spatial_grid/proc/exit_cell: (/atom/movable)
+#define SPATIAL_GRID_CELL_EXITED(contents_type) "spatial_grid_cell_exited_[contents_type]"
+
+/// sent after world.maxx and/or world.maxy are expanded: (has_exapnded_world_maxx, has_expanded_world_maxy)
+#define COMSIG_GLOB_EXPANDED_WORLD_BOUNDS "!expanded_world_bounds"
+
+// ~fix eye component
+///from base of datum/component/fixeye/user_toggle_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_FIXEYE_TOGGLE "fixeye_toggle"
+///from base of datum/component/fixeye/check_flags(): (mob/living/source, flags)
+#define COMSIG_FIXEYE_CHECK	"fixeye_check"
+///from base of datum/component/fixeye/safe_enable_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_FIXEYE_ENABLE "fixeye_enable"
+///from base of datum/component/fixeye/safe_disable_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_FIXEYE_DISABLE "fixeye_disable"
+///from base of datum/component/fixeye/lock_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_FIXEYE_LOCK "fixeye_lock"
+///from base of datum/component/fixeye/unlock_fixeye(): (mob/living/source)
+#define COMSIG_FIXEYE_UNLOCK "fixeye_unlock"
+///from base of datum/component/fixeye/enable_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_LIVING_FIXEYE_ENABLED "fixeye_enabled"
+///from base of datum/component/fixeye/disable_fixeye(): (mob/living/source, silent, forced)
+#define COMSIG_LIVING_FIXEYE_DISABLED "fixeye_disabled"
+
+///from base of atom/setDir(): (old_dir, new_dir). Called before the direction changes.
+#define COMPONENT_NO_DIR_CHANGE 1
+
+///from base of /item/proc/set_painting_tool_color(): (chosen_color)
+#define COMSIG_PAINTING_TOOL_SET_COLOR "painting_tool_set_color"
+
+/// When a hostile simple mob loses it's target.
+#define COMSIG_HOSTILE_MOB_LOST_TARGET "hostile_mob_lost_target"
+
+/// /mob/living/proc/updatehealth()
+#define COMSIG_MOB_RUN_ARMOR "mob_run_armor"
+
+// Power signals
+/// Sent when an obj/item calls item_use_power: (use_amount, user, check_only)
+#define COMSIG_ITEM_POWER_USE "item_use_power"
+	#define NO_COMPONENT NONE
+	#define COMPONENT_POWER_SUCCESS (1<<0)
+	#define COMPONENT_NO_CELL  (1<<1)
+	#define COMPONENT_NO_CHARGE (1<<2)
+

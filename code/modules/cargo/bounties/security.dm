@@ -7,7 +7,7 @@
 
 /datum/bounty/item/security/recharger
 	name = "Зарядные устройства"
-	description = "Военная академия НТ проводит стрелковые учения. Они требуют, чтобы зарядные устройства были отправлены."
+	description = "Военная академия NanoTrasen проводит стрелковые учения. Они требуют, чтобы зарядные устройства были отправлены."
 	reward = CARGO_CRATE_VALUE * 4
 	required_count = 3
 	wanted_types = list(/obj/machinery/recharger)
@@ -28,14 +28,14 @@
 
 /datum/bounty/item/security/plates
 	name = "Номерные знаки"
-	description = "В результате автокатастрофы с участием клоуна мы могли бы использовать аванс на некоторые из номерных знаков вашего заключенного."
+	description = "В результате автокатастрофы с участием клоуна мы могли бы использовать аванс на некоторые из номерных знаков заключенного."
 	reward = CARGO_CRATE_VALUE * 2
 	required_count = 10
 	wanted_types = list(/obj/item/stack/license_plates/filled)
 
 /datum/bounty/item/security/earmuffs
-	name = "Наушники"
-	description = "Центральное Командование устало от сообщений вашей станции. Они приказали вам отправить наушники, чтобы уменьшить раздражение."
+	name = "Защитные наушники"
+	description = "Центральное Командование устало от сообщений вашей станции. Они приказали вам отправить защитные наушники, чтобы уменьшить раздражение."
 	reward = CARGO_CRATE_VALUE * 2
 	wanted_types = list(/obj/item/clothing/ears/earmuffs)
 

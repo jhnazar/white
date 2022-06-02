@@ -23,8 +23,8 @@
 
 
 /obj/machinery/power/compressor
-	name = "compressor"
-	desc = "The compressor stage of a gas turbine generator."
+	name = "компрессор турбины"
+	desc = "Компрессорная ступень газотурбинного генератора."
 	icon = 'icons/obj/atmospherics/pipes/simple.dmi'
 	icon_state = "compressor"
 	density = TRUE
@@ -48,8 +48,8 @@
 	return ..()
 
 /obj/machinery/power/turbine
-	name = "gas turbine generator"
-	desc = "A gas turbine used for backup power generation."
+	name = "газотурбинный генератор"
+	desc = "Газовая турбина, используемая для резервного производства электроэнергии."
 	icon = 'icons/obj/atmospherics/pipes/simple.dmi'
 	icon_state = "turbine"
 	density = TRUE
@@ -89,6 +89,7 @@
 		turbine.locate_machinery()
 
 /obj/machinery/power/compressor/RefreshParts()
+	. = ..()
 	var/E = 0
 	for(var/obj/item/stock_parts/manipulator/M in component_parts)
 		E += M.rating
@@ -178,6 +179,7 @@
 	connect_to_network()
 
 /obj/machinery/power/turbine/RefreshParts()
+	. = ..()
 	var/P = 0
 	for(var/obj/item/stock_parts/capacitor/C in component_parts)
 		P += C.rating
@@ -288,8 +290,8 @@
 // COMPUTER NEEDS A SERIOUS REWRITE.
 
 /obj/machinery/computer/turbine_computer
-	name = "gas turbine control computer"
-	desc = "A computer to remotely control a gas turbine."
+	name = "Консоль управления газовой турбиной"
+	desc = "Компьютер для дистанционного управления газовой турбиной."
 	icon_screen = "turbinecomp"
 	icon_keyboard = "tech_key"
 	circuit = /obj/item/circuitboard/computer/turbine_computer
@@ -313,6 +315,7 @@
 		compressor = locate(/obj/machinery/power/compressor) in range(7, src)
 
 /obj/machinery/computer/turbine_computer/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "TurbineComputer", name)

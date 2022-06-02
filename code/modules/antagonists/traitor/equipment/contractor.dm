@@ -184,7 +184,7 @@
 	uniform = /obj/item/clothing/under/chameleon
 	suit = /obj/item/clothing/suit/chameleon
 	back = /obj/item/storage/backpack
-	belt = /obj/item/pda/chameleon
+	belt = /obj/item/modular_computer/tablet/pda/chameleon
 	mask = /obj/item/clothing/mask/cigarette/syndicate
 	shoes = /obj/item/clothing/shoes/chameleon/noslip
 	ears = /obj/item/radio/headset/chameleon
@@ -227,7 +227,7 @@
 	partner_mind = partner.mind
 	partner_mind.make_Contractor_Support()
 
-	to_chat(partner_mind.current, "\n<span class='alertwarning'>[user.real_name] is your superior. Follow any, and all orders given by them. You're here to support their mission only.</span>")
+	to_chat(partner_mind.current, span_alertwarning("\n[user.real_name] is your superior. Follow any, and all orders given by them. You're here to support their mission only."))
 	to_chat(partner_mind.current, "<span class='alertwarning'>Should they perish, or be otherwise unavailable, you're to assist other active agents in this mission area to the best of your ability.</span>\n\n")
 
 	new /obj/effect/pod_landingzone(free_location, arrival_pod)
@@ -244,7 +244,7 @@
 
 	if (.)
 		power_fail(35, 50)
-		priority_announce("Abnormal activity detected in [station_name()]'s powernet. As a precautionary measure, the station's power will be shut off for an indeterminate duration.", "Critical Power Failure", ANNOUNCER_POWEROFF)
+		priority_announce("Обнаружена проблема в энергосетях [station_name()]. В качестве меры предосторожности энергия будет отключена на неопределенный срок.", "Критический сбой питания", ANNOUNCER_POWEROFF)
 
 // Subtract cost, and spawn if it's an item.
 /datum/contractor_item/proc/handle_purchase(datum/contractor_hub/hub, mob/living/user)

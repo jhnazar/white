@@ -5,6 +5,7 @@
 	icon_state = "peoff"
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 	layer = ABOVE_ALL_MOB_LAYER
+	plane = GAME_PLANE_FOV_HIDDEN
 	density = TRUE
 	var/engine_power = 0
 	var/minimum_power = 25
@@ -50,10 +51,8 @@
 			add_overlay("peoverlay")
 			soundloop.start()
 			START_PROCESSING(SSmachines, src)
-			priority_announce("Был обнаружен импульсный двигатель в локации [get_area_name(src, TRUE)].", null, 'sound/misc/announce_dig.ogg', "Priority")
-			light_color = "#f79947"
-			light_range = 8
-			update_light()
+			priority_announce("Был обнаружен импульсный двигатель в локации [get_area_name(src, TRUE)].", null, sound('white/valtos/sounds/trevoga2.ogg'), "Priority")
+			set_light(8, 2, "#f79947")
 		to_chat(user, span_notice("Включаю двигатель."))
 
 /obj/structure/pulse_engine/attackby(obj/item/I, mob/living/user, params)
@@ -67,4 +66,4 @@
 			engine_power = max(engine_power, minimum_power)
 
 /obj/structure/pulse_engine/process(delta_time)
-	engine_power = max(engine_power - 5, minimum_power)
+	engine_power = max(engine_power - 0.2, minimum_power)

@@ -1,12 +1,9 @@
 /obj/machinery/recharge_station
-	name = "cyborg recharging station"
-	desc = "This device recharges cyborgs and resupplies them with materials."
+	name = "Станция зарядки киборгов"
+	desc = "Устройство, заряжающее киборгов и переснаряжающая их материалами."
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "borgcharger0"
 	density = FALSE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 500
-	active_power_usage = 10000
 	req_access = list(ACCESS_ROBOTICS)
 	state_open = TRUE
 	circuit = /obj/item/circuitboard/machine/cyborgrecharger
@@ -24,6 +21,7 @@
 
 
 /obj/machinery/recharge_station/RefreshParts()
+	. = ..()
 	recharge_speed = 0
 	repairs = 0
 	for(var/obj/item/stock_parts/capacitor/C in component_parts)
@@ -38,7 +36,7 @@
 	if(in_range(user, src) || isobserver(user))
 		. += "<hr><span class='notice'>Дисплей: Recharging <b>[recharge_speed]J</b> per cycle.</span>"
 		if(repairs)
-			. += "\n<span class='notice'>[capitalize(src.name)] has been upgraded to support automatic repairs.</span>"
+			. += span_notice("\n[capitalize(src.name)] has been upgraded to support automatic repairs.")
 
 
 /obj/machinery/recharge_station/on_set_is_operational(old_value)

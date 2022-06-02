@@ -66,7 +66,7 @@
 	addtimer(CALLBACK(src, .proc/limiting_spam_false), 18) // calibrates before starting the honk
 
 /mob/living/simple_animal/bot/honkbot/proc/react_buzz()
-	playsound(src, 'sound/machines/buzz-sigh.ogg', 50, TRUE, -1)
+	playsound(src, 'white/valtos/sounds/error1.ogg', 50, TRUE, -1)
 	sensor_blink()
 
 /mob/living/simple_animal/bot/honkbot/bot_reset()
@@ -74,7 +74,7 @@
 	target = null
 	oldtarget_name = null
 	anchored = FALSE
-	walk_to(src,0)
+	SSmove_manager.stop_looping(src)
 	last_found = world.time
 	limiting_spam = FALSE
 
@@ -119,7 +119,7 @@ Status: []<BR>
 		mode = BOT_HUNT
 
 /mob/living/simple_animal/bot/honkbot/attack_hand(mob/living/carbon/human/H)
-	if(H.a_intent == "harm")
+	if(H.a_intent == INTENT_HARM)
 		retaliate(H)
 		addtimer(CALLBACK(src, .proc/react_buzz), 5)
 	return ..()
@@ -237,7 +237,7 @@ Status: []<BR>
 
 		if(BOT_IDLE)		// idle
 
-			walk_to(src,0)
+			SSmove_manager.stop_looping(src)
 			look_for_perp()
 			if(!mode && auto_patrol)
 				mode = BOT_START_PATROL
@@ -246,7 +246,7 @@ Status: []<BR>
 
 			// if can't reach perp for long enough, go idle
 			if(frustration >= 5) //gives up easier than beepsky
-				walk_to(src,0)
+				SSmove_manager.stop_looping(src)
 				back_to_idle()
 				return
 
@@ -265,7 +265,7 @@ Status: []<BR>
 
 				else	// not next to perp
 					var/turf/olddist = get_dist(src, target)
-					walk_to(src, target,1,4)
+					SSmove_manager.move_to(src, target, 1, 4)
 					if((get_dist(src, target)) >= (olddist))
 						frustration++
 					else
@@ -332,8 +332,6 @@ Status: []<BR>
 				continue
 
 /mob/living/simple_animal/bot/honkbot/explode()
-
-	walk_to(src,0)
 	visible_message(span_boldannounce("[capitalize(src.name)] взрывается!"))
 	var/atom/Tsec = drop_location()
 	//doesn't drop cardboard nor its assembly, since its a very frail material.

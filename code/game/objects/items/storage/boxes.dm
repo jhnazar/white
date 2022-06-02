@@ -23,7 +23,7 @@
 
 /obj/item/storage/box
 	name = "коробка"
-	desc = "Это просто обычная коробка."
+	desc = "Просто обычная коробка."
 	icon_state = "box"
 	inhand_icon_state = "syringe_kit"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
@@ -127,6 +127,7 @@
 	var/mask_type = /obj/item/clothing/mask/breath/cheap
 	var/internal_type = /obj/item/tank/internals/emergency_oxygen
 	var/medipen_type = /obj/item/reagent_containers/hypospray/medipen
+	var/bottle_type = /obj/item/reagent_containers/food/drinks/waterbottle/large
 
 /obj/item/storage/box/survival/PopulateContents()
 	new mask_type(src)
@@ -138,6 +139,7 @@
 	else
 		new /obj/item/tank/internals/plasmaman/belt(src)
 	new /obj/item/emergency_shield(src)
+	new bottle_type(src)
 
 /obj/item/storage/box/survival/radio/PopulateContents()
 	..() // we want the survival stuff too.
@@ -214,8 +216,8 @@
 	new /obj/item/reagent_containers/syringe/bluespace(src)
 
 /obj/item/storage/box/medipens
-	name = "коробка МедиПенов"
-	desc = "Коробка, полная адреналином МедиПенов."
+	name = "коробка медипенов"
+	desc = "Коробка, полная адреналином медипенов."
 	illustration = "epipen"
 
 /obj/item/storage/box/medipens/PopulateContents()
@@ -224,7 +226,7 @@
 
 /obj/item/storage/box/medipens/utility
 	name = "набор стимуляторов"
-	desc = "Коробка с несколькими стимуляторами для экономичного майнера."
+	desc = "Коробка с несколькими стимуляторами для экономичного шахтёра."
 	illustration = "epipen"
 
 /obj/item/storage/box/medipens/utility/PopulateContents()
@@ -281,7 +283,7 @@
 
 /obj/item/storage/box/flashbangs
 	name = "коробка светошумовых гранат (ВНИМАНИЕ)"
-	desc = "<B>ВНИМАНИЕ: эти устройства чрезвычайно опасны и могут вызвать слепоту или глухоту при повторном использовании.</B>"
+	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут вызвать слепоту или глухоту при многократном использовании.</B>"
 	icon_state = "secbox"
 	illustration = "flashbang"
 
@@ -291,7 +293,7 @@
 
 /obj/item/storage/box/stingbangs
 	name = "коробка стингбэнгов (ВНИМАНИЕ)"
-	desc = "<B>ВНИМАНИЕ: эти устройства чрезвычайно опасны и могут вызвать слепоту или глухоту при повторном использовании.</B>"
+	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут привести к тяжелым травмам или смерти при повторном использовании.</B>"
 	icon_state = "secbox"
 	illustration = "flashbang"
 
@@ -301,7 +303,7 @@
 
 /obj/item/storage/box/flashes
 	name = "коробка вспышек"
-	desc = "<B>Внимание: Вспышки могут нанести серьёзный урон глазам, требуются защитные очки</B>"
+	desc = "<B>ВНИМАНИЕ: Вспышки могут вызвать серьезные повреждения глаз, необходимо использовать защитные очки.</B>"
 	icon_state = "secbox"
 	illustration = "flash"
 
@@ -311,7 +313,7 @@
 
 /obj/item/storage/box/wall_flash
 	name = "комплект настенной вспышки"
-	desc = "В этой коробке находится все необходимое для настенной вспышки. <B> ВНИМАНИЕ: вспышки могут серьезно повредить глаза, требуются защитные очки.</B>"
+	desc = "Эта коробка содержит все необходимое для создания настенной вспышки. <B> ВНИМАНИЕ: Вспышки могут вызвать серьезные повреждения глаз, необходимо использовать защитные очки.</B>"
 	icon_state = "secbox"
 	illustration = "flash"
 
@@ -331,7 +333,7 @@
 
 /obj/item/storage/box/teargas
 	name = "ящик со слезоточивым газом (ВНИМАНИЕ)"
-	desc = "<B>ВНИМАНИЕ: Эти устройства чрезвычайно опасны и могут вызвать слепоту и раздражение кожи.</B>"
+	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут вызвать слепоту и раздражение кожи.</B>"
 	icon_state = "secbox"
 	illustration = "grenade"
 
@@ -340,8 +342,8 @@
 		new /obj/item/grenade/chem_grenade/teargas(src)
 
 /obj/item/storage/box/emps
-	name = "ящик с ЕМП гранатами"
-	desc = "Ящик с 5 ЕМП гранатами."
+	name = "коробка с ЭМИ гранатами"
+	desc = "Простая коробка с 5 ЭМИ гранатами."
 	illustration = "emp"
 
 /obj/item/storage/box/emps/PopulateContents()
@@ -350,7 +352,7 @@
 
 /obj/item/storage/box/trackimp
 	name = "комплект отслеживающих имплантов"
-	desc = "Коробка с приспособлениями для отслеживания отморозков."
+	desc = "Коробка с приспособлениями для отслеживания подонков."
 	icon_state = "secbox"
 	illustration = "implant"
 
@@ -448,7 +450,7 @@
 	name = "коробка донк-покетов"
 	desc = "<B>Инструкция:</B><I>Нагрейте в микроволновой печи. Продукт остынет, если его не съесть в течение семи минут.</I>"
 	icon_state = "donkpocketbox"
-	illustration=null
+	illustration = null
 	var/donktype = /obj/item/food/donkpocket
 
 /obj/item/storage/box/donkpockets/PopulateContents()
@@ -544,15 +546,7 @@
 
 /obj/item/storage/box/pdas/PopulateContents()
 	for(var/i in 1 to 4)
-		new /obj/item/pda(src)
-	new /obj/item/cartridge/head(src)
-
-	var/newcart = pick(	/obj/item/cartridge/engineering,
-						/obj/item/cartridge/security,
-						/obj/item/cartridge/medical,
-						/obj/item/cartridge/signal/toxins,
-						/obj/item/cartridge/quartermaster)
-	new newcart(src)
+		new /obj/item/modular_computer/tablet/pda(src)
 
 /obj/item/storage/box/silver_ids
 	name = "коробка запасных серебряных удостоверений"
@@ -565,7 +559,7 @@
 
 /obj/item/storage/box/prisoner
 	name = "коробка с идентификаторами для заключенных"
-	desc = "Уберите их последнее достоинство, их имя."
+	desc = "Лишите их последнего клочка достоинства - их имени."
 	icon_state = "secbox"
 	illustration = "id"
 
@@ -586,9 +580,8 @@
 	illustration = "pda"
 
 /obj/item/storage/box/seccarts/PopulateContents()
-	new /obj/item/cartridge/detective(src)
 	for(var/i in 1 to 6)
-		new /obj/item/cartridge/security(src)
+		new /obj/item/computer_hardware/hard_drive/portable/security(src)
 
 /obj/item/storage/box/firingpins
 	name = "ящик штатных бойков"
@@ -679,7 +672,7 @@
 
 /obj/item/storage/box/snappops
 	name = "коробка бахающих фантиков"
-	desc = "Восемь фантиков веселья! Возраст от 8 лет и старше. Не подходит для детей."
+	desc = "Восемь фантиков веселья! От 8 лет и старше. Не подходит для детей."
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "spbox"
 
@@ -694,7 +687,7 @@
 
 /obj/item/storage/box/matches
 	name = "спичечный коробок"
-	desc = "Маленькая коробочка почти, но не совсем плазменных премиальных спичек."
+	desc = "Маленькая коробочка Почти, Но Не Совсем Плазменных Премиальных Спичек."
 	icon = 'icons/obj/cigarettes.dmi'
 	icon_state = "matchbox"
 	inhand_icon_state = "zippo"
@@ -704,6 +697,7 @@
 	drop_sound = 'sound/items/handling/matchbox_drop.ogg'
 	pickup_sound =  'sound/items/handling/matchbox_pickup.ogg'
 	custom_price = PAYCHECK_ASSISTANT * 0.4
+	illustration = null
 
 /obj/item/storage/box/matches/ComponentInitialize()
 	. = ..()
@@ -843,8 +837,8 @@
 		new /obj/item/tank/internals/plasmaman/belt(src)
 
 /obj/item/storage/box/rubbershot
-	name = "коробка резиновых дробей"
-	desc = "Коробка с резиновыми дробями, предназначенная для дробовиков."
+	name = "коробка с резиновой дробью"
+	desc = "Коробка с резиновой дробью 12 калибра, предназначенная для дробовиков."
 	icon_state = "rubbershot_box"
 	illustration = null
 
@@ -853,8 +847,8 @@
 		new /obj/item/ammo_casing/shotgun/rubbershot(src)
 
 /obj/item/storage/box/lethalshot
-	name = "коробка смертельных дробей из дробовика"
-	desc = "Коробка со смертоносными дробями, предназначенная для дробовиков."
+	name = "коробка с дробью"
+	desc = "Коробка с патронами 12 калибра с дробью."
 	icon_state = "lethalshot_box"
 	illustration = null
 
@@ -863,8 +857,8 @@
 		new /obj/item/ammo_casing/shotgun/buckshot(src)
 
 /obj/item/storage/box/beanbag
-	name = "коробка резиновых дробей"
-	desc = "Коробка с резиновыми дробями."
+	name = "коробка с резиновыми пулями"
+	desc = "Коробка с травматическими пулями 12 калибра, предназначенная для дробовиков."
 	icon_state = "rubbershot_box"
 	illustration = null
 
@@ -895,7 +889,7 @@
 
 /obj/item/storage/box/papersack/Initialize(mapload)
 	. = ..()
-	papersack_designs = sortList(list(
+	papersack_designs = sort_list(list(
 		"None" = image(icon = src.icon, icon_state = "paperbag_None"),
 		"NanotrasenStandard" = image(icon = src.icon, icon_state = "paperbag_NanotrasenStandard"),
 		"SyndiSnacks" = image(icon = src.icon, icon_state = "paperbag_SyndiSnacks"),
@@ -920,7 +914,7 @@
 			if("None")
 				desc = "Мешок, аккуратно сделанный из бумаги."
 			if("NanotrasenStandard")
-				desc = "Стандартный бумажный обеденный мешок Нанотрейзен для лояльных сотрудников в дороге."
+				desc = "Стандартный бумажный обеденный мешок NanoTrasen для лояльных сотрудников в дороге."
 			if("SyndiSnacks")
 				desc = "Дизайн этого бумажного пакета - пережиток печально известной программы СиндиЗакуски.."
 			if("Heart")
@@ -1098,7 +1092,7 @@
 /obj/item/storage/box/debugtools/PopulateContents()
 	var/static/items_inside = list(
 		/obj/item/flashlight/emp/debug=1,\
-		/obj/item/pda=1,\
+		/obj/item/modular_computer/tablet/pda=1,\
 		/obj/item/modular_computer/tablet/preset/advanced=1,\
 		/obj/item/geiger_counter=1,\
 		/obj/item/construction/rcd/combat/admin=1,\
@@ -1117,7 +1111,7 @@
 
 /obj/item/storage/box/plastic
 	name = "пластиковая коробка"
-	desc = "Это прочный пластиковый корпус."
+	desc = "Прочная пластиковая коробка."
 	icon_state = "plasticbox"
 	foldable = null
 	illustration = "writing"
@@ -1186,7 +1180,7 @@
 
 /obj/item/storage/box/gum/nicotine
 	name = "упаковка никотиновой жевательной резинки"
-	desc = "Разработан, чтобы помочь избавиться от никотиновой зависимости и оральной фиксации одновременно, не разрушая при этом ваши легкие. Со вкусом мяты!"
+	desc = "Разработан, чтобы помочь избавиться от никотиновой зависимости и оральной фиксации одновременно, не разрушая при этом легкие. Со вкусом мяты!"
 	icon_state = "bubblegum_nicotine"
 	custom_premium_price = PAYCHECK_EASY * 1.5
 
@@ -1204,7 +1198,7 @@
 /obj/item/storage/box/gum/happiness/Initialize()
 	. = ..()
 	if (prob(25))
-		desc += "Вы можете смутно разобрать слово «Гемопагоприл», которое когда-то было нацарапано на нем."
+		desc += "Можно смутно разобрать слово «Гемопагоприл», которое когда-то было нацарапано на нем."
 
 /obj/item/storage/box/gum/happiness/PopulateContents()
 	for(var/i in 1 to 4)
@@ -1212,7 +1206,7 @@
 
 /obj/item/storage/box/gum/bubblegum
 	name = "упаковка жевательной резинки"
-	desc = "Упаковка, по всей видимости, полностью демоническая. Вы чувствуете, что даже открыть это было бы грехом."
+	desc = "Упаковка, по всей видимости, полностью демоническая. Чувствую, что даже открыть это было бы грехом."
 	icon_state = "bubblegum_bubblegum"
 
 /obj/item/storage/box/gum/bubblegum/PopulateContents()

@@ -6,7 +6,7 @@
 	extended_desc = "Nanotrasen Internal Requisition Network interface for supply purchasing using a department budget account."
 	requires_ntnet = TRUE
 	usage_flags = PROGRAM_LAPTOP | PROGRAM_TABLET
-	size = 20
+	size = 10
 	tgui_id = "NtosCargo"
 	///Are you actually placing orders with it?
 	var/requestonly = TRUE
@@ -17,9 +17,9 @@
 	///Can this console approve purchase requests?
 	var/can_approve_requests = FALSE
 	///What do we say when the shuttle moves with living beings on it.
-	var/safety_warning = "For safety and ethical reasons, the automated supply shuttle \
-		cannot transport live organisms, human remains, classified nuclear weaponry, mail, \
-		homing beacons, unstable eigenstates or machinery housing any form of artificial intelligence."
+	var/safety_warning = "По соображениям безопасности, шаттл снабжения не может перевозить живые организмы, \
+						человеческие останки, классифицированное ядерное вооружение, почту, недоставленные ящики с почтой, маячки с самонаведением, \
+						нестабильные собственные состояния, или машины, содержащие любую форму искусственного интеллекта."
 	///If you're being raided by pirates, what do you tell the crew?
 	var/blockade_warning = "Bluespace instability detected. Shuttle movement impossible."
 	///The name of the shuttle template being used as the cargo shuttle. 'supply' is default and contains critical code. Don't change this unless you know what you're doing.
@@ -226,7 +226,7 @@
 					return
 
 			if(pack.goody && !self_paid)
-				playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+				playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 				computer.say("ERROR: Small crates may only be purchased by private accounts.")
 				return
 

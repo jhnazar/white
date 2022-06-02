@@ -74,21 +74,21 @@
 
 /obj/item/electronic_assembly/Bump(atom/AM)
 	collw = AM
-	.=..()
+	. = ..()
 	if((istype(collw, /obj/machinery/door/airlock) ||  istype(collw, /obj/machinery/door/window)) && (!isnull(access_card)))
 		var/obj/machinery/door/D = collw
 		if(D.check_access(access_card))
 			D.open()
 
 /obj/item/electronic_assembly/Initialize()
-	.=..()
+	. = ..()
 	START_PROCESSING(SScircuit, src)
 	set_custom_materials(list(GET_MATERIAL_REF(/datum/material/iron) = round((max_complexity + max_components) / 4) * SScircuit.cost_multiplier))
 
 	//sets up diagnostic hud view
 	prepare_huds()
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.add_to_hud(src)
+		diag_hud.add_atom_to_hud(src)
 	diag_hud_set_circuithealth()
 	diag_hud_set_circuitcell()
 	diag_hud_set_circuitstat()
@@ -99,7 +99,7 @@
 /obj/item/electronic_assembly/Destroy()
 	STOP_PROCESSING(SScircuit, src)
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.remove_from_hud(src)
+		diag_hud.remove_atom_from_hud(src)
 	QDEL_NULL(access_card)
 	return ..()
 

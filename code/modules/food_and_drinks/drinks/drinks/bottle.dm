@@ -23,10 +23,6 @@
 	///Directly relates to the 'knockdown' duration. Lowered by armor (i.e. helmets)
 	var/bottle_knockdown_duration = 1.3 SECONDS
 
-/obj/item/reagent_containers/food/drinks/bottle/update_overlays()
-	. = ..()
-	. += "[initial(icon_state)]shine"
-
 /obj/item/reagent_containers/food/drinks/bottle/small
 	name = "small glass bottle"
 	desc = "This blank bottle is unyieldingly anonymous, offering no clues to its contents."
@@ -152,6 +148,7 @@
 
 /obj/item/broken_bottle/Initialize()
 	. = ..()
+	AddComponent(/datum/component/caltrop, min_damage = force)
 	AddComponent(/datum/component/butchering, 200, 55)
 
 /obj/item/reagent_containers/food/drinks/bottle/gin

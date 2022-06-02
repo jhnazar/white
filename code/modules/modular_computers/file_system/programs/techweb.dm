@@ -4,7 +4,7 @@
 	program_icon_state = "research"
 	extended_desc = "Connect to the internal science server in order to assist in station research efforts."
 	requires_ntnet = TRUE
-	size = 16
+	size = 10
 	tgui_id = "NtosTechweb"
 	program_icon = "atom"
 	required_access = ACCESS_HEADS
@@ -81,7 +81,7 @@
 	var/obj/item/computer_hardware/card_slot/card_slot
 	if(computer)
 		card_slot = computer.all_components[MC_CARD]
-	var/obj/item/card/id/user_id_card = card_slot.stored_card
+	var/obj/item/card/id/user_id_card = card_slot?.stored_card
 
 	// Check if the console is locked to block any actions occuring
 	if (locked && action != "toggleLock")

@@ -15,7 +15,7 @@
 	ranged_cooldown_time = 120
 	friendly_verb_continuous = "wails at"
 	friendly_verb_simple = "wail at"
-	speak_emote = list("bellows")
+	speak_emote = list("выдувает")
 	speed = 3
 	maxHealth = 300
 	health = 300
@@ -179,6 +179,7 @@
 	icon = 'icons/mob/lavaland/lavaland_monsters.dmi'
 	icon_state = "Goliath_tentacle_spawn"
 	layer = BELOW_MOB_LAYER
+	plane = GAME_PLANE
 	var/mob/living/spawner
 
 /obj/effect/temp_visual/goliath_tentacle/Initialize(mapload, mob/living/new_spawner)
@@ -190,7 +191,7 @@
 		spawner = new_spawner
 	if(ismineralturf(loc))
 		var/turf/closed/mineral/M = loc
-		M.gets_drilled()
+		M.attempt_drill()
 	deltimer(timerid)
 	timerid = addtimer(CALLBACK(src, .proc/tripanim), 7, TIMER_STOPPABLE)
 

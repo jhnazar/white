@@ -36,7 +36,8 @@
 //Engineering
 
 /obj/item/circuitboard/machine/announcement_system
-	name = "Announcement System (Оборудование)"
+	name = "Автоматизированная Система Оповещений"
+	desc = "Автоматизированная Система Оповещений делает важные оповещения в радиоканалах, пока ты не трогаешь её своими грязными руками."
 	icon_state = "engineering"
 	build_path = /obj/machinery/announcement_system
 	req_components = list(
@@ -44,7 +45,8 @@
 		/obj/item/stack/sheet/glass = 1)
 
 /obj/item/circuitboard/machine/autolathe
-	name = "Autolathe (Оборудование)"
+	name = "автолат"
+	desc = "Производит изделия из металла и стекла."
 	icon_state = "engineering"
 	build_path = /obj/machinery/autolathe
 	req_components = list(
@@ -53,7 +55,8 @@
 		/obj/item/stack/sheet/glass = 1)
 
 /obj/item/circuitboard/machine/grounding_rod
-	name = "Grounding Rod (Оборудование)"
+	name = "Заземлитель"
+	desc = "Защищает окружающее оборудование и людей от поджаривания Проклятием Эдисона."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/grounding_rod
 	req_components = list(/obj/item/stock_parts/capacitor = 1)
@@ -61,7 +64,8 @@
 
 
 /obj/item/circuitboard/machine/telecomms/broadcaster
-	name = "Subspace Broadcaster (Оборудование)"
+	name = "Подпространственный вещатель"
+	desc = "Машина в форме тарелки, используемая для передачи обработанных подпространственных сигналов."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/broadcaster
 	req_components = list(
@@ -72,7 +76,8 @@
 		/obj/item/stock_parts/micro_laser = 2)
 
 /obj/item/circuitboard/machine/telecomms/bus
-	name = "Bus Mainframe (Оборудование)"
+	name = "Мэйнфрейм шины"
+	desc = "Мощное аппаратное обеспечение, используемое для быстрой передачи огромных объемов данных и связывание машин в общую сеть."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/bus
 	req_components = list(
@@ -81,7 +86,8 @@
 		/obj/item/stock_parts/subspace/filter = 1)
 
 /obj/item/circuitboard/machine/telecomms/hub
-	name = "Hub Mainframe (Оборудование)"
+	name = "Телекоммуникационный узел"
+	desc = "Мощное аппаратное обеспечение, используемое для отправки / приема огромных объемов данных."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/hub
 	req_components = list(
@@ -90,7 +96,8 @@
 		/obj/item/stock_parts/subspace/filter = 2)
 
 /obj/item/circuitboard/machine/telecomms/message_server
-	name = "Messaging Server (Оборудование)"
+	name = "Сервер месенджера"
+	desc = "Машина, которая обрабатывает и маршрутизирует сообщения КПК и запрашивает консольные сообщения."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/message_server
 	req_components = list(
@@ -99,7 +106,8 @@
 		/obj/item/stock_parts/subspace/filter = 3)
 
 /obj/item/circuitboard/machine/telecomms/processor
-	name = "Processor Unit (Оборудование)"
+	name = "Процессорный блок"
+	desc = "Эта машина используется для обработки больших объемов информации."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/processor
 	req_components = list(
@@ -111,7 +119,8 @@
 		/obj/item/stock_parts/subspace/amplifier = 1)
 
 /obj/item/circuitboard/machine/telecomms/receiver
-	name = "Subspace Receiver (Оборудование)"
+	name = "Подпространственный приемник"
+	desc = "Эта машина имеет форму тарелкообразной приемной антенны и зеленые огоньки. Предназначена для приема и обработки подпространственного радиосигнала."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/receiver
 	req_components = list(
@@ -121,7 +130,8 @@
 		/obj/item/stock_parts/micro_laser = 1)
 
 /obj/item/circuitboard/machine/telecomms/relay
-	name = "Relay Mainframe (Оборудование)"
+	name = "Телекоммуникационный ретранслятор"
+	desc = "Мощное аппаратное обеспечение, используемое для передачи огромных объемов данных на огромное расстояние."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/relay
 	req_components = list(
@@ -130,7 +140,8 @@
 		/obj/item/stock_parts/subspace/filter = 2)
 
 /obj/item/circuitboard/machine/telecomms/server
-	name = "Telecommunication Server (Оборудование)"
+	name = "Телекоммуникационный сервер"
+	desc = "Машина, используемая для хранения данных и сетевой статистики."
 	icon_state = "engineering"
 	build_path = /obj/machinery/telecomms/server
 	req_components = list(
@@ -139,28 +150,31 @@
 		/obj/item/stock_parts/subspace/filter = 1)
 
 /obj/item/circuitboard/machine/tesla_coil
-	name = "Tesla Controller (Оборудование)"
+	name = "Катушка Теслы"
+	desc = "Преобразует удары шаровой молнии в энергию. Используйте отвертку для переключения между режимами производства электроэнергии и очков исследования."
 	icon_state = "engineering"
-	desc = "You can use a screwdriver to switch between Research and Power Generation."
 	build_path = /obj/machinery/power/tesla_coil
 	req_components = list(/obj/item/stock_parts/capacitor = 1)
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/cell_charger
-	name = "Cell Charger (Оборудование)"
+	name = "зарядник батарей"
+	desc = "Заряжает аккумуляторные батареи, не подходит для вооружения."
 	icon_state = "engineering"
 	build_path = /obj/machinery/cell_charger
 	req_components = list(/obj/item/stock_parts/capacitor = 1)
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/circulator
-	name = "Circulator/Heat Exchanger (Оборудование)"
+	name = "турбина ТЭГа"
+	desc = "Газовый циркулятор с теплообменником."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/binary/circulator
 	req_components = list()
 
 /obj/item/circuitboard/machine/emitter
-	name = "Emitter (Оборудование)"
+	name = "излучатель"
+	desc = "Мощный промышленный лазер, часто используемый в области силовых полей и производства электроэнергии."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/emitter
 	req_components = list(
@@ -169,13 +183,15 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/generator
-	name = "Thermo-Electric Generator (Оборудование)"
+	name = "термоэлектрический генератор (ТЭГ)"
+	desc = "Высокоэффективный газовый термоэлектрический генератор."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/generator
 	req_components = list()
 
 /obj/item/circuitboard/machine/ntnet_relay
-	name = "NTNet Relay (Оборудование)"
+	name = "Квантовое реле NTNet"
+	desc = "Очень сложный маршрутизатор и передатчик, способный соединять вместе беспроводные электронные устройства. Выглядит хрупким."
 	icon_state = "engineering"
 	build_path = /obj/machinery/ntnet_relay
 	req_components = list(
@@ -183,7 +199,8 @@
 		/obj/item/stock_parts/subspace/filter = 1)
 
 /obj/item/circuitboard/machine/pacman
-	name = "PACMAN-type Generator (Оборудование)"
+	name = "П.А.К.М.А.Н. - портативный генератор"
+	desc = "Портативный генератор для аварийного резервного питания. Работает на плазме."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/port_gen/pacman
 	req_components = list(
@@ -194,16 +211,19 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/pacman/super
-	name = "SUPERPACMAN-type Generator (Оборудование)"
+	name = "С.У.П.Е.Р.П.А.К.М.А.Н. - портативный генератор"
+	desc = "Портативный генератор для аварийного резервного питания. Работает на уране."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/port_gen/pacman/super
 
 /obj/item/circuitboard/machine/pacman/mrs
-	name = "MRSPACMAN-type Generator (Оборудование)"
+	name = "М.И.С.И.С.П.А.К.М.А.Н. - портативный генератор"
+	desc = "Портативный генератор для аварийного резервного питания. Работает на алмазах."
 	build_path = /obj/machinery/power/port_gen/pacman/mrs
 
 /obj/item/circuitboard/machine/power_compressor
-	name = "Power Compressor (Оборудование)"
+	name = "компрессор турбины"
+	desc = "Компрессорная ступень газотурбинного генератора."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/compressor
 	req_components = list(
@@ -211,7 +231,8 @@
 		/obj/item/stock_parts/manipulator = 6)
 
 /obj/item/circuitboard/machine/power_turbine
-	name = "Power Turbine (Оборудование)"
+	name = "газотурбинный генератор"
+	desc = "Газовая турбина, используемая для резервного производства электроэнергии."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/turbine
 	req_components = list(
@@ -224,7 +245,8 @@
 	build_path = /obj/machinery/rnd/production/protolathe/department/engineering
 
 /obj/item/circuitboard/machine/rad_collector
-	name = "Radiation Collector (Оборудование)"
+	name = "радиационный коллекторный массив"
+	desc = "Устройство, которое использует излучение Хокинга и плазму для производства энергии."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/rad_collector
 	req_components = list(
@@ -255,14 +277,16 @@
 		/obj/item/stack/sheet/mineral/plasma = 5)
 
 /obj/item/circuitboard/machine/scanner_gate
-	name = "Scanner Gate (Оборудование)"
+	name = "сканирующая арка"
+	desc = "Устройство сканирующее проходящих сквозь него пользователей и подающее звуковой сигнал при заданных параметрах."
 	icon_state = "engineering"
 	build_path = /obj/machinery/scanner_gate
 	req_components = list(
 		/obj/item/stock_parts/scanning_module = 3)
 
 /obj/item/circuitboard/machine/smes
-	name = "SMES (Оборудование)"
+	name = "Сверхмощный аккумуляторный каскад (СМЕС)"
+	desc = "Огромная батарея аккумуляторов, предназначеная для длительного хранения энергии, получаемой от источника питания и ее дальнейшего распределения по электрической сети."
 	icon_state = "engineering"
 	build_path = /obj/machinery/power/smes
 	req_components = list(
@@ -298,28 +322,32 @@
 	. += "<hr><span class='notice'>It is set to layer [pipe_layer].</span>"
 
 /obj/item/circuitboard/machine/HFR_fuel_input
-	name = "HFR Fuel Input (Оборудование)"
+	name = "Термоядерный реактор - Топливный порт"
+	desc = "Входной порт термоядерного реактора, принимает исключительно водород и тритий в газообразной форме."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/unary/hypertorus/fuel_input
 	req_components = list(
 		/obj/item/stack/sheet/plasteel = 5)
 
 /obj/item/circuitboard/machine/HFR_waste_output
-	name = "HFR Waste Output (Оборудование)"
+	name = "Термоядерный реактор - Порт вывода"
+	desc = "Выпускной порт термоядерного реактора, предназначенный для вывода горячих отработанных газов, сбрасываемых из активной зоны машины."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/unary/hypertorus/waste_output
 	req_components = list(
 		/obj/item/stack/sheet/plasteel = 5)
 
 /obj/item/circuitboard/machine/HFR_moderator_input
-	name = "HFR Moderator Input (Оборудование)"
+	name = "Термоядерный реактор - Порт регулятора"
+	desc = "Порт регулятора термоядерного реактора, предназначенный для охлаждения и управления протекания реакции."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/unary/hypertorus/moderator_input
 	req_components = list(
 		/obj/item/stack/sheet/plasteel = 5)
 
 /obj/item/circuitboard/machine/HFR_core
-	name = "HFR core (Оборудование)"
+	name = "Термоядерный реактор - Ядро"
+	desc = "Ядро термоядерного реактора, передовая технология для точной настройки протекания реакции внутри машины. Он имеет ввод-вывод для охлаждения газов."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/unary/hypertorus/core
 	req_components = list(
@@ -328,14 +356,16 @@
 		/obj/item/stack/sheet/plasteel = 10)
 
 /obj/item/circuitboard/machine/HFR_corner
-	name = "HFR Corner (Оборудование)"
+	name = "Термоядерный реактор - Корпус"
+	desc = "Конструктивная часть машины."
 	icon_state = "engineering"
 	build_path = /obj/machinery/hypertorus/corner
 	req_components = list(
 		/obj/item/stack/sheet/plasteel = 5)
 
 /obj/item/circuitboard/machine/HFR_interface
-	name = "HFR Interface (Оборудование)"
+	name = "Термоядерный реактор - Интерфейс"
+	desc = "Интерфейс термоядерного реактора для управления протекания реакции."
 	icon_state = "engineering"
 	build_path = /obj/machinery/hypertorus/interface
 	req_components = list(
@@ -344,7 +374,8 @@
 		/obj/item/stack/sheet/plasteel = 5)
 
 /obj/item/circuitboard/machine/crystallizer
-	name = "Crystallizer (Machine Board)"
+	name = "кристаллизатор"
+	desc = "Используется для кристаллизации или солидификации газов."
 	icon_state = "engineering"
 	build_path = /obj/machinery/atmospherics/components/binary/crystallizer
 	req_components = list(
@@ -355,7 +386,8 @@
 //Generic
 
 /obj/item/circuitboard/machine/circuit_imprinter
-	name = "Circuit Imprinter (Оборудование)"
+	name = "Схемопринтер"
+	desc = "Производит печатные платы для создания оборудования."
 	icon_state = "generic"
 	build_path = /obj/machinery/rnd/production/circuit_imprinter
 	req_components = list(
@@ -364,12 +396,14 @@
 		/obj/item/reagent_containers/glass/beaker = 2)
 
 /obj/item/circuitboard/machine/circuit_imprinter/department
-	name = "Departmental Circuit Imprinter (Оборудование)"
+	name = "схемопринтер отдела"
+	desc = "Производит печатные платы для создания оборудования."
 	icon_state = "generic"
 	build_path = /obj/machinery/rnd/production/circuit_imprinter/department
 
 /obj/item/circuitboard/machine/holopad
-	name = "AI Holopad (Оборудование)"
+	name = "голопад ИИ"
+	desc = "Напольное устройство для проецирования голографических изображений."
 	icon_state = "generic"
 	build_path = /obj/machinery/holopad
 	req_components = list(/obj/item/stock_parts/capacitor = 1)
@@ -394,7 +428,8 @@
 		. += "\nThere is a red light flashing next to the word \"secure\""
 
 /obj/item/circuitboard/machine/launchpad
-	name = "Bluespace Launchpad (Оборудование)"
+	name = "Локальный блюспейс телепад"
+	desc = "Блюспейс телепад, способный перемещать материю сквозь блюспейс. Не требует фактических координат, работает на смещении координат относительно консоли. Дальность работы зависит от деталей."
 	icon_state = "generic"
 	build_path = /obj/machinery/launchpad
 	req_components = list(
@@ -410,7 +445,8 @@
 	req_components = list()
 
 /obj/item/circuitboard/machine/protolathe
-	name = "Protolathe (Оборудование)"
+	name = "Протолат"
+	desc = "Превращает сырье в полезные предметы."
 	icon_state = "generic"
 	build_path = /obj/machinery/rnd/production/protolathe
 	req_components = list(
@@ -433,7 +469,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/smartfridge
-	name = "Smartfridge (Оборудование)"
+	name = "умный холодильник"
+	desc = "Сохраняет холодные вещи холодными, а горячие... тоже холодными."
 	build_path = /obj/machinery/smartfridge
 	req_components = list(/obj/item/stock_parts/matter_bin = 1)
 	var/static/list/fridges_name_paths = list(/obj/machinery/smartfridge = "plant produce",
@@ -471,7 +508,8 @@
 
 
 /obj/item/circuitboard/machine/space_heater
-	name = "Space Heater (Оборудование)"
+	name = "обогреватель"
+	desc = "Обогреватель/охладитель, сделанный космическими амишами с использованием традиционных космических технологий, гарантированно не подожжет станцию. Гарантия аннулируется при использовании в двигателях."
 	icon_state = "generic"
 	build_path = /obj/machinery/space_heater
 	req_components = list(
@@ -481,7 +519,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/electrolyzer
-	name = "Electrolyzer (Оборудование)"
+	name = "электролизер"
+	desc = "Благодаря быстрому и динамическому реагированию наших электролизеров производство водорода на месте гарантировано. Гарантия недействительна при использовании клоунами."
 	icon_state = "generic"
 	build_path = /obj/machinery/electrolyzer
 	req_components = list(
@@ -507,8 +546,8 @@
 	build_path = /obj/machinery/rnd/production/techfab/department
 
 /obj/item/circuitboard/machine/vendor
-	name = "Custom Vendor (Оборудование)"
-	desc = "You can turn the \"brand selection\" dial using a screwdriver."
+	name = "частный торговый автомат"
+	desc = "Комерция в действии! Вид торгового автомата можно изменить при помощи отвертки."
 	custom_premium_price = PAYCHECK_ASSISTANT * 1.5
 	build_path = /obj/machinery/vending/custom
 	req_components = list(/obj/item/vending_refill/custom = 1)
@@ -564,7 +603,7 @@
 			display_vending_names_paths = list()
 			for(var/path in vending_names_paths)
 				display_vending_names_paths[vending_names_paths[path]] = path
-		var/choice =  input(user,"Choose a new brand","Select an Item") as null|anything in sortList(display_vending_names_paths)
+		var/choice =  input(user,"Choose a new brand","Select an Item") as null|anything in sort_list(display_vending_names_paths)
 		set_type(display_vending_names_paths[choice])
 	else
 		return ..()
@@ -582,7 +621,8 @@
 	return ..()
 
 /obj/item/circuitboard/machine/vending/donksofttoyvendor
-	name = "Donksoft Toy Vendor (Оборудование)"
+	name = "торговый автомат игрушек DonkSoft"
+	desc = "Утвержденный поставщик игрушек в возрасте от 8 лет и старше."
 	build_path = /obj/machinery/vending/donksofttoyvendor
 	req_components = list(
 		/obj/item/stack/sheet/glass = 1,
@@ -596,7 +636,8 @@
 		/obj/item/vending_refill/donksoft = 1)
 
 /obj/item/circuitboard/machine/bountypad
-	name = "Civilian Bounty Pad (Оборудование)"
+	name = "гражданская платформа отправки"
+	desc = "Используется для отправки груза на ЦК."
 	icon_state = "generic"
 	build_path = /obj/machinery/piratepad/civilian
 	req_components = list(
@@ -606,7 +647,8 @@
 	)
 
 /obj/item/circuitboard/machine/accounting
-	name = "Account Registration Device (Оборудование)"
+	name = "Регистратор учетных записей"
+	desc = "Машина, которая позволяет ХоПу подключать банковский счет к новым ID-картам."
 	icon_state = "command"
 	build_path = /obj/machinery/accounting
 	req_components = list(
@@ -796,10 +838,12 @@
 
 /obj/item/circuitboard/machine/medipen_refiller
 	name = "Плата Наполнителя медипенов"
-	desc = "Машина перезаряжающая медипены химикатами."
+	desc = "Машина, производящая пустые медипены, а так же перезаряжающая их химикатами. Внимание! Перезарядка осуществляется только для медипенов одобренных медицинской ассоциацией Нанотрейзен. Химический состав наполнителя должен строго соответствовать маркировке, в противном случае операция будет прервана."
 	icon_state = "medical"
 	build_path = /obj/machinery/medipen_refiller
 	req_components = list(
+		/obj/item/stock_parts/micro_laser = 1,
+		/obj/item/stock_parts/manipulator = 1,
 		/obj/item/stock_parts/matter_bin = 1)
 
 /obj/item/circuitboard/machine/techfab/department/medical
@@ -810,12 +854,14 @@
 //Science
 
 /obj/item/circuitboard/machine/circuit_imprinter/department/science
-	name = "Departmental Circuit Imprinter - Science (Оборудование)"
+	name = "схемопринтер отдела РнД"
+	desc = "Производит печатные платы для создания оборудования."
 	icon_state = "science"
 	build_path = /obj/machinery/rnd/production/circuit_imprinter/department/science
 
 /obj/item/circuitboard/machine/cyborgrecharger
-	name = "Cyborg Recharger (Оборудование)"
+	name = "Станция зарядки киборгов"
+	desc = "Устройство, заряжающее киборгов и переснаряжающая их материалами."
 	icon_state = "science"
 	build_path = /obj/machinery/recharge_station
 	req_components = list(
@@ -825,7 +871,8 @@
 	def_components = list(/obj/item/stock_parts/cell = /obj/item/stock_parts/cell/high)
 
 /obj/item/circuitboard/machine/destructive_analyzer
-	name = "Destructive Analyzer (Оборудование)"
+	name = "деструктивный анализатор"
+	desc = "Если ты хочешь понять как работают вещи, тебе придется их сломать."
 	icon_state = "science"
 	build_path = /obj/machinery/rnd/destructive_analyzer
 	req_components = list(
@@ -834,7 +881,8 @@
 		/obj/item/stock_parts/micro_laser = 1)
 
 /obj/item/circuitboard/machine/experimentor
-	name = "E.X.P.E.R.I-MENTOR (Оборудование)"
+	name = "Э.К.С.П.Е.Р.И.Ментор"
+	desc = "\"Альтернативная\" версия деструктивного анализатора с небольшой тенденцией к катастрофическому выходу из строя."
 	icon_state = "science"
 	build_path = /obj/machinery/rnd/experimentor
 	req_components = list(
@@ -843,7 +891,8 @@
 		/obj/item/stock_parts/micro_laser = 2)
 
 /obj/item/circuitboard/machine/mech_recharger
-	name = "Mechbay Recharger (Оборудование)"
+	name = "порт питания мехдока"
+	desc = "Этот порт заряжает внутреннюю силовую ячейку меха."
 	icon_state = "science"
 	build_path = /obj/machinery/mech_bay_recharge_port
 	req_components = list(
@@ -851,7 +900,8 @@
 		/obj/item/stock_parts/capacitor = 5)
 
 /obj/item/circuitboard/machine/mechfab
-	name = "Exosuit Fabricator (Оборудование)"
+	name = "фабрикатор экзокостюмов"
+	desc = "Сложный производственный комплекс изготавливающий киборгов и огромные экзокостюмы."
 	icon_state = "science"
 	build_path = /obj/machinery/mecha_part_fabricator
 	req_components = list(
@@ -861,7 +911,8 @@
 		/obj/item/stack/sheet/glass = 1)
 
 /obj/item/circuitboard/machine/monkey_recycler
-	name = "Monkey Recycler (Оборудование)"
+	name = "переработчик обезьян"
+	desc = "Полезная машина, перерабатывающая мертвых обезьян в обезьяньи кубики."
 	icon_state = "science"
 	build_path = /obj/machinery/monkey_recycler
 	req_components = list(
@@ -870,7 +921,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/nanite_chamber
-	name = "Nanite Chamber (Оборудование)"
+	name = "Нанитная камера"
+	desc = "Устройство для инъекции, мониторинга и базовой настройки нанитных облаков."
 	icon_state = "science"
 	build_path = /obj/machinery/nanite_chamber
 	req_components = list(
@@ -879,7 +931,8 @@
 		/obj/item/stock_parts/manipulator = 1)
 
 /obj/item/circuitboard/machine/nanite_program_hub
-	name = "Nanite Program Hub (Оборудование)"
+	name = "Программный центр нанитов"
+	desc = "Компилирует нанитные программы с веб-серверов и записывает их на диски."
 	icon_state = "science"
 	build_path = /obj/machinery/nanite_program_hub
 	req_components = list(
@@ -887,7 +940,8 @@
 		/obj/item/stock_parts/manipulator = 1)
 
 /obj/item/circuitboard/machine/nanite_programmer
-	name = "Nanite Programmer (Оборудование)"
+	name = "Программатор нанитов"
+	desc = "Устройство для изменения настроек нанитных программ хранимых на дисках."
 	icon_state = "science"
 	build_path = /obj/machinery/nanite_programmer
 	req_components = list(
@@ -906,7 +960,8 @@
 	build_path = /obj/machinery/rnd/production/protolathe/department/science
 
 /obj/item/circuitboard/machine/public_nanite_chamber
-	name = "Public Nanite Chamber (Оборудование)"
+	name = "Публичная нанитная камера"
+	desc = "Устройство для автоматической инъекции нанитного облака с заданым номером. Объем вводимых нанитов значительно ниже чем у стандартной камеры."
 	icon_state = "science"
 	build_path = /obj/machinery/public_nanite_chamber
 	var/cloud_id = 1
@@ -916,18 +971,19 @@
 
 /obj/item/circuitboard/machine/public_nanite_chamber/multitool_act(mob/living/user)
 	. = ..()
-	var/new_cloud = input("Set the public nanite chamber's Cloud ID (1-100).", "Cloud ID", cloud_id) as num|null
+	var/new_cloud = input("Введите номер нанитного облака в диапазоне (1-100).", "Номер облака", cloud_id) as num|null
 	if(!new_cloud || (loc != user))
-		to_chat(user, span_warning("You must hold the circuitboard to change its Cloud ID!"))
+		to_chat(user, span_warning("Я должен держать плату в руках для изменения номера облака!"))
 		return
 	cloud_id = clamp(round(new_cloud, 1), 1, 100)
 
 /obj/item/circuitboard/machine/public_nanite_chamber/examine(mob/user)
 	. = ..()
-	. += "<hr>Cloud ID is currently set to [cloud_id]."
+	. += "<hr>Текущий номер облака \"[cloud_id]\"."
 
 /obj/item/circuitboard/machine/quantumpad
-	name = "Quantum Pad (Оборудование)"
+	name = "Квантовый телепад"
+	desc = "Квантовый блюспейс телепад, используемый для телепортации объектов на другие квантовые телепады."
 	icon_state = "science"
 	build_path = /obj/machinery/quantumpad
 	req_components = list(
@@ -938,7 +994,8 @@
 	def_components = list(/obj/item/stack/ore/bluespace_crystal = /obj/item/stack/ore/bluespace_crystal/artificial)
 
 /obj/item/circuitboard/machine/rdserver
-	name = "R&D Server (Оборудование)"
+	name = "Сервер РнД"
+	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки компьютерного ботана, оно производит очки исследований."
 	icon_state = "science"
 	build_path = /obj/machinery/rnd/server
 	req_components = list(
@@ -951,7 +1008,8 @@
 	build_path = /obj/machinery/rnd/production/techfab/department/science
 
 /obj/item/circuitboard/machine/teleporter_hub
-	name = "Teleporter Hub (Оборудование)"
+	name = "телепортационная арка"
+	desc = "Открывает проход сквозь блюспейс пространство."
 	icon_state = "science"
 	build_path = /obj/machinery/teleport/hub
 	req_components = list(
@@ -960,7 +1018,8 @@
 	def_components = list(/obj/item/stack/ore/bluespace_crystal = /obj/item/stack/ore/bluespace_crystal/artificial)
 
 /obj/item/circuitboard/machine/teleporter_station
-	name = "Teleporter Station (Оборудование)"
+	name = "телепортационная станция"
+	desc = "Станция управления питанием блюспейс телепорта. Распределяет силовые нагрузки и калибрует пространственный прокол для предотвращения искажений."
 	icon_state = "science"
 	build_path = /obj/machinery/teleport/station
 	req_components = list(
@@ -995,7 +1054,8 @@
 	build_path = /obj/machinery/rnd/production/protolathe/department/security
 
 /obj/item/circuitboard/machine/recharger
-	name = "Weapon Recharger (Оборудование)"
+	name = "оружейный зарядник"
+	desc = "Заряжает энергетическое оружие и энергозависимую экипировку."
 	icon_state = "security"
 	build_path = /obj/machinery/recharger
 	req_components = list(/obj/item/stock_parts/capacitor = 1)
@@ -1009,7 +1069,8 @@
 //Service
 
 /obj/item/circuitboard/machine/biogenerator
-	name = "Biogenerator (Оборудование)"
+	name = "биореактор"
+	desc = "Превращает растения в биомассу, которую можно использовать для изготовления полезных предметов."
 	icon_state = "service"
 	build_path = /obj/machinery/biogenerator
 	req_components = list(
@@ -1019,7 +1080,8 @@
 		/obj/item/stack/sheet/glass = 1)
 
 /obj/item/circuitboard/machine/chem_dispenser/drinks
-	name = "Soda Dispenser (Оборудование)"
+	name = "раздатчик газировки"
+	desc = "Содержит большой резервуар с безалкогольными напитками."
 	icon_state = "service"
 	build_path = /obj/machinery/chem_dispenser/drinks
 
@@ -1034,7 +1096,8 @@
 	)
 
 /obj/item/circuitboard/machine/chem_dispenser/drinks/beer
-	name = "Booze Dispenser (Оборудование)"
+	name = "раздатчик бухлишка"
+	desc = "Содержит большой резервуар ништяков."
 	icon_state = "service"
 	build_path = /obj/machinery/chem_dispenser/drinks/beer
 
@@ -1054,27 +1117,31 @@
 	build_path = /obj/machinery/chem_master/condimaster
 
 /obj/item/circuitboard/machine/deep_fryer
-	name = "circuit board (Deep Fryer)"
+	name = "фритюрница"
+	desc = "Жареное <i>всё</i>."
 	icon_state = "service"
 	build_path = /obj/machinery/deepfryer
 	req_components = list(/obj/item/stock_parts/micro_laser = 1)
 	needs_anchored = FALSE
 /obj/item/circuitboard/machine/griddle
-	name = "circuit board (Griddle)"
+	name = "гридль"
+	desc = "Потому что сковородки для жалких лузеров."
 	icon_state = "service"
 	build_path = /obj/machinery/griddle
 	req_components = list(/obj/item/stock_parts/micro_laser = 1)
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/oven
-	name = "circuit board (Oven)"
+	name = "духовка"
+	desc = "Не рекомендуется залезать внутрь."
 	greyscale_colors = CIRCUIT_COLOR_SERVICE
 	build_path = /obj/machinery/oven
 	req_components = list(/obj/item/stock_parts/micro_laser = 1)
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/dish_drive
-	name = "Dish Drive (Оборудование)"
+	name = "утилизатор тарелок"
+	desc = "Кулинарное чудо, которое использует преобразование вещества в энергию для хранения посуды и осколков. Удобно!"
 	icon_state = "service"
 	build_path = /obj/machinery/dish_drive
 	req_components = list(
@@ -1088,7 +1155,7 @@
 /obj/item/circuitboard/machine/dish_drive/examine(mob/user)
 	. = ..()
 	. += "<hr><span class='notice'>Its suction function is [suction ? "enabled" : "disabled"]. Use it in-hand to switch.</span>"
-	. += "\n<span class='notice'>Its disposal auto-transmit function is [transmit ? "enabled" : "disabled"]. ПКМ it to switch.</span>"
+	. += span_notice("\nIts disposal auto-transmit function is [transmit ? "enabled" : "disabled"]. ПКМ it to switch.")
 
 /obj/item/circuitboard/machine/dish_drive/attack_self(mob/living/user)
 	suction = !suction
@@ -1101,7 +1168,8 @@
 	to_chat(user, span_notice("You [transmit ? "enable" : "disable"] the board's automatic disposal transmission."))
 
 /obj/item/circuitboard/machine/gibber
-	name = "Gibber (Оборудование)"
+	name = "мясорубка"
+	desc = "Полагаю в более подробном описании не нуждается."
 	icon_state = "service"
 	build_path = /obj/machinery/gibber
 	req_components = list(
@@ -1110,7 +1178,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/hydroponics
-	name = "Hydroponics Tray (Оборудование)"
+	name = "лоток гидропоники"
+	desc = "Это самая высокотехнологичная, автоматизированная, автономная грядка которую вы когда-либо видели."
 	icon_state = "service"
 	build_path = /obj/machinery/hydroponics/constructable
 	req_components = list(
@@ -1130,7 +1199,8 @@
 		/obj/item/stock_parts/scanning_module = 1)
 
 /obj/item/circuitboard/machine/microwave
-	name = "Microwave (Оборудование)"
+	name = "микроволновка"
+	desc = "Готовит и варит штуки."
 	icon_state = "service"
 	build_path = /obj/machinery/microwave
 	req_components = list(
@@ -1141,7 +1211,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/processor
-	name = "Food Processor (Оборудование)"
+	name = "кухонный комбайн"
+	desc = "Промышленный измельчитель, используемый для обработки мяса и других продуктов. Во время работы держите руки подальше от приемника."
 	icon_state = "service"
 	build_path = /obj/machinery/processor
 	req_components = list(
@@ -1168,7 +1239,8 @@
 	build_path = /obj/machinery/rnd/production/protolathe/department/service
 
 /obj/item/circuitboard/machine/recycler
-	name = "Recycler (Оборудование)"
+	name = "Мусоропереработчик"
+	desc = "Большая дробильная машина, используемая для неэффективной переработки мелких предметов. Сбоку есть индикаторы."
 	icon_state = "service"
 	build_path = /obj/machinery/recycler
 	req_components = list(
@@ -1177,7 +1249,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/seed_extractor
-	name = "Seed Extractor (Оборудование)"
+	name = "экстрактор семян"
+	desc = "Извлекает и упаковывает семена из урожая."
 	icon_state = "service"
 	build_path = /obj/machinery/seed_extractor
 	req_components = list(
@@ -1191,7 +1264,8 @@
 	build_path = /obj/machinery/rnd/production/techfab/department/service
 
 /obj/item/circuitboard/machine/vendatray
-	name = "Vend-A-Tray (Оборудование)"
+	name = "торговая витрина"
+	desc = "Витрина со считывателем ID карты. Используйте свою ID карту для покупки содержимого."
 	icon_state = "service"
 	build_path = /obj/structure/displaycase/forsale
 	req_components = list(
@@ -1200,7 +1274,8 @@
 //Supply
 
 /obj/item/circuitboard/machine/mining_equipment_vendor
-	name = "Mining Equipment Vendor (Оборудование)"
+	name = "Торговый автомат шахтеров"
+	desc = "Различное оборудование для бригады шахтеров. Очки добываются за сдачу руды в шахтерскую печь и начисляются на персональный счет шахтера."
 	icon_state = "supply"
 	build_path = /obj/machinery/vendor/mining
 	req_components = list(
@@ -1208,7 +1283,8 @@
 		/obj/item/stock_parts/matter_bin = 3)
 
 /obj/item/circuitboard/machine/exploration_equipment_vendor
-	name = "Rangers equipment vendor (Machine Board)"
+	name = "Торговый автомат рейнджеров"
+	desc = "Различное оборудование для команды исследователей глубин космоса. Очки добываются за выполнение миссий и разделяются между исследователями."
 	icon_state = "supply"
 	build_path = /obj/machinery/vendor/exploration
 	req_components = list(
@@ -1220,7 +1296,8 @@
 	build_path = /obj/machinery/vendor/golem
 
 /obj/item/circuitboard/machine/ore_redemption
-	name = "Ore Redemption (Оборудование)"
+	name = "Шахтерская печь"
+	desc = "Машина, которая принимает руду и мгновенно переплавляет ее в листы пригодного для обработки материала. При этом  генерируются баллы за руду, их количество зависит от редкости руды. Полученные балы можно обменять на полезную экипировку в торговом автомате шахтеров."
 	icon_state = "supply"
 	build_path = /obj/machinery/mineral/ore_redemption
 	req_components = list(
@@ -1232,7 +1309,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/ore_silo
-	name = "Ore Silo (Оборудование)"
+	name = "ресурсный бункер"
+	desc = "Универсальная блюспейс система хранения и передачи ресурсов на нужды станции."
 	icon_state = "supply"
 	build_path = /obj/machinery/ore_silo
 	req_components = list()
@@ -1243,7 +1321,8 @@
 	build_path = /obj/machinery/rnd/production/protolathe/department/cargo
 
 /obj/item/circuitboard/machine/stacking_machine
-	name = "Stacking Machine (Оборудование)"
+	name = "Штабелирующая машина"
+	desc = "Машина, которая автоматически упаковывает проезжающие мимо материалы. Управляется консолью."
 	icon_state = "supply"
 	build_path = /obj/machinery/mineral/stacking_machine
 	req_components = list(
@@ -1251,7 +1330,8 @@
 		/obj/item/stock_parts/matter_bin = 2)
 
 /obj/item/circuitboard/machine/stacking_unit_console
-	name = "Stacking Machine Console (Оборудование)"
+	name = "консоль штабелирующей машины"
+	desc = "Управляет штабелирующей машиной... в теории."
 	icon_state = "supply"
 	build_path = /obj/machinery/mineral/stacking_unit_console
 	req_components = list(
@@ -1264,7 +1344,8 @@
 	build_path = /obj/machinery/rnd/production/techfab/department/cargo
 
 /obj/item/circuitboard/machine/bepis
-	name = "BEPIS Chamber (Оборудование)"
+	name = "Б.Е.П.И.С"
+	desc = "Высокоточное тестирующее устройство, которое открывает секреты известной вселенной, используя два самых мощных вещества, доступных человеку: чрезмерное количество электричества и деньги."
 	icon_state = "supply"
 	build_path = /obj/machinery/rnd/bepis
 	req_components = list(
@@ -1276,7 +1357,8 @@
 
 //Misc
 /obj/item/circuitboard/machine/sheetifier
-	name = "Sheet-meister 2000 (Оборудование)"
+	name = "листопрокатная машина"
+	desc = "Строительный материал из чего угодно."
 	icon_state = "supply"
 	build_path = /obj/machinery/sheetifier
 	req_components = list(
@@ -1285,7 +1367,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/restaurant_portal
-	name = "Restaurant Portal"
+	name = "портал ресторана"
+	desc = "Портал от Всемирной Организации Роботов-Гурманов!"
 	icon_state = "service"
 	build_path = /obj/machinery/restaurant_portal
 	needs_anchored = TRUE
@@ -1306,7 +1389,8 @@
 		/obj/item/stock_parts/micro_laser = /obj/item/stock_parts/micro_laser/quadultra)
 
 /obj/item/circuitboard/machine/hypnochair
-	name = "Enhanced Interrogation Chamber (Оборудование)"
+	name = "допросная камера"
+	desc = "Устройство, используемое для проведения \"допроса с пристрастием\" при помощи инвазивного ментального внедрения."
 	icon_state = "security"
 	build_path = /obj/machinery/hypnochair
 	req_components = list(
@@ -1363,7 +1447,8 @@
 	needs_anchored = FALSE
 
 /obj/item/circuitboard/machine/skill_station
-	name = "Skill Station (Оборудование)"
+	name = "Камера имплантации чипов навыков"
+	desc = "Осваивайте навыки с всего лишь мизерными шансами на повреждение головного мозга!"
 	build_path = /obj/machinery/skill_station
 	req_components = list(
 		/obj/item/stock_parts/matter_bin = 2,
@@ -1372,7 +1457,8 @@
 	)
 
 /obj/item/circuitboard/machine/destructive_scanner
-	name = "Experimental Destructive Scanner (Machine Board)"
+	name = "экспериментально-деструктивный сканер"
+	desc = "Гораздо более крупная версия ручного сканера, обугленная этикетка предупреждает о его разрушительных возможностях."
 	icon_state = "science"
 	build_path = /obj/machinery/destructive_scanner
 	req_components = list(
@@ -1381,7 +1467,8 @@
 		/obj/item/stock_parts/manipulator = 2)
 
 /obj/item/circuitboard/machine/doppler_array
-	name = "Tachyon-Doppler Research Array (Machine Board)"
+	name = "ТДИМ"
+	desc = "Тахионно-доплеровский исследовательский массив. Специализированная система обнаружения тахионно-доплеровских бомб, в которой используется сложное бортовое программное обеспечение для записи данных для экспериментов."
 	icon_state = "science"
 	build_path = /obj/machinery/doppler_array/research
 	req_components = list(
@@ -1389,7 +1476,8 @@
 		/obj/item/stock_parts/scanning_module = 4)
 
 /obj/item/circuitboard/machine/exoscanner
-	name = "Exoscanner (Machine Board)"
+	name = "Массив сканеров"
+	desc = "Сложная сканирующая матрица. Уязвима к воздействию окружающей среды."
 	icon_state = "science"
 	build_path = /obj/machinery/exoscanner
 	req_components = list(
@@ -1397,7 +1485,8 @@
 		/obj/item/stock_parts/scanning_module = 4)
 
 /obj/item/circuitboard/machine/exodrone_launcher
-	name = "Exploration Drone Launcher (Machine Board)"
+	name = "пусковая установка дрона"
+	desc = "Запускает дрона на исследовательскую миссию."
 	icon_state = "science"
 	build_path = /obj/machinery/exodrone_launcher
 	req_components = list(
@@ -1411,21 +1500,24 @@
 	req_components = list()
 
 /obj/item/circuitboard/machine/shuttle/engine/plasma
-	name = "plasma thruster (Machine Board)"
+	name = "плазменный двигатель"
+	desc = "Двигатель, который сжигает плазму, хранящуюся в располагающемся рядом предзажигателе плазменного двигателя."
 	build_path = /obj/machinery/shuttle/engine/plasma
 	req_components = list(/obj/item/stock_parts/capacitor = 2,
 		/obj/item/stack/cable_coil = 5,
 		/obj/item/stock_parts/micro_laser = 1)
 
 /obj/item/circuitboard/machine/shuttle/engine/void
-	name = "void thruster (Machine Board)"
+	name = "пустотный двигатель"
+	desc = "Двигатель, использующий технологию для пространственного прорыва для движения."
 	build_path = /obj/machinery/shuttle/engine/void
 	req_components = list(/obj/item/stock_parts/capacitor/quadratic = 2,
 		/obj/item/stack/cable_coil = 5,
 		/obj/item/stock_parts/micro_laser/quadultra = 1)
 
 /obj/item/circuitboard/machine/shuttle/heater
-	name = "electronic engine heater (Machine Board)"
+	name = "предзажигатель двигателя"
+	desc = "Направляет энергию в сжатые частицы для приведения в действие присоединенного двигателя."
 	build_path = /obj/machinery/atmospherics/components/unary/shuttle/heater
 	req_components = list(/obj/item/stock_parts/micro_laser = 2,
 		/obj/item/stock_parts/matter_bin = 1)

@@ -1,6 +1,6 @@
 /obj/machinery/hypnochair
-	name = "enhanced interrogation chamber"
-	desc = "A device used to perform \"enhanced interrogation\" through invasive mental conditioning."
+	name = "допросная камера"
+	desc = "Устройство, используемое для проведения \"допроса с пристрастием\" при помощи инвазивного ментального внедрения."
 	icon = 'icons/obj/machines/implantchair.dmi'
 	icon_state = "hypnochair"
 	circuit = /obj/item/circuitboard/machine/hypnochair
@@ -83,11 +83,11 @@
 
 /obj/machinery/hypnochair/proc/interrogate()
 	if(!trigger_phrase)
-		playsound(get_turf(src), 'sound/machines/buzz-sigh.ogg', 25, TRUE)
+		playsound(get_turf(src), 'white/valtos/sounds/error1.ogg', 25, TRUE)
 		return
 	var/mob/living/carbon/C = occupant
 	if(!istype(C))
-		playsound(get_turf(src), 'sound/machines/buzz-sigh.ogg', 25, TRUE)
+		playsound(get_turf(src), 'white/valtos/sounds/error1.ogg', 25, TRUE)
 		return
 	victim = C
 	if(!(C.get_eye_protection() > 0))
@@ -113,6 +113,8 @@
 			"...so peaceful...",\
 			"...an annoying buzz in your ears..."\
 		)]</span>")
+
+	use_power(active_power_usage * delta_time)
 
 /obj/machinery/hypnochair/proc/finish_interrogation()
 	interrogating = FALSE

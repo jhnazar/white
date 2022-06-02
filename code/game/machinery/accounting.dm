@@ -1,6 +1,6 @@
 /obj/machinery/accounting
-	name = "account registration device"
-	desc = "A machine that allows heads of staff to create a new bank account after inserting an ID."
+	name = "Регистратор учетных записей"
+	desc = "Машина, которая позволяет ХоПу подключать банковский счет к новым ID-картам."
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "recharger"
 	circuit = /obj/item/circuitboard/machine/accounting
@@ -55,17 +55,16 @@
 
 /obj/machinery/accounting/update_overlays()
 	. = ..()
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	luminosity = 0
 	if(machine_stat & (NOPOWER|BROKEN) || !anchored)
 		return
 	if(panel_open)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-open", layer, plane, dir, alpha)
+		. += mutable_appearance(icon, "recharger-open", layer, plane, alpha)
 		return
 	luminosity = 1
 	if(inserted_id)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-full", layer, plane, dir, alpha)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-full", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+		. += mutable_appearance(icon, "recharger-full", layer, plane, alpha)
+		. += mutable_appearance(icon, "recharger-full", 0, EMISSIVE_PLANE, alpha)
 	else
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-empty", layer, plane, dir, alpha)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-empty", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+		. += mutable_appearance(icon, "recharger-empty", layer, plane, alpha)
+		. += mutable_appearance(icon, "recharger-empty", 0, EMISSIVE_PLANE, alpha)

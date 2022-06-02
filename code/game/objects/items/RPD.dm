@@ -181,8 +181,8 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 		icon_state = "[icon_state]_preview"
 
 /obj/item/pipe_dispenser
-	name = "Rapid Pipe Dispenser (RPD)"
-	desc = "A device used to rapidly pipe things."
+	name = "РПД - портативный раздатчик труб"
+	desc = "Компактный и удобный инструмент для прокладки любых коммуникаций."
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "rpd"
 	worn_icon_state = "RPD"
@@ -558,7 +558,7 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 
 /obj/item/pipe_dispenser/proc/mouse_wheeled(mob/source, atom/A, delta_x, delta_y, params)
 	SIGNAL_HANDLER
-	if(source.incapacitated(ignore_restraints = TRUE, ignore_stasis = TRUE))
+	if(source.incapacitated(IGNORE_RESTRAINTS|IGNORE_STASIS))
 		return
 
 	if(delta_y > 0)
@@ -586,5 +586,6 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 	var/upgrade_flags
 
 /obj/item/rpd_upgrade/unwrench
-	desc = "Adds reverse wrench mode to the RPD. Attention, due to budget cuts, the mode is hard linked to the destroy mode control button."
+	name = "Диск с чертежами для РПД - Деконструкция"
+	desc = "Добавляет режим обратного ключа в RPD. Внимание, из-за сокращения бюджета режим жестко связан с кнопкой управления режимом уничтожения."
 	upgrade_flags = RPD_UPGRADE_UNWRENCH

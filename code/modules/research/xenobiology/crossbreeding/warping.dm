@@ -195,7 +195,7 @@ put up a rune with bluespace effects, lots of those runes are fluff or act as a 
 
 /obj/effect/warped_rune/orangespace/do_effect(mob/user)
 	var/obj/structure/bonfire/bluespace/B = new (rune_turf)
-	B.StartBurning()
+	B.start_burning()
 	. = ..()
 
 /obj/item/slimecross/warping/purple
@@ -303,7 +303,7 @@ put up a rune with bluespace effects, lots of those runes are fluff or act as a 
 	var/obj/item/stock_parts/cell/C = AM.get_cell()
 	if(!C && isliving(AM))
 		var/mob/living/L = AM
-		for(var/obj/item/I in L.GetAllContents())
+		for(var/obj/item/I in L.get_all_contents())
 			C = I.get_cell()
 			if(C?.charge)
 				break
@@ -751,7 +751,7 @@ GLOBAL_DATUM(blue_storage, /obj/item/storage/backpack/holding/bluespace)
 /obj/effect/warped_rune/adamantinespace/do_effect(mob/user)
 	for(var/turf/open/T in RANGE_TURFS(1, src) - rune_turf)
 		var/obj/structure/reflector/box/anchored/mob_pass/D = new (T)
-		D.setAngle(dir2angle(get_dir(src, D)))
+		D.set_angle(dir2angle(get_dir(src, D)))
 		D.admin = TRUE
 		QDEL_IN(D, 300)
 	activated_on_step = TRUE

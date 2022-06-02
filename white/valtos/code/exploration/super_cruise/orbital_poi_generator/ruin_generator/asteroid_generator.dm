@@ -9,10 +9,13 @@
 		_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset, scale)
 	catch(var/exception/e)
 		message_admins("Asteroid failed to generate!")
-		stack_trace("Asteroid failed to generate! [e] on [e.file]:[e.line]")
+		log_runtime("Asteroid failed to generate! [e] on [e.file]:[e.line]")
 	space_level.generating = FALSE
 
 /proc/_generate_asteroids(center_x, center_y, center_z, max_radius, weight_offset = 0, scale = 65)
+
+	SSair.pause_z(center_z)
+
 	var/perlin_noise_scale = scale
 	var/seed = rand(0, 999999)
 	var/turf/z_center = locate(center_x, center_y, center_z)
@@ -29,7 +32,7 @@
 			continue
 		//Change area
 		asteroid_area.contents += T
-		T.change_area(T.loc, asteroid_area)
+		T.transfer_area_lighting(T.loc, asteroid_area)
 		//Check if we are closed or not (Cave generation)
 		var/closed = text2num(generated_string[world.maxx * (T.y - 1) + T.x])
 		var/noise_at_coord = text2num(rustg_noise_get_at_coordinates("[seed]", "[T.x / perlin_noise_scale]", "[T.y / perlin_noise_scale]"))
@@ -62,6 +65,8 @@
 			/obj/structure/spawner/lavaland/basilisk, /obj/structure/spawner/lavaland,
 			/obj/structure/spawner/lavaland/goliath, /obj/structure/spawner/lavaland/legion)
 		new type_to_spawn(T)
+
+	SSair.unpause_z(center_z)
 
 //Spawner types
 /obj/structure/spawner/lavaland/basilisk

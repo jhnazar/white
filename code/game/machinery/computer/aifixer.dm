@@ -1,6 +1,6 @@
 /obj/machinery/computer/aifixer
-	name = "\improper AI system integrity restorer"
-	desc = "Used with intelliCards containing nonfunctional AIs to restore them to working order."
+	name = "Консоль восстановления целостности ИИ"
+	desc = "Используется с интелкартами, для восстановления поврежденных ИИ до рабочего состояния."
 	req_access = list(ACCESS_CAPTAIN, ACCESS_ROBOTICS, ACCESS_HEADS)
 	circuit = /obj/item/circuitboard/computer/aifixer
 	icon_keyboard = "tech_key"
@@ -22,6 +22,7 @@
 		return ..()
 
 /obj/machinery/computer/aifixer/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "AiRestorer", name)

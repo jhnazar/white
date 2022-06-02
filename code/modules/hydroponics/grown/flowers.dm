@@ -51,7 +51,7 @@
 	//Spacemans's Trumpet
 /obj/item/seeds/poppy/lily/trumpet
 	name = "Пачка семян космического дурмана"
-	desc = "Растение, созданное тяжёлой генной инженерией. Этот дурман даже отдалённо не напоминает его древних предков. Для научного отдела НТ более известно, как NTPW-0372."
+	desc = "Растение, созданное тяжёлой генной инженерией. Этот дурман даже отдалённо не напоминает его древних предков. Для научного отдела NT более известно, как NTPW-0372."
 	icon_state = "seed-trumpet"
 	species = "spacemanstrumpet"
 	plantname = "Spaceman's Trumpet Plant"
@@ -292,7 +292,7 @@
 	if(isliving(M))
 		to_chat(M, span_danger("Горю, словно в огне от интенсивного жара [name]!"))
 		M.adjust_fire_stacks(seed.potency / 20)
-		if(M.IgniteMob())
+		if(M.ignite_mob())
 			message_admins("[ADMIN_LOOKUPFLW(user)] set [ADMIN_LOOKUPFLW(M)] on fire with [src] at [AREACOORD(user)]")
 			log_game("[key_name(user)] set [key_name(M)] on fire with [src] at [AREACOORD(user)]")
 

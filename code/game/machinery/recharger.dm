@@ -1,11 +1,9 @@
 /obj/machinery/recharger
-	name = "зарядник"
+	name = "оружейный зарядник"
+	desc = "Заряжает энергетическое оружие и энергозависимую экипировку."
 	icon = 'icons/obj/stationobjs.dmi'
 	icon_state = "recharger"
-	desc = "Заряжает штуки. В частности оружие."
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 400
-	active_power_usage = 25000
+	base_icon_state = "recharger"
 	circuit = /obj/item/circuitboard/machine/recharger
 	pass_flags = PASSTABLE
 	var/obj/item/charging = null
@@ -15,11 +13,13 @@
 	var/static/list/allowed_devices = typecacheof(list(
 		/obj/item/gun/energy,
 		/obj/item/melee/baton,
-		/obj/item/melee/sabre/security/,
+		/obj/item/melee/sabre/security,
 		/obj/item/ammo_box/magazine/recharge,
-		/obj/item/modular_computer))
+		/obj/item/modular_computer,
+		/obj/item/kinetic_shield))
 
 /obj/machinery/recharger/RefreshParts()
+	. = ..()
 	for(var/obj/item/stock_parts/capacitor/C in component_parts)
 		recharge_coeff = C.rating
 
@@ -135,7 +135,7 @@
 		if(C)
 			if(C.charge < C.maxcharge)
 				C.give(C.chargerate * recharge_coeff * delta_time / 2)
-				use_power(1250 * recharge_coeff * delta_time)
+				use_power(active_power_usage * recharge_coeff * delta_time)
 				using_power = TRUE
 			update_icon()
 
@@ -143,7 +143,7 @@
 			var/obj/item/ammo_box/magazine/recharge/R = charging
 			if(R.stored_ammo.len < R.max_ammo)
 				R.stored_ammo += new R.ammo_type(R)
-				use_power(1000 * recharge_coeff * delta_time)
+				use_power(active_power_usage * recharge_coeff * delta_time)
 				using_power = TRUE
 			update_icon()
 			return
@@ -167,22 +167,20 @@
 
 /obj/machinery/recharger/update_overlays()
 	. = ..()
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
-	luminosity = 0
 	if(machine_stat & (NOPOWER|BROKEN) || !anchored)
 		return
 	if(panel_open)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-open", layer, plane, dir, alpha)
+		. += mutable_appearance(icon, "[base_icon_state]-open", layer, plane, alpha)
 		return
 
-	luminosity = 1
-	if (charging)
-		if(using_power)
-			SSvis_overlays.add_vis_overlay(src, icon, "recharger-charging", layer, plane, dir, alpha)
-			SSvis_overlays.add_vis_overlay(src, icon, "recharger-charging", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
-		else
-			SSvis_overlays.add_vis_overlay(src, icon, "recharger-full", layer, plane, dir, alpha)
-			SSvis_overlays.add_vis_overlay(src, icon, "recharger-full", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
-	else
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-empty", layer, plane, dir, alpha)
-		SSvis_overlays.add_vis_overlay(src, icon, "recharger-empty", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
+	if(!charging)
+		. += mutable_appearance(icon, "[base_icon_state]-empty", layer, plane, alpha)
+		. += mutable_appearance(icon, "[base_icon_state]-empty", 0, EMISSIVE_PLANE, alpha)
+		return
+	if(using_power)
+		. += mutable_appearance(icon, "[base_icon_state]-charging", layer, plane, alpha)
+		. += mutable_appearance(icon, "[base_icon_state]-charging", 0, EMISSIVE_PLANE, alpha)
+		return
+
+	. += mutable_appearance(icon, "[base_icon_state]-full", layer, plane, alpha)
+	. += mutable_appearance(icon, "[base_icon_state]-full", 0, EMISSIVE_PLANE, alpha)

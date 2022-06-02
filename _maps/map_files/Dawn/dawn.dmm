@@ -1058,7 +1058,7 @@
 "cT" = (
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 24
+	pixel_y = 23
 	},
 /obj/structure/cable,
 /turf/open/floor/plating,
@@ -1319,9 +1319,6 @@
 	pixel_x = -3;
 	pixel_y = 3
 	},
-/obj/item/gun/ballistic/shotgun/spas12/rubber,
-/obj/item/gun/ballistic/shotgun/spas12/rubber,
-/obj/item/gun/ballistic/shotgun/spas12/rubber,
 /obj/effect/turf_decal/bot,
 /turf/open/floor/plasteel/monofloor/dark,
 /area/ai_monitored/security/armory)
@@ -2460,8 +2457,8 @@
 	pixel_y = 32
 	},
 /obj/item/storage/toolbox/mechanical,
-/obj/item/cartridge/quartermaster,
-/obj/item/cartridge/quartermaster,
+/obj/item/computer_hardware/hard_drive/portable/quartermaster,
+/obj/item/computer_hardware/hard_drive/portable/quartermaster,
 /turf/open/floor/plasteel,
 /area/cargo/storage)
 "gN" = (
@@ -3412,7 +3409,7 @@
 /obj/structure/cable,
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 24
+	pixel_y = 23
 	},
 /obj/machinery/light{
 	dir = 4
@@ -3498,7 +3495,7 @@
 "jy" = (
 /obj/machinery/power/apc{
 	dir = 8;
-	pixel_x = -24
+	pixel_x = -25
 	},
 /obj/structure/cable,
 /turf/open/floor/plating,
@@ -4010,6 +4007,10 @@
 /obj/effect/turf_decal/trimline/blue/filled/line,
 /turf/open/floor/plasteel/white,
 /area/medical/medbay)
+"kM" = (
+/obj/effect/turf_decal/delivery,
+/turf/open/floor/plasteel/monofloor/dark,
+/area/cargo/exploration_mission)
 "kN" = (
 /obj/machinery/conveyor{
 	dir = 6;
@@ -4165,7 +4166,7 @@
 	cell_type = /obj/item/stock_parts/cell/high;
 	dir = 8;
 	name = "Arrivals Hallway APC";
-	pixel_x = -24;
+	pixel_x = -25;
 	pixel_y = 0
 	},
 /obj/effect/turf_decal/stripes/line{
@@ -4572,7 +4573,7 @@
 "mt" = (
 /obj/machinery/power/apc{
 	dir = 8;
-	pixel_x = -24
+	pixel_x = -25
 	},
 /obj/structure/cable,
 /turf/open/floor/plating,
@@ -4690,7 +4691,6 @@
 /turf/open/floor/plasteel,
 /area/service/janitor)
 "mK" = (
-/obj/machinery/door/firedoor/window,
 /obj/effect/spawner/structure/window/reinforced,
 /turf/open/floor/plating,
 /area/medical/medbay)
@@ -5476,7 +5476,6 @@
 /area/medical/medbay)
 "oI" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/obj/machinery/door/firedoor/window,
 /obj/effect/spawner/structure/window/reinforced,
 /turf/open/floor/plating,
 /area/medical/medbay)
@@ -6544,7 +6543,7 @@
 	},
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 24
+	pixel_y = 23
 	},
 /obj/structure/cable,
 /turf/open/floor/plasteel,
@@ -7109,7 +7108,7 @@
 /turf/open/space/basic,
 /area/space/nearstation)
 "th" = (
-/obj/machinery/rnd/production/techfab/department/engineering,
+/obj/machinery/mecha_part_fabricator/engi,
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 8
@@ -7528,15 +7527,9 @@
 	},
 /obj/structure/table,
 /obj/item/clipboard,
-/obj/item/cartridge/quartermaster,
-/obj/item/cartridge/quartermaster{
-	pixel_x = 6;
-	pixel_y = 5
-	},
-/obj/item/cartridge/quartermaster{
-	pixel_x = -4;
-	pixel_y = 7
-	},
+/obj/item/computer_hardware/hard_drive/portable/quartermaster,
+/obj/item/computer_hardware/hard_drive/portable/quartermaster,
+/obj/item/computer_hardware/hard_drive/portable/quartermaster,
 /obj/item/coin/silver,
 /obj/effect/turf_decal/tile/brown{
 	dir = 4
@@ -8670,7 +8663,7 @@
 	areastring = "/area/ai_monitored/command/nuke_storage";
 	dir = 1;
 	name = "Vault APC";
-	pixel_y = 24
+	pixel_y = 23
 	},
 /turf/open/floor/circuit,
 /area/ai_monitored/command/nuke_storage)
@@ -9913,7 +9906,7 @@
 /obj/structure/cable,
 /obj/machinery/power/apc/highcap/five_k{
 	dir = 8;
-	pixel_x = -24
+	pixel_x = -25
 	},
 /turf/open/floor/plasteel,
 /area/ai_monitored/turret_protected/aisat)
@@ -10340,13 +10333,8 @@
 /obj/structure/table,
 /obj/structure/table/glass,
 /obj/machinery/recharger,
-/obj/item/cartridge/chemistry{
-	pixel_x = -6;
-	pixel_y = 8
-	},
-/obj/item/cartridge/medical{
-	pixel_x = 4
-	},
+/obj/item/computer_hardware/hard_drive/portable/chemistry,
+/obj/item/computer_hardware/hard_drive/portable/medical,
 /obj/item/clothing/neck/stethoscope{
 	pixel_y = 5
 	},
@@ -10421,6 +10409,9 @@
 /obj/structure/chair/sofa/corp/right{
 	dir = 8
 	},
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
+	},
 /turf/open/floor/plasteel/monofloor/dark,
 /area/cargo/exploration_dock)
 "EA" = (
@@ -10462,6 +10453,9 @@
 "EU" = (
 /obj/structure/cable,
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4,
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
 /turf/open/floor/plasteel/monofloor/dark,
 /area/cargo/exploration_dock)
 "EZ" = (
@@ -11108,7 +11102,7 @@
 	areastring = "/area/command/heads_quarters/hop";
 	dir = 1;
 	name = "Head of Personnel APC";
-	pixel_y = 24
+	pixel_y = 23
 	},
 /turf/open/floor/plasteel,
 /area/command/heads_quarters/hop)
@@ -11201,14 +11195,8 @@
 /obj/machinery/keycard_auth{
 	pixel_x = -10
 	},
-/obj/item/cartridge/engineering{
-	pixel_x = 4;
-	pixel_y = 5
-	},
-/obj/item/cartridge/engineering{
-	pixel_x = 4;
-	pixel_y = 5
-	},
+/obj/item/computer_hardware/hard_drive/portable/engineering,
+/obj/item/computer_hardware/hard_drive/portable/engineering,
 /mob/living/simple_animal/parrot/poly,
 /obj/effect/turf_decal/tile/neutral{
 	dir = 8
@@ -11385,6 +11373,11 @@
 	},
 /turf/open/floor/plasteel,
 /area/command)
+"LV" = (
+/obj/structure/cable,
+/obj/effect/turf_decal/stripes/corner,
+/turf/open/floor/plasteel/monofloor/dark,
+/area/cargo/exploration_dock)
 "LW" = (
 /obj/machinery/computer/operating{
 	dir = 1
@@ -11519,6 +11512,10 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/security/brig)
+"Nc" = (
+/obj/effect/turf_decal/stripes/line,
+/turf/open/floor/plasteel/monofloor/dark,
+/area/cargo/exploration_dock)
 "Nd" = (
 /obj/structure/window/reinforced{
 	dir = 1;
@@ -11694,11 +11691,6 @@
 "OH" = (
 /turf/open/floor/plasteel,
 /area/engineering/engine_smes)
-"OI" = (
-/obj/effect/spawner/structure/window/reinforced,
-/obj/machinery/door/firedoor/window,
-/turf/open/floor/plating,
-/area/medical/medbay)
 "OQ" = (
 /obj/machinery/light/small,
 /obj/structure/cable,
@@ -13286,11 +13278,23 @@
 /obj/effect/turf_decal/tile/green,
 /turf/open/floor/plasteel/white,
 /area/medical/chemistry)
+"YW" = (
+/obj/structure/cable,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
+	dir = 8
+	},
+/obj/effect/landmark/start/exploration,
+/obj/effect/turf_decal/stripes/corner{
+	dir = 4
+	},
+/turf/open/floor/plasteel/monofloor/dark,
+/area/cargo/exploration_dock)
 "YZ" = (
 /obj/machinery/light,
 /obj/machinery/power/apc{
 	dir = 4;
-	pixel_y = -24
+	pixel_y = -24;
+	pixel_x = 24
 	},
 /obj/structure/cable,
 /obj/effect/turf_decal/trimline/blue/filled/line{
@@ -52279,9 +52283,9 @@ aa
 aa
 wL
 GN
-NP
+LV
 EU
-RY
+YW
 RY
 dv
 To
@@ -52536,8 +52540,8 @@ aa
 aa
 aa
 xu
-Qf
-Qf
+Nc
+kM
 Ew
 OX
 GA
@@ -55906,7 +55910,7 @@ kA
 lb
 lX
 Wv
-OI
+mK
 mz
 mX
 XY
@@ -56163,7 +56167,7 @@ kB
 jA
 jA
 lY
-OI
+mK
 mA
 mY
 Nm
@@ -56420,7 +56424,7 @@ jA
 jA
 jA
 LW
-OI
+mK
 mB
 mZ
 VG

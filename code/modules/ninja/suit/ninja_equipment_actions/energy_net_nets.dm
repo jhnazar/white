@@ -9,7 +9,7 @@
  */
 /obj/structure/energy_net
 	name = "Энергетическая сеть"
-	desc = "Это сеть из зеленой энергии."
+	desc = "Сеть из зеленой энергии."
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "energynet"
 
@@ -18,6 +18,7 @@
 	mouse_opacity = MOUSE_OPACITY_ICON//So you can hit it with stuff.
 	anchored = TRUE//Can't drag/grab the net.
 	layer = ABOVE_ALL_MOB_LAYER
+	plane = ABOVE_GAME_PLANE
 	max_integrity = 60 //How much health it has.
 	can_buckle = 1
 	buckle_lying = 0
@@ -31,7 +32,7 @@
 
 /obj/structure/energy_net/Destroy()
 	if(!QDELETED(affecting))
-		affecting.visible_message(span_notice("[affecting.name] восстанавливается из энергосети!") , span_notice("Восстанавливаюсь за счёт энергосети!") , span_hear("Вы слышите ворчание."))
+		affecting.visible_message(span_notice("[affecting.name] восстанавливается из энергосети!") , span_notice("Восстанавливаюсь за счёт энергосети!") , span_hear("Слышу ворчание."))
 	affecting = null
 	return ..()
 

@@ -71,9 +71,6 @@ SUBSYSTEM_DEF(shuttle)
 
 	var/shuttle_loading
 
-	var/last_integrity_check = 0
-	var/cached_station_integrity = 100
-
 /datum/controller/subsystem/shuttle/Initialize(timeofday)
 	ordernum = rand(1, 9000)
 
@@ -168,7 +165,7 @@ SUBSYSTEM_DEF(shuttle)
 
 /datum/controller/subsystem/shuttle/proc/block_recall(lockout_timer)
 	if(adminEmergencyNoRecall)
-		priority_announce("Ошибка!", "Блокировка приёмника шаттла", 'sound/misc/announce_dig.ogg')
+		priority_announce("Ошибка!", "Блокировка приёмника шаттла", sound('white/valtos/sounds/trevoga2.ogg'))
 		addtimer(CALLBACK(src, .proc/unblock_recall), lockout_timer)
 		return
 	emergencyNoRecall = TRUE
@@ -176,7 +173,7 @@ SUBSYSTEM_DEF(shuttle)
 
 /datum/controller/subsystem/shuttle/proc/unblock_recall()
 	if(adminEmergencyNoRecall)
-		priority_announce("Ошибка!", "Блокировка приёмника шаттла", 'sound/misc/announce_dig.ogg')
+		priority_announce("Ошибка!", "Блокировка приёмника шаттла", sound('white/valtos/sounds/trevoga2.ogg'))
 		return
 	emergencyNoRecall = FALSE
 
@@ -194,7 +191,7 @@ SUBSYSTEM_DEF(shuttle)
 
 /// Check if we can call the evac shuttle.
 /// Returns TRUE if we can. Otherwise, returns a string detailing the problem.
-/datum/controller/subsystem/shuttle/proc/canEvac(mob/user, check_integrity = TRUE)
+/datum/controller/subsystem/shuttle/proc/canEvac(mob/user)
 	var/srd = CONFIG_GET(number/shuttle_refuel_delay)
 	if(world.time - SSticker.round_start_time < srd)
 		return "Эвакуационный шаттл всё ещё готовится. Подождите [DisplayTimeText(srd - (world.time - SSticker.round_start_time))] перед очередной попыткой."
@@ -212,23 +209,6 @@ SUBSYSTEM_DEF(shuttle)
 			return "Эвакуационный шаттл уже отлетел от станции на безопасное расстояние."
 		if(SHUTTLE_STRANDED)
 			return "Эвакуационный шаттл заблокирован Центральным Командованием."
-
-	if(world.time - SSticker.round_start_time > 1 HOURS)
-		return TRUE
-
-	if(check_integrity)
-		var/station_integrity = 100
-		if(last_integrity_check > world.time - 1 MINUTES)
-			station_integrity = cached_station_integrity
-		else
-			var/datum/station_state/end_state = new /datum/station_state()
-			end_state.count()
-			station_integrity = min(PERCENT(GLOB.start_state.score(end_state)), 100)
-			last_integrity_check = world.time
-			cached_station_integrity = station_integrity
-		if(station_integrity > 98)
-			return "Состояние станции удовлетворительное. Улетать пока нет смысла."
-
 	return TRUE
 
 /datum/controller/subsystem/shuttle/proc/requestEvac(mob/user, call_reason)
@@ -257,7 +237,7 @@ SUBSYSTEM_DEF(shuttle)
 		return
 
 	var/area/signal_origin = get_area(user)
-	var/emergency_reason = "\nПричиныч:\n\n[call_reason]"
+	var/emergency_reason = "\nПричина:\n\n[call_reason]"
 	var/security_num = seclevel2num(get_security_level())
 	switch(security_num)
 		if(SEC_LEVEL_RED,SEC_LEVEL_DELTA)
@@ -293,15 +273,15 @@ SUBSYSTEM_DEF(shuttle)
 
 	if(!admiral_message)
 		admiral_message = pick(GLOB.admiral_messages)
-	var/intercepttext = "<font size = 3><b>Обновление Нанотрейзен</b>: Запрос шаттла.</font><hr>\
+	var/intercepttext = "<font size = 3><b>Обновление NanoTrasen</b>: Запрос шаттла.</font><hr>\
 						Для предъявления по месту требования:<br><br>\
 						Мы приняли к сведению ситуацию по [station_name()] и подошли \
 						к выводу о том, что это не является основанием для отказа от данной станции.<br>\
 						Если вы не согласны с нашим мнением, предлагаем вам открыть \
-						прямую линию с нами и объяснить причину вашего кризиса.<br><br>\
+						прямую линию с нами и объяснить причину кризиса.<br><br>\
 						<i>Это сообщение было автоматически сгенерировано на основе \
 						показаний диагностических приборов дальнего действия. \
-						Чтобы гарантировать качество вашего запроса, каждый \
+						Чтобы гарантировать качество запроса, каждый \
 						окончательный отчет проверяется дежурным контр-адмиралом.<br> \
 						<b>Заметка контр-адмирала:</b> \
 						[admiral_message]"
@@ -834,7 +814,7 @@ SUBSYSTEM_DEF(shuttle)
 
 		templates[S.port_id]["templates"] += list(L)
 
-	data["templates_tabs"] = sortList(data["templates_tabs"])
+	data["templates_tabs"] = sort_list(data["templates_tabs"])
 
 	data["existing_shuttle"] = null
 

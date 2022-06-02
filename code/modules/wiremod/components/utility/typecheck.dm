@@ -7,8 +7,8 @@
  * Checks the type of a value
  */
 /obj/item/circuit_component/compare/typecheck
-	display_name = "Typecheck"
-	desc = "A component that checks the type of its input."
+	display_name = "Проверка типа"
+	desc = "Компонент, который проверяет тип входных данных."
 
 	input_port_amount = 1
 	var/datum/port/input/option/typecheck_options
@@ -17,7 +17,7 @@
 	var/static/component_options = list(
 		PORT_TYPE_STRING,
 		PORT_TYPE_NUMBER,
-		PORT_TYPE_LIST,
+		PORT_COMPOSITE_TYPE_LIST,
 		PORT_TYPE_ATOM,
 		COMP_TYPECHECK_MOB,
 		COMP_TYPECHECK_HUMAN,
@@ -37,7 +37,7 @@
 			return istext(input_val)
 		if(PORT_TYPE_NUMBER)
 			return isnum(input_val)
-		if(PORT_TYPE_LIST)
+		if(PORT_COMPOSITE_TYPE_LIST)
 			return islist(input_val)
 		if(PORT_TYPE_ATOM)
 			return isatom(input_val)

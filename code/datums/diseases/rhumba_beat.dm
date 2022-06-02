@@ -32,11 +32,11 @@
 			if(DT_PROB(10, delta_time))
 				if(prob(50))
 					affected_mob.adjust_fire_stacks(2)
-					affected_mob.IgniteMob()
+					affected_mob.ignite_mob()
 				else
 					affected_mob.emote("gasp")
 					to_chat(affected_mob, span_danger("Ощущаю горящий бит внутри..."))
 		if(5)
 			to_chat(affected_mob, span_danger("Моё тело не может сдержать ритм Румбы..."))
 			if(DT_PROB(29, delta_time))
-				explosion(get_turf(affected_mob), -1, 0, 2, 3, 0, 2) // This is equivalent to a lvl 1 fireball
+				explosion(affected_mob, devastation_range = -1, light_impact_range = 2, flame_range = 2, flash_range = 3, adminlog = FALSE, explosion_cause = src) // This is equivalent to a lvl 1 fireball

@@ -121,6 +121,7 @@
 		return FALSE
 
 /obj/machinery/deepcore/drill/RefreshParts()
+	. = ..()
 	var/MM_value = 0
 	var/MM_amount = 0
 	for(var/obj/item/stock_parts/manipulator/MM in component_parts)
@@ -291,7 +292,7 @@
 			L += I
 		else
 			viens_by_type[I.resource] = list(I)
-	var/A = input(user, "Type to locate", "DCM") in sortList(viens_by_type)
+	var/A = input(user, "Type to locate", "DCM") in sort_list(viens_by_type)
 	if(!A || QDELETED(src) || !user || !user.is_holding(src) || user.incapacitated())
 		return
 	//Searches for nearest ore vein as usual
@@ -308,8 +309,6 @@
 			located_dist = get_dist(here, get_turf(I))
 			located_vein = I
 	return located_vein
-
-GLOBAL_LIST_EMPTY(ore_vein_landmarks)
 
 /obj/effect/landmark/ore_vein
 	name = "ore vein"
@@ -400,8 +399,8 @@ GLOBAL_LIST_EMPTY(ore_vein_landmarks)
 	desc = "A machine designed to recieve the output of any connected bluespace drills."
 	icon_state = "hopper_off"
 	density = TRUE
-	idle_power_usage = 500
-	active_power_usage = 5000
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 2
+	active_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 10
 	anchored = FALSE
 	circuit = /obj/item/circuitboard/machine/deepcore/hopper
 
@@ -424,6 +423,7 @@ GLOBAL_LIST_EMPTY(ore_vein_landmarks)
 	var/ejecting = FALSE
 
 /obj/machinery/deepcore/hopper/RefreshParts()
+	. = ..()
 	var/MM_value = 0
 	var/MM_amount = 0
 	for(var/obj/item/stock_parts/manipulator/MM in component_parts)

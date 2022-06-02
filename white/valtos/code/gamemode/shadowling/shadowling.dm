@@ -1,10 +1,3 @@
-#define LIGHT_HEAL_THRESHOLD 2
-#define LIGHT_DAMAGE_TAKEN 7
-#define LIGHT_DAM_THRESHOLD 0.25
-
-#define ANTAG_DATUM_THRALL		/datum/antagonist/thrall
-#define ANTAG_DATUM_SLING		/datum/antagonist/shadowling
-
 /*
 SHADOWLING: A gamemode based on previously-run events
 Aliens called shadowlings are on the station.
@@ -228,16 +221,6 @@ Made by Xhuis
 			H.adjustOrganLoss(ORGAN_SLOT_BRAIN, -25)
 			H.adjustCloneLoss(-1)
 
-/datum/game_mode/proc/update_shadow_icons_added(datum/mind/shadow_mind)
-	var/datum/atom_hud/antag/shadow_hud = GLOB.huds[ANTAG_HUD_SHADOW]
-	shadow_hud.join_hud(shadow_mind.current)
-	set_antag_hud(shadow_mind.current, ((is_shadow(shadow_mind.current)) ? "shadowling" : "thrall"))
-
-/datum/game_mode/proc/update_shadow_icons_removed(datum/mind/shadow_mind)
-	var/datum/atom_hud/antag/shadow_hud = GLOB.huds[ANTAG_HUD_SHADOW]
-	shadow_hud.leave_hud(shadow_mind.current)
-	set_antag_hud(shadow_mind.current, null)
-
 /mob/living/proc/add_thrall()
 	if(!istype(mind))
 		return FALSE
@@ -257,7 +240,7 @@ Made by Xhuis
 	if(!istype(mind))
 		return FALSE
 	return mind.remove_antag_datum(ANTAG_DATUM_SLING)
-/*
+
 /datum/antagonist/shadowling/roundend_report()
 	var/list/round_credits = list()
 	var/len_before_addition
@@ -272,7 +255,7 @@ Made by Xhuis
 
 	round_credits += ..()
 	return round_credits
-*/
+
 ////////////////////
 /////BODYPARTS/////
 ////////////////////

@@ -14,7 +14,7 @@
 	move_to_delay = 10
 	friendly_verb_continuous = "floats near"
 	friendly_verb_simple = "float near"
-	speak_emote = list("puffs")
+	speak_emote = list("раздувает")
 	vision_range = 5
 	speed = 0
 	maxHealth = 50
@@ -101,7 +101,7 @@
 
 /mob/living/simple_animal/hostile/asteroid/fugu/proc/Deflate()
 	if(wumbo)
-		walk(src, 0)
+		SSmove_manager.stop_looping(src)
 		wumbo = 0
 		icon_state = "Fugu0"
 		obj_damage = 0

@@ -36,14 +36,13 @@
 	name = "Cook"
 	jobtype = /datum/job/cook
 
-	belt = /obj/item/pda/cook
+	belt = /obj/item/modular_computer/tablet/pda/cook
 	ears = /obj/item/radio/headset/headset_srv
 	uniform = /obj/item/clothing/under/rank/civilian/chef
 	suit = /obj/item/clothing/suit/toggle/chef
 	head = /obj/item/clothing/head/chefhat
 	mask = /obj/item/clothing/mask/fakemoustache/italian
 	backpack_contents = list(
-		/obj/item/modular_computer/tablet/preset/cheap = 1,
 		/obj/item/sharpener = 1,
 		/obj/item/choice_beacon/ingredient = 1
 		)

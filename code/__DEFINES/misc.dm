@@ -12,6 +12,24 @@
 /// Inverse direction, taking into account UP|DOWN if necessary.
 #define REVERSE_DIR(dir) ( ((dir & 85) << 1) | ((dir & 170) >> 1) )
 
+/// Create directional subtypes for a path to simplify mapping.
+#define MAPPING_DIRECTIONAL_HELPERS(path, offset) ##path/directional/north {\
+	dir = NORTH; \
+	pixel_y = offset; \
+} \
+##path/directional/south {\
+	dir = SOUTH; \
+	pixel_y = -offset; \
+} \
+##path/directional/east {\
+	dir = EAST; \
+	pixel_x = offset; \
+} \
+##path/directional/west {\
+	dir = WEST; \
+	pixel_x = -offset; \
+}
+
 //Human Overlays Indexes/////////
 #define MUTATIONS_LAYER			30		//mutations. Tk headglows, cold resistance glow, etc
 #define BODY_BEHIND_LAYER		29		//certain mutantrace features (tail when looking south) that must appear behind the body parts
@@ -245,7 +263,7 @@ GLOBAL_LIST_INIT(ghost_others_options, list(GHOST_OTHERS_SIMPLE, GHOST_OTHERS_DE
 #define ORBITRON	"Orbitron"
 #define SHARE		"Share Tech Mono"
 
-GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
+GLOBAL_LIST_INIT(pda_styles, sort_list(list(MONO, VT, ORBITRON, SHARE)))
 
 /////////////////////////////////////
 // atom.appearence_flags shortcuts //
@@ -361,15 +379,6 @@ GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
 #define FIELD_TURF 1
 #define FIELD_EDGE 2
 
-//gibtonite state defines
-#define GIBTONITE_UNSTRUCK 0
-#define GIBTONITE_ACTIVE 1
-#define GIBTONITE_STABLE 2
-#define GIBTONITE_DETONATE 3
-
-//for obj explosion block calculation
-#define EXPLOSION_BLOCK_PROC -1
-
 //for determining which type of heartbeat sound is playing
 #define BEAT_FAST 1
 #define BEAT_SLOW 2
@@ -417,8 +426,8 @@ GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
 #define RIDING_OFFSET_ALL "ALL"
 
 //stack recipe placement check types
-#define STACK_CHECK_CARDINALS "cardinals" //checks if there is an object of the result type in any of the cardinal directions
-#define STACK_CHECK_ADJACENT "adjacent" //checks if there is an object of the result type within one tile
+#define STACK_CHECK_CARDINALS (1<<0) //checks if there is an object of the result type in any of the cardinal directions
+#define STACK_CHECK_ADJACENT (1<<1) //checks if there is an object of the result type within one tile
 
 //text files
 #define BRAIN_DAMAGE_FILE "traumas.json"
@@ -506,18 +515,6 @@ GLOBAL_LIST_INIT(pda_styles, sortList(list(MONO, VT, ORBITRON, SHARE)))
 #define OK_ART 20
 #define GOOD_ART 25
 #define GREAT_ART 50
-
-//Religion
-///role below priests, for losing most powers of priests but still being holy.
-#define HOLY_ROLE_DEACON 1
-///default priestly role
-#define HOLY_ROLE_PRIEST 2
-///the one who designates the religion
-#define HOLY_ROLE_HIGHPRIEST 3
-
-#define ALIGNMENT_GOOD "good"
-#define ALIGNMENT_NEUT "neutral"
-#define ALIGNMENT_EVIL "evil"
 
 
 // Play time / EXP

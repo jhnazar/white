@@ -7,12 +7,13 @@ Note: Must be placed within 3 tiles of the R&D Console
 */
 /obj/machinery/rnd/destructive_analyzer
 	name = "деструктивный анализатор"
-	desc = "Узнай науку, уничтожая вещи!"
+	desc = "Если ты хочешь понять как работают вещи, тебе придется их сломать."
 	icon_state = "d_analyzer"
 	circuit = /obj/item/circuitboard/machine/destructive_analyzer
 	var/decon_mod = 0
 
 /obj/machinery/rnd/destructive_analyzer/RefreshParts()
+	. = ..()
 	var/T = 0
 	for(var/obj/item/stock_parts/S in component_parts)
 		T += S.rating
@@ -216,6 +217,7 @@ Note: Must be placed within 3 tiles of the R&D Console
 			unload_item()
 	if(ls["deconstruct"])
 		if(!user_try_decon_id(ls["deconstruct"], usr))
+			playsound(src, 'white/valtos/sounds/click3.ogg', 20, TRUE)
 			say("Destructive analysis failed!")
 
 	updateUsrDialog()

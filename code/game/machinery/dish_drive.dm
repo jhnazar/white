@@ -1,12 +1,11 @@
 /obj/machinery/dish_drive
-	name = "dish drive"
-	desc = "A culinary marvel that uses matter-to-energy conversion to store dishes and shards. Convenient! \
-	Additional features include a vacuum function to suck in nearby dishes, and an automatic transfer beam that empties its contents into nearby disposal bins every now and then. \
-	Or you can just drop your plates on the floor, like civilized folk."
+	name = "утилизатор тарелок"
+	desc = "Кулинарное чудо, которое использует преобразование вещества в энергию для хранения посуды и осколков. Удобно! \
+		Дополнительные функции включают функцию вакуумирования для всасывания близлежащей посуды и автоматическую передаточную балку, которая время от времени высыпает ее содержимое в близлежащие мусорные баки. \
+		Или вы можете просто бросить свои тарелки на пол, как цивилизованные люди."
 	icon = 'goon/icons/obj/kitchen.dmi'
 	icon_state = "synthesizer"
-	idle_power_usage = 800 //5 with default parts
-	active_power_usage = 1300 //10 with default parts
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.04
 	density = FALSE
 	circuit = /obj/item/circuitboard/machine/dish_drive
 	pass_flags = PASSTABLE
@@ -66,6 +65,7 @@
 	..()
 
 /obj/machinery/dish_drive/RefreshParts()
+	. = ..()
 	var/total_rating = 0
 	for(var/obj/item/stock_parts/S in component_parts)
 		total_rating += S.rating
@@ -115,7 +115,7 @@
 	if(!bin)
 		if(manual)
 			visible_message(span_warning("[capitalize(src.name)] buzzes. There are no disposal bins in range!"))
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 50, TRUE)
+			playsound(src, 'white/valtos/sounds/error1.ogg', 50, TRUE)
 		return
 	var/disposed = 0
 	for(var/obj/item/I in dish_drive_contents)

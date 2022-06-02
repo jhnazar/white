@@ -112,7 +112,6 @@
 	anchored = TRUE
 	density = TRUE
 	move_resist = INFINITY
-	layer = MASSIVE_OBJ_LAYER
 	plane = ABOVE_LIGHTING_PLANE
 	light_range = 6
 	appearance_flags = LONG_GLIDE
@@ -408,7 +407,7 @@
 /obj/item/voodoo/fire_act(exposed_temperature, exposed_volume)
 	if(target)
 		target.adjust_fire_stacks(20)
-		target.IgniteMob()
+		target.ignite_mob()
 		GiveHint(target,1)
 	return ..()
 
@@ -486,6 +485,7 @@
 	name = "торнадо"
 	desc = "Говно полное!"
 	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	randomdir = 0
 	duration = 40
 	pixel_x = 500

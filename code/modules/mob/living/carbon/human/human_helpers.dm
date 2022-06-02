@@ -12,9 +12,9 @@
 	if(id)
 		. = id.assignment
 	else
-		var/obj/item/pda/pda = wear_id
+		var/obj/item/modular_computer/tablet/pda = wear_id
 		if(istype(pda))
-			. = pda.ownjob
+			. = pda.saved_job
 		else
 			return if_no_id
 	if(!.)
@@ -26,9 +26,9 @@
 	var/obj/item/card/id/id = get_idcard(FALSE)
 	if(id)
 		return id.registered_name
-	var/obj/item/pda/pda = wear_id
+	var/obj/item/modular_computer/tablet/pda/pda = wear_id
 	if(istype(pda))
-		return pda.owner
+		return pda.saved_identification
 	return if_no_id
 
 //repurposed proc. Now it combines get_id_name() and get_face_name() to determine a mob's name variable. Made into a separate proc as it'll be useful elsewhere
@@ -60,17 +60,14 @@
 //Useful when player is being seen by other mobs
 /mob/living/carbon/human/proc/get_id_name(if_no_id = "Неизвестный")
 	var/obj/item/storage/wallet/wallet = wear_id
-	var/obj/item/pda/pda = wear_id
+	var/obj/item/modular_computer/tablet/pda = wear_id
 	var/obj/item/card/id/id = wear_id
-	var/obj/item/modular_computer/tablet/tablet = wear_id
 	if(istype(wallet))
 		id = wallet.front_id
 	if(istype(id))
 		. = id.registered_name
 	else if(istype(pda))
-		. = pda.owner
-	else if(istype(tablet))
-		var/obj/item/computer_hardware/card_slot/card_slot = tablet.all_components[MC_CARD]
+		var/obj/item/computer_hardware/card_slot/card_slot = pda.all_components[MC_CARD]
 		if(card_slot?.stored_card)
 			. = card_slot.stored_card.registered_name
 	if(!.)
@@ -221,15 +218,10 @@
 
 ///Returns death message for mob examine text
 /mob/living/carbon/human/proc/generate_death_examine_text()
-	//var/mob/dead/observer/ghost = get_ghost(TRUE, TRUE)
 	var/t_on = ru_who(TRUE)
-	if(key || !getorgan(/obj/item/organ/brain))
-		return "<span class='deadsay'>[t_on] не реагирует на происходящее вокруг; нет признаков жизни и души...</span>\n" //Default death message
-	//The death mob has a brain and no client/player that is assigned to the mob
-	/*
-	if(!ghost?.can_reenter_corpse)  //And there is no ghost that could reenter the body
-		//There is no way this mob can in any normal way get a player, so they lost the will to live
-		return "<span class='deadsay'>[t_on] не реагирует на происходящее вокруг; нет признаков жизни и желания души жить...</span>\n"
-	*/
-	//This mob has a ghost linked that could still reenter the body, so the soul only departed
-	return "<span class='deadsay'>[t_on] не реагирует на происходящее вокруг; нет признаков жизни и души...</span>\n"
+	var/mob/dead/observer/ghost = get_ghost(TRUE, TRUE)
+	//This checks to see if the body is revivable
+	if(key || !getorgan(/obj/item/organ/brain) || ghost?.can_reenter_corpse)
+		return "<span class='deadsay'>[t_on] не реагирует на происходящее вокруг; нет признаков жизни...</span>\n"
+	else
+		return "<span class='deadsay'>[t_on] не реагирует на происходящее вокруг; нет признаков жизни и души...</span>\n"

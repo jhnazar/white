@@ -9,14 +9,18 @@
 
 	for (var/obj/machinery/camera/C in L)
 		var/list/tempnetwork = C.network&src.network
-		if (tempnetwork.len)
-			T[text("[][]", C.c_tag, (C.can_use() ? null : " (Deactivated)"))] = C
+		if (length(tempnetwork))
+			T[text("[][]", C.c_tag, (C.can_use() ? null : " (Отключена)"))] = C
 
 	return T
 
 /mob/living/silicon/ai/proc/show_camera_list()
 	var/list/cameras = get_camera_list()
-	var/camera = input(src, "Choose which camera you want to view", "Cameras") as null|anything in cameras
+	var/camera = tgui_input_list(src, "Выберите камеру наблюдения", "Камеры", cameras)
+	if(isnull(camera))
+		return
+	if(isnull(cameras[camera]))
+		return
 	switchCamera(cameras[camera])
 
 /datum/trackable
@@ -26,19 +30,22 @@
 	var/list/humans = list()
 	var/list/others = list()
 
-/mob/living/silicon/ai/proc/trackable_mobs()
+/mob/living/silicon/ai/proc/trackable_mobs(mob/user)
 	track.initialized = TRUE
 	track.names.Cut()
 	track.namecounts.Cut()
 	track.humans.Cut()
 	track.others.Cut()
 
-	if(usr.stat == DEAD)
+	if(!user)
+		user = usr
+
+	if(user.stat == DEAD)
 		return list()
 
 	for(var/i in GLOB.mob_living_list)
 		var/mob/living/L = i
-		if(!L.can_track(usr))
+		if(!L.can_track(user))
 			continue
 
 		var/name = L.name
@@ -53,11 +60,11 @@
 		else
 			track.others[name] = WEAKREF(L)
 
-	var/list/targets = sortList(track.humans) + sortList(track.others)
+	var/list/targets = sort_list(track.humans) + sort_list(track.others)
 
 	return targets
 
-/mob/living/silicon/ai/verb/ai_camera_track(target_name in trackable_mobs())
+/mob/living/silicon/ai/verb/ai_camera_track(target_name in trackable_mobs(src))
 	set name = "track"
 	set hidden = TRUE //Don't display it on the verb lists. This verb exists purely so you can type "track Oldman Robustin" and follow his ass
 
@@ -65,27 +72,39 @@
 		return
 
 	if(!track.initialized)
-		trackable_mobs()
+		trackable_mobs(src)
 
 	var/datum/weakref/target = (isnull(track.humans[target_name]) ? track.others[target_name] : track.humans[target_name])
 
 	if(target)
 		ai_actual_track(target.resolve())
 
+/mob/living/silicon/robot/shell/proc/ai_camera_track(target_name) // for the case if we still have tracking panel still open
+	var/mob/living/silicon/ai/AI = mainframe
+
+	undeploy()
+	AI.ai_camera_track(target_name)
+
+/mob/living/silicon/robot/shell/proc/ai_actual_track(mob/living/target)
+	var/mob/living/silicon/ai/AI = mainframe
+
+	undeploy()
+	AI.ai_actual_track(target)
+
 /mob/living/silicon/ai/proc/ai_actual_track(mob/living/target)
 	if(!istype(target))
 		return
-	var/mob/living/silicon/ai/U = usr
+	var/mob/living/silicon/ai/U = src
 
 	U.cameraFollow = target
 	U.tracking = 1
 
-	if(!target || !target.can_track(usr))
-		to_chat(U, span_warning("Target is not near any active cameras."))
+	if(!target || !target.can_track(src))
+		to_chat(U, span_warning("Цель не видна на активных камерах."))
 		U.cameraFollow = null
 		return
 
-	to_chat(U, span_notice("Now tracking [target.get_visible_name()] on camera."))
+	to_chat(U, span_notice("Теперь следим за [target.get_visible_name()]."))
 
 	INVOKE_ASYNC(src, .proc/do_track, target, U)
 
@@ -99,11 +118,11 @@
 		if(!target.can_track(usr))
 			U.tracking = TRUE
 			if(!cameraticks)
-				to_chat(U, span_warning("Target is not near any active cameras. Attempting to reacquire..."))
+				to_chat(U, span_warning("Цель не видна на активных камерах. Пытаемся найти снова..."))
 			cameraticks++
 			if(cameraticks > 9)
 				U.cameraFollow = null
-				to_chat(U, span_warning("Unable to reacquire, cancelling track..."))
+				to_chat(U, span_warning("Не смогли найти цель, отменяем слежку..."))
 				tracking = FALSE
 				return
 			else
@@ -146,7 +165,7 @@
 	var/obj/machinery/camera/a
 	var/obj/machinery/camera/b
 
-	for (var/i = L.len, i > 0, i--)
+	for (var/i = length(L), i > 0, i--)
 		for (var/j = 1 to i - 1)
 			a = L[j]
 			b = L[j + 1]

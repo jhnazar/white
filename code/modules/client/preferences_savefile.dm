@@ -5,7 +5,7 @@
 // You do not need to raise this if you are adding new values that have sane defaults.
 // Only raise this value when changing the meaning/format/name/layout of an existing value
 // where you would want the updater procs below to run
-#define SAVEFILE_VERSION_MAX 53
+#define SAVEFILE_VERSION_MAX 54
 
 /*
 SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Carn
@@ -68,6 +68,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	if(current_version < 53)
 		widescreenwidth = 19
+
+	if(current_version < 54)
+		if("0474cf4afd90f3bd6ed0fc294e3e71f4" in purchased_gear)
+			purchased_gear += "b77fc4971b9920d93a5c1cab1aa490ed"
+		if("4d4919a746a01f2d0c17740fdbbd83ea" in purchased_gear)
+			purchased_gear += "6355ec980b834b9c956ad064bde6657a"
 
 /datum/preferences/proc/update_character(current_version, savefile/S)
 	return
@@ -183,8 +189,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	READ_FILE(S["menuoptions"], menuoptions)
 	READ_FILE(S["enable_tips"], enable_tips)
 	READ_FILE(S["tip_delay"], tip_delay)
-	READ_FILE(S["pda_style"], pda_style)
-	READ_FILE(S["pda_color"], pda_color)
 	READ_FILE(S["fullscreen"], fullscreen)
 	READ_FILE(S["btprefsnew"], btprefsnew)
 	READ_FILE(S["btvolume_max"], btvolume_max)
@@ -258,8 +262,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	ghost_others	= sanitize_inlist(ghost_others, GLOB.ghost_others_options, GHOST_OTHERS_DEFAULT_OPTION)
 	menuoptions		= SANITIZE_LIST(menuoptions)
 	be_special		= SANITIZE_LIST(be_special)
-	pda_style		= sanitize_inlist(pda_style, GLOB.pda_styles, initial(pda_style))
-	pda_color		= sanitize_hexcolor(pda_color, 6, 1, initial(pda_color))
 	key_bindings 	= sanitize_keybindings(key_bindings)
 	favorite_outfits = SANITIZE_LIST(favorite_outfits)
 
@@ -341,8 +343,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["menuoptions"], menuoptions)
 	WRITE_FILE(S["enable_tips"], enable_tips)
 	WRITE_FILE(S["tip_delay"], tip_delay)
-	WRITE_FILE(S["pda_style"], pda_style)
-	WRITE_FILE(S["pda_color"], pda_color)
 	WRITE_FILE(S["key_bindings"], key_bindings)
 	WRITE_FILE(S["fullscreen"], fullscreen)
 	WRITE_FILE(S["btprefsnew"], btprefsnew)
@@ -394,7 +394,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	READ_FILE(S["age"], age)
 	READ_FILE(S["hair_color"], hair_color)
 	READ_FILE(S["facial_hair_color"], facial_hair_color)
-	READ_FILE(S["eye_color"], eye_color)
+	READ_FILE(S["eye_color_left"], eye_color_left)
+	READ_FILE(S["eye_color_right"], eye_color_right)
 	READ_FILE(S["skin_tone"], skin_tone)
 	READ_FILE(S["hairstyle_name"], hairstyle)
 	READ_FILE(S["facial_style_name"], facial_hairstyle)
@@ -497,7 +498,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	hair_color			= sanitize_hexcolor(hair_color, 3, 0)
 	facial_hair_color			= sanitize_hexcolor(facial_hair_color, 3, 0)
 	underwear_color			= sanitize_hexcolor(underwear_color, 3, 0)
-	eye_color		= sanitize_hexcolor(eye_color, 3, 0)
+	eye_color_left		= sanitize_hexcolor(eye_color_left, 3, 0)
+	eye_color_right		= sanitize_hexcolor(eye_color_right, 3, 0)
 	hair_grad_color = sanitize_hexcolor(hair_grad_color, 3, 0)
 	hair_grad_style = sanitize_inlist(hair_grad_style, GLOB.hair_gradients_list, initial(hair_grad_style))
 	facial_grad_color = sanitize_hexcolor(facial_grad_color, 3, 0)
@@ -552,7 +554,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["age"]			, age)
 	WRITE_FILE(S["hair_color"]			, hair_color)
 	WRITE_FILE(S["facial_hair_color"]			, facial_hair_color)
-	WRITE_FILE(S["eye_color"]			, eye_color)
+	WRITE_FILE(S["eye_color_left"]			, eye_color_left)
+	WRITE_FILE(S["eye_color_right"]			, eye_color_right)
 	WRITE_FILE(S["skin_tone"]			, skin_tone)
 	WRITE_FILE(S["hairstyle_name"]			, hairstyle)
 	WRITE_FILE(S["facial_style_name"]			, facial_hairstyle)

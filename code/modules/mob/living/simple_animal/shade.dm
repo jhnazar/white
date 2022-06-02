@@ -10,8 +10,8 @@
 	maxHealth = 40
 	health = 40
 	healable = 0
-	speak_emote = list("hisses")
-	emote_hear = list("wails.","screeches.")
+	speak_emote = list("шипит")
+	emote_hear = list("вопит.","визжит.")
 	response_help_continuous = "puts their hand through"
 	response_help_simple = "put your hand through"
 	response_disarm_continuous = "flails at"
@@ -67,9 +67,9 @@
 	else if(src != M)
 		return ..()
 
-/mob/living/simple_animal/shade/attackby(obj/item/O, mob/user, params)  //Marker -Agouri
-	if(istype(O, /obj/item/soulstone))
-		var/obj/item/soulstone/SS = O
-		SS.transfer_soul("SHADE", src, user)
+/mob/living/simple_animal/shade/attackby(obj/item/item, mob/user, params)  //Marker -Agouri
+	if(istype(item, /obj/item/soulstone))
+		var/obj/item/soulstone/stone = item
+		stone.capture_shade(src, user)
 	else
 		. = ..()

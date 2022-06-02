@@ -5,7 +5,7 @@
 	desc = ""
 	gender = NEUTER
 	mob_biotypes = NONE
-	speak_emote = list("hisses")
+	speak_emote = list("шипит")
 	response_help_continuous = "thinks better of touching"
 	response_help_simple = "think better of touching"
 	response_disarm_continuous = "flails at"
@@ -74,7 +74,7 @@
 /mob/living/simple_animal/hostile/construct/Destroy()
 	QDEL_NULL(our_rune)
 	return ..()
-	
+
 /mob/living/simple_animal/hostile/construct/Login()
 	. = ..()
 	if(!. || !client)
@@ -86,9 +86,9 @@
 	. = list("<hr><span class='cult'>Это же [icon2html(src, user)] <b>[src]</b>!\n[desc]")
 	if(health < maxHealth)
 		if(health >= maxHealth/2)
-			. += "\n<span class='warning'>[t_on] немного повреждён.</span>"
+			. += span_warning("\n[t_on] немного повреждён.")
 		else
-			. += "\n<span class='warning'><b>[t_on] сильно повреждён!</b></span>"
+			. += span_warning("\n<b>[t_on] сильно повреждён!</b>")
 	. += "</span>"
 
 /mob/living/simple_animal/hostile/construct/attack_animal(mob/living/simple_animal/M)
@@ -184,7 +184,7 @@
 				var/new_angle_s = P.Angle + rand(120,240)
 				while(new_angle_s > 180)	// Translate to regular projectile degrees
 					new_angle_s -= 360
-				P.setAngle(new_angle_s)
+				P.set_angle(new_angle_s)
 
 			return BULLET_ACT_FORCE_PIERCE // complete projectile permutation
 
@@ -303,7 +303,7 @@
 /mob/living/simple_animal/hostile/construct/artificer/Initialize()
 	. = ..()
 	var/datum/atom_hud/datahud = GLOB.huds[health_hud]
-	datahud.add_hud_to(src)
+	datahud.show_to(src)
 
 /mob/living/simple_animal/hostile/construct/artificer/Found(atom/A) //what have we found here?
 	if(isconstruct(A)) //is it a construct?

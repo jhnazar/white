@@ -6,9 +6,8 @@
 	. = ..()
 	if(. & EMP_PROTECT_SELF)
 		return
-	take_holo_damage(50/severity)
-	Paralyze(400/severity)
-	silent = max(20/severity, silent)
+	take_holo_damage(50 / severity)
+	Stun(400 / severity)
 	if(holoform)
 		fold_in(force = TRUE)
 	//Need more effects that aren't instadeath or permanent law corruption.
@@ -30,23 +29,23 @@
 /mob/living/silicon/pai/ex_act(severity, target)
 	take_holo_damage(severity * 50)
 	switch(severity)
-		if(1)	//RIP
+		if(EXPLODE_DEVASTATE)	//RIP
 			qdel(card)
 			qdel(src)
-		if(2)
+		if(EXPLODE_HEAVY)
 			fold_in(force = 1)
 			Paralyze(400)
-		if(3)
+		if(EXPLODE_LIGHT)
 			fold_in(force = 1)
 			Paralyze(200)
 
 /mob/living/silicon/pai/attack_hand(mob/living/carbon/human/user)
 	switch(user.a_intent)
-		if("help")
+		if(INTENT_HELP)
 			visible_message(span_notice("[user] gently pats [src] on the head, eliciting an off-putting buzzing from its holographic field."))
-		if("disarm")
+		if(INTENT_DISARM)
 			visible_message(span_notice("[user] boops [src] on the head!"))
-		if("harm")
+		if(INTENT_HARM)
 			user.do_attack_animation(src)
 			if (user.name == master)
 				visible_message(span_notice("Responding to its master's touch, [src] disengages its holochassis emitter, rapidly losing coherence."))
@@ -70,8 +69,8 @@
 /mob/living/silicon/pai/stripPanelEquip(obj/item/what, mob/who, where) //prevents stripping
 	to_chat(src, span_warning("Your holochassis stutters and warps intensely as you attempt to interact with the object, forcing you to cease lest the field fail."))
 
-/mob/living/silicon/pai/IgniteMob(mob/living/silicon/pai/P)
-	return FALSE //No we're not flammable
+/mob/living/silicon/pai/ignite_mob()
+	return FALSE
 
 /mob/living/silicon/pai/proc/take_holo_damage(amount)
 	emitterhealth = clamp((emitterhealth - amount), -50, emittermaxhealth)

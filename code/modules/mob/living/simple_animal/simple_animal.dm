@@ -194,6 +194,7 @@
 		AddComponent(/datum/component/personal_crafting)
 		ADD_TRAIT(src, TRAIT_ADVANCEDTOOLUSER, ROUNDSTART_TRAIT)
 		ADD_TRAIT(src, TRAIT_CAN_STRIP, ROUNDSTART_TRAIT)
+	ADD_TRAIT(src, TRAIT_NOFIRE_SPREAD, ROUNDSTART_TRAIT)
 	if(discovery_points)
 		AddComponent(/datum/component/discoverable, discovery_points)
 
@@ -343,10 +344,10 @@
 	if(isturf(loc) && isopenturf(loc))
 		var/turf/open/ST = loc
 		if(ST.air)
-			var/tox = ST.air.get_moles(/datum/gas/plasma)
-			var/oxy = ST.air.get_moles(/datum/gas/oxygen)
-			var/n2  = ST.air.get_moles(/datum/gas/nitrogen)
-			var/co2 = ST.air.get_moles(/datum/gas/carbon_dioxide)
+			var/tox = ST.air.get_moles(GAS_PLASMA)
+			var/oxy = ST.air.get_moles(GAS_O2)
+			var/n2  = ST.air.get_moles(GAS_N2)
+			var/co2 = ST.air.get_moles(GAS_CO2)
 
 			if(atmos_requirements["min_oxy"] && oxy < atmos_requirements["min_oxy"])
 				. = FALSE
@@ -379,6 +380,8 @@
 	if(isturf(A))
 		var/areatemp = get_temperature(environment)
 		var/temp_delta = areatemp - bodytemperature
+		if(client)
+			handle_temp_color(areatemp)
 		if(abs(temp_delta) > 5)
 			if(temp_delta < 0)
 				if(!on_fire)
@@ -515,10 +518,7 @@
 			return FALSE
 	return TRUE
 
-/mob/living/simple_animal/handle_fire(delta_time, times_fired)
-	return TRUE
-
-/mob/living/simple_animal/IgniteMob()
+/mob/living/simple_animal/ignite_mob()
 	return FALSE
 
 /mob/living/simple_animal/extinguish_mob()
@@ -668,7 +668,6 @@
 	if(client && hud_used && hud_used.hud_version != HUD_STYLE_NOHUD)
 		for(var/obj/item/I in held_items)
 			var/index = get_held_index_of_item(I)
-			I.layer = ABOVE_HUD_LAYER
 			I.plane = ABOVE_HUD_PLANE
 			I.screen_loc = ui_hand_position(index)
 			client.screen |= I
@@ -691,10 +690,11 @@
 		if (togglestatus > 0 && togglestatus < 5)
 			if (togglestatus == AI_Z_OFF || AIStatus == AI_Z_OFF)
 				var/turf/T = get_turf(src)
-				if (AIStatus == AI_Z_OFF)
-					SSidlenpcpool.idle_mobs_by_zlevel[T?.z] -= src
-				else
-					SSidlenpcpool.idle_mobs_by_zlevel[T?.z] += src
+				if (T)
+					if (AIStatus == AI_Z_OFF)
+						SSidlenpcpool.idle_mobs_by_zlevel[T.z] -= src
+					else
+						SSidlenpcpool.idle_mobs_by_zlevel[T.z] += src
 			GLOB.simple_animals[AIStatus] -= src
 			GLOB.simple_animals[togglestatus] += src
 			AIStatus = togglestatus
@@ -712,10 +712,10 @@
 			toggle_ai(AI_ON)
 
 
-/mob/living/simple_animal/onTransitZ(old_z, new_z)
+/mob/living/simple_animal/on_changed_z_level(turf/old_turf, turf/new_turf)
 	..()
-	if (AIStatus == AI_Z_OFF)
-		SSidlenpcpool.idle_mobs_by_zlevel[old_z] -= src
+	if (old_turf && AIStatus == AI_Z_OFF)
+		SSidlenpcpool.idle_mobs_by_zlevel[old_turf.z] -= src
 		toggle_ai(initial(AIStatus))
 
 ///This proc is used for adding the swabbale element to mobs so that they are able to be biopsied and making sure holograpic and butter-based creatures don't yield viable cells samples.
@@ -752,7 +752,7 @@
 		return
 	if(!Adjacent(hunted))
 		stop_automated_movement = TRUE
-		walk_to(src,hunted,0,3)
+		SSmove_manager.move_to(src, hunted, 0, 3)
 		if(Adjacent(hunted))
 			hunt(hunted) // In case it gets next to the target immediately, skip the scan timer and kill it.
 		return

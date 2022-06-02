@@ -20,6 +20,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	// Faction
 	RADIO_KEY_SYNDICATE = RADIO_CHANNEL_SYNDICATE,
 	RADIO_KEY_CENTCOM = RADIO_CHANNEL_CENTCOM,
+	RADIO_KEY_FACTION = RADIO_CHANNEL_FACTION,
 
 	// Admin
 	MODE_KEY_ADMIN = MODE_ADMIN,
@@ -139,15 +140,23 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 
 	switch(stat)
 		if(SOFT_CRIT)
+			if(message_mods[MODE_CHANGELING])
+				return
 			message_mods[WHISPER_MODE] = MODE_WHISPER
 		if(UNCONSCIOUS)
 			return
 		if(HARD_CRIT)
-			if(!message_mods[WHISPER_MODE])
+			if(!message_mods[WHISPER_MODE] || message_mods[MODE_CHANGELING])
 				return
 		if(DEAD)
 			say_dead(original_message)
 			return
+
+	if(client && SSlag_switch.measures[SLOWMODE_SAY] && !HAS_TRAIT(src, TRAIT_BYPASS_MEASURES) && !forced && src == usr)
+		if(!COOLDOWN_FINISHED(client, say_slowmode))
+			to_chat(src, span_warning("Сообщение не было отправлено из-за ограничений. Подождите [SSlag_switch.slowmode_cooldown/10] секунд перед отправкой нового.\n\"[message]\""))
+			return
+		COOLDOWN_START(client, say_slowmode, SSlag_switch.slowmode_cooldown)
 
 	if(!can_speak_basic(original_message, ignore_spam, forced))
 		return
@@ -274,7 +283,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 		deaf_type = 2 // Since you should be able to hear yourself without looking
 
 	// Create map text prior to modifying message for goonchat
-	if (client?.prefs.chat_on_map && !(stat == UNCONSCIOUS || stat == HARD_CRIT) && (client.prefs.see_chat_non_mob || ismob(speaker)) && can_hear())
+	if (client?.prefs.chat_on_map && !(stat == UNCONSCIOUS || stat == HARD_CRIT) && (ismob(speaker) || client.prefs.see_chat_non_mob || ismob(speaker)) && can_hear())
 		create_chat_message(speaker, message_language, raw_message, spans)
 
 	// Recompose message for AI hrefs, language incomprehension.
@@ -314,7 +323,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 				continue	//Remove if underlying cause (likely byond issue) is fixed. See TG PR #49004.
 			if(M.stat != DEAD) //not dead, not important
 				continue
-			if(get_dist(M, src) > 7 || M.z != z) //they're out of range of normal hearing
+			if(M.z != z || get_dist(M, src) > 7) //they're out of range of normal hearing
 				if(eavesdrop_range)
 					if(!(M.client.prefs?.chat_toggles & CHAT_GHOSTWHISPER)) //they're whispering and we have hearing whispers at any range off
 						continue
@@ -330,20 +339,24 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 		eavesrendered = compose_message(src, message_language, eavesdropping, , spans, message_mods)
 
 	var/rendered = compose_message(src, message_language, message, , spans, message_mods)
-	for(var/_AM in listening)
-		var/atom/movable/AM = _AM
-		if(eavesdrop_range && get_dist(source, AM) > message_range && !(the_dead[AM]))
-			AM.Hear(eavesrendered, src, message_language, eavesdropping, , spans, message_mods)
+	for(var/atom/movable/listening_movable as anything in listening)
+		if(!listening_movable)
+			stack_trace("somehow theres a null returned from get_hearers_in_view() in send_speech!")
+			continue
+		if(eavesdrop_range && get_dist(source, listening_movable) > message_range && !(the_dead[listening_movable]))
+			listening_movable.Hear(eavesrendered, src, message_language, eavesdropping, , spans, message_mods)
 		else
-			AM.Hear(rendered, src, message_language, message, , spans, message_mods)
+			listening_movable.Hear(rendered, src, message_language, message, , spans, message_mods)
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_LIVING_SAY_SPECIAL, src, message)
 
 	//speech bubble
 	var/list/speech_bubble_recipients = list()
 	for(var/mob/M in listening)
-		if(M.client)
+		if(M.client || (SSlag_switch.measures[DISABLE_RUNECHAT] && !HAS_TRAIT(src, TRAIT_BYPASS_MEASURES)))
 			speech_bubble_recipients.Add(M.client)
 	var/image/I = image('icons/mob/talk.dmi', src, "[bubble_type][say_test(message)]", FLY_LAYER)
+	I.plane = ABOVE_GAME_PLANE
+	I.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
 	INVOKE_ASYNC(GLOBAL_PROC, /.proc/flick_overlay, I, speech_bubble_recipients, 30)
 
 /mob/proc/binarycheck()
@@ -386,12 +399,6 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	if(HAS_TRAIT(src, TRAIT_UNINTELLIGIBLE_SPEECH))
 		message = unintelligize(message)
 
-	if(HAS_TRAIT(src, TRAIT_JEWISH))
-		message = difilexish(message)
-
-	if(HAS_TRAIT(src, TRAIT_UKRAINISH))
-		message = ukrainish(message)
-
 	if(HAS_TRAIT(src, TRAIT_ASIAT))
 		message = asiatish(message)
 
@@ -401,8 +408,12 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	if(stuttering)
 		message = stutter(message)
 
+	if(fucking_anime_girl_noises_oh_nya)
+		message = ddlc_text(message)
+
 	if(cultslurring && slurring)
 		message = cultslur(message)
+
 	else if(slurring)
 		message = slur(message)
 
@@ -418,7 +429,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 
 /mob/living/proc/radio(message, list/message_mods = list(), list/spans, language)
 	var/obj/item/implant/radio/imp = locate() in src
-	if(imp?.radio.on)
+	if(imp?.radio.is_on())
 		if(message_mods[MODE_HEADSET])
 			imp.radio.talk_into(src, message, , spans, language, message_mods)
 			return ITALICS | REDUCE_RANGE

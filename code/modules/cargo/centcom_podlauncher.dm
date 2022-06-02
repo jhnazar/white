@@ -92,10 +92,12 @@
 	cam_screen.del_on_map_removal = TRUE
 	cam_screen.screen_loc = "[map_name]:1,1"
 	cam_plane_masters = list()
-	for(var/plane in subtypesof(/atom/movable/screen/plane_master))
-		var/atom/movable/screen/instance = new plane()
+	for(var/plane in subtypesof(/atom/movable/screen/plane_master) - /atom/movable/screen/plane_master/blackness)
+		var/atom/movable/screen/plane_master/instance = new plane()
 		if (!renderLighting && instance.plane == LIGHTING_PLANE)
 			instance.alpha = 100
+		if(instance.blend_mode_override)
+			instance.blend_mode = instance.blend_mode_override
 		instance.assigned_map = map_name
 		instance.del_on_map_removal = TRUE
 		instance.screen_loc = "[map_name]:CENTER"
@@ -347,7 +349,7 @@
 			var/shrapnelInput
 			var/search = input("Input typepath of projectile you're looking for or leave the bar empty to show all projectiles.")
 			if(isnull(search) || search == "")
-				shrapnelInput = input("Please enter the type of pellet cloud you'd like to create on landing (Can be any projectile!)", "Projectile Typepath",  0) in sortList(subtypesof(/obj/projectile), /proc/cmp_typepaths_asc)
+				shrapnelInput = input("Please enter the type of pellet cloud you'd like to create on landing (Can be any projectile!)", "Projectile Typepath",  0) in sort_list(subtypesof(/obj/projectile), /proc/cmp_typepaths_asc)
 			else
 				shrapnelInput = pick_closest_path(search, matches = get_fancy_list_of_projectile_types())
 			if (isnull(shrapnelInput))
@@ -782,9 +784,9 @@
 		selector.moveToNullspace() //Otherwise, we move the selector to nullspace until it is needed again
 
 /datum/centcom_podlauncher/proc/clearBay() //Clear all objs and mobs from the selected bay
-	for (var/obj/O in bay.GetAllContents())
+	for (var/obj/O in bay.get_all_contents())
 		qdel(O)
-	for (var/mob/M in bay.GetAllContents())
+	for (var/mob/M in bay.get_all_contents())
 		qdel(M)
 	for (var/bayturf in bay)
 		var/turf/turf_to_clear = bayturf
@@ -880,6 +882,8 @@ GLOBAL_DATUM_INIT(podlauncher, /datum/centcom_podlauncher, new)
 	image_icon = 'icons/obj/supplypods_32x32.dmi'
 	image_state = "selector"
 	image_layer = FLY_LAYER
+	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	alpha = 150
 
 /obj/effect/hallucination/simple/dropoff_location
@@ -887,4 +891,6 @@ GLOBAL_DATUM_INIT(podlauncher, /datum/centcom_podlauncher, new)
 	image_icon = 'icons/obj/supplypods_32x32.dmi'
 	image_state = "dropoff_indicator"
 	image_layer = FLY_LAYER
+	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	alpha = 0

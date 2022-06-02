@@ -38,10 +38,7 @@
 	name_source = GLOB.last_names
 
 /datum/antagonist/ert/proc/update_name()
-	if(owner.current.gender == FEMALE)
-		owner.current.fully_replace_character_name(owner.current.real_name,"[role] [pick(name_source)]а")
-	else
-		owner.current.fully_replace_character_name(owner.current.real_name,"[role] [pick(name_source)]")
+	owner.current.fully_replace_character_name(owner.current.real_name,"[role] [pick(name_source)]")
 
 /datum/antagonist/ert/security // kinda handled by the base template but here for completion
 
@@ -220,14 +217,12 @@
 
 /datum/antagonist/ert/families
 	name = "Space Police Responder"
-	antag_hud_type = ANTAG_HUD_SPACECOP
 	antag_hud_name = "hud_spacecop"
 	greentext_reward = 20
 
 /datum/antagonist/ert/families/apply_innate_effects(mob/living/mob_override)
 	..()
 	var/mob/living/M = mob_override || owner.current
-	add_antag_hud(antag_hud_type, antag_hud_name, M)
 	if(M.hud_used)
 		var/datum/hud/H = M.hud_used
 		var/atom/movable/screen/wanted/giving_wanted_lvl = new /atom/movable/screen/wanted()
@@ -239,7 +234,6 @@
 
 /datum/antagonist/ert/families/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/M = mob_override || owner.current
-	remove_antag_hud(antag_hud_type, M)
 	if(M.hud_used)
 		var/datum/hud/H = M.hud_used
 		H.infodisplay -= H.wanted_lvl

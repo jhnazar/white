@@ -1,11 +1,12 @@
 #define SAFETY_COOLDOWN 100
 
 /obj/machinery/recycler
-	name = "recycler"
-	desc = "A large crushing machine used to recycle small items inefficiently. There are lights on the side."
+	name = "Мусоропереработчик"
+	desc = "Большая дробильная машина, используемая для неэффективной переработки мелких предметов. Сбоку есть индикаторы."
 	icon = 'icons/obj/recycling.dmi'
 	icon_state = "grinder-o0"
 	layer = ABOVE_ALL_MOB_LAYER // Overhead
+	plane = ABOVE_GAME_PLANE
 	density = TRUE
 	circuit = /obj/item/circuitboard/machine/recycler
 	var/safety_mode = FALSE // Temporarily stops machine if it detects a mob
@@ -47,6 +48,7 @@
 	AddElement(/datum/element/connect_loc, loc_connections)
 
 /obj/machinery/recycler/RefreshParts()
+	. = ..()
 	var/amt_made = 0
 	var/mat_mod = 0
 	for(var/obj/item/stock_parts/matter_bin/B in component_parts)
@@ -123,7 +125,7 @@
 	if(!isturf(AM0.loc))
 		return //I don't know how you called Crossed() but stop it.
 
-	var/list/to_eat = AM0.GetAllContents()
+	var/list/to_eat = AM0.get_all_contents()
 
 	var/living_detected = FALSE //technically includes silicons as well but eh
 	var/list/nom = list()
@@ -151,15 +153,17 @@
 						if(frabbs == 5)
 							GLOB.ooc_allowed = 0
 					crush_living(CRUNCH)
+					use_power(active_power_usage)
 		else // Stop processing right now without eating anything.
 			emergency_stop()
 			return
 	for(var/nommed in nom)
 		recycle_item(nommed)
+		use_power(active_power_usage)
 	if(nom.len && sound)
 		playsound(src, item_recycle_sound, (50 + nom.len*5), TRUE, nom.len, ignore_walls = (nom.len - 10)) // As a substitute for playing 50 sounds at once.
 	if(not_eaten)
-		playsound(src, 'sound/machines/buzz-sigh.ogg', (50 + not_eaten*5), FALSE, not_eaten, ignore_walls = (not_eaten - 10)) // Ditto.
+		playsound(src, 'white/valtos/sounds/error1.ogg', (50 + not_eaten*5), FALSE, not_eaten, ignore_walls = (not_eaten - 10)) // Ditto.
 	if(!ismob(AM0))
 		qdel(AM0)
 	else // Lets not move a mob to nullspace and qdel it, yes?
@@ -186,7 +190,7 @@
 
 
 /obj/machinery/recycler/proc/emergency_stop()
-	playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+	playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 	safety_mode = TRUE
 	update_appearance()
 	addtimer(CALLBACK(src, .proc/reboot), SAFETY_COOLDOWN)

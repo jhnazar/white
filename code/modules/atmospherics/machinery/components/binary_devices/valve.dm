@@ -22,6 +22,8 @@ It's like a regular ol' straight pipe, but you can turn it on and off.
 	construction_type = /obj/item/pipe/binary
 	pipe_state = "mvalve"
 
+	use_power = NO_POWER_USE
+
 	var/switching = FALSE
 
 /obj/machinery/atmospherics/components/binary/valve/update_icon_nopipes(animation = FALSE)
@@ -39,7 +41,6 @@ It's like a regular ol' straight pipe, but you can turn it on and off.
 	SEND_SIGNAL(src, COMSIG_VALVE_SET_OPEN, to_open)
 	. = on
 	on = to_open
-	playsound(src, 'white/valtos/sounds/valve.ogg', 25, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
 	if(on)
 		update_icon_nopipes()
 		update_parents()
@@ -57,6 +58,9 @@ It's like a regular ol' straight pipe, but you can turn it on and off.
 		return
 	update_icon_nopipes(TRUE)
 	switching = TRUE
+
+	playsound(src, 'white/valtos/sounds/valve.ogg', 25, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+
 	addtimer(CALLBACK(src, .proc/finish_interact), 10)
 
 /**

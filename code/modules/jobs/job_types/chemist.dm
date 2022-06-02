@@ -34,18 +34,18 @@
 	jobtype = /datum/job/chemist
 
 	glasses = /obj/item/clothing/glasses/science
-	belt = /obj/item/pda/chemist
-	l_pocket = /obj/item/reagent_containers/glass/bottle/random_buffer
-	r_pocket = /obj/item/reagent_containers/dropper
+	belt = /obj/item/modular_computer/tablet/pda/chemist
+	l_pocket = /obj/item/reagent_containers/glass/bottle/basic_buffer
+	r_pocket = /obj/item/reagent_containers/glass/bottle/acidic_buffer
 	ears = /obj/item/radio/headset/headset_med
 	uniform = /obj/item/clothing/under/rank/medical/chemist
 	shoes = /obj/item/clothing/shoes/sneakers/white
 	suit =  /obj/item/clothing/suit/toggle/labcoat/chemist
+	suit_store = /obj/item/reagent_containers/dropper
 	backpack = /obj/item/storage/backpack/chemistry
 	satchel = /obj/item/storage/backpack/satchel/chem
 	duffelbag = /obj/item/storage/backpack/duffelbag/med
 	box = /obj/item/storage/box/survival/medical
-	backpack_contents = list(/obj/item/modular_computer/tablet/preset/cheap=1)
 
 	chameleon_extras = /obj/item/gun/syringe
 

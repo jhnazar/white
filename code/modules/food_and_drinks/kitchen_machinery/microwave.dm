@@ -7,9 +7,6 @@
 	icon_state = "mw"
 	layer = BELOW_OBJ_LAYER
 	density = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 50
-	active_power_usage = 1000
 	circuit = /obj/item/circuitboard/machine/microwave
 	pass_flags = PASSTABLE
 	light_color = LIGHT_COLOR_YELLOW
@@ -46,6 +43,7 @@
 	. = ..()
 
 /obj/machinery/microwave/RefreshParts()
+	. = ..()
 	efficiency = 0
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
 		efficiency += M.rating
@@ -243,7 +241,7 @@
 
 	if(wire_disabled)
 		audible_message("[src] buzzes.")
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 		return
 
 	if(prob(max((5 / efficiency) - 5, dirty * 5))) //a clean unupgraded microwave has no risk of failure
@@ -266,11 +264,24 @@
 	soundloop.start()
 	update_icon()
 
+/particles/sparks
+	width = 64
+	height = 64
+	count = 10
+	spawning = 20
+	lifespan = 2 SECONDS
+	fade = 1 SECONDS
+	color = "#ffd000"
+	position = generator("box", list(-3,-3,-3), list(3,3,3))
+	velocity = generator("circle", 3, 5)
+
 /obj/machinery/microwave/proc/spark()
+	playsound(src, 'sound/effects/sparks1.ogg', 50, TRUE)
 	visible_message(span_warning("Sparks fly around [src]!"))
-	var/datum/effect_system/spark_spread/s = new
-	s.set_up(2, 1, src)
-	s.start()
+	particles = new /particles/sparks
+	spawn(2 SECONDS)
+		QDEL_NULL(particles)
+
 
 #define MICROWAVE_NORMAL 0
 #define MICROWAVE_MUCK 1
@@ -305,7 +316,7 @@
 				pre_success()
 		return
 	time--
-	use_power(500)
+	use_power(active_power_usage)
 	addtimer(CALLBACK(src, .proc/loop, type, time, wait), wait)
 
 /obj/machinery/microwave/power_change()
@@ -328,7 +339,7 @@
 		spark()
 		broken = 2
 		if(prob(max(metal / 2, 33)))
-			explosion(loc, 0, 1, 2)
+			explosion(src, heavy_impact_range = 1, light_impact_range = 2)
 	else
 		dump_inventory_contents()
 

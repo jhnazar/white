@@ -3,7 +3,7 @@
 	id = "vampire"
 	default_color = "FFFFFF"
 	species_traits = list(EYECOLOR,HAIR,FACEHAIR,LIPS,DRINKSBLOOD, HAS_FLESH, HAS_BONE)
-	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP)
+	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER,TRAIT_NOHUNGER,TRAIT_NOBREATH,TRAIT_CAN_STRIP,TRAIT_NOHYDRATION)
 	inherent_biotypes = MOB_UNDEAD|MOB_HUMANOID
 	mutant_bodyparts = list("tail_human" = "None", "ears" = "None", "wings" = "None")
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_PRIDE | MIRROR_MAGIC | ERT_SPAWN
@@ -57,7 +57,7 @@
 		to_chat(C, span_warning("You don't belong here!"))
 		C.adjustFireLoss(10 * delta_time)
 		C.adjust_fire_stacks(3 * delta_time)
-		C.IgniteMob()
+		C.ignite_mob()
 
 /datum/species/vampire/check_species_weakness(obj/item/weapon, mob/living/attacker)
 	if(istype(weapon, /obj/item/nullrod/whip))
@@ -76,7 +76,7 @@
 	name = "Drain Victim"
 	desc = "Leech blood from any carbon victim you are passively grabbing."
 
-/datum/action/item_action/organ_action/vampire/Trigger()
+/datum/action/item_action/organ_action/vampire/Trigger(trigger_flags)
 	. = ..()
 	if(iscarbon(owner))
 		var/mob/living/carbon/H = owner

@@ -9,6 +9,7 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("Collectable Pete hat",		/obj/item/clothing/head/collectable/petehat, 	150),
 		new /datum/donate_info("Collectable Xeno hat",		/obj/item/clothing/head/collectable/xenom,		110),
 		new /datum/donate_info("Collectable Top hat",		/obj/item/clothing/head/collectable/tophat,		120),
+		new /datum/donate_info("Collectable rabbit ears",	/obj/item/clothing/head/collectable/rabbitears,	120),
 		new /datum/donate_info("Kitty Ears",				/obj/item/clothing/head/kitty,					100),
 		new /datum/donate_info("Ushanka",					/obj/item/clothing/head/ushanka,				200),
 		new /datum/donate_info("Beret",						/obj/item/clothing/head/beret,					150),
@@ -17,7 +18,6 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("Cake-hat",					/obj/item/clothing/head/hardhat/cakehat,		100),
 		new /datum/donate_info("Wizard hat",				/obj/item/clothing/head/wizard/fake,			100),
 		new /datum/donate_info("Flat-cap",					/obj/item/clothing/head/flatcap,				120),
-		new /datum/donate_info("Collectable rabbit ears",	/obj/item/clothing/head/collectable/rabbitears,	120),
 		new /datum/donate_info("Cardborg helment",			/obj/item/clothing/head/cardborg,				20),
 		new /datum/donate_info("Bear pelt",					/obj/item/clothing/head/bearpelt,				175),
 		new /datum/donate_info("Scarecrow Hat",				/obj/item/clothing/head/scarecrow_hat,			175),
@@ -58,11 +58,18 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("Balaclava",					/obj/item/clothing/mask/izanclava,				110),
 		new /datum/donate_info("Swatclava",					/obj/item/clothing/mask/izanclava/swat,			120),
 	),
-	"Личное" = list(
+	"Очки" = list(
 		new /datum/donate_info("Eye patch",					/obj/item/clothing/glasses/eyepatch,			130),
 		new /datum/donate_info("Orange glasses",			/obj/item/clothing/glasses/orange,				130),
 		new /datum/donate_info("Heat goggles",				/obj/item/clothing/glasses/heat,				130),
 		new /datum/donate_info("Cold goggles",				/obj/item/clothing/glasses/cold,				130),
+		new /datum/donate_info("Red glasses",				/obj/item/clothing/glasses/red,					180),
+		new /datum/donate_info("Geist Gazers",				/obj/item/clothing/glasses/geist_gazers,		250),
+		new /datum/donate_info("Psych glasses",				/obj/item/clothing/glasses/psych,				250),
+		new /datum/donate_info("O.S.I. Sunglasses",			/obj/item/clothing/glasses/osi,					130),
+		new /datum/donate_info("Phantom Thief Mask",		/obj/item/clothing/glasses/phantom,				130),
+	),
+	"Личное" = list(
 		new /datum/donate_info("Cane",						/obj/item/cane,									130),
 		new /datum/donate_info("Zippo",						/obj/item/lighter,								130),
 		new /datum/donate_info("Cigarette packet",			/obj/item/storage/fancy/cigarettes,				20),
@@ -71,9 +78,7 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("E-Cigarette",				/obj/item/clothing/mask/vape,					150),
 		new /datum/donate_info("Beer bottle",				/obj/item/reagent_containers/food/drinks/beer,	80),
 		new /datum/donate_info("Captain flask",				/obj/item/reagent_containers/food/drinks/flask,	200),
-		new /datum/donate_info("Red glasses",				/obj/item/clothing/glasses/red,					180),
 		new /datum/donate_info("Waistcoat",					/obj/item/clothing/accessory/waistcoat,			85),
-		new /datum/donate_info("Cloak",						/obj/item/clothing/neck/cloak,					190),
 		new /datum/donate_info("Donut Box",					/obj/item/storage/fancy/donut_box,				450),
 		new /datum/donate_info("Red Armband",				/obj/item/clothing/accessory/armband,			100),
 	),
@@ -101,8 +106,6 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("Puffer jacket",				/obj/item/clothing/suit/jacket/puffer,			120),
 		new /datum/donate_info("Winter coat",				/obj/item/clothing/suit/hooded/wintercoat,		130),
 		new /datum/donate_info("Cardborg",					/obj/item/clothing/suit/cardborg,				50),
-		new /datum/donate_info("Cowl",						/obj/item/clothing/suit/cowl,					150),
-		new /datum/donate_info("Robe",						/obj/item/clothing/suit/cowl/robe,				500),
 		new /datum/donate_info("Bulletproof Vest",			/obj/item/clothing/suit/armor/vest/izan,		100),
 		new /datum/donate_info("Arbiter Vest",				/obj/item/clothing/suit/armor/vest/izan/arbiter,165),
 		new /datum/donate_info("m35 Coat",					/obj/item/clothing/suit/armor/vest/izan/army_coat,120),
@@ -168,34 +171,101 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("Yuri Initiate Jumpsuit",	/obj/item/clothing/under/costume/yuri, 			200),
 		new /datum/donate_info("Sybil Slickers Uniform",	/obj/item/clothing/under/costume/sybil_slickers,200),
 		new /datum/donate_info("Basil Boys Uniform",		/obj/item/clothing/under/costume/basil_boys, 	200),
-		new /datum/donate_info("Swag Outfit",				/obj/item/clothing/under/costume/swagoutfit, 	200),
-		new /datum/donate_info("Referee Uniform",			/obj/item/clothing/under/costume/referee, 		200),
 	),
 	"Перчатки" = list(
-		new /datum/donate_info("White Gloves",				/obj/item/clothing/gloves/color/white,			125),
-		new /datum/donate_info("Rainbow Gloves",			/obj/item/clothing/gloves/color/rainbow,		200),
-		new /datum/donate_info("Black Gloves",				/obj/item/clothing/gloves/color/black,			130),
-		new /datum/donate_info("Boxing Gloves",				/obj/item/clothing/gloves/boxing,				120),
-		new /datum/donate_info("Green Gloves",				/obj/item/clothing/gloves/color/green,			100),
-		new /datum/donate_info("Latex Gloves",				/obj/item/clothing/gloves/color/latex,			150),
+		new /datum/donate_info("White Gloves",				/obj/item/clothing/gloves/color/white,			100),
+		new /datum/donate_info("Orange Gloves",				/obj/item/clothing/gloves/color/orange,			125),
+		new /datum/donate_info("Red Gloves",				/obj/item/clothing/gloves/color/red,			125),
+		new /datum/donate_info("Blue Gloves",				/obj/item/clothing/gloves/color/blue,			125),
+		new /datum/donate_info("Purple Gloves",				/obj/item/clothing/gloves/color/purple,			125),
+		new /datum/donate_info("Green Gloves",				/obj/item/clothing/gloves/color/green,			125),
+		new /datum/donate_info("Grey Gloves",				/obj/item/clothing/gloves/color/grey,			125),
+		new /datum/donate_info("Light Brown Gloves",		/obj/item/clothing/gloves/color/light_brown,	125),
+		new /datum/donate_info("Brown Gloves",				/obj/item/clothing/gloves/color/brown,			125),
+		new /datum/donate_info("Black Gloves",				/obj/item/clothing/gloves/color/black,			125),
+		new /datum/donate_info("Rainbow Gloves",			/obj/item/clothing/gloves/color/rainbow,		150),
 		new /datum/donate_info("Fingerless Gloves",			/obj/item/clothing/gloves/fingerless,			90),
+		new /datum/donate_info("Boxing Gloves",				/obj/item/clothing/gloves/boxing,				50),
+		new /datum/donate_info("Boxing Gloves",				/obj/item/clothing/gloves/boxing/green,			50),
+		new /datum/donate_info("Boxing Gloves",				/obj/item/clothing/gloves/boxing/blue,			50),
+		new /datum/donate_info("Boxing Gloves",				/obj/item/clothing/gloves/boxing/yellow,		50),
 		new /datum/donate_info("Arbiter Gloves",			/obj/item/clothing/gloves/arbiter,				125),
 		new /datum/donate_info("Undertaker Gloves",			/obj/item/clothing/gloves/arbiter/undertaker,	125),
 	),
+	"Плащи" = list(
+		new /datum/donate_info("Cloak",						/obj/item/clothing/neck/cloak,					190),
+		new /datum/donate_info("Cowl",						/obj/item/clothing/neck/cowl,					150),
+		new /datum/donate_info("Blue Robe",					/obj/item/clothing/neck/cowl/robe,				500),
+		new /datum/donate_info("Red Robe",					/obj/item/clothing/neck/cowl/robe/red,			500),
+		new /datum/donate_info("Terran Robe",				/obj/item/clothing/neck/cowl/terran,			500),
+		new /datum/donate_info("Terran Robe",				/obj/item/clothing/neck/cowl/terran/off,		500),
+		new /datum/donate_info("Terran Robe",				/obj/item/clothing/neck/cowl/terran/comm,		500),
+	),
 	"Покрывала" = list(
+		new /datum/donate_info("DIY Bedsheet",				/obj/item/bedsheet,								50),
+		new /datum/donate_info("Blue Bedsheet",				/obj/item/bedsheet/blue,						75),
+		new /datum/donate_info("Green Bedsheet",			/obj/item/bedsheet/green,						75),
+		new /datum/donate_info("Grey Bedsheet",				/obj/item/bedsheet/grey,						75),
+		new /datum/donate_info("Orange Bedsheet",			/obj/item/bedsheet/orange,						75),
+		new /datum/donate_info("Purple Bedsheet",			/obj/item/bedsheet/purple,						75),
+		new /datum/donate_info("Red Bedsheet",				/obj/item/bedsheet/red,							75),
+		new /datum/donate_info("Yellow Bedsheet",			/obj/item/bedsheet/yellow,						75),
+		new /datum/donate_info("Brown Bedsheet",			/obj/item/bedsheet/brown,						75),
+		new /datum/donate_info("Black Bedsheet",			/obj/item/bedsheet/black,						75),
+		new /datum/donate_info("Rainbow Bedsheet",			/obj/item/bedsheet/rainbow,						75),
+		new /datum/donate_info("Patriot Bedsheet",			/obj/item/bedsheet/patriot,						100),
+		new /datum/donate_info("CentCom Bedsheet",			/obj/item/bedsheet/centcom,						150),
+		new /datum/donate_info("NanoTrasen Bedsheet",		/obj/item/bedsheet/nanotrasen,					150),
+		new /datum/donate_info("Syndie Bedsheet",			/obj/item/bedsheet/syndie,						150),
+		new /datum/donate_info("Cult Bedsheet",				/obj/item/bedsheet/cult,						200),
+		new /datum/donate_info("Wizard Bedsheet",			/obj/item/bedsheet/wiz,							200),
+		new /datum/donate_info("Ian Bedsheet",				/obj/item/bedsheet/ian,							200),
+		new /datum/donate_info("CE Bedsheet",				/obj/item/bedsheet/ce,							100),
+		new /datum/donate_info("QM Bedsheet",				/obj/item/bedsheet/qm,							100),
+		new /datum/donate_info("RD Bedsheet",				/obj/item/bedsheet/rd,							100),
+		new /datum/donate_info("CMO Bedsheet",				/obj/item/bedsheet/cmo,							100),
+		new /datum/donate_info("HOS Bedsheet",				/obj/item/bedsheet/hos,							100),
+		new /datum/donate_info("HOP Bedsheet",				/obj/item/bedsheet/hop,							100),
 		new /datum/donate_info("Clown Bedsheet",			/obj/item/bedsheet/clown,						100),
 		new /datum/donate_info("Mime Bedsheet",				/obj/item/bedsheet/mime,						100),
-		new /datum/donate_info("Rainbow Bedsheet",			/obj/item/bedsheet/rainbow,						100),
-		new /datum/donate_info("Captain Bedsheet",			/obj/item/bedsheet/captain,						120),
-		new /datum/donate_info("Cosmos Bedsheet",			/obj/item/bedsheet/cosmos,						150),
+		new /datum/donate_info("Chaplain Bedsheet",			/obj/item/bedsheet/chaplain,					100),
+		new /datum/donate_info("Captain Bedsheet",			/obj/item/bedsheet/captain,						150),
+		new /datum/donate_info("Cosmos Bedsheet",			/obj/item/bedsheet/cosmos,						250),
 	),
 	"Игрушки" = list(
-		new /datum/donate_info("Rubber Duck",				/obj/item/bikehorn/rubberducky,					200),
-		new /datum/donate_info("Champion Belt",				/obj/item/storage/belt/champion,				200),
-		new /datum/donate_info("Toy pistol",				/obj/item/toy/gun,								150),
-		new /datum/donate_info("Toy dualsaber",				/obj/item/dualsaber/toy,				280),
+		new /datum/donate_info("Snappops",					/obj/item/storage/box/snappops,					90),
+		new /datum/donate_info("AI",						/obj/item/toy/talking/ai,						90),
+		new /datum/donate_info("Codex Gigas",				/obj/item/toy/talking/codex_gigas,				90),
+		new /datum/donate_info("Sword",						/obj/item/toy/sword,							90),
+		new /datum/donate_info("Crossbow",					/obj/item/gun/ballistic/shotgun/toy/crossbow,	90),
+		new /datum/donate_info("Crayons",					/obj/item/storage/crayons,						90),
+		new /datum/donate_info("Spinning Toy",				/obj/item/toy/spinningtoy,						90),
+		new /datum/donate_info("Arrest",					/obj/item/toy/balloon/arrest,					90),
+		new /datum/donate_info("Nuke",						/obj/item/toy/nuke,								90),
+		new /datum/donate_info("Mini-meteor",				/obj/item/toy/minimeteor,						90),
+		new /datum/donate_info("Red Button",				/obj/item/toy/redbutton,						90),
+		new /datum/donate_info("Owl",						/obj/item/toy/talking/owl,						90),
+		new /datum/donate_info("Griffin",					/obj/item/toy/talking/griffin,					90),
+		new /datum/donate_info("Antag Token",				/obj/item/coin/antagtoken,						90),
+		new /datum/donate_info("Toy Xeno",					/obj/item/toy/toy_xeno,							90),
+		new /datum/donate_info("Handcuffs",					/obj/item/restraints/handcuffs/fake,			90),
+		new /datum/donate_info("Eightball",					/obj/item/toy/eightball,						90),
+		new /datum/donate_info("Toolbox",					/obj/item/toy/windup_toolbox,					90),
+		new /datum/donate_info("Clock",						/obj/item/toy/clockwork_watch,					90),
+		new /datum/donate_info("Dagger",					/obj/item/toy/toy_dagger,						90),
+		new /datum/donate_info("E-Hand",					/obj/item/extendohand/acme,						90),
+		new /datum/donate_info("Hot Potato",				/obj/item/hot_potato/harmless/toy,				90),
+		new /datum/donate_info("Emag",						/obj/item/card/emagfake,						90),
+		new /datum/donate_info("Goat",						/obj/item/toy/plush/goatplushie,				90),
+		new /datum/donate_info("Moth",						/obj/item/toy/plush/moth,						90),
+		new /datum/donate_info("Peacekeeper",				/obj/item/toy/plush/pkplush,					90),
+		new /datum/donate_info("Radio",						/obj/item/toy/brokenradio,						90),
+		new /datum/donate_info("Brain",						/obj/item/toy/braintoy,							90),
+		new /datum/donate_info("Toy pistol",				/obj/item/toy/gun,								90),
+		new /datum/donate_info("Toy dualsaber",				/obj/item/dualsaber/toy,						280),
 		new /datum/donate_info("Toy katana",				/obj/item/toy/katana,							215),
-		new /datum/donate_info("Rainbow crayon",			/obj/item/toy/crayon/rainbow,					250),
+		new /datum/donate_info("Rubber Duck",				/obj/item/bikehorn/rubberducky,					90),
+		new /datum/donate_info("Champion Belt",				/obj/item/storage/belt/champion,				200),
 		new /datum/donate_info("Марфумо",					/obj/item/toy/plush/marfumoplushie,				300),
 		new /datum/donate_info("Асфумо",					/obj/item/toy/plush/asfumoplushie,				300),
 		new /datum/donate_info("Цирфумо",					/obj/item/toy/plush/cirfumoplushie,				300),
@@ -203,9 +273,6 @@ GLOBAL_LIST_INIT(donations_list, list(
 	"Специальное" = list(
 		new /datum/donate_info("Santa Bag",					/obj/item/storage/backpack/santabag,			450),
 		new /datum/donate_info("Bible",						/obj/item/storage/book/bible,					100),
-	),
-	"Инновации" = list(
-		new /datum/donate_info("Game Kit",					/obj/item/game_kit,								100),
 		new /datum/donate_info("Checkers Kit",				/obj/item/checkers_kit,							150),
 		new /datum/donate_info("Casino Cards",				/obj/item/toy/cards/deck/shitspawn_deck,		450),
 		new /datum/donate_info("Jukebox",					/obj/machinery/turntable,						100),
@@ -218,6 +285,7 @@ GLOBAL_LIST_INIT(donations_list, list(
 		new /datum/donate_info("CoomCamera™",				/obj/item/camera/coom,							300)
 	)
 ))
+GLOBAL_PROTECT(donations_list)
 
 /datum/donate_info
 	var/name
@@ -239,7 +307,7 @@ GLOBAL_LIST_INIT(donations_list, list(
 
 
 	if(!SSticker || SSticker.current_state < GAME_STATE_PLAYING)
-		to_chat(src,span_warning("Не так быстро, игра ещё не началась!"))
+		to_chat(src, span_warning("Не так быстро, игра ещё не началась!"))
 		return
 
 	if (!GLOB.donators[ckey]) //If it doesn't exist yet
@@ -256,6 +324,7 @@ GLOBAL_LIST_INIT(donations_list, list(
 
 GLOBAL_LIST_EMPTY(donate_icon_cache)
 GLOBAL_LIST_EMPTY(donators)
+GLOBAL_PROTECT(donators)
 
 #define DONATIONS_SPAWN_WINDOW 6000
 
@@ -321,44 +390,48 @@ GLOBAL_LIST_EMPTY(donators)
 
 			if(!SSticker || SSticker.current_state < 3)
 				to_chat(user,span_warning("Игра ещё не началась!"))
-				return 0
+				return FALSE
 
 			if((world.time-SSticker.round_start_time) > DONATIONS_SPAWN_WINDOW && !istype(get_area(user), /area/service/bar))
 				to_chat(user,span_warning("Нужно быть в баре."))
-				return 0
+				return FALSE
+
+			if(istype(get_area(user), /area/violence))
+				to_chat(user,span_warning("Поставки товаров СиндиЭкспресс в данную зону невозможны."))
+				return FALSE
 
 			if(prize.cost > money)
 				to_chat(user,span_warning("Недостаточно баланса."))
-				return 0
+				return FALSE
 
 			if(!allowed_num_items)
 				to_chat(user,span_warning("Достигли максимума. Ура."))
-				return 0
+				return FALSE
 
 			if(!user)
 				to_chat(user,span_warning("Нужно быть живым."))
-				return 0
+				return FALSE
 
 			if(!ispath(prize.path_to))
-				return 0
+				return FALSE
 
 			if(user.stat)
-				return 0
+				return FALSE
 
 			if(prize.stock <= 0)
 				to_chat(user,span_warning("Поставки <b>[prize.name]</b> закончились."))
-				return 0
+				return FALSE
 
 			if(prize.special)
 				if (prize.special != user.ckey)
 					to_chat(user,span_warning("Этот предмет предназначен для <b>[prize.special]</b>."))
-					return 0
+					return FALSE
 
 			prize.stock--
 
 			podspawn(list(
 				"target" = get_turf(user),
-				"path" = /obj/structure/closet/supplypod/battleroyale,
+				"path" = /obj/structure/closet/supplypod/box,
 				"spawn" = prize.path_to
 			))
 
@@ -381,10 +454,11 @@ GLOBAL_LIST_EMPTY(donators)
 	return GLOB.donate_icon_cache[P.path_to]
 
 GLOBAL_VAR_INIT(ohshitfuck, FALSE)
+GLOBAL_PROTECT(ohshitfuck)
 
 /proc/load_donator(ckey)
 	if(!SSdbcore.IsConnected())
-		return 0
+		return FALSE
 
 	if(GLOB.ohshitfuck)
 		new /datum/donator(ckey, 50000)
@@ -396,7 +470,7 @@ GLOBAL_VAR_INIT(ohshitfuck, FALSE)
 		var/money = round(text2num(query_donators.item[1]))
 		new /datum/donator(ckey, money)
 	qdel(query_donators)
-	return 1
+	return TRUE
 
 /proc/check_donations(ckey)
 	if (!GLOB.donators[ckey]) //If it doesn't exist yet
@@ -404,7 +478,15 @@ GLOBAL_VAR_INIT(ohshitfuck, FALSE)
 	var/datum/donator/D = GLOB.donators[ckey]
 	if(D)
 		return D.maxmoney
-	return 0
+	return FALSE
+
+/proc/check_donations_avail(ckey)
+	if (!GLOB.donators[ckey])
+		return FALSE
+	var/datum/donator/D = GLOB.donators[ckey]
+	if(D)
+		return D.money
+	return FALSE
 
 /proc/get_donator(ckey)
 	if (!GLOB.donators[ckey])
@@ -414,15 +496,135 @@ GLOBAL_VAR_INIT(ohshitfuck, FALSE)
 		return D
 	return null
 
-GLOBAL_LIST_INIT(custom_race_donations, list(
-	"woofwoof322" = "athena_s",
-	"oni3288" = "oni",
-	"0cemeh1tejib6a6yjiek" = "babulet",
-	"pisimist29" = "android",
-	"arsenay" = "aandroid",
-	"fiaskin" = "synthman"))
+/client/proc/manage_some_donations()
+	set name = "Manage Some Donations"
+	set category = "Дбг"
 
-GLOBAL_LIST_INIT(custom_tails_donations, list(
-	"felinemistress" = "Fox",
-	"chilipila" = "Fox",
-	"oni3288" = "Oni"))
+	if(!check_rights_for(src, R_SECURED))
+		return
+
+	var/which_one = tgui_input_list(src, "ОООХ", "ОБОЖАЮ ЧЛЕН В ЖОПЕ ПО УТРАМ", list("furfag", "tailfag", "phoenix"))
+	var/list/lte_nuclear_war = list()
+
+	if(which_one == "furfag")
+		lte_nuclear_war = GLOB.custom_race_donations
+	else if (which_one == "tailfag")
+		lte_nuclear_war = GLOB.custom_tails_donations
+	else if (which_one == "phoenix")
+		lte_nuclear_war = GLOB.phoenix_donations
+	else
+		return
+
+	var/fuckoboingo = tgui_input_list(src, "HOLY", "RETARD", sort_list(lte_nuclear_war)|"ADD SOMEONE")
+
+	if(!fuckoboingo)
+		return
+
+	if(fuckoboingo == "ADD SOMEONE")
+		var/motherlover = input(src, "Separator is - | Sample: ckey-id", "some big ass")
+
+		if(!motherlover)
+			return
+
+		var/list/fucktorio = splittext_char(motherlover, "-")
+
+		if(length(fucktorio?[1]) && length(fucktorio?[2]))
+			if(which_one == "phoenix")
+				if(lte_nuclear_war[ckey(fucktorio[1])])
+					lte_nuclear_war[ckey(fucktorio[1])] = fucktorio[2]
+				else
+					LAZYADDASSOC(lte_nuclear_war, ckey(fucktorio[1]), text2num(fucktorio[2]))
+				message_admins("[key_name_admin(src)] устанавливает [fucktorio[1]] количество перерождений на [fucktorio[2]].")
+			else
+				if(fucktorio[2] == "all")
+					var/list/roles_to_add = list("fly", "felinid", "moth", "ipc", "plasmaman", "lizard", "android", "ethereal", "pigman")
+					for(var/role in roles_to_add)
+						LAZYADDASSOCLIST(lte_nuclear_war, ckey(fucktorio[1]), role)
+					message_admins("[key_name_admin(src)] открывает [fucktorio[1]] доступ к [english_list(roles_to_add)].")
+				else
+					LAZYADDASSOCLIST(lte_nuclear_war, ckey(fucktorio[1]), fucktorio[2])
+					message_admins("[key_name_admin(src)] открывает [fucktorio[1]] доступ к [fucktorio[2]].")
+	else
+		if(which_one == "phoenix")
+			var/list/temp_list = list()
+			for(var/fucker in lte_nuclear_war)
+				if(fucker != fuckoboingo)
+					continue
+				temp_list += lte_nuclear_war[fucker]
+			var/fuckate = tgui_input_list(src, "AHH", "DIGGER", sort_list(temp_list))
+			if(!fuckate)
+				return
+			LAZYREMOVEASSOC(lte_nuclear_war, fuckoboingo, fuckate)
+			message_admins("[key_name_admin(src)] удаляет у [fuckoboingo] доступ к [fuckate].")
+		else
+			LAZYREMOVE(lte_nuclear_war, fuckoboingo)
+			message_admins("[key_name_admin(src)] удаляет у [fuckoboingo] доступ к фениксу.")
+
+	if(which_one == "furfag")
+		GLOB.custom_race_donations = lte_nuclear_war
+		save_races_donations()
+	else if (which_one == "tailfag")
+		GLOB.custom_tails_donations = lte_nuclear_war
+		save_tails_donations()
+	else if (which_one == "phoenix")
+		GLOB.phoenix_donations = lte_nuclear_war
+		save_phoenix_donations()
+	return
+
+/proc/load_race_donations()
+	var/json_file = file("data/donations/race.json")
+	if(!fexists(json_file))
+		return
+	return json_decode(file2text(json_file))
+
+/proc/load_tails_donations()
+	var/json_file = file("data/donations/tails.json")
+	if(!fexists(json_file))
+		return
+	return json_decode(file2text(json_file))
+
+/proc/load_phoenix_donations()
+	var/json_file = file("data/donations/phoenix.json")
+	if(!fexists(json_file))
+		return
+	return json_decode(file2text(json_file))
+
+/proc/save_races_donations()
+	if(IsAdminAdvancedProcCall())
+		message_admins("[key_name_admin(usr)] сосёт хуй и лижет яйца.")
+		return
+
+	var/json_file = file("data/donations/race.json")
+
+	fdel(json_file)
+
+	WRITE_FILE(json_file, json_encode(GLOB.custom_race_donations))
+
+/proc/save_tails_donations()
+	if(IsAdminAdvancedProcCall())
+		message_admins("[key_name_admin(usr)] сосёт хуй и лижет яйца.")
+		return
+
+	var/json_file = file("data/donations/tails.json")
+
+	fdel(json_file)
+
+	WRITE_FILE(json_file, json_encode(GLOB.custom_tails_donations))
+
+/proc/save_phoenix_donations()
+	if(IsAdminAdvancedProcCall())
+		message_admins("[key_name_admin(usr)] сосёт хуй и лижет яйца.")
+		return
+
+	var/json_file = file("data/donations/phoenix.json")
+
+	fdel(json_file)
+
+	WRITE_FILE(json_file, json_encode(GLOB.phoenix_donations))
+
+GLOBAL_LIST_INIT(custom_race_donations,  load_race_donations())
+GLOBAL_PROTECT(custom_race_donations)
+GLOBAL_LIST_INIT(custom_tails_donations, load_tails_donations())
+GLOBAL_PROTECT(custom_tails_donations)
+GLOBAL_LIST_INIT(phoenix_donations, load_phoenix_donations())
+GLOBAL_PROTECT(phoenix_donations)

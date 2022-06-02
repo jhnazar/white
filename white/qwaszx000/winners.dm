@@ -27,7 +27,7 @@
 	var/winner_key = null
 
 /obj/structure/displaycase/winner/Initialize()
-	.=..()
+	. = ..()
 	if(start_showpieces.len > 0)
 		if("trophy_message" in start_showpieces)
 			trophy_message = start_showpieces["trophy_message"]
@@ -41,7 +41,7 @@
 			update_icon()
 
 /obj/structure/displaycase/winner/obj_break(damage_flag)
-	.=..()
+	. = ..()
 	if(broken && !(flags_1 & NODECONSTRUCT_1))
 		src.Destroy()
 		QDEL_NULL(src)
@@ -134,9 +134,9 @@
 /obj/structure/sign/plaques/robust/attack_hand(mob/user)
 	. = ..()
 	if(!(user.name in coomers))
-		if(isliving(user))
-			var/mob/living/L = user
-			L.cum(null, null)
+		if(ishuman(user))
+			var/mob/living/carbon/human/H = user
+			H.end_dance(null, null)
 			coomers += user.name
 
 /obj/structure/sign/plaques/robust/bronze

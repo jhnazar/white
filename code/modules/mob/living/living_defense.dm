@@ -1,5 +1,7 @@
 
 /mob/living/proc/run_armor_check(def_zone = null, attack_flag = MELEE, absorb_text = null, soften_text = null, armour_penetration, penetrated_text, silent=FALSE)
+	SEND_SIGNAL(src, COMSIG_MOB_RUN_ARMOR)
+
 	var/armor = getarmor(def_zone, attack_flag)
 
 	if(armor <= 0)
@@ -19,6 +21,7 @@
 			to_chat(src, span_notice("[absorb_text]"))
 		else
 			to_chat(src, span_notice("Броня поглотила удар!"))
+		playsound(src, "ricochet_armor", 60)
 	else
 		if(soften_text)
 			to_chat(src, span_warning("[soften_text]"))
@@ -53,12 +56,6 @@
 
 	SEND_SIGNAL(src, COMSIG_ATOM_BULLET_ACT, P, def_zone)
 
-//	if(isliving(P.firer))
-//		var/mob/living/L = P.firer
-//		lastattacker = L.real_name
-//		if(L.ckey)
-//			lastattackerckey = L.ckey
-
 	if(isliving(P.firer))
 		lastattackermob = P.firer
 
@@ -66,7 +63,7 @@
 		var/attack_direction = get_dir(P.starting, src)
 		apply_damage(P.damage, P.damage_type, def_zone, armor, wound_bonus=P.wound_bonus, bare_wound_bonus=P.bare_wound_bonus, sharpness = P.sharpness, attack_direction = attack_direction)
 		apply_effects(P.stun, P.knockdown, P.unconscious, P.irradiate, P.slur, P.stutter, P.eyeblur, P.drowsy, armor, P.stamina, P.jitter, P.paralyze, P.immobilize)
-		if(P.dismemberment)
+		if(P.dismemberment && (P.damage_type == BRUTE || P.damage_type == BURN))
 			check_projectile_dismemberment(P, def_zone)
 	return on_hit_state ? BULLET_ACT_HIT : BULLET_ACT_BLOCK
 
@@ -103,7 +100,7 @@
 						span_userdanger("В <b>меня</b> попадает [thrown_item.name]!"))
 		if(!thrown_item.throwforce)
 			return
-		var/armor = run_armor_check(zone, MELEE, "Моя броня отражает попадание в [ru_parse_zone(parse_zone(zone))].", "Моя броня смягчает попадание в [ru_parse_zone(parse_zone(zone))].", thrown_item.armour_penetration)
+		var/armor = run_armor_check(zone, MELEE, "Броня отражает попадание в [ru_parse_zone(parse_zone(zone))].", "Броня смягчает попадание в [ru_parse_zone(parse_zone(zone))].", thrown_item.armour_penetration)
 		apply_damage(thrown_item.throwforce, thrown_item.damtype, zone, armor, sharpness = thrown_item.get_sharpness(), wound_bonus = (nosell_hit * CANT_WOUND))
 		if(QDELETED(src)) //Damage can delete the mob.
 			return
@@ -116,7 +113,7 @@
 
 /mob/living/fire_act()
 	adjust_fire_stacks(3)
-	IgniteMob()
+	ignite_mob()
 
 /mob/living/proc/grabbedby(mob/living/carbon/user, supress_message = FALSE)
 	if(user == src || anchored || !isturf(user.loc))
@@ -207,7 +204,7 @@
 			M.Feedstop()
 		return // can't attack while eating!
 
-	if(HAS_TRAIT(src, TRAIT_PACIFISM))
+	if(HAS_TRAIT(M, TRAIT_PACIFISM))
 		to_chat(M, span_warning("Не хочу вредить!"))
 		return FALSE
 
@@ -290,7 +287,7 @@
 
 /mob/living/attack_larva(mob/living/carbon/alien/larva/L)
 	switch(L.a_intent)
-		if("help")
+		if(INTENT_HELP)
 			visible_message(span_notice("<b>[L.name]</b> трётся своей головой о <b>[skloname(name, VINITELNI, gender)]</b>.") , \
 							span_notice("<b>[L.name]</b> трётся своей головой о меня.") , null, null, L)
 			to_chat(L, span_notice("Тру свою голову о [skloname(name, VINITELNI, gender)]."))
@@ -317,21 +314,21 @@
 
 /mob/living/attack_alien(mob/living/carbon/alien/humanoid/M)
 	switch(M.a_intent)
-		if ("help")
-			visible_message(span_notice("<b>[M]</b> cобнимает <b>[skloname(name, VINITELNI, gender)]</b> своей клешнёй.") , \
+		if (INTENT_HELP)
+			visible_message(span_notice("<b>[M]</b> обнимает <b>[skloname(name, VINITELNI, gender)]</b> своей клешнёй.") , \
 				span_notice("<b>[M]</b> обнимает меня своей клешнёй.") , null, null, M)
 			to_chat(M, span_notice("Обнимаю [skloname(name, VINITELNI, gender)] своей клешнёй."))
 			return FALSE
-		if ("grab")
+		if (INTENT_GRAB)
 			grabbedby(M)
 			return FALSE
-		if("harm")
+		if(INTENT_HARM)
 			if(HAS_TRAIT(M, TRAIT_PACIFISM))
 				to_chat(M, span_warning("Не хочу вредить!"))
 				return FALSE
 			M.do_attack_animation(src)
 			return TRUE
-		if("disarm")
+		if(INTENT_DISARM)
 			M.do_attack_animation(src, ATTACK_EFFECT_DISARM)
 			return TRUE
 

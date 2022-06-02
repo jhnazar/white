@@ -1,6 +1,6 @@
 /obj/machinery/computer/secure_data//TODO:SANITY
-	name = "security records console"
-	desc = "Used to view and edit personnel's security records."
+	name = "консоль записей СБ"
+	desc = "Используется для просмотра и редактирования записей о правонарушениях и личных дел персонала."
 	icon_screen = "security"
 	icon_keyboard = "security_key"
 	req_one_access = list(ACCESS_SECURITY, ACCESS_FORENSICS_LOCKERS)
@@ -50,12 +50,12 @@
 	records = add_output_port("Security Records", PORT_TYPE_TABLE)
 	on_fail = add_output_port("Failed", PORT_TYPE_SIGNAL)
 
-/obj/item/circuit_component/arrest_console_data/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/arrest_console_data/register_usb_parent(atom/movable/shell)
 	. = ..()
-	if(istype(parent, /obj/machinery/computer/secure_data))
-		attached_console = parent
+	if(istype(shell, /obj/machinery/computer/secure_data))
+		attached_console = shell
 
-/obj/item/circuit_component/arrest_console_data/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/arrest_console_data/unregister_usb_parent(atom/movable/shell)
 	attached_console = null
 	return ..()
 
@@ -121,12 +121,12 @@
 
 	var/obj/machinery/computer/secure_data/attached_console
 
-/obj/item/circuit_component/arrest_console_arrest/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/arrest_console_arrest/register_usb_parent(atom/movable/shell)
 	. = ..()
-	if(istype(parent, /obj/machinery/computer/secure_data))
-		attached_console = parent
+	if(istype(shell, /obj/machinery/computer/secure_data))
+		attached_console = shell
 
-/obj/item/circuit_component/arrest_console_arrest/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/arrest_console_arrest/unregister_usb_parent(atom/movable/shell)
 	attached_console = null
 	return ..()
 
@@ -864,14 +864,14 @@ What a mess.*/
 								return
 
 							var/datum/data/crime/crime = GLOB.data_core.createCrimeEntry(t1, "", authenticated, station_time_timestamp(), fine)
-							for (var/obj/item/pda/P in GLOB.PDAs)
-								if(P.owner == active1.fields["name"])
+							for (var/obj/item/modular_computer/tablet in GLOB.TabletMessengers)
+								if(tablet.saved_identification == active1.fields["name"])
 									var/message = "You have been fined [fine] credits for '[t1]'. Fines may be paid at security."
-									var/datum/signal/subspace/messaging/pda/signal = new(src, list(
+									var/datum/signal/subspace/messaging/tablet_msg/signal = new(src, list(
 										"name" = "Security Citation",
 										"job" = "Citation Server",
 										"message" = message,
-										"targets" = list("[P.owner] ([P.ownjob])"),
+										"targets" = list(tablet),
 										"automated" = 1
 									))
 									signal.send_to_receivers()

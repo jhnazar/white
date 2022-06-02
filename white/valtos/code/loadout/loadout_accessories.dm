@@ -33,6 +33,16 @@
 	path = /obj/item/clothing/neck/stripedbluescarf
 	cost = 80
 
+/datum/gear/accessory/scarf/stripedgray
+	display_name = "Шарф, полосатый серый"
+	path = /obj/item/clothing/neck/stripedgrayscarf
+	cost = 150
+
+/datum/gear/accessory/scarf/stripedblack
+	display_name = "Шарф, полосатый чёрный"
+	path = /obj/item/clothing/neck/stripedblackscarf
+	cost = 150
+
 /datum/gear/accessory/armband_red
 	display_name = "Повязка, красная"
 	path = /obj/item/clothing/accessory/armband
@@ -67,7 +77,7 @@
 /datum/gear/accessory/necklace
 	display_name = "Цепочка, золотая"
 	path = /obj/item/clothing/neck/necklace/dope
-	cost = 250
+	cost = 900
 
 /datum/gear/accessory/eyepatch
 	display_name = "Повязка на глаз"
@@ -111,3 +121,9 @@
 	display_name = "Помада, мультицвет"
 	path = /obj/item/lipstick/random
 	cost = 575
+
+/datum/gear/accessory/cape/chronos
+	display_name = "Военный плащ Новой Мекки"
+	path = /obj/item/clothing/neck/cape/chronos
+	slot = ITEM_SLOT_NECK
+	cost = 7500

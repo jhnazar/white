@@ -46,7 +46,7 @@
 	. = ..()
 	if(.)
 		return
-	if((action != "admin_log" || action != "show_admins") && !check_rights(R_ADMIN))
+	if((action != "admin_log" || action != "show_admins" || action != "mentor_log") && !check_rights(R_ADMIN))
 		return
 	var/datum/round_event/E
 	var/ok = FALSE
@@ -59,6 +59,13 @@
 			if(!GLOB.admin_log.len)
 				dat += "No-one has done anything this round!"
 			holder << browse(dat, "window=admin_log")
+		if("mentor_log")
+			var/dat = "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'><B>Mentor Log<HR></B>"
+			for(var/l in GLOB.mentor_log)
+				dat += "<li>[l]</li>"
+			if(!GLOB.mentor_log.len)
+				dat += "No-one has done anything this round!"
+			holder << browse(dat, "window=mentor_log")
 		if("show_admins")
 			var/dat = "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'><B>Current admins:</B><HR>"
 			if(GLOB.admin_datums)
@@ -178,13 +185,13 @@
 			set_station_name(new_name)
 			log_admin("[key_name(holder)] renamed the station to \"[new_name]\".")
 			message_admins(span_adminnotice("[key_name_admin(holder)] renamed the station to: [new_name]."))
-			priority_announce("[command_name()] has renamed the station to \"[new_name]\".")
+			priority_announce("[command_name()] переименовывает станцию в \"[new_name]\".")
 		if("reset_name")
 			var/new_name = new_station_name()
 			set_station_name(new_name)
 			log_admin("[key_name(holder)] reset the station name.")
 			message_admins(span_adminnotice("[key_name_admin(holder)] reset the station name."))
-			priority_announce("[command_name()] has renamed the station to \"[new_name]\".")
+			priority_announce("[command_name()] переименовывает станцию в \"[new_name]\".")
 		if("night_shift_set")
 			var/val = tgui_alert(holder, "What do you want to set night shift to? This will override the automatic system until set to automatic again.", "Night Shift", list("On", "Off", "Automatic"))
 			switch(val)
@@ -214,7 +221,7 @@
 				message_admins("[key_name_admin(holder)] [new_perma ? "stopped" : "started"] the arrivals shuttle")
 				log_admin("[key_name(holder)] [new_perma ? "stopped" : "started"] the arrivals shuttle")
 			else
-				to_chat(holder, span_admin("There is no arrivals shuttle.") , confidential = TRUE)
+				to_chat(holder, span_admin("There is no arrivals shuttle."))
 		if("movelaborshuttle")
 			SSblackbox.record_feedback("nested tally", "admin_secrets_fun_used", 1, list("Send Labor Shuttle"))
 			if(!SSshuttle.toggleShuttle("laborcamp","laborcamp_home","laborcamp_away"))
@@ -232,7 +239,7 @@
 					var/datum/round_event_control/disease_outbreak/DC = locate(/datum/round_event_control/disease_outbreak) in SSevents.control
 					E = DC.runEvent()
 				if("Choose")
-					var/virus = input("Choose the virus to spread", "BIOHAZARD") as null|anything in sortList(typesof(/datum/disease), /proc/cmp_typepaths_asc)
+					var/virus = input("Choose the virus to spread", "BIOHAZARD") as null|anything in sort_list(typesof(/datum/disease), /proc/cmp_typepaths_asc)
 					var/datum/round_event_control/disease_outbreak/DC = locate(/datum/round_event_control/disease_outbreak) in SSevents.control
 					var/datum/round_event/disease_outbreak/DO = DC.runEvent()
 					DO.virus_type = virus
@@ -338,7 +345,7 @@
 				if(is_station_level(W.z) && !istype(get_area(W), /area/command) && !istype(get_area(W), /area/commons) && !istype(get_area(W), /area/security/prison))
 					W.req_access = list()
 			message_admins("[key_name_admin(holder)] activated Egalitarian Station mode")
-			priority_announce("CentCom airlock control override activated. Please take this time to get acquainted with your coworkers.", null, SSstation.announcer.get_rand_report_sound())
+			priority_announce("Перенастройка протоколов доступа к шлюзам запущена. Пожалуйста, отнеситесь с пониманием к вашим коллегам.", null, SSstation.announcer.get_rand_report_sound())
 		if("ancap")
 			if(!is_funmin)
 				return
@@ -346,9 +353,9 @@
 			SSeconomy.full_ancap = !SSeconomy.full_ancap
 			message_admins("[key_name_admin(holder)] toggled Anarcho-capitalist mode")
 			if(SSeconomy.full_ancap)
-				priority_announce("The NAP is now in full effect.", null, SSstation.announcer.get_rand_report_sound())
+				priority_announce("Анкап объявлен на вашей станции.", null, SSstation.announcer.get_rand_report_sound())
 			else
-				priority_announce("The NAP has been revoked.", null, SSstation.announcer.get_rand_report_sound())
+				priority_announce("Анкап был запрещён на вашей станции.", null, SSstation.announcer.get_rand_report_sound())
 		if("blackout")
 			if(!is_funmin)
 				return
@@ -392,7 +399,7 @@
 				var/list/prefs = settings["mainsettings"]
 
 				if (prefs["amount"]["value"] < 1 || prefs["portalnum"]["value"] < 1)
-					to_chat(holder, span_warning("Number of portals and mobs to spawn must be at least 1.") , confidential = TRUE)
+					to_chat(holder, span_warning("Number of portals and mobs to spawn must be at least 1."))
 					return
 
 				var/mob/pathToSpawn = prefs["typepath"]["value"]
@@ -400,7 +407,7 @@
 					pathToSpawn = text2path(pathToSpawn)
 
 				if (!ispath(pathToSpawn))
-					to_chat(holder, span_notice("Invalid path [pathToSpawn].") , confidential = TRUE)
+					to_chat(holder, span_notice("Invalid path [pathToSpawn]."))
 					return
 
 				var/list/candidates = list()
@@ -416,6 +423,7 @@
 					portalAnnounce(prefs["announcement"]["value"], (prefs["playlightning"]["value"] == "Yes" ? TRUE : FALSE))
 
 				var/mutable_appearance/storm = mutable_appearance('icons/obj/tesla_engine/energy_ball.dmi', "energy_ball_fast", FLY_LAYER)
+				storm.plane =  ABOVE_GAME_PLANE
 				storm.color = prefs["color"]["value"]
 
 				message_admins("[key_name_admin(holder)] has created a customized portal storm that will spawn [prefs["portalnum"]["value"]] portals, each of them spawning [prefs["amount"]["value"]] of [pathToSpawn]")
@@ -484,7 +492,7 @@
 				return
 			SSblackbox.record_feedback("nested tally", "admin_secrets_fun_used", 1, list("Mass Braindamage"))
 			for(var/mob/living/carbon/human/H in GLOB.player_list)
-				to_chat(H, span_boldannounce("You suddenly feel stupid.") , confidential = TRUE)
+				to_chat(H, span_boldannounce("You suddenly feel stupid."))
 				H.adjustOrganLoss(ORGAN_SLOT_BRAIN, 60, 80)
 			message_admins("[key_name_admin(holder)] made everybody brain damaged")
 		if("floorlava")
@@ -528,7 +536,7 @@
 						if(droptype == "Yes")
 							ADD_TRAIT(I, TRAIT_NODROP, ADMIN_TRAIT)
 				else
-					to_chat(H, span_warning("You're not kawaii enough for this!") , confidential = TRUE)
+					to_chat(H, span_warning("You're not kawaii enough for this!"))
 		if("masspurrbation")
 			if(!is_funmin)
 				return
@@ -572,7 +580,7 @@
 	if(holder)
 		log_admin("[key_name(holder)] used secret [action]")
 		if(ok)
-			to_chat(world, text("<B>A secret has been activated by []!</B>", holder.key), confidential = TRUE)
+			to_chat(world, text("<B>A secret has been activated by []!</B>", holder.key))
 
 /proc/portalAnnounce(announcement, playlightning)
 	set waitfor = FALSE

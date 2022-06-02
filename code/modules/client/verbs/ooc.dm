@@ -1,6 +1,7 @@
 GLOBAL_VAR_INIT(OOC_COLOR, null)//If this is null, use the CSS for OOC. Otherwise, use a custom colour.
 GLOBAL_VAR_INIT(normal_ooc_colour, "#002eb8")
 GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД ЕБУТ", "оникс" = "говно", "опух" = "говнище", "валтос" = "мяу"))
+GLOBAL_LIST_INIT(alko_list, list("zarri", "maxsc", "nfogmann", "unitazik", "sranklin"))
 
 /client/verb/ooc(msg as text)
 	set name = "OOC" //Gave this shit a shorter name so you only have to time out "ooc" rather than "ooc message" to use it --NeoFite
@@ -31,6 +32,7 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 		return
 
 	msg = copytext_char(sanitize(msg), 1, MAX_MESSAGE_LEN)
+
 	var/raw_msg = msg
 
 	if(!msg)
@@ -41,7 +43,11 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 
 	msg = emoji_parse(msg)
 
-	if(SSticker.HasRoundStarted() && (msg[1] in list(".",";",":","#") || findtext_char(msg, "say", 1, 5)))
+	if(ckey in GLOB.alko_list)
+		msg = slur(msg)
+
+
+	if(SSticker.HasRoundStarted() && (msg[1] in list(".",";",":","#") || findtext_char(msg, "Сказать", 1, 5)))
 		if(tgui_alert(usr, "Похоже \"[raw_msg]\" выглядит как внутриигровое сообщение, написать его в OOC?", "Для OOC?", list("Да", "Нет")) != "Да")
 			return
 
@@ -49,7 +55,7 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 		if(handle_spam_prevention(msg,MUTE_OOC))
 			return
 		if(findtext(msg, "byond://"))
-			to_chat(src, "<B> >Привет, ты что, охуел?</B>")
+			to_chat(src, "<B>Привет, ты что, охуел?</B>")
 			log_admin("[key_name(src)] has attempted to advertise in OOC: [msg]")
 			message_admins("[key_name_admin(src)] has attempted to advertise in OOC: [msg]")
 			qdel(src)
@@ -88,12 +94,12 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 					if(check_rights_for(src, R_ADMIN))
 						to_chat(C, "<span class='adminooc'>[CONFIG_GET(flag/allow_admin_ooccolor) && prefs.ooccolor ? "<font color=[prefs.ooccolor]>" :"" ]<span class='prefix'>[tagmsg]:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message linkify'>[msg]</span></span></font>")
 					else
-						to_chat(C, span_adminobserverooc("<span class='prefix'>[tagmsg]:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message linkify'>[msg]</span>"))
+						to_chat(C, span_adminobserverooc(span_prefix("[tagmsg]:</span> <EM>[keyname][holder.fakekey ? "/([holder.fakekey])" : ""]:</EM> <span class='message linkify'>[msg]")))
 				else
 					if(GLOB.OOC_COLOR)
 						to_chat(C, "<font color='[GLOB.OOC_COLOR]'><b><span class='prefix'>[tagmsg]:</span> <EM>[holder.fakekey ? holder.fakekey : key]:</EM> <span class='message linkify'>[msg]</span></b></font>")
 					else
-						to_chat(C, span_ooc("<span class='prefix'>[tagmsg]:</span> <EM>[holder.fakekey ? holder.fakekey : key]:</EM> <span class='message linkify'>[msg]</span>"))
+						to_chat(C, span_ooc(span_prefix("[tagmsg]:</span> <EM>[holder.fakekey ? holder.fakekey : key]:</EM> <span class='message linkify'>[msg]")))
 
 			else if(!(key in C.prefs.ignoring))
 				if(check_donations(ckey) >= 100)
@@ -101,11 +107,11 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 				else if(GLOB.OOC_COLOR)
 					to_chat(C, "<font color='[GLOB.OOC_COLOR]'><b><span class='prefix'>[tagmsg]:</span> <EM>[keyname]:</EM> <span class='message linkify'>[msg]</span></b></font>")
 				else
-					to_chat(C, span_ooc("<span class='prefix'>[tagmsg]:</span> <EM>[keyname]:</EM> <span class='message linkify'>[msg]</span>"))
+					to_chat(C, span_ooc(span_prefix("[tagmsg]:</span> <EM>[keyname]:</EM> <span class='message linkify'>[msg]")))
 	if(isnewplayer(mob))
-		webhook_send_lobby(key, msg)
+		webhook_send_lobby(key, raw_msg)
 	else
-		webhook_send_ooc(key, msg)
+		webhook_send_ooc(key, raw_msg)
 
 /proc/toggle_ooc(toggle = null)
 	if(toggle != null) //if we're specifically en/disabling ooc
@@ -115,7 +121,7 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 			return
 	else //otherwise just toggle it
 		GLOB.ooc_allowed = !GLOB.ooc_allowed
-	message_admins(span_bold("OOC [GLOB.ooc_allowed ? "включен" : "выключен"]."))
+	to_chat(world, "<B>Чат ООС был глобально [GLOB.ooc_allowed ? "включен" : "отключен"]!</B>")
 
 /proc/toggle_dooc(toggle = null)
 	if(toggle != null)
@@ -212,7 +218,7 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 
 	var/motd = global.config.motd
 	if(motd)
-		to_chat(src, "<div class=\"motd\">[motd]</div>", handle_whitespace=FALSE)
+		to_chat(src, "<div class=\"motd\">[motd]</div>")
 	else
 		to_chat(src, span_notice("The Message of the Day has not been set."))
 
@@ -291,7 +297,7 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 		return
 
 	// Sort the list
-	players = sortList(players)
+	players = sort_list(players)
 
 	// Request the player to ignore
 	var/selection = input("Please, select a player!", "Ignore", null, null) as null|anything in players
@@ -366,14 +372,14 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 	SSticker.show_roundend_report(src, report_type = PERSONAL_LAST_ROUND)
 
 /client/proc/show_servers_last_roundend_report()
-	set name = "Server's Last Round"
+	set name = "📘 Последний раунд сервера"
 	set category = "OOC"
 	set desc = "View the last round end report from this server"
 
 	SSticker.show_roundend_report(src, report_type = SERVER_LAST_ROUND)
 
 /client/verb/fit_viewport()
-	set name = "❗ Подстроить экран"
+	set name = "ПОЧИНИТЬ ЭКРАН"
 	set category = "Особенное"
 	set desc = "Fit the width of the map window to match the viewport"
 
@@ -391,13 +397,23 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 
 	var/list/map_size = splittext(sizes["mapwindow.size"], "x")
 
-	// Looks like we expect mapwindow.size to be "ixj" where i and j are numbers.
-	// If we don't get our expected 2 outputs, let's give some useful error info.
-	if(length(map_size) != 2)
-		CRASH("map_size of incorrect length --- map_size var: [map_size] --- map_size length: [length(map_size)]")
+	// Gets the type of zoom we're currently using from our view datum
+	// If it's 0 we do our pixel calculations based off the size of the mapwindow
+	// If it's not, we already know how big we want our window to be, since zoom is the exact pixel ratio of the map
+	var/zoom_value = src.view_size?.zoom || 0
 
-	var/height = text2num(map_size[2])
-	var/desired_width = round(height * aspect_ratio)
+	var/desired_width = 0
+	if(zoom_value)
+		desired_width = round(view_size[1] * zoom_value * world.icon_size)
+	else
+
+		// Looks like we expect mapwindow.size to be "ixj" where i and j are numbers.
+		// If we don't get our expected 2 outputs, let's give some useful error info.
+		if(length(map_size) != 2)
+			CRASH("map_size of incorrect length --- map_size var: [map_size] --- map_size length: [length(map_size)]")
+		var/height = text2num(map_size[2])
+		desired_width = round(height * aspect_ratio)
+
 	if (text2num(map_size[1]) == desired_width)
 		// Nothing to do
 		return
@@ -439,10 +455,19 @@ GLOBAL_LIST_INIT(retard_words, list("подливит" = "МЕНЯ В ЗАД Е�
 		else
 			winset(src, "mainwindow.split", "splitter=[pct]")
 
+/// Attempt to automatically fit the viewport, assuming the user wants it
+/client/proc/attempt_auto_fit_viewport()
+	if (!prefs.auto_fit_viewport)
+		return
+	if(fully_created)
+		INVOKE_ASYNC(src, .verb/fit_viewport)
+	else //Delayed to avoid wingets from Login calls.
+		addtimer(CALLBACK(src, .verb/fit_viewport, 1 SECONDS))
+
 /client/verb/policy()
 	set name = "📘 Показать политику"
 	set desc = "Show special server rules related to your current character."
-	set category = "OOC"
+	set category = null
 
 	//Collect keywords
 	var/list/keywords = mob.get_policy_keywords()

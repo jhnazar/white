@@ -17,14 +17,14 @@
 		return
 	var/obj/item/circuitboard/computer/syndicate_shuttle/board = circuit
 	if(board.challenge && world.time < SYNDICATE_CHALLENGE_TIMER)
-		to_chat(usr, "<span class='warning'>Вы бросили вызов станции! Вы ВЫНУЖДЕНЫ дать им по крайней мере [DisplayTimeText(SYNDICATE_CHALLENGE_TIMER - world.time)] для их подготовки.</span>")
+		to_chat(usr, span_warning("Вы бросили вызов станции! Вы ВЫНУЖДЕНЫ дать им по крайней мере [DisplayTimeText(SYNDICATE_CHALLENGE_TIMER - world.time)] для их подготовки."))
 		return FALSE
 	board.moved = TRUE
 	. = ..()
 
 /obj/machinery/computer/shuttle_flight/syndicate/recall
 	name = "консоль призыва шаттла синдиката"
-	desc = "Используйте это, если ваши товарищи по команде оставили вас на базе."
+	desc = "Используйте это, если товарищи по команде оставили вас на базе."
 	request_shuttle_message = "Вызвать обратно"
 	recall_docking_port_id = "syndicate_away"
 
@@ -38,11 +38,12 @@
 	desc = "Контролирует систему запуска штурмового дроппода."
 	icon = 'icons/obj/terminals.dmi'
 	icon_state = "dorm_available"
+	icon_keyboard = null
 	light_color = LIGHT_COLOR_BLUE
 	req_access = list(ACCESS_SYNDICATE)
 	shuttleId = "steel_rain"
 	possible_destinations = null
 	recall_docking_port_id = "null"	//Make it a recall shuttle, with no default dest
-	request_shuttle_message = "ВАЛЕРА СЛОМАЛ НАХУЙ"
+	request_shuttle_message = "НАЧАТЬ ШТУРМ"
 
 #undef SYNDICATE_CHALLENGE_TIMER

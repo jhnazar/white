@@ -11,13 +11,12 @@
 	icon = 'icons/turf/shuttle.dmi'
 
 /obj/machinery/atmospherics/components/unary/shuttle/heater
-	name = "engine heater"
-	desc = "Directs energy into compressed particles in order to power an attached thruster."
+	name = "предзажигатель двигателя"
+	desc = "Направляет энергию в сжатые частицы для приведения в действие присоединенного двигателя."
 	icon_state = "heater_pipe"
 	var/icon_state_closed = "heater_pipe"
 	var/icon_state_open = "heater_pipe_open"
 	var/icon_state_off = "heater_pipe"
-	idle_power_usage = 50
 	circuit = /obj/item/circuitboard/machine/shuttle/heater
 
 	density = TRUE
@@ -28,7 +27,7 @@
 
 	pipe_flags = PIPING_ONE_PER_TURF | PIPING_DEFAULT_LAYER_ONLY
 
-	var/gas_type = /datum/gas/plasma
+	var/gas_type = GAS_PLASMA
 	var/efficiency_multiplier = 1
 	var/gas_capacity = 0
 
@@ -70,6 +69,7 @@
 	return TRUE
 
 /obj/machinery/atmospherics/components/unary/shuttle/heater/RefreshParts()
+	. = ..()
 	var/cap = 0
 	var/eff = 0
 	for(var/obj/item/stock_parts/matter_bin/M in component_parts)

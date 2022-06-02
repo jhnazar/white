@@ -165,8 +165,8 @@
 	sounds = list(
 		"beep"			= 'sound/machines/twobeep.ogg',
 		"chime"			= 'sound/machines/chime.ogg',
-		"buzz sigh"		= 'sound/machines/buzz-sigh.ogg',
-		"buzz twice"	= 'sound/machines/buzz-two.ogg',
+		"buzz sigh"		= 'white/valtos/sounds/error1.ogg',
+		"buzz twice"	= 'white/valtos/sounds/error2.ogg',
 		"ping"			= 'sound/machines/ping.ogg',
 		"synth yes"		= 'sound/machines/synth_yes.ogg',
 		"synth no"		= 'sound/machines/synth_no.ogg',
@@ -413,7 +413,7 @@
 /obj/item/integrated_circuit_old/output/text_to_radio/Initialize()
 	. = ..()
 	radio = new(src)
-	radio.frequency = FREQ_COMMON
+	radio.set_frequency(FREQ_COMMON)
 	GLOB.ic_speakers += src
 
 /obj/item/integrated_circuit_old/output/text_to_radio/Destroy()

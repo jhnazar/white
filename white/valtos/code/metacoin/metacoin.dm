@@ -1,5 +1,8 @@
 /client/proc/process_endround_metacoin()
-	if(!mob)	return
+	if(IsAdminAdvancedProcCall())
+		return
+	if(!mob)
+		return
 	var/mob/M = mob
 	if(M.mind && !isnewplayer(M))
 		if(M.stat != DEAD && !isbrain(M))
@@ -14,6 +17,8 @@
 			inc_metabalance(M, METACOIN_NOTSURVIVE_REWARD, reason="Я пытался...")
 
 /client/proc/process_greentext(reward, o_completed)
+	if(IsAdminAdvancedProcCall())
+		return
 	if(!reward)
 		reward = 5
 	switch(o_completed)
@@ -23,9 +28,6 @@
 			inc_metabalance(mob, reward, reason="Задача выполнена!")
 		if(2 to INFINITY)
 			inc_metabalance(mob, reward, reason="Задачи выполнены!")
-
-/client/proc/process_ten_minute_living()
-	inc_metabalance(mob, METACOIN_TENMINUTELIVING_REWARD, FALSE)
 
 /client/proc/get_metabalance()
 	var/datum/db_query/query_get_metacoins = SSdbcore.NewQuery(
@@ -49,6 +51,9 @@
 	mc_cached = get_metabalance()
 
 /client/proc/set_metacoin_count(mc_count, ann = TRUE)
+	if(IsAdminAdvancedProcCall())
+		return
+
 	var/datum/db_query/query_set_metacoins = SSdbcore.NewQuery(
 		"UPDATE player SET metacoins = :mc_count WHERE ckey = :ckey",
 		list("mc_count" = mc_count, "ckey" = ckey)
@@ -60,6 +65,9 @@
 		to_chat(src, "<span class='rose bold'>Новый баланс: [mc_count] метакэша!</span>")
 
 /proc/inc_metabalance(mob/M, mc_count, ann = TRUE, reason = null)
+	if(IsAdminAdvancedProcCall())
+		return
+
 	if(!M.client || mc_count == 0)
 		return
 
@@ -69,6 +77,8 @@
 	)
 	query_inc_metacoins.warn_execute()
 	qdel(query_inc_metacoins)
+
+	WRITE_LOG("data/metacoin.log", "[GLOB.round_id] - [M?.ckey] > [mc_count] < [reason]")
 
 	if(!M.client || !M)
 		return

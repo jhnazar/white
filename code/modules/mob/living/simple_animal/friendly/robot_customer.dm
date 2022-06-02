@@ -35,7 +35,8 @@
 	ai_controller.blackboard[BB_CUSTOMER_ATTENDING_VENUE] = attending_venue
 	ai_controller.blackboard[BB_CUSTOMER_PATIENCE] = customer_info.total_patience
 	icon_state = customer_info.base_icon
-	name = "[pick(customer_info?.name_prefixes)]-бот"
+	if(customer_info?.name_prefixes.len)
+		name = "[pick(customer_info?.name_prefixes)]-бот"
 	color = rgb(rand(80,255), rand(80,255), rand(80,255))
 	update_icon()
 
@@ -53,11 +54,11 @@
 
 /mob/living/simple_animal/robot_customer/MouseEntered(location, control, params)
 	. = ..()
-	hud_to_show_on_hover?.add_hud_to(usr)
+	hud_to_show_on_hover?.show_to(usr)
 
 /mob/living/simple_animal/robot_customer/MouseExited(location, control, params)
 	. = ..()
-	hud_to_show_on_hover?.remove_hud_from(usr)
+	hud_to_show_on_hover?.hide_from(usr)
 
 /mob/living/simple_animal/robot_customer/update_overlays()
 	. = ..()

@@ -24,7 +24,6 @@
 		/obj/item/storage/box/lights/mixed = 20,
 		/obj/item/lightreplacer = 10,
 		/obj/item/holosign_creator/engineering = 8,
-		/obj/item/clothing/head/hardhat/red/upgraded = 1
 	)
 
 	rpg_title = "Кристалломант"
@@ -34,7 +33,7 @@
 	jobtype = /datum/job/station_engineer
 
 	belt = /obj/item/storage/belt/utility/full/engi
-	l_pocket = /obj/item/pda/engineering
+	l_pocket = /obj/item/modular_computer/tablet/pda/engineering
 	ears = /obj/item/radio/headset/headset_eng
 	uniform = /obj/item/clothing/under/rank/engineering/engineer
 	shoes = /obj/item/clothing/shoes/workboots

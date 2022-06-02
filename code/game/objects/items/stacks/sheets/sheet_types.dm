@@ -18,6 +18,7 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	new/datum/stack_recipe("Табурет", /obj/structure/chair/stool, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("барный стул", /obj/structure/chair/stool/bar, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("кровать", /obj/structure/bed, 2, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("двухспальная кровать", /obj/structure/bed/double, 4, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
 	new/datum/stack_recipe_list("офисные кресла", list( \
 		new/datum/stack_recipe("темное офисное кресло", /obj/structure/chair/office, 5, one_per_turf = TRUE, on_floor = TRUE), \
@@ -42,6 +43,12 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 		new /datum/stack_recipe("диван (правый)", /obj/structure/chair/sofa/corp/right, one_per_turf = TRUE, on_floor = TRUE), \
 		new /datum/stack_recipe("диван (угловой)", /obj/structure/chair/sofa/corp/corner, one_per_turf = TRUE, on_floor = TRUE), \
 		)), \
+	new /datum/stack_recipe_list("скамейки", list( \
+		new /datum/stack_recipe("скамейка (центр)", /obj/structure/chair/sofa/bench, one_per_turf = TRUE, on_floor = TRUE), \
+		new /datum/stack_recipe("скамейка (левая)", /obj/structure/chair/sofa/bench/left, one_per_turf = TRUE, on_floor = TRUE), \
+		new /datum/stack_recipe("скамейка (правая)", /obj/structure/chair/sofa/bench/right, one_per_turf = TRUE, on_floor = TRUE), \
+		new /datum/stack_recipe("скамейка (угол)", /obj/structure/chair/sofa/bench/corner, one_per_turf = TRUE, on_floor = TRUE), \
+		)), \
 	new /datum/stack_recipe_list("шахматные фигуры", list( \
 		new /datum/stack_recipe("Белый Pawn", /obj/structure/chess/whitepawn, 2, time = 1 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
 		new /datum/stack_recipe("Белый Rook", /obj/structure/chess/whiterook, 2, time = 1 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
@@ -63,7 +70,7 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	new/datum/stack_recipe("каркас канистры", /obj/structure/canister_frame/machine/frame_tier_0, 5, time = 8, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
 	new/datum/stack_recipe("плитка для пола", /obj/item/stack/tile/plasteel, 1, 4, 20), \
-	new/datum/stack_recipe("железный стержень", /obj/item/stack/rods, 1, 2, 60), \
+	new/datum/stack_recipe("желез. стержень", /obj/item/stack/rods, 1, 2, 60), \
 	null, \
 	new/datum/stack_recipe("каркас стены", /obj/structure/girder, 2, time = 40, one_per_turf = TRUE, on_floor = TRUE, trait_booster = TRAIT_QUICK_BUILD, trait_modifier = 0.75), \
 	null, \
@@ -176,7 +183,7 @@ GLOBAL_LIST_INIT(plasteel_recipes, list ( \
 /obj/item/stack/sheet/plasteel
 	name = "пласталь"
 	singular_name = "лист пластали"
-	desc = "Это лист из сплава железа и плазмы"
+	desc = "Пласталь является сплавом железа и плазмы. Благодаря отличной прочности и недороговизне этот новомодный сплав завоевал сердца многих инженеров."
 	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-plasteel"
 	inhand_icon_state = "sheet-plasteel"
@@ -215,7 +222,6 @@ GLOBAL_LIST_INIT(wood_recipes, list ( \
 	new/datum/stack_recipe("деревянный стул", /obj/structure/chair/wood/, 3, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("крылатый стул", /obj/structure/chair/wood/wings, 3, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("деревянная застава", /obj/structure/barricade/wooden, 5, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
-	new/datum/stack_recipe("кузнеческое полено", /obj/item/blacksmith/srub, 10, time = 10), \
 	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/wooden, 2, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("деревянная дверь", /obj/structure/mineral_door/wood, 10, time = 20, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("гроб", /obj/structure/closet/crate/coffin, 5, time = 15, one_per_turf = TRUE, on_floor = TRUE), \
@@ -240,7 +246,6 @@ GLOBAL_LIST_INIT(wood_recipes, list ( \
 	new/datum/stack_recipe("ступка", /obj/item/reagent_containers/glass/mortar, 3), \
 	new/datum/stack_recipe("головешка", /obj/item/match/firebrand, 2, time = 100), \
 	new/datum/stack_recipe("зубок", /obj/item/stack/teeth/human/wood, 1, time = 5),\
-	new/datum/stack_recipe("рукоять скипетра", /obj/item/scepter_shaft, 3, time=5),\
 	null, \
 	new/datum/stack_recipe_list("церковные скамьи", list(
 		new /datum/stack_recipe("скамья (центральная)", /obj/structure/chair/pew, 3, one_per_turf = TRUE, on_floor = TRUE),
@@ -256,7 +261,7 @@ GLOBAL_LIST_INIT(wood_recipes, list ( \
 	singular_name = "деревянная доска"
 	icon_state = "sheet-wood"
 	inhand_icon_state = "sheet-wood"
-	icon = 'icons/obj/stack_objects.dmi'
+	icon = 'white/valtos/icons/items.dmi'
 	mats_per_unit = list(/datum/material/wood=MINERAL_MATERIAL_AMOUNT)
 	sheettype = "wood"
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 0)
@@ -335,9 +340,11 @@ GLOBAL_LIST_INIT(cloth_recipes, list ( \
 	new/datum/stack_recipe("сумка для химикатов", /obj/item/storage/bag/chemistry, 4), \
 	new/datum/stack_recipe("сумка для биологических образцов", /obj/item/storage/bag/bio, 4), \
 	new/datum/stack_recipe("строительная сумка", /obj/item/storage/bag/construction, 4), \
+	new/datum/stack_recipe("сумка для материалов", /obj/item/storage/bag/sheetsnatcher, 4), \
 	null, \
 	new/datum/stack_recipe("импровизированная марля", /obj/item/stack/medical/gauze/improvised, 1, 2, 6), \
 	new/datum/stack_recipe("тряпка", /obj/item/reagent_containers/glass/rag, 1), \
+	new/datum/stack_recipe("двойная простыня", /obj/item/bedsheet/double, 3), \
 	new/datum/stack_recipe("простыня", /obj/item/bedsheet, 3), \
 	new/datum/stack_recipe("пустой мешок для песка", /obj/item/emptysandbag, 4), \
 	null, \
@@ -382,6 +389,7 @@ GLOBAL_LIST_INIT(durathread_recipes, list ( \
 	new/datum/stack_recipe("дюратканевый берет", /obj/item/clothing/head/beret/durathread, 2, time = 40), \
 	new/datum/stack_recipe("дюратканевая шапочка", /obj/item/clothing/head/beanie/durathread, 2, time = 40), \
 	new/datum/stack_recipe("дюратканевая бандана", /obj/item/clothing/mask/bandana/durathread, 1, time = 25), \
+	new/datum/stack_recipe("раскройка бронежилета", /obj/item/armor_preassembly, 10, time = 25), \
 	))
 
 /obj/item/stack/sheet/durathread
@@ -396,6 +404,12 @@ GLOBAL_LIST_INIT(durathread_recipes, list ( \
 	merge_type = /obj/item/stack/sheet/durathread
 	drop_sound = 'sound/items/handling/cloth_drop.ogg'
 	pickup_sound =  'sound/items/handling/cloth_pickup.ogg'
+
+/obj/item/stack/sheet/durathread/ten
+	amount = 10
+
+/obj/item/stack/sheet/durathread/six
+	amount = 6
 
 /obj/item/stack/sheet/durathread/get_main_recipes()
 	. = ..()
@@ -428,6 +442,7 @@ GLOBAL_LIST_INIT(durathread_recipes, list ( \
  */
 GLOBAL_LIST_INIT(cardboard_recipes, list (																				 \
 	new/datum/stack_recipe("коробка", /obj/item/storage/box),															 \
+	new/datum/stack_recipe("медицинская коробка", /obj/item/storage/box/med),											 \
 	new/datum/stack_recipe("костюм картонного киборга", /obj/item/clothing/suit/cardborg, 3),					  		 \
 	new/datum/stack_recipe("шлем картонного киборга", /obj/item/clothing/head/cardborg),								 \
 	new/datum/stack_recipe("большая коробка", /obj/structure/closet/cardboard, 4, one_per_turf = TRUE, on_floor = TRUE), \
@@ -521,58 +536,6 @@ GLOBAL_LIST_INIT(cardboard_recipes, list (																				 \
 	else
 		. = ..()
 
-
-/*
- * Runed Metal
- */
-
-GLOBAL_LIST_INIT(runed_metal_recipes, list ( \
-	new /datum/stack_recipe("руническая дверь (не слишком прочная дверь, оглушает коснувшихся не культистов))", /obj/machinery/door/airlock/cult, 1, time = 5 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	new /datum/stack_recipe("руническая балка (не рекомендованное использование рунного металла)", /obj/structure/girder/cult, 1, time = 5 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	new /datum/stack_recipe("пилон (лечит (и регенерирует кровь) находящихся поблизости кровавых культистов и конструктов, но также превращает полы поблизости в гравированные)", /obj/structure/destructible/cult/pylon, 4, time = 4 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	new /datum/stack_recipe("демоническая кузня (можно создать защищенные робы, робы флагелянтов и зеркальные щиты)", /obj/structure/destructible/cult/forge, 3, time = 4 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	new /datum/stack_recipe("архивы (можно создать глазные повязки фанатиков, сферы проклятия шатлов, и оборудование идущего по завесе)", /obj/structure/destructible/cult/tome, 3, time = 4 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	new /datum/stack_recipe("алтарь (можно создать жуткие точильные камни, оболочки конструктов и фляги с несвятой водой)", /obj/structure/destructible/cult/talisman, 3, time = 4 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
-	))
-
-/obj/item/stack/sheet/runed_metal
-	name = "рунический металл"
-	desc = "Листы холодного, покрытого меняющимися надписями, металла."
-	singular_name = "лист рунического металла"
-	icon_state = "sheet-runed"
-	inhand_icon_state = "sheet-runed"
-	icon = 'icons/obj/stack_objects.dmi'
-	mats_per_unit = list(/datum/material/runedmetal = MINERAL_MATERIAL_AMOUNT)
-	sheettype = "runed"
-	merge_type = /obj/item/stack/sheet/runed_metal
-	novariants = TRUE
-	grind_results = list(/datum/reagent/iron = 5, /datum/reagent/blood = 15)
-	material_type = /datum/material/runedmetal
-
-/obj/item/stack/sheet/runed_metal/attack_self(mob/living/user)
-	if(!iscultist(user))
-		to_chat(user, span_warning("Только обладающий запретными знаниями имеет шанс поработать с этим металлом.	"))
-		return
-	var/turf/T = get_turf(user) //we may have moved. adjust as needed...
-	var/area/A = get_area(user)
-	if((!is_station_level(T.z) && !is_mining_level(T.z)) || (A && !(A.area_flags & CULT_PERMITTED)))
-		to_chat(user, span_warning("Завеса здесь недостаточно слабая."))
-		return FALSE
-	return ..()
-
-/obj/item/stack/sheet/runed_metal/get_main_recipes()
-	. = ..()
-	. += GLOB.runed_metal_recipes
-
-/obj/item/stack/sheet/runed_metal/fifty
-	amount = 50
-
-/obj/item/stack/sheet/runed_metal/ten
-	amount = 10
-
-/obj/item/stack/sheet/runed_metal/five
-	amount = 5
-
 /*
  * Bronze
  */
@@ -608,7 +571,7 @@ GLOBAL_LIST_INIT(bronze_recipes, list ( \
 	singular_name = "лист латуни"
 	icon_state = "sheet-brass"
 	inhand_icon_state = "sheet-brass"
-	icon = 'icons/obj/stack_objects.dmi'
+	icon = 'white/valtos/icons/items.dmi'
 	mats_per_unit = list(/datum/material/bronze = MINERAL_MATERIAL_AMOUNT)
 	lefthand_file = 'icons/mob/inhands/misc/sheets_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/sheets_righthand.dmi'
@@ -753,6 +716,7 @@ new /datum/stack_recipe("paper frame door", /obj/structure/mineral_door/paperfra
 	name = "листы мяса"
 	desc = "Чье-то окровавленное мясо, спресованное в неплохой твердый лист."
 	singular_name = "лист мяса"
+	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-meat"
 	material_flags = MATERIAL_COLOR
 	mats_per_unit = list(/datum/material/meat = MINERAL_MATERIAL_AMOUNT)
@@ -768,8 +732,8 @@ new /datum/stack_recipe("paper frame door", /obj/structure/mineral_door/paperfra
 	amount = 5
 
 /obj/item/stack/sheet/pizza
-	name = "ломтики пепперони "
-	desc = "Это вкусные ломтики пепперони!"
+	name = "ломтики пепперони"
+	desc = "Вкусные ломтики пепперони!"
 	singular_name = "ломтик пепперони"
 	icon_state = "sheet-pizza"
 	mats_per_unit = list(/datum/material/pizza = MINERAL_MATERIAL_AMOUNT)

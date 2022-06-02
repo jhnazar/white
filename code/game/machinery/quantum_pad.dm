@@ -1,11 +1,9 @@
 /obj/machinery/quantumpad
-	name = "quantum pad"
-	desc = "A bluespace quantum-linked telepad used for teleporting objects to other quantum pads."
+	name = "квантовый телепад"
+	desc = "Квантовый блюспейс телепад, используемый для телепортации объектов на другие квантовые телепады."
 	icon = 'icons/obj/telescience.dmi'
 	icon_state = "qpad-idle"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 2000
-	active_power_usage = 50000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 10
 	obj_flags = CAN_BE_HIT | UNIQUE_RENAME
 	circuit = /obj/item/circuitboard/machine/quantumpad
 	var/teleport_cooldown = 400 //30 seconds base due to base parts
@@ -38,6 +36,7 @@
 		. += "<hr><span class='notice'>The <i>linking</i> device is now able to be <i>scanned<i> with a multitool.</span>"
 
 /obj/machinery/quantumpad/RefreshParts()
+	. = ..()
 	var/E = 0
 	for(var/obj/item/stock_parts/capacitor/C in component_parts)
 		E += C.rating
@@ -154,7 +153,7 @@
 			last_teleport = world.time
 
 			// use a lot of power
-			use_power(10000 / power_efficiency)
+			use_power(active_power_usage / power_efficiency)
 			sparks()
 			target_pad.sparks()
 
@@ -205,12 +204,12 @@
 	target_pad = add_input_port("Target Pad", PORT_TYPE_ATOM)
 	failed = add_output_port("On Fail", PORT_TYPE_SIGNAL)
 
-/obj/item/circuit_component/quantumpad/register_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/quantumpad/register_usb_parent(atom/movable/shell)
 	. = ..()
-	if(istype(parent, /obj/machinery/quantumpad))
-		attached_pad = parent
+	if(istype(shell, /obj/machinery/quantumpad))
+		attached_pad = shell
 
-/obj/item/circuit_component/quantumpad/unregister_usb_parent(atom/movable/parent)
+/obj/item/circuit_component/quantumpad/unregister_usb_parent(atom/movable/shell)
 	attached_pad = null
 	return ..()
 

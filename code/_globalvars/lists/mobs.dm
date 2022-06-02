@@ -17,6 +17,7 @@ GLOBAL_LIST_INIT(dangerous_turfs, typecacheof(list(
 //This is for procs to replace all the goddamn 'in world's that are chilling around the code
 
 GLOBAL_LIST_EMPTY(player_list)				//all mobs **with clients attached**.
+GLOBAL_LIST_EMPTY(keyloop_list) 			//as above but can be limited to boost performance
 GLOBAL_LIST_EMPTY(mob_list)					//all mobs, including clientless
 GLOBAL_LIST_EMPTY(mob_directory)			//mob_id -> mob
 GLOBAL_LIST_EMPTY(alive_mob_list)			//all alive mobs, including clientless. Excludes /mob/dead/new_player
@@ -53,6 +54,12 @@ GLOBAL_LIST_EMPTY(latejoin_ai_cores)
 GLOBAL_LIST_EMPTY(mob_config_movespeed_type_lookup)
 
 GLOBAL_LIST_EMPTY(emote_list)
+
+GLOBAL_LIST_INIT(construct_radial_images, list(
+	CONSTRUCT_JUGGERNAUT = image(icon = 'icons/mob/cult.dmi', icon_state = "juggernaut"),
+	CONSTRUCT_WRAITH = image(icon = 'icons/mob/cult.dmi', icon_state = "wraith"),
+	CONSTRUCT_ARTIFICER = image(icon = 'icons/mob/cult.dmi', icon_state = "artificer")
+))
 
 /// All alive mobs with clients.
 GLOBAL_LIST_EMPTY(alive_player_list)
@@ -92,3 +99,12 @@ GLOBAL_LIST_EMPTY(alive_player_list)
 				.[E.key_third_person] = list(E)
 			else
 				.[E.key_third_person] |= E
+
+/proc/get_crewmember_minds()
+	var/list/minds = list()
+	for(var/data in GLOB.data_core.locked)
+		var/datum/data/record/record = data
+		var/datum/mind/mind = record.fields["mindref"]
+		if(mind)
+			minds += mind
+	return minds

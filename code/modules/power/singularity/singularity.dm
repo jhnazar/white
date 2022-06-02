@@ -1,3 +1,7 @@
+/atom/movable/singularity_effect
+	plane = GRAVITY_PULSE_PLANE
+	appearance_flags = PIXEL_SCALE
+
 /// The gravitational singularity
 /obj/singularity
 	name = "гравитационная сингулярность"
@@ -7,8 +11,8 @@
 	anchored = TRUE
 	density = TRUE
 	move_resist = INFINITY
-	layer = MASSIVE_OBJ_LAYER
-	plane = ABOVE_LIGHTING_PLANE
+	plane = SINGULARITY_PLANE
+	layer = SINGULARITY_LAYER
 	light_range = 6
 	appearance_flags = LONG_GLIDE
 
@@ -31,10 +35,14 @@
 	var/event_chance = 10 //Prob for event each tick
 	var/move_self = TRUE
 	var/consumed_supermatter = FALSE //If the singularity has eaten a supermatter shard and can go to stage six
+	/// How long it's been since the singulo last acted, in seconds
+	var/time_since_act = 0
 
 	flags_1 = SUPERMATTER_IGNORES_1
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF | FREEZE_PROOF
 	obj_flags = CAN_BE_HIT | DANGEROUS_POSSESSION
+
+	var/atom/movable/singularity_effect/singulo_effect
 
 /obj/singularity/Initialize(mapload, starting_energy = 50)
 	. = ..()
@@ -45,7 +53,7 @@
 
 	energy = starting_energy
 
-	START_PROCESSING(SSobj, src)
+	START_PROCESSING(SSsinguloprocess, src)
 	SSpoints_of_interest.make_point_of_interest(src)
 	GLOB.singularities |= src
 
@@ -64,7 +72,8 @@
 			break
 
 	if (!mapload)
-		notify_ghosts("О, НЕТ!", source = src, action = NOTIFY_ORBIT, flashwindow = FALSE, ghost_sound = 'sound/machines/warning-buzzer.ogg', header = "IT'S LOOSE", notify_volume = 75)
+		GLOB.is_engine_sabotaged = TRUE
+		notify_ghosts("О, НЕТ!", source = src, action = NOTIFY_ORBIT, flashwindow = FALSE, ghost_sound = 'sound/machines/warning-buzzer.ogg', header = "НЕВЕРОЯТНО", notify_volume = 75)
 
 /obj/effect/singularity_creation
 	name = "временной сдвиг"
@@ -81,6 +90,7 @@
 	. = ..()
 	if(timeleft)
 		QDEL_IN(src, timeleft)
+	update_icon(STAGE_ONE)
 
 /obj/effect/singularity_creation/singularity_act()
 	return
@@ -97,7 +107,9 @@
 	singularity_component = WEAKREF(new_component)
 
 /obj/singularity/Destroy()
-	STOP_PROCESSING(SSobj, src)
+	vis_contents -= singulo_effect
+	QDEL_NULL(singulo_effect)
+	STOP_PROCESSING(SSsinguloprocess, src)
 	GLOB.singularities.Remove(src)
 	return ..()
 
@@ -157,19 +169,23 @@
 
 /obj/singularity/ex_act(severity, target)
 	switch(severity)
-		if(1)
+		if(EXPLODE_DEVASTATE)
 			if(current_size <= STAGE_TWO)
 				investigate_log("has been destroyed by a heavy explosion.", INVESTIGATE_SINGULO)
 				qdel(src)
 				return
-			else
-				energy -= round(((energy+1)/2),1)
-		if(2)
-			energy -= round(((energy+1)/3),1)
-		if(3)
-			energy -= round(((energy+1)/4),1)
+
+			energy -= round(((energy + 1) / 2), 1)
+		if(EXPLODE_HEAVY)
+			energy -= round(((energy + 1) / 3), 1)
+		if(EXPLODE_LIGHT)
+			energy -= round(((energy + 1) / 4), 1)
 
 /obj/singularity/process(delta_time)
+	time_since_act += delta_time
+	if(time_since_act < 2)
+		return
+	time_since_act = 0
 	if(current_size >= STAGE_TWO)
 		var/datum/component/soundplayer/SP = GetComponent(/datum/component/soundplayer)
 		if(!SP)
@@ -180,7 +196,7 @@
 			SP.environmental = TRUE
 			SP.active = TRUE
 		SP.playing_volume = current_size*10
-		SP.playing_range = current_size*5
+		SP.playing_range = 16
 
 		radiation_pulse(src, min(5000, (energy*4.5)+1000), RAD_DISTANCE_COEFFICIENT*0.5)
 
@@ -215,11 +231,6 @@
 	switch(temp_allowed_size)
 		if(STAGE_ONE)
 			current_size = STAGE_ONE
-			icon = 'icons/obj/singularity.dmi'
-			icon_state = "singularity_s1"
-
-			pixel_x = 0
-			pixel_y = 0
 			new_grav_pull = 4
 			new_consume_range = 0
 			dissipate_delay = 10
@@ -228,11 +239,6 @@
 		if(STAGE_TWO)
 			if(check_cardinals_range(1, TRUE))
 				current_size = STAGE_TWO
-				icon = 'icons/effects/96x96.dmi'
-				icon_state = "singularity_s3"
-
-				pixel_x = -32
-				pixel_y = -32
 				new_grav_pull = 6
 				new_consume_range = 1
 				dissipate_delay = 5
@@ -241,11 +247,6 @@
 		if(STAGE_THREE)
 			if(check_cardinals_range(2, TRUE))
 				current_size = STAGE_THREE
-				icon = 'icons/effects/160x160.dmi'
-				icon_state = "singularity_s5"
-
-				pixel_x = -64
-				pixel_y = -64
 				new_grav_pull = 8
 				new_consume_range = 2
 				dissipate_delay = 4
@@ -254,11 +255,6 @@
 		if(STAGE_FOUR)
 			if(check_cardinals_range(3, TRUE))
 				current_size = STAGE_FOUR
-				icon = 'icons/effects/224x224.dmi'
-				icon_state = "singularity_s7"
-
-				pixel_x = -96
-				pixel_y = -96
 				new_grav_pull = 10
 				new_consume_range = 3
 				dissipate_delay = 10
@@ -266,21 +262,11 @@
 				dissipate_strength = 10
 		if(STAGE_FIVE)//this one also lacks a check for gens because it eats everything
 			current_size = STAGE_FIVE
-			icon = 'icons/effects/288x288.dmi'
-			icon_state = "singularity_s9"
-
-			pixel_x = -128
-			pixel_y = -128
 			new_grav_pull = 10
 			new_consume_range = 4
 			dissipate = FALSE //It cant go smaller due to e loss
 		if(STAGE_SIX) //This only happens if a stage 5 singulo consumes a supermatter shard.
 			current_size = STAGE_SIX
-			icon = 'icons/effects/352x352.dmi'
-			icon_state = "singularity_s11"
-
-			pixel_x = -160
-			pixel_y = -160
 			new_grav_pull = 15
 			new_consume_range = 5
 			dissipate = FALSE
@@ -294,12 +280,49 @@
 		resolved_singularity.singularity_size = current_size
 
 	if(current_size == allowed_size)
-		investigate_log("<font color='red'>grew to size [current_size]</font>", INVESTIGATE_SINGULO)
+		investigate_log(span_red("grew to size [current_size]"), INVESTIGATE_SINGULO)
+		update_icon(temp_allowed_size)
 		return TRUE
 	else if(current_size < (--temp_allowed_size))
 		expand(temp_allowed_size)
 	else
 		return FALSE
+
+/obj/singularity/update_icon(stage)
+	switch(stage)
+		if(STAGE_ONE)
+			icon = 'icons/obj/singularity.dmi'
+			icon_state = "singularity_s1"
+			pixel_x = 0
+			pixel_y = 0
+		if(STAGE_TWO)
+			icon = 'icons/effects/96x96.dmi'
+			icon_state = "singularity_s3"
+			pixel_x = -32
+			pixel_y = -32
+		if(STAGE_THREE)
+			icon = 'icons/effects/160x160.dmi'
+			icon_state = "singularity_s5"
+			pixel_x = -64
+			pixel_y = -64
+		if(STAGE_FOUR)
+			icon = 'icons/effects/224x224.dmi'
+			icon_state = "singularity_s7"
+			pixel_x = -96
+			pixel_y = -96
+		if(STAGE_FIVE)
+			icon = 'icons/effects/288x288.dmi'
+			icon_state = "singularity_s9"
+			pixel_x = -128
+			pixel_y = -128
+
+	if(!singulo_effect)
+		singulo_effect = new(src)
+		singulo_effect.transform = matrix().Scale(2.4)
+		vis_contents += singulo_effect
+
+	singulo_effect.icon = icon
+	singulo_effect.icon_state = icon_state
 
 /obj/singularity/proc/check_energy()
 	if(energy <= 0)
@@ -328,8 +351,8 @@
 	var/gain = thing.singularity_act(current_size, src)
 	energy += gain
 	if(istype(thing, /obj/machinery/power/supermatter_crystal) && !consumed_supermatter)
-		desc = "[initial(desc)] It glows fiercely with inner fire."
-		name = "supermatter-charged [initial(name)]"
+		desc = "[initial(desc)] Светится, ха!"
+		name = "суперматериальная [initial(name)]"
 		consumed_supermatter = TRUE
 		set_light(10)
 
@@ -369,15 +392,15 @@
 	if(!isturf(T))
 		return FALSE
 	turfs.Add(T)
-	var/dir2 = 0
-	var/dir3 = 0
+	var/dir2
+	var/dir3
 	switch(direction)
-		if(NORTH||SOUTH)
-			dir2 = 4
-			dir3 = 8
-		if(EAST||WEST)
-			dir2 = 1
-			dir3 = 2
+		if(NORTH, SOUTH)
+			dir2 = EAST
+			dir3 = WEST
+		if(EAST, WEST)
+			dir2 = NORTH
+			dir3 = SOUTH
 	var/turf/T2 = T
 	for(var/j = 1 to steps-1)
 		T2 = get_step(T2,dir2)
@@ -433,7 +456,7 @@
 		C.visible_message(span_warning("Кожа <b>[C]</b> воспламеняется!") , \
 						  span_userdanger("Чувствую, что я сейчас <b>ГОРЮ</b>!"))
 		C.adjust_fire_stacks(5)
-		C.IgniteMob()
+		C.ignite_mob()
 	return
 
 
@@ -462,7 +485,7 @@
 /obj/singularity/singularity_act()
 	var/gain = (energy/2)
 	var/dist = max((current_size - 2),1)
-	explosion(src.loc,(dist),(dist*2),(dist*4))
+	explosion(src, devastation_range = (dist), heavy_impact_range = (dist*2), light_impact_range = (dist*4))
 	qdel(src)
 	return gain
 

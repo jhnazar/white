@@ -16,13 +16,13 @@
 
 /datum/design/mmi
 	name = "MMI"
-	desc = "Мягкое сокращение Воина, MMI, скрывает истинный ужас этого чудовища, которое, тем не менее, стало стандартным для станций Нанотрейзен."
+	desc = "Мягкое сокращение Воина, MMI, скрывает истинный ужас этого чудовища, которое, тем не менее, стало стандартным для станций NanoTrasen."
 	id = "mmi"
 	build_type = PROTOLATHE | MECHFAB
 	materials = list(/datum/material/iron = 1000, /datum/material/glass = 500)
 	construction_time = 75
 	build_path = /obj/item/mmi
-	category = list("Медицинские разработки", "Медицинское снаряжение")
+	category = list("Медицинские разработки", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -34,7 +34,7 @@
 	materials = list(/datum/material/iron = 1700, /datum/material/glass = 1350, /datum/material/gold = 500) //Gold, because SWAG.
 	construction_time = 75
 	build_path = /obj/item/mmi/posibrain
-	category = list("Медицинские разработки", "Медицинское снаряжение")
+	category = list("Медицинские разработки", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -46,7 +46,7 @@
 	construction_time = 20
 	materials = list(/datum/material/glass = 5000, /datum/material/plastic = 3000, /datum/material/diamond = 1000, /datum/material/bluespace = 1000)
 	build_path = /obj/item/reagent_containers/glass/beaker/bluespace
-	category = list("Медицинские разработки", "Фармацевтика")
+	category = list("Медицинские разработки", "Фармацевтика", "Научное снаряжение")
 	sub_category = list("Химическая посуда")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -58,7 +58,7 @@
 	construction_time = 20
 	materials = list(/datum/material/iron = 3000)
 	build_path = /obj/item/reagent_containers/glass/beaker/noreact
-	category = list("Медицинские разработки", "Фармацевтика")
+	category = list("Медицинские разработки", "Фармацевтика", "Научное снаряжение")
 	sub_category = list("Химическая посуда")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
 
@@ -71,7 +71,7 @@
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
 	materials = list(/datum/material/glass = 2500, /datum/material/plastic = 3000)
 	build_path = /obj/item/reagent_containers/glass/beaker/plastic
-	category = list("Медицинские разработки", "Фармацевтика")
+	category = list("Медицинские разработки", "Фармацевтика", "Научное снаряжение")
 	sub_category = list("Химическая посуда")
 
 /datum/design/meta_beaker
@@ -83,7 +83,7 @@
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
 	materials = list(/datum/material/glass = 2500, /datum/material/plastic = 3000, /datum/material/gold = 1000, /datum/material/titanium = 1000)
 	build_path = /obj/item/reagent_containers/glass/beaker/meta
-	category = list("Медицинские разработки", "Фармацевтика")
+	category = list("Медицинские разработки", "Фармацевтика", "Научное снаряжение")
 	sub_category = list("Химическая посуда")
 
 /datum/design/ph_meter
@@ -106,7 +106,7 @@
 	construction_time = 20
 	materials = list(/datum/material/glass = 2000, /datum/material/plasma = 1000, /datum/material/diamond = 1000, /datum/material/bluespace = 500)
 	build_path = /obj/item/reagent_containers/syringe/bluespace
-	category = list("Медицинские разработки", "Фармацевтика")
+	category = list("Медицинские разработки", "Фармацевтика", "Научное снаряжение")
 	sub_category = list("Инъекции")
 
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
@@ -119,7 +119,7 @@
 	construction_time = 20
 	materials = list(/datum/material/iron = 300, /datum/material/glass = 100, /datum/material/silver = 50)
 	build_path = /obj/item/disk/data
-	category = list("Медицинские разработки", "Медицинское снаряжение")
+	category = list("Медицинские разработки", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -143,7 +143,7 @@
 	construction_time = 30
 	materials = list(/datum/material/iron = 3000, /datum/material/plasma = 2000, /datum/material/diamond = 500, /datum/material/bluespace = 500)
 	build_path = /obj/item/bodybag/bluespace
-	category = list("Медицинские разработки", "Медицинское снаряжение")
+	category = list("Медицинские разработки", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Прочее")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -155,8 +155,7 @@
 	construction_time = 40
 	materials = list(/datum/material/iron = 4000, /datum/material/plasma = 1000)
 	build_path = /obj/item/extinguisher_refill
-	category = list("Медицинские разработки", "Медицинское снаряжение")
-	sub_category = list("Прочее")
+	category = list("Медицинские разработки", "Прочее")
 
 
 /datum/design/crewpinpointer
@@ -240,7 +239,7 @@
 	build_type = PROTOLATHE | MECHFAB
 	construction_time = 40
 	materials = list(/datum/material/iron = 1000, /datum/material/glass = 500)
-	category = list("Медицинские разработки", "Медицинское снаряжение")
+	category = list("Медицинские разработки", "Медицинское снаряжение", "Научное снаряжение")
 	sub_category = list("Диагностика и мониторинг")
 	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL | DEPARTMENTAL_FLAG_SCIENCE
 
@@ -270,7 +269,7 @@
 
 /datum/design/surgical_drapes
 	name = "Хирургическая простыня"
-	desc = "Хирургические простыни марки Нанотрейзен обеспечивают оптимальную безопасность и защиту от инфекций."
+	desc = "Хирургические простыни марки NanoTrasen обеспечивают оптимальную безопасность и защиту от инфекций."
 	id = "surgical_drapes"
 	build_type = PROTOLATHE | MECHFAB
 	construction_time = 40
@@ -526,7 +525,7 @@
 
 /datum/design/cyberimp_nutriment_plus
 	name = "Имплант питательный насос ПЛЮС"
-	desc = "Этот имплант полностью перекрывает все ваши потребности в пище и жидкости."
+	desc = "Этот имплант полностью перекрывает все потребности в пище и жидкости."
 	id = "ci-nutrimentplus"
 	build_type = PROTOLATHE | MECHFAB
 	construction_time = 50
@@ -740,64 +739,6 @@
 	construction_time = 50
 	materials = list(/datum/material/iron = 500, /datum/material/glass = 500, /datum/material/silver = 500)
 	build_path = /obj/item/organ/stomach/cybernetic/tier3
-	sub_category = list("Продвинутые кибернетические органы")
-
-/datum/design/cybernetic_kidneys
-	name = "Базовые кибернетические почки"
-	desc = "Базовое устройство, имитирующее функции человеческих почек."
-	id = "cybernetic_kidneys"
-	build_type = PROTOLATHE | MECHFAB
-	construction_time = 40
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500)
-	build_path = /obj/item/organ/kidneys/cybernetic
-	category = list("Кибернетика", "Медицинские разработки")
-	sub_category = list("Базовые кибернетические органы")
-	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
-
-/datum/design/cybernetic_kidneys/tier2
-	name = "Кибернетические почки"
-	desc = "Усовершенствованное устройство, превосходящее функции человеческих почек."
-	id = "cybernetic_kidneys_tier2"
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500)
-	build_path = /obj/item/organ/kidneys/cybernetic/tier2
-	sub_category = list("Стандартные кибернетические органы")
-
-/datum/design/cybernetic_kidneys/tier3
-	name = "Продвинутые кибернетические почки"
-	desc = "Эта версия кибернетических почек имеет огромный внутренний запас."
-	id = "cybernetic_kidneys_tier3"
-	construction_time = 50
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500, /datum/material/silver = 500)
-	build_path = /obj/item/organ/kidneys/cybernetic/tier3
-	sub_category = list("Продвинутые кибернетические органы")
-
-/datum/design/cybernetic_guts
-	name = "Базовые кибернетические кишки"
-	desc = "Базовое устройство, имитирующее функции человеческих почек."
-	id = "cybernetic_guts"
-	build_type = PROTOLATHE | MECHFAB
-	construction_time = 40
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500)
-	build_path = /obj/item/organ/guts/cybernetic
-	category = list("Кибернетика", "Медицинские разработки")
-	sub_category = list("Базовые кибернетические органы")
-	departmental_flags = DEPARTMENTAL_FLAG_MEDICAL
-
-/datum/design/cybernetic_guts/tier2
-	name = "Кибернетические кишки"
-	desc = "Усовершенствованное устройство, превосходящее функции человеческих почек."
-	id = "cybernetic_guts_tier2"
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500)
-	build_path = /obj/item/organ/guts/cybernetic/tier2
-	sub_category = list("Стандартные кибернетические органы")
-
-/datum/design/cybernetic_guts/tier3
-	name = "Продвинутые кибернетические кишки"
-	desc = "Эта версия кибернетических почек имеет огромный внутренний запас."
-	id = "cybernetic_guts_tier3"
-	construction_time = 50
-	materials = list(/datum/material/iron = 500, /datum/material/glass = 500, /datum/material/silver = 500)
-	build_path = /obj/item/organ/guts/cybernetic/tier3
 	sub_category = list("Продвинутые кибернетические органы")
 
 /datum/design/cybernetic_ears

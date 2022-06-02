@@ -8,7 +8,7 @@
 	icon_gib = "syndicate_gib"
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	mouse_opacity = MOUSE_OPACITY_ICON
-	speak_emote = list("telepathically cries")
+	speak_emote = list("телепатически плачет")
 	speed = 2
 	move_to_delay = 2
 	projectiletype = /obj/projectile/temp/basilisk/ice
@@ -68,7 +68,7 @@
 		return ..()
 	var/turf/end = pick(possible_ends)
 	do_teleport(src, end, 0,  channel=TELEPORT_CHANNEL_BLUESPACE, forced = TRUE)
-	SLEEP_CHECK_DEATH(8)
+	SLEEP_CHECK_DEATH(8, src)
 	return ..()
 
 /mob/living/simple_animal/hostile/asteroid/ice_demon/Life(delta_time = SSMOBS_DT, times_fired)

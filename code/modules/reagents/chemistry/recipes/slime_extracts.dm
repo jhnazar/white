@@ -209,7 +209,7 @@
 	if(holder?.my_atom)
 		var/turf/open/T = get_turf(holder.my_atom)
 		if(istype(T))
-			var/datum/gas/gastype = /datum/gas/nitrogen
+			var/datum/gas/gastype = GAS_N2
 			T.atmos_spawn_air("[initial(gastype.id)]=50;TEMP=2.7")
 
 /datum/chemical_reaction/slime/slimefireproof
@@ -391,7 +391,7 @@
 
 /datum/chemical_reaction/slime/slimeexplosion/proc/boom(datum/reagents/holder)
 	if(holder?.my_atom)
-		explosion(get_turf(holder.my_atom), 1 ,3, 6)
+		explosion(holder.my_atom, devastation_range = 1, heavy_impact_range = 3, light_impact_range = 6, explosion_cause = src)
 
 
 /datum/chemical_reaction/slime/slimecornoil
@@ -403,7 +403,7 @@
 //Light Pink
 /datum/chemical_reaction/slime/slimepotion2
 	required_container = /obj/item/slime_extract/lightpink
-	required_reagents = list(/datum/reagent/toxin/plasma = 1)
+	required_reagents = list(/datum/reagent/medicine/strange_reagent = 5)
 	required_other = TRUE
 
 /datum/chemical_reaction/slime/slimepotion2/on_reaction(datum/reagents/holder, datum/equilibrium/reaction, created_volume)

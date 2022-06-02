@@ -45,8 +45,8 @@
 	force = 20
 	throwforce = 10
 	hitsound = 'sound/weapons/bladeslice.ogg'
-	attack_verb_continuous = list("attacks", "slashes", "stabs", "slices", "tears", "lacerates", "rips", "dices", "cuts")
-	attack_verb_simple = list("attack", "slash", "stab", "slice", "tear", "lacerate", "rip", "dice", "cut")
+	attack_verb_continuous = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает")
+	attack_verb_simple = list("атакует", "разрезает", "колет", "режет", "рвет", "разрывает", "нарезает")
 	sharpness = SHARP_EDGED
 
 /obj/item/melee/synthetic_arm_blade/Initialize()
@@ -68,9 +68,10 @@
 	block_chance = 50
 	armour_penetration = 75
 	sharpness = SHARP_EDGED
-	attack_verb_continuous = list("slashes", "cuts")
-	attack_verb_simple = list("slash", "cut")
+	attack_verb_continuous = list("разрезает", "нарезает")
+	attack_verb_simple = list("разрезает", "нарезает")
 	hitsound = 'sound/weapons/rapierhit.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 	custom_materials = list(/datum/material/iron = 1000)
 	wound_bonus = 30
 	bare_wound_bonus = 55
@@ -156,6 +157,7 @@
 	attack_verb_continuous = list("slashes", "stings", "prickles", "pokes")
 	attack_verb_simple = list("slash", "sting", "prickle", "poke")
 	hitsound = 'sound/weapons/rapierhit.ogg'
+	block_sounds = list('white/valtos/sounds/block_sword.ogg')
 
 /obj/item/melee/beesword/afterattack(atom/target, mob/user, proximity)
 	. = ..()
@@ -237,8 +239,8 @@
 /obj/item/melee/classic_baton/proc/get_unga_dunga_cyborg_stun_description(mob/living/target, mob/living/user)
 	. = list()
 
-	.["visible"] = "<span class='danger'>[user] пытается уложить [target] используя [src] и конечно же проваливает попытку!</span>" //look at this duuuuuude
-	.["local"] = "<span class='userdanger'>[target] пытается... уложить меня [src]?</span>" //look at the top of his head!
+	.["visible"] = span_danger("[user] пытается уложить [target] используя [src] и конечно же проваливает попытку!") //look at this duuuuuude
+	.["local"] = span_userdanger("[target] пытается... уложить меня [src]?") //look at the top of his head!
 
 	return .
 
@@ -340,15 +342,15 @@
 	custom_price = PAYCHECK_HARD * 4.5
 
 /obj/item/melee/classic_baton/telescopic
-	name = "telescopic baton"
-	desc = "A compact yet robust personal defense weapon. Can be concealed when folded."
+	name = "телескопическая дубинка"
+	desc = "Компактное, но надежное оружие самообороны. В сложенном состоянии может поместиться в карман."
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "telebaton"
 	lefthand_file = 'icons/mob/inhands/weapons/melee_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/weapons/melee_righthand.dmi'
 	inhand_icon_state = null
-	attack_verb_continuous = list("hits", "pokes")
-	attack_verb_simple = list("hit", "poke")
+	attack_verb_continuous = list("ударяет")
+	attack_verb_simple = list("hit")
 	worn_icon_state = "tele_baton"
 	slot_flags = ITEM_SLOT_BELT
 	w_class = WEIGHT_CLASS_SMALL
@@ -371,8 +373,8 @@
 		hitsound_on = hitsound, \
 		w_class_on = WEIGHT_CLASS_NORMAL, \
 		clumsy_check = FALSE, \
-		attack_verb_continuous_on = list("smacks", "strikes", "cracks", "beats"), \
-		attack_verb_simple_on = list("smack", "strike", "crack", "beat"))
+		attack_verb_continuous_on = list("шлепает", "ударяет", "бьет"), \
+		attack_verb_simple_on = list("шлепает", "ударяет", "бьет"))
 	RegisterSignal(src, COMSIG_TRANSFORMING_ON_TRANSFORM, .proc/on_transform)
 
 /obj/item/melee/classic_baton/telescopic/suicide_act(mob/user)
@@ -404,13 +406,13 @@
 
 	extended = active
 	inhand_icon_state = active ? on_inhand_icon_state : null // When inactive, there is no inhand icon_state.
-	balloon_alert(user, "[active ? "extended" : "collapsed"] [src]")
+	balloon_alert(user, "[active ? "разложена" : "сложена"] [src]")
 	playsound(user ? user : src, on_sound, 50, TRUE)
 	return COMPONENT_NO_DEFAULT_MESSAGE
 
 /obj/item/melee/classic_baton/telescopic/contractor_baton
-	name = "contractor baton"
-	desc = "A compact, specialised baton assigned to Syndicate contractors. Applies light electrical shocks to targets."
+	name = "дубинка контрактора"
+	desc = "Компактная дубинка, предназначаемая для контракторов Синдиката. Поражает цели электричеством, ненадолго оглушая их."
 	icon = 'icons/obj/items_and_weapons.dmi'
 	icon_state = "contractor_baton"
 	worn_icon_state = "contractor_baton"
@@ -537,8 +539,8 @@
 	return FALSE
 
 /obj/item/melee/curator_whip
-	name = "curator's whip"
-	desc = "Somewhat eccentric and outdated, it still stings like hell to be hit by."
+	name = "кнут куратора"
+	desc = "Несколько эксцентричный и устаревший, но все равно чертовски жжет, когда им бьют."
 	icon_state = "whip"
 	inhand_icon_state = "chain"
 	lefthand_file = 'icons/mob/inhands/weapons/melee_lefthand.dmi'
@@ -547,8 +549,8 @@
 	slot_flags = ITEM_SLOT_BELT
 	force = 15
 	w_class = WEIGHT_CLASS_NORMAL
-	attack_verb_continuous = list("flogs", "whips", "lashes", "disciplines")
-	attack_verb_simple = list("flog", "whip", "lash", "discipline")
+	attack_verb_continuous = list("хлыщет", "дисциплинирует")
+	attack_verb_simple = list("хлыщет", "дисциплинирует")
 	hitsound = 'sound/weapons/whip.ogg'
 
 /obj/item/melee/curator_whip/afterattack(target, mob/user, proximity_flag)
@@ -559,8 +561,8 @@
 		H.visible_message(span_danger("[user] disarms [H]!"), span_userdanger("[user] disarmed you!"))
 
 /obj/item/melee/roastingstick
-	name = "advanced roasting stick"
-	desc = "A telescopic roasting stick with a miniature shield generator designed to ensure entry into various high-tech shielded cooking ovens and firepits."
+	name = "телескопическая вилка"
+	desc = "Телескопическая мангальная вилка с миниатюрным генератором защитного поля, предназначенная для обеспечения доступа в различные высокотехнологичные экранированные кухонные печи и камины."
 	icon_state = "roastingstick"
 	inhand_icon_state = null
 	worn_icon_state = "tele_baton"

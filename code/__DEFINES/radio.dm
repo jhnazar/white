@@ -57,6 +57,10 @@
 
 #define RADIO_CHANNEL_YOHEI "Yohei"
 
+#define RADIO_CHANNEL_FACTION "Faction"
+#define RADIO_KEY_FACTION "f"
+#define RADIO_TOKEN_FACTION ":f"
+
 #define MIN_FREE_FREQ 1201 // -------------------------------------------------
 // Frequencies are always odd numbers and range from 1201 to 1599.
 
@@ -66,6 +70,7 @@
 #define FREQ_CTF_GREEN 1219  // CTF green team comms frequency, green
 #define FREQ_CTF_YELLOW 1221  // CTF yellow team comms frequency, yellow
 #define FREQ_YOHEI 1228  // Yohei's screeching
+#define FREQ_FACTION 1335
 #define FREQ_CENTCOM 1337  // CentCom comms frequency, gray
 #define FREQ_SUPPLY 1347  // Supply comms frequency, light brown
 #define FREQ_SERVICE 1349  // Service comms frequency, green
@@ -125,3 +130,6 @@
 #define REQ_DEP_TYPE_ASSISTANCE 	(1<<0)
 #define REQ_DEP_TYPE_SUPPLIES 		(1<<1)
 #define REQ_DEP_TYPE_INFORMATION 	(1<<2)
+
+///give this to can_receive to specify that there is no restriction on what z level this signal is sent to
+#define RADIO_NO_Z_LEVEL_RESTRICTION 0

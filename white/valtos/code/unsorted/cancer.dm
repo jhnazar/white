@@ -27,7 +27,7 @@
 	var/phase = 1
 	var/list/introduced = list()
 	var/speen = FALSE
-	var/speenrange = 7
+	var/speenrange = 4
 	var/obj/savedloot = null
 	var/charging = FALSE
 	var/chargetiles = 0
@@ -219,7 +219,7 @@
 	var/list/hit_things = list()
 	for(var/turf/T in speenturfs)
 		src.dir = get_dir(src, T)
-		for(var/turf/U in (getline(src, T) - get_turf(src)))
+		for(var/turf/U in (get_line(src, T) - get_turf(src)))
 			var/obj/effect/temp_visual/bone/bonk = new /obj/effect/temp_visual/bone(U)
 			QDEL_IN(bonk, 1.25)
 			for(var/mob/living/M in U)
@@ -449,7 +449,7 @@
 	ranged_cooldown = world.time + max(5, 60 - anger_modifier * 0.75)
 	var/oldcolor = color
 	animate(src, color = "#ff9955", time = 6)
-	SLEEP_CHECK_DEATH(6)
+	SLEEP_CHECK_DEATH(6, src)
 	var/list/targets = ListTargets()
 	var/list/cardinal_copy = GLOB.cardinals.Copy()
 	while(targets.len && cardinal_copy.len)
@@ -463,10 +463,10 @@
 		var/obj/effect/temp_visual/hierophant/chaser/sans/C = new(loc, src, pickedtarget, phase, FALSE)
 		C.moving = 3
 		C.moving_dir = pick_n_take(cardinal_copy)
-		SLEEP_CHECK_DEATH(8)
+		SLEEP_CHECK_DEATH(8, src)
 	animate(src, color = oldcolor, time = 8)
 	addtimer(CALLBACK(src, /atom/proc/update_atom_colour), 8)
-	SLEEP_CHECK_DEATH(8)
+	SLEEP_CHECK_DEATH(8, src)
 
 /obj/effect/temp_visual/hierophant/chaser/sans
 	icon = 'white/valtos/icons/undertale/SANESSS.dmi'

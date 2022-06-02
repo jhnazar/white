@@ -4,7 +4,7 @@
 	icon = 'icons/obj/chess.dmi'
 	icon_state = "white_pawn"
 	name = "\improper Вероятно, Белая Пешка"
-	desc = "Это странно. Пожалуйста, сообщите администрации, как вам удалось получить родительскую шахматную фигуру. Спасибо!"
+	desc = "Странно. Пожалуйста, сообщите кодерам, как вам удалось получить родительскую шахматную фигуру. Спасибо!"
 	max_integrity = 100
 
 /obj/structure/chess/wrench_act(mob/user, obj/item/tool)
@@ -12,7 +12,8 @@
 	if(!do_after(user, 0.5 SECONDS, target = src))
 		return TRUE
 	var/obj/item/stack/sheet/iron/metal_sheets = new (drop_location(), 2)
-	metal_sheets.add_fingerprint(user)
+	if (!QDELETED(metal_sheets))
+		metal_sheets.add_fingerprint(user)
 	tool.play_tool_sound(src)
 	qdel(src)
 	return TRUE

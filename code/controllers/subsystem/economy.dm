@@ -54,9 +54,13 @@ SUBSYSTEM_DEF(economy)
 	var/mail_waiting = 0
 
 /datum/controller/subsystem/economy/Initialize(timeofday)
-	var/budget_to_hand_out = round(budget_pool / department_accounts.len)
-	for(var/A in department_accounts)
-		new /datum/bank_account/department(A, budget_to_hand_out)
+	//removes cargo from the split
+	var/budget_to_hand_out = round(budget_pool / department_accounts.len -1)
+	for(var/dep_id in department_accounts)
+		if(dep_id == ACCOUNT_CAR) //cargo starts with NOTHING
+			new /datum/bank_account/department(dep_id, 0)
+			continue
+		new /datum/bank_account/department(dep_id, budget_to_hand_out)
 	return ..()
 
 /datum/controller/subsystem/economy/Recover()
@@ -72,10 +76,9 @@ SUBSYSTEM_DEF(economy)
 	station_target_buffer += STATION_TARGET_BUFFER
 	for(var/account in bank_accounts_by_id)
 		var/datum/bank_account/bank_account = bank_accounts_by_id[account]
-		if(bank_account?.account_job)
+		if(bank_account?.account_job && !ispath(bank_account.account_job))
 			temporary_total += (bank_account.account_job.paycheck * STARTING_PAYCHECKS)
-		if(!istype(bank_account, /datum/bank_account/department))
-			station_total += bank_account.account_balance
+		station_total += bank_account.account_balance
 	station_target = max(round(temporary_total / max(bank_accounts_by_id.len * 2, 1)) + station_target_buffer, 1)
 	if(!market_crashing)
 		price_update()
@@ -113,8 +116,8 @@ SUBSYSTEM_DEF(economy)
 		if(!is_station_level(V.z))
 			continue
 		V.reset_prices(V.product_records, V.coin_records)
-	earning_report = "Экономический отчет сектора<br/> В настоящее время цены поставщиков в секторе [SSeconomy.inflation_value()*100]%.<br /> Расходная мощность станции в настоящее время <b>[station_total] кредит[get_num_string(station_total)]</b>, а целевое довольствие экипажа составляет <b>[station_target] кредит[get_num_string(station_target)]</b>.<br /> Это всё от <i>Отдел экономистов Нанотрейзен</i>."
-	GLOB.news_network.SubmitArticle(earning_report, "Экономический отчет сектора", "Станционные Объявления", null, update_alert = FALSE)
+	earning_report = "<b>Экономический отчет сектора</b><br><br> В настоящее время цены поставщиков в секторе <b>[SSeconomy.inflation_value()*100]%</b>.<br><br> Расходная мощность станции в настоящее время <b>[station_total] кредит[get_num_string(station_total)]</b>, а целевое довольствие экипажа составляет <b>[station_target] кредит[get_num_string(station_target)]</b>.<br><br> Это всё от <i>Отдел экономистов NanoTrasen</i>."
+	GLOB.news_network.submit_article(earning_report, "Экономический отчет сектора", "Станционные Объявления", null, update_alert = FALSE)
 
 /**
  * Proc that returns a value meant to shift inflation values in vendors, based on how much money exists on the station.

@@ -77,7 +77,7 @@
 	icon_type = "donut"
 	spawn_type = /obj/item/food/donut
 	fancy_open = TRUE
-	appearance_flags = KEEP_TOGETHER
+	appearance_flags = KEEP_TOGETHER|LONG_GLIDE
 	custom_premium_price = PAYCHECK_HARD * 1.75
 
 /obj/item/storage/fancy/donut_box/ComponentInitialize()
@@ -216,7 +216,7 @@
 
 	. += "<hr><span class='notice'>ПКМ чтобы извлечь содержимое.</span>"
 	if(spawn_coupon)
-		. += "\n<span class='notice'>На обратной стороне упаковки есть купон! Вы можете оторвать его, когда содержимое пачки станет пустым.</span>"
+		. += span_notice("\nНа обратной стороне упаковки есть купон! Можно оторвать его, когда содержимое пачки станет пустым.")
 
 /obj/item/storage/fancy/cigarettes/AltClick(mob/user)
 	if(!user.canUseTopic(src, BE_CLOSE, NO_DEXTERITY, FALSE, TRUE))

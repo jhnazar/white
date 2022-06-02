@@ -219,13 +219,13 @@
 	//Makes the user passive, it's in their oath not to harm!
 	ADD_TRAIT(owner, TRAIT_PACIFISM, "hippocraticOath")
 	var/datum/atom_hud/H = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
-	H.add_hud_to(owner)
+	H.show_to(owner)
 	return ..()
 
 /datum/status_effect/hippocratic_oath/on_remove()
 	REMOVE_TRAIT(owner, TRAIT_PACIFISM, "hippocraticOath")
 	var/datum/atom_hud/H = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
-	H.remove_hud_from(owner)
+	H.hide_from(owner)
 
 /datum/status_effect/hippocratic_oath/tick()
 	if(owner.stat == DEAD)
@@ -258,11 +258,11 @@
 							qdel(L)
 							consume_owner() //see above comment
 							return
-					to_chat(itemUser, span_notice("Your arm suddenly grows back with the Rod of Asclepius still attached!"))
+					to_chat(itemUser, span_notice("Моя рука мгновенно отрастает и в ней появляется жезл Асклепия!"))
 				else
 					//Otherwise get rid of whatever else is in their hand and return the rod to said hand
 					itemUser.put_in_hand(newRod, hand, forced = TRUE)
-					to_chat(itemUser, span_notice("The Rod of Asclepius suddenly grows back out of your arm!"))
+					to_chat(itemUser, span_notice("Посох Асклепия возвращается в мою руку!"))
 			//Because a servant of medicines stops at nothing to help others, lets keep them on their toes and give them an additional boost.
 			if(itemUser.health < itemUser.maxHealth)
 				new /obj/effect/temp_visual/heal(get_turf(itemUser), "#375637")
@@ -275,31 +275,50 @@
 			itemUser.adjustCloneLoss(-0.5) //Becasue apparently clone damage is the bastion of all health
 		//Heal all those around you, unbiased
 		for(var/mob/living/L in view(7, owner))
-			if(L.health < L.maxHealth)
-				new /obj/effect/temp_visual/heal(get_turf(L), "#375637")
-			if(iscarbon(L))
-				L.adjustBruteLoss(-3.5)
-				L.adjustFireLoss(-3.5)
-				L.adjustToxLoss(-3.5, forced = TRUE) //Because Slime People are people too
-				L.adjustOxyLoss(-3.5)
-				L.adjustStaminaLoss(-3.5)
-				L.adjustOrganLoss(ORGAN_SLOT_BRAIN, -3.5)
-				L.adjustCloneLoss(-1) //Becasue apparently clone damage is the bastion of all health
-			else if(issilicon(L))
-				L.adjustBruteLoss(-3.5)
-				L.adjustFireLoss(-3.5)
-			else if(isanimal(L))
-				var/mob/living/simple_animal/SM = L
-				SM.adjustHealth(-3.5, forced = TRUE)
+			if(L.stat == DEAD)
+				if(L.health < L.maxHealth)
+					new /obj/effect/temp_visual/heal(get_turf(L), "#d21818")
+				if(iscarbon(L))
+					L.adjustBruteLoss(-1.5)
+					L.adjustFireLoss(-1.5)
+					L.adjustToxLoss(-1.5, forced = TRUE) //Because Slime People are people too
+					L.adjustOxyLoss(-1.5)
+					L.adjustStaminaLoss(-1.5)
+					L.adjustOrganLoss(ORGAN_SLOT_BRAIN, -1.5)
+					L.adjustCloneLoss(-1) //Becasue apparently clone damage is the bastion of all health
+				else if(issilicon(L))
+					L.adjustBruteLoss(-1.5)
+					L.adjustFireLoss(-1.5)
+				else if(isanimal(L))
+					var/mob/living/simple_animal/SM = L
+					SM.adjustHealth(-1.5, forced = TRUE)
+			else
+				if(L.health < L.maxHealth)
+					new /obj/effect/temp_visual/heal(get_turf(L), "#375637")
+				if(iscarbon(L))
+					L.adjustBruteLoss(-3.5)
+					L.adjustFireLoss(-3.5)
+					L.adjustToxLoss(-3.5, forced = TRUE) //Because Slime People are people too
+					L.adjustOxyLoss(-3.5)
+					L.adjustStaminaLoss(-3.5)
+					L.adjustOrganLoss(ORGAN_SLOT_BRAIN, -3.5)
+					L.adjustCloneLoss(-1) //Becasue apparently clone damage is the bastion of all health
+				else if(issilicon(L))
+					L.adjustBruteLoss(-3.5)
+					L.adjustFireLoss(-3.5)
+				else if(isanimal(L))
+					var/mob/living/simple_animal/SM = L
+					SM.adjustHealth(-3.5, forced = TRUE)
 
 /datum/status_effect/hippocratic_oath/proc/consume_owner()
 	owner.visible_message(span_notice("[owner] soul is absorbed into the rod, relieving the previous snake of its duty."))
 	var/mob/living/simple_animal/hostile/retaliate/poison/snake/healSnake = new(owner.loc)
-	var/list/chems = list(/datum/reagent/medicine/sal_acid, /datum/reagent/medicine/c2/convermol, /datum/reagent/medicine/oxandrolone)
+	var/list/chems = list(/datum/reagent/medicine/sal_acid, /datum/reagent/medicine/salbutamol, /datum/reagent/medicine/oxandrolone)
 	healSnake.poison_type = pick(chems)
 	healSnake.name = "Змея Асклепия"
 	healSnake.real_name = "Змея Асклепия"
-	healSnake.desc = "A mystical snake previously trapped upon the Rod of Asclepius, now freed of its burden. Unlike the average snake, its bites contain chemicals with minor healing properties."
+	healSnake.maxHealth = 200
+	healSnake.desc = "Мистическая змея обвивавшая до этого жезл Асклепия. В отличии от обычных змей при укусе она вводит лекарственные вещества."
 	new /obj/effect/decal/cleanable/ash(owner.loc)
 	new /obj/item/rod_of_asclepius(owner.loc)
 	qdel(owner)
@@ -346,8 +365,18 @@
 
 /datum/status_effect/antimagic
 	id = "antimagic"
+	status_type = STATUS_EFFECT_REFRESH
 	duration = 10 SECONDS
 	examine_text = span_notice("They seem to be covered in a dull, grey aura.")
+
+/datum/status_effect/antimagic/on_creation(mob/living/new_owner, duration = 10 SECONDS)
+	src.duration = duration
+	return ..()
+
+/datum/status_effect/antimagic/refresh(effect, duration = 10 SECONDS)
+	if(duration == -1)
+		return
+	duration = world.time + duration
 
 /datum/status_effect/antimagic/on_apply()
 	owner.visible_message(span_notice("[owner] is coated with a dull aura!"))
@@ -372,13 +401,13 @@
 	. = ..()
 	to_chat(owner,span_notice("You phase through reality, nothing is out of bounds!"))
 	owner.alpha = 180
-	owner.pass_flags |= PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB
+	owner.pass_flags |= PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB | PASSDOORS
 	location = get_turf(owner)
 
 /datum/status_effect/crucible_soul/on_remove()
 	to_chat(owner,span_notice("You regain your physicality, returning you to your original location..."))
 	owner.alpha = initial(owner.alpha)
-	owner.pass_flags &= ~(PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB)
+	owner.pass_flags &= ~(PASSCLOSEDTURF | PASSGLASS | PASSGRILLE | PASSMACHINE | PASSSTRUCTURE | PASSTABLE | PASSMOB | PASSDOORS)
 	owner.forceMove(location)
 	location = null
 	return ..()
@@ -439,6 +468,134 @@
 				carbie.adjustBruteLoss(-heal_amt)
 				carbie.blood_volume += carbie.blood_volume >= BLOOD_VOLUME_NORMAL ? 0 : heal_amt*3
 
+/// Summons multiple foating knives around the owner.
+/// Each knife will block an attack straight up.
+/datum/status_effect/protective_blades
+	id = "Silver Knives"
+	alert_type = null
+	status_type = STATUS_EFFECT_MULTIPLE
+	tick_interval = -1
+	/// The number of blades we summon up to.
+	var/max_num_blades = 4
+	/// The radius of the blade's orbit.
+	var/blade_orbit_radius = 20
+	/// The time between spawning blades.
+	var/time_between_initial_blades = 0.25 SECONDS
+	/// If TRUE, we self-delete our status effect after all the blades are deleted.
+	var/delete_on_blades_gone = TRUE
+	/// A list of blade effects orbiting / protecting our owner
+	var/list/obj/effect/floating_blade/blades = list()
+
+/datum/status_effect/protective_blades/on_creation(
+	mob/living/new_owner,
+	new_duration = -1,
+	max_num_blades = 4,
+	blade_orbit_radius = 20,
+	time_between_initial_blades = 0.25 SECONDS,
+)
+
+	src.duration = new_duration
+	src.max_num_blades = max_num_blades
+	src.blade_orbit_radius = blade_orbit_radius
+	src.time_between_initial_blades = time_between_initial_blades
+	return ..()
+
+/datum/status_effect/protective_blades/on_apply()
+	RegisterSignal(owner, COMSIG_HUMAN_CHECK_SHIELDS, .proc/on_shield_reaction)
+	for(var/blade_num in 1 to max_num_blades)
+		var/time_until_created = (blade_num - 1) * time_between_initial_blades
+		if(time_until_created <= 0)
+			create_blade()
+		else
+			addtimer(CALLBACK(src, .proc/create_blade), time_until_created)
+
+	return TRUE
+
+/datum/status_effect/protective_blades/on_remove()
+	UnregisterSignal(owner, COMSIG_HUMAN_CHECK_SHIELDS)
+	QDEL_LIST(blades)
+
+	return ..()
+
+/// Creates a floating blade, adds it to our blade list, and makes it orbit our owner.
+/datum/status_effect/protective_blades/proc/create_blade()
+	if(QDELETED(src) || QDELETED(owner))
+		return
+
+	var/obj/effect/floating_blade/blade = new(get_turf(owner))
+	blades += blade
+	blade.orbit(owner, blade_orbit_radius)
+	RegisterSignal(blade, COMSIG_PARENT_QDELETING, .proc/remove_blade)
+	playsound(get_turf(owner), 'sound/items/unsheath.ogg', 33, TRUE)
+
+/// Signal proc for [COMSIG_HUMAN_CHECK_SHIELDS].
+/// If we have a blade in our list, consume it and block the incoming attack (shield it)
+/datum/status_effect/protective_blades/proc/on_shield_reaction(
+	mob/living/carbon/human/source,
+	atom/movable/hitby,
+	damage = 0,
+	attack_text = "the attack",
+	attack_type = MELEE_ATTACK,
+	armour_penetration = 0,
+)
+	SIGNAL_HANDLER
+
+	if(!length(blades))
+		return
+
+	var/obj/effect/floating_blade/to_remove = blades[1]
+
+	playsound(get_turf(source), 'sound/weapons/parry.ogg', 100, TRUE)
+	source.visible_message(
+		span_warning("[to_remove] orbiting [source] snaps in front of [attack_text], blocking it before vanishing!"),
+		span_warning("[to_remove] orbiting you snaps in front of [attack_text], blocking it before vanishing!"),
+		span_hear("You hear a clink."),
+	)
+
+	qdel(to_remove)
+
+	return SHIELD_BLOCK
+
+/// Remove deleted blades from our blades list properly.
+/datum/status_effect/protective_blades/proc/remove_blade(obj/effect/floating_blade/to_remove)
+	SIGNAL_HANDLER
+
+	if(!(to_remove in blades))
+		CRASH("[type] called remove_blade() with a blade that was not in its blades list.")
+
+	to_remove.stop_orbit(owner.orbiters)
+	blades -= to_remove
+
+	if(!length(blades) && !QDELETED(src) && delete_on_blades_gone)
+		qdel(src)
+
+	return TRUE
+
+/// A subtype that doesn't self-delete / disappear when all blades are gone
+/// It instead regenerates over time back to the max after blades are consumed
+/datum/status_effect/protective_blades/recharging
+	delete_on_blades_gone = FALSE
+	/// The amount of time it takes for a blade to recharge
+	var/blade_recharge_time = 1 MINUTES
+
+/datum/status_effect/protective_blades/recharging/on_creation(
+	mob/living/new_owner,
+	new_duration = -1,
+	max_num_blades = 4,
+	blade_orbit_radius = 20,
+	time_between_initial_blades = 0.25 SECONDS,
+	blade_recharge_time = 1 MINUTES,
+)
+
+	src.blade_recharge_time = blade_recharge_time
+	return ..()
+
+/datum/status_effect/protective_blades/recharging/remove_blade(obj/effect/floating_blade/to_remove)
+	. = ..()
+	if(!.)
+		return
+
+	addtimer(CALLBACK(src, .proc/create_blade), blade_recharge_time)
 
 /atom/movable/screen/alert/status_effect/crucible_soul
 	name = "Blessing of Crucible Soul"

@@ -38,7 +38,7 @@
 	var/detail_color = COLOR_ASSEMBLY_ORANGE
 
 /obj/item/card/data/Initialize()
-	.=..()
+	. = ..()
 	update_icon()
 
 /obj/item/card/data/update_overlays()
@@ -564,22 +564,22 @@
 			var/datum/bank_account/D = SSeconomy.get_dep_account(registered_account.account_job.paycheck_department)
 			if(D)
 				msg += "\nБаланс [D.account_holder] составляет <b>[D.account_balance] кредит[get_num_string(D.account_balance)]."
-		msg += "\n<span class='info'>ПКМ на ID-карте для снятия денег.</span>"
-		msg += "\n<span class='info'>Похоже сюда можно вставлять голо-чипы, монетки и прочую валюту.</span>"
+		msg += span_info("\nПКМ на ID-карте для снятия денег.")
+		msg += span_info("\nПохоже сюда можно вставлять голо-чипы, монетки и прочую валюту.")
 		if(registered_account.civilian_bounty)
 			msg += "\n<span class='info'><b>Есть активный гражданский заказ.</b>"
-			msg += "\n<span class='info'><i>[registered_account.bounty_text()]</i></span>"
-			msg += "\n<span class='info'>Количество: [registered_account.bounty_num()]</span>"
-			msg += "\n<span class='info'>Награда: [registered_account.bounty_value()]</span>"
+			msg += span_info("\n<i>[registered_account.bounty_text()]</i>")
+			msg += span_info("\nКоличество: [registered_account.bounty_num()]")
+			msg += span_info("\nНаграда: [registered_account.bounty_value()]")
 		if(registered_account.account_holder == user.real_name)
-			msg += "\n<span class='boldnotice'>Если ты потеряешь эту ID-карту, ты можешь запросто переподключить свой счёт используя ПКМ на своей новой карте.</span>"
+			msg += span_boldnotice("\nЕсли ты потеряешь эту ID-карту, ты можешь запросто переподключить свой счёт используя ПКМ на своей новой карте.")
 	else
 		msg += span_info("Похоже здесь не привязан аккаунт. ПКМ для привязки аккаунта поможет.")
 
 	return msg
 
 /obj/item/card/id/GetAccess()
-	return access
+	return access.Copy()
 
 /obj/item/card/id/GetID()
 	return src
@@ -864,16 +864,6 @@
 	assigned_icon_state = "assigned_syndicate"
 	wildcard_slots = WILDCARD_LIMIT_GOLD
 
-/obj/item/card/id/advanced/centcom/spetsnaz
-	icon_state = "card_black"
-	worn_icon_state = "card_black"
-	assigned_icon_state = "assigned_syndicate"
-	desc = "Эта карта явно принадлежит тому, кто может запросто творить военные преступления без последствий для себя."
-	trim = /datum/id_trim/centcom/spetsnaz
-
-/obj/item/card/id/advanced/centcom/spetsnaz/leader
-	trim = /datum/id_trim/centcom/spetsnaz/leader
-
 /obj/item/card/id/advanced/black/deathsquad
 	name = "ОТРЯД СМЕРТИ"
 	desc = "Карта офицера отряда смерти?"
@@ -1026,10 +1016,10 @@
 	// to sneakily steal their accesses by swiping our agent ID card near them. As a result, we
 	// return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN to cancel any part of the following the attack chain.
 	if(istype(target, /mob/living/carbon/human))
-		to_chat(user, "<span class='notice'>You covertly start to scan [target] with \the [src], hoping to pick up a wireless ID card signal...</span>")
+		to_chat(user, span_notice("You covertly start to scan [target] with \the [src], hoping to pick up a wireless ID card signal..."))
 
 		if(!do_mob(user, target, 2 SECONDS))
-			to_chat(user, "<span class='notice'>The scan was interrupted.</span>")
+			to_chat(user, span_notice("The scan was interrupted."))
 			return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 		var/mob/living/carbon/human/human_target = target
@@ -1037,11 +1027,11 @@
 		var/list/target_id_cards = human_target.get_all_contents_type(/obj/item/card/id)
 
 		if(!length(target_id_cards))
-			to_chat(user, "<span class='notice'>The scan failed to locate any ID cards.</span>")
+			to_chat(user, span_notice("The scan failed to locate any ID cards."))
 			return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 		var/selected_id = pick(target_id_cards)
-		to_chat(user, "<span class='notice'>You successfully sync your [src] with \the [selected_id].</span>")
+		to_chat(user, span_notice("You successfully sync your [src] with \the [selected_id]."))
 		theft_target = WEAKREF(selected_id)
 		ui_interact(user)
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
@@ -1049,7 +1039,7 @@
 	if(istype(target, /obj/item))
 		var/obj/item/target_item = target
 
-		to_chat(user, "<span class='notice'>You covertly start to scan [target] with your [src], hoping to pick up a wireless ID card signal...</span>")
+		to_chat(user, span_notice("You covertly start to scan [target] with your [src], hoping to pick up a wireless ID card signal..."))
 
 		var/list/target_id_cards = target_item.get_all_contents_type(/obj/item/card/id)
 
@@ -1059,11 +1049,11 @@
 			target_id_cards |= target_item_id
 
 		if(!length(target_id_cards))
-			to_chat(user, "<span class='notice'>The scan failed to locate any ID cards.</span>")
+			to_chat(user, span_notice("The scan failed to locate any ID cards."))
 			return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 		var/selected_id = pick(target_id_cards)
-		to_chat(user, "<span class='notice'>You successfully sync your [src] with \the [selected_id].</span>")
+		to_chat(user, span_notice("You successfully sync your [src] with \the [selected_id]."))
 		theft_target = WEAKREF(selected_id)
 		ui_interact(user)
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
@@ -1218,7 +1208,7 @@
 							trim_list[fake_trim_name] = trim_path
 
 					var/selected_trim_path
-					selected_trim_path = input("Какой же образ мы выберем.\nЗаметка: это не добавит доступа.", "Модификация карты", selected_trim_path) as null|anything in sortList(trim_list, /proc/cmp_typepaths_asc)
+					selected_trim_path = input("Какой же образ мы выберем.\nЗаметка: это не добавит доступа.", "Модификация карты", selected_trim_path) as null|anything in sort_list(trim_list, /proc/cmp_typepaths_asc)
 					if(selected_trim_path)
 						SSid_access.apply_trim_to_chameleon_card(src, trim_list[selected_trim_path])
 
@@ -1280,7 +1270,7 @@
 
 /obj/item/card/id/advanced/simple_bot
 	name = "простая ID-карта робота"
-	desc = "Внутренняя идентификационная карта, используемая неразумными машинами на станции. Вы должны сообщить об этом кодеру, если вы его держите."
+	desc = "Внутренняя идентификационная карта, используемая неразумными машинами на станции. Требуется сообщить об этом кодеру, если вы его держите."
 	wildcard_slots = WILDCARD_LIMIT_ADMIN
 
 /obj/item/card/id/red

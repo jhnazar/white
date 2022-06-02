@@ -126,10 +126,6 @@
 /obj/effect/turf_decal/tile/brown{
 	dir = 8
 	},
-/obj/machinery/bounty_board{
-	dir = 8;
-	pixel_x = -32
-	},
 /turf/open/floor/plasteel,
 /area/mine/production)
 "ay" = (
@@ -746,15 +742,6 @@
 	opacity = 0
 	},
 /obj/structure/fans/tiny,
-/turf/open/floor/plasteel,
-/area/mine/production)
-"ck" = (
-/obj/effect/turf_decal/tile/brown{
-	dir = 1
-	},
-/obj/effect/turf_decal/tile/brown{
-	dir = 8
-	},
 /turf/open/floor/plasteel,
 /area/mine/production)
 "cl" = (
@@ -2741,6 +2728,7 @@
 /obj/structure/stone_tile/block/cracked{
 	dir = 4
 	},
+/obj/structure/world_anvil,
 /turf/open/floor/plating/asteroid/basalt/lava_land_surface,
 /area/lavaland/surface/outdoors)
 "kl" = (
@@ -20134,7 +20122,7 @@ ps
 bn
 br
 bO
-ck
+ax
 NS
 br
 bq

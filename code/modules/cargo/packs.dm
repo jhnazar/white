@@ -177,7 +177,7 @@
 	name = "NULL_ENTRY"
 	desc = "(#@&^$THIS PACKAGE CONTAINS 30TC WORTH OF SOME RANDOM SYNDICATE GEAR WE HAD LYING AROUND THE WAREHOUSE. GIVE EM HELL, OPERATIVE@&!*() "
 	hidden = TRUE
-	cost = 2000
+	cost = CARGO_CRATE_VALUE * 2000
 	contains = list()
 	crate_name = "emergency crate"
 	crate_type = /obj/structure/closet/crate/internals
@@ -298,14 +298,12 @@
 
 /datum/supply_pack/security/ammo
 	name = "Ammo Crate"
-	desc = "Contains five 20-round magazines for the WT-550 Auto Rifle, three boxes of rubber ammo and special .38 speedloarders. Requires Security access to open."
+	desc = "Contains three boxes of beanbag shotgun shells, three boxes of rubbershot shotgun shells and one of each special .38 speedloarders. Requires Security access to open."
 	cost = CARGO_CRATE_VALUE * 12
 	access_view = ACCESS_ARMORY
-	contains = list(/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
+	contains = list(/obj/item/storage/box/beanbag,
+					/obj/item/storage/box/beanbag,
+					/obj/item/storage/box/beanbag,
 					/obj/item/storage/box/rubbershot,
 					/obj/item/storage/box/rubbershot,
 					/obj/item/storage/box/rubbershot,
@@ -665,23 +663,22 @@
 					/obj/item/clothing/gloves/tackler/combat)
 	crate_name = "swat crate"
 
-/datum/supply_pack/security/armory/wt550
-	name = "WT-550 Auto Rifle Crate"
-	desc = "Contains two high-powered, semiautomatic rifles chambered in 4.6x30mm. Requires Armory access to open."
+/datum/supply_pack/security/armory/thermal
+	name = "Thermal Pistol Crate"
+	desc = "Contains a pair of holsters each with two experimental thermal pistols, using nanites as the basis for their ammo. Requires Armory access to open."
 	cost = CARGO_CRATE_VALUE * 7
-	contains = list(/obj/item/gun/ballistic/automatic/wt550,
-					/obj/item/gun/ballistic/automatic/wt550)
-	crate_name = "auto rifle crate"
+	contains = list(/obj/item/storage/belt/holster/thermal,
+					/obj/item/storage/belt/holster/thermal)
+	crate_name = "thermal pistol crate"
 
-/datum/supply_pack/security/armory/wt550ammo
-	name = "WT-550 Auto Rifle Ammo Crate"
-	desc = "Contains four 20-round magazine for the WT-550 Auto Rifle. Each magazine is designed to facilitate rapid tactical reloads. Requires Armory access to open."
-	cost = CARGO_CRATE_VALUE * 3.5
-	contains = list(/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9,
-					/obj/item/ammo_box/magazine/wt550m9)
-
+/datum/supply_pack/security/armory/kinetic_shields
+	name = "Кинетические щиты"
+	desc = "Содержит три кинетических щита, которые способны отражать снаряды летящие с большой скоростью. ВНИМАНИЕ! Не включать одновременно два и более щита. Только для службы безопасности."
+	cost = CARGO_CRATE_VALUE * 20
+	contains = list(/obj/item/kinetic_shield,
+					/obj/item/kinetic_shield,
+					/obj/item/kinetic_shield)
+	crate_name = "ящик с кинетическими щитами"
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Engineering /////////////////////////////////////
@@ -1460,7 +1457,7 @@
 	desc = "Need to rebuild the ORM but science got annihialted after a bomb test? Buy this for the most advanced parts NT can give you."
 	cost = CARGO_CRATE_VALUE * 3
 	access_view = FALSE
-	contains = list(/obj/item/storage/part_replacer/cargo)
+	contains = list(/obj/item/storage/part_replacer/tier2)
 	crate_name = "\improper RPED crate"
 
 /datum/supply_pack/science/shieldwalls
@@ -2312,16 +2309,6 @@
 	contains = list(/obj/item/storage/box/lasertagpins)
 	crate_name = "laser tag crate"
 
-/datum/supply_pack/costumes_toys/mech_suits
-	name = "Mech Pilot's Suit Crate"
-	desc = "Suits for piloting big robots. Contains all three colors!"
-	cost = CARGO_CRATE_VALUE * 3 //state-of-the-art technology doesn't come cheap
-	contains = list(/obj/item/clothing/under/costume/mech_suit,
-					/obj/item/clothing/under/costume/mech_suit/white,
-					/obj/item/clothing/under/costume/mech_suit/blue)
-	crate_name = "mech pilot's suit crate"
-	crate_type = /obj/structure/closet/crate/wooden
-
 /datum/supply_pack/costumes_toys/costume_original
 	name = "Original Costume Crate"
 	desc = "Reenact Shakespearean plays with this assortment of outfits. Contains eight different costumes!"
@@ -2557,6 +2544,9 @@
 	DropPodOnly = TRUE
 	crate_type = null
 	special_pod = /obj/structure/closet/supplypod/bluespacepod
+
+/datum/supply_pack/misc/empty/generate()
+	return null
 
 /datum/supply_pack/misc/religious_supplies
 	name = "Religious Supplies Crate"

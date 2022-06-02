@@ -37,7 +37,14 @@ GLOBAL_DATUM_INIT(maploader, /datum/dmm_suite, new())
 #define DMM_IGNORE_MOBS 24
 #define DMM_USE_JSON 32
 
-/datum/dmm_suite/proc/save_map(turf/t1, turf/t2, map_name = "", flags = 0)
+// MAX 2 ZLEVELS FUCK YOU
+/datum/dmm_suite/proc/save_station()
+	save_map(locate(16, 16, 2), locate(world.maxx - 16, world.maxy - 16, 2), "z1", (DMM_IGNORE_NPCS | DMM_IGNORE_PLAYERS | DMM_IGNORE_MOBS), "data/map_saves/[ckey(SSmapping.config?.map_name)]/[GLOB.round_id]/")
+	var/turf/ttop = locate(125, 125, 3)
+	if(is_station_level(ttop.z))
+		save_map(locate(16, 16, 3), locate(world.maxx - 16, world.maxy - 16, 3), "z2", (DMM_IGNORE_NPCS | DMM_IGNORE_PLAYERS | DMM_IGNORE_MOBS), "data/map_saves/[ckey(SSmapping.config?.map_name)]/[GLOB.round_id]/")
+
+/datum/dmm_suite/proc/save_map(turf/t1, turf/t2, map_name = "", flags = 0, map_prefix = "_maps/quicksave/")
 	// Check for illegal characters in file name... in a cheap way.
 	if(!((ckeyEx(map_name) == map_name) && ckeyEx(map_name)))
 		CRASH("Invalid text supplied to proc save_map, invalid characters or empty string.")
@@ -45,7 +52,6 @@ GLOBAL_DATUM_INIT(maploader, /datum/dmm_suite, new())
 	if(!isturf(t1) || !isturf(t2))
 		CRASH("Invalid arguments supplied to proc save_map, arguments were not turfs.")
 
-	var/map_prefix = "_maps/quicksave/"
 	var/map_path = "[map_prefix][map_name].dmm"
 	if(fexists(map_path))
 		fdel(map_path)
@@ -113,7 +119,7 @@ GLOBAL_DATUM_INIT(maploader, /datum/dmm_suite, new())
 
 	var/list/key_map = list()
 	var/z_pos = 1
-	while(TRUE)
+	for(;;)
 		if(z_pos >= length(template_buffer_text))
 			break
 
@@ -124,7 +130,7 @@ GLOBAL_DATUM_INIT(maploader, /datum/dmm_suite, new())
 
 		var/z_block = copytext(template_buffer_text, z_pos, findtext(template_buffer_text, ".", z_pos))
 		var/y_pos = 1
-		while(TRUE)
+		for(;;)
 			if(y_pos >= length(z_block))
 				break
 
@@ -132,7 +138,7 @@ GLOBAL_DATUM_INIT(maploader, /datum/dmm_suite, new())
 			// A row of keys
 			y_pos = findtext(z_block, ";", y_pos) + 1
 			var/x_pos = 1
-			while(TRUE)
+			for(;;)
 				if(x_pos >= length(y_block))
 					break
 

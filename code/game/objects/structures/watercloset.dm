@@ -262,6 +262,7 @@
 	w_class = WEIGHT_CLASS_TINY
 	food_reagents = list(/datum/reagent/chlorine = 3, /datum/reagent/ammonia = 1)
 	foodtypes = TOXIC | GROSS
+	preserved_food = TRUE
 
 /obj/item/food/urinalcake/attack_self(mob/living/user)
 	user.visible_message(span_notice("[user] squishes [src]!") , span_notice("You squish [src].") , "<i>You hear a squish.</i>")
@@ -269,13 +270,13 @@
 	addtimer(VARSET_CALLBACK(src, icon_state, "urinalcake"), 8)
 
 /obj/item/bikehorn/rubberducky/plasticducky
-	name = "plastic ducky"
-	desc = "It's a cheap plastic knockoff of a loveable bathtime toy."
+	name = "пластиковая уточка"
+	desc = "Дешевая пластиковая подделка вашей любимой игрушки для ванны."
 	custom_materials = list(/datum/material/plastic = 1000)
 
 /obj/item/bikehorn/rubberducky
-	name = "rubber ducky"
-	desc = "Rubber ducky you're so fine, you make bathtime lots of fuuun. Rubber ducky I'm awfully fooooond of yooooouuuu~"	//thanks doohl
+	name = "резиновая уточка"
+	desc = "Резиновая уточка, такая милая! С ней так весело купаааааться. Я всегда тебя найдууу!!!"	//thanks doohl
 	icon = 'icons/obj/watercloset.dmi'
 	icon_state = "rubberducky"
 	inhand_icon_state = "rubberducky"
@@ -670,22 +671,20 @@
 
 /obj/structure/curtain/proc/toggle()
 	open = !open
-	update_icon()
-
-/obj/structure/curtain/update_icon()
-	if(!open)
+	if(open)
+		icon_state = "[icon_type]-open"
+		layer = SIGN_LAYER
+		plane = GAME_PLANE
+		set_density(FALSE)
+		set_opacity(FALSE)
+	else
 		icon_state = "[icon_type]-closed"
 		layer = WALL_OBJ_LAYER
+		plane = GAME_PLANE_UPPER
 		set_density(TRUE)
 		open = FALSE
 		if(opaque_closed)
 			set_opacity(TRUE)
-	else
-		icon_state = "[icon_type]-open"
-		layer = SIGN_LAYER
-		density = FALSE
-		open = TRUE
-		set_opacity(FALSE)
 
 /obj/structure/curtain/attackby(obj/item/W, mob/user)
 	if (istype(W, /obj/item/toy/crayon))
@@ -773,6 +772,7 @@
 /obj/structure/curtain/cloth/fancy/mechanical/proc/open()
 	icon_state = "[icon_type]-open"
 	layer = SIGN_LAYER
+	plane = GAME_PLANE
 	set_density(FALSE)
 	open = TRUE
 	playsound(loc, 'sound/effects/curtain.ogg', 50, TRUE)
@@ -781,6 +781,7 @@
 /obj/structure/curtain/cloth/fancy/mechanical/proc/close()
 	icon_state = "[icon_type]-closed"
 	layer = WALL_OBJ_LAYER
+	plane = GAME_PLANE_UPPER
 	set_density(TRUE)
 	open = FALSE
 	playsound(loc, 'sound/effects/curtain.ogg', 50, TRUE)

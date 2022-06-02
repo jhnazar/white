@@ -16,13 +16,9 @@
 	pocket_storage_component_path = /datum/component/storage/concrete/pockets/shoes
 	lace_time = 12 SECONDS
 
-/obj/item/clothing/shoes/combat/ComponentInitialize()
-	. = ..()
-	AddComponent(/datum/component/squeak, list('white/valtos/sounds/suitstep1.ogg' = 1, 'white/valtos/sounds/suitstep2.ogg' = 1), 25, 75, falloff_exponent = 20)
-
 /obj/item/clothing/shoes/combat/sneakboots
 	name = "скрытные ботинки"
-	desc = "Это ботинки со специальной шумоподавляющей подошвой. Были бы идеальны для скрытного проникновения, если бы не их цветовая гамма."
+	desc = "Ботинки со специальной шумоподавляющей подошвой. Были бы идеальны для скрытного проникновения, если бы не их цветовая гамма."
 	icon_state = "sneakboots"
 	inhand_icon_state = "sneakboots"
 	w_class = WEIGHT_CLASS_SMALL
@@ -138,7 +134,7 @@
 
 /obj/item/clothing/shoes/jackboots
 	name = "сапоги"
-	desc = "Боевые ботинки Нанотрейзен для боевых сценариев или боевых ситуаций. Все время в бою."
+	desc = "Боевые ботинки NanoTrasen для боевых сценариев или боевых ситуаций. Все время в бою."
 	icon_state = "jackboots"
 	inhand_icon_state = "jackboots"
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
@@ -149,10 +145,6 @@
 	permeability_coefficient = 0.05 //Thick soles, and covers the ankle
 	pocket_storage_component_path = /datum/component/storage/concrete/pockets/shoes
 	can_be_tied = FALSE
-
-/obj/item/clothing/shoes/jackboots/ComponentInitialize()
-	. = ..()
-	AddComponent(/datum/component/squeak, list('white/valtos/sounds/suitstep1.ogg' = 1, 'white/valtos/sounds/suitstep2.ogg' = 1), 25, 75, falloff_exponent = 20)
 
 /obj/item/clothing/shoes/jackboots/fast
 	slowdown = -1
@@ -179,7 +171,7 @@
 
 /obj/item/clothing/shoes/workboots
 	name = "рабочие ботинки"
-	desc = "Нанотрейзен выпускает инженерные шнуровочные рабочие ботинки для особо рабочих воротничков."
+	desc = "NanoTrasen выпускает инженерные шнуровочные рабочие ботинки для особо рабочих воротничков."
 	icon_state = "workboots"
 	inhand_icon_state = "jackboots"
 	lefthand_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'

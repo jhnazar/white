@@ -93,6 +93,25 @@
 	spreadChance = 20
 	merge_type = /obj/item/stack/ore/iron
 
+/obj/item/stack/ore/coal
+	name = "coal ore"
+	icon = 'white/valtos/icons/prison/prison.dmi'
+	icon_state = "coal"
+	inhand_icon_state = "Iron ore"
+	singular_name = "coal ore chunk"
+	points = 1
+	refined_type = /obj/item/stack/sheet/mineral/coal
+	mine_experience = 1
+	scan_state = "rock_Coal"
+	spreadChance = 20
+	merge_type = /obj/item/stack/ore/coal
+
+/obj/item/stack/ore/coal/Initialize(mapload, new_amount, merge, list/mat_override, mat_amt)
+	. = ..()
+	var/obj/item/stack/S = new refined_type (get_turf(src))
+	S.amount = new_amount
+	qdel(src)
+
 /obj/item/stack/ore/glass
 	name = "sand pile"
 	icon_state = "Glass ore"
@@ -253,7 +272,7 @@ GLOBAL_LIST_INIT(sand_recipes, list(\
 
 /obj/item/gibtonite/attackby(obj/item/I, mob/user, params)
 	if(!wires && istype(I, /obj/item/assembly/igniter))
-		user.visible_message(span_notice("[user] attaches [I] to [src].") , span_notice("You attach [I] to [src]."))
+		user.visible_message(span_notice("[user] attaches [I] to [src]."), span_notice("You attach [I] to [src]."))
 		wires = new /datum/wires/explosive/gibtonite(src)
 		attacher = key_name(user)
 		qdel(I)
@@ -273,7 +292,7 @@ GLOBAL_LIST_INIT(sand_recipes, list(\
 			primed = FALSE
 			if(det_timer)
 				deltimer(det_timer)
-			user.visible_message(span_notice("The chain reaction stopped! ...The ore's quality looks diminished.") , span_notice("You stopped the chain reaction. ...The ore's quality looks diminished."))
+			user.visible_message(span_notice("The chain reaction stopped! ...The ore's quality looks diminished."), span_notice("You stopped the chain reaction. ...The ore's quality looks diminished."))
 			icon_state = "Gibtonite ore"
 			quality = GIBTONITE_QUALITY_LOW
 			return
@@ -319,11 +338,11 @@ GLOBAL_LIST_INIT(sand_recipes, list(\
 	if(primed)
 		switch(quality)
 			if(GIBTONITE_QUALITY_HIGH)
-				explosion(src,2,4,9,adminlog = notify_admins)
+				explosion(src, devastation_range = 2, heavy_impact_range = 4, light_impact_range = 9, adminlog = notify_admins)
 			if(GIBTONITE_QUALITY_MEDIUM)
-				explosion(src,1,2,5,adminlog = notify_admins)
+				explosion(src, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 5, adminlog = notify_admins)
 			if(GIBTONITE_QUALITY_LOW)
-				explosion(src,0,1,3,adminlog = notify_admins)
+				explosion(src, heavy_impact_range = 1, light_impact_range = 3, adminlog = notify_admins)
 		qdel(src)
 
 /obj/item/stack/ore/Initialize(mapload, new_amount, merge = TRUE, list/mat_override=null, mat_amt=1)
@@ -332,10 +351,16 @@ GLOBAL_LIST_INIT(sand_recipes, list(\
 	pixel_y = base_pixel_y + rand(0, 8) - 8
 
 /obj/item/stack/ore/ex_act(severity, target)
-	if (!severity || severity >= 2)
-		return
-	qdel(src)
+	if(severity >= EXPLODE_DEVASTATE)
+		qdel(src)
 
+//plasa magmite functions like an ore in the way it's mined, but we don't want to be redeeming this. Since Gibtonite is stuck with other ores it's okay to put it here.
+/obj/item/magmite
+	name = "плазменный магмит"
+	desc = "Кусок плазменного магмита, кристаллизованный глубоко под поверхностью Лаваленда. Его сила, кажется, колеблется в зависимости от расстояния до планеты."
+	icon = 'icons/obj/mining.dmi'
+	icon_state = "Magmite ore"
+	w_class = WEIGHT_CLASS_NORMAL
 
 /*****************************Coin********************************/
 

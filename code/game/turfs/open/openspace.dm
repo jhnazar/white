@@ -10,16 +10,21 @@ GLOBAL_DATUM_INIT(openspace_backdrop_one_for_all, /atom/movable/openspace_backdr
 	plane = OPENSPACE_BACKDROP_PLANE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	vis_flags = VIS_INHERIT_ID
-	alpha = 160
+	alpha = 0
 
 /turf/open/openspace
 	name = "открытое пространство"
 	desc = "Смотри под ноги!"
-	icon_state = "invisible"
+	icon = 'white/valtos/icons/openspace.dmi'
+	icon_state = "openspace-0"
+	base_icon_state = "openspace"
+	smoothing_flags = SMOOTH_BITMASK
+	canSmoothWith = list(SMOOTH_GROUP_OPENSPACE)
+	smoothing_groups = list(SMOOTH_GROUP_OPENSPACE)
 	baseturfs = /turf/open/openspace
 	CanAtmosPassVertical = ATMOS_PASS_YES
-	baseturfs = /turf/open/openspace
 	intact = FALSE //this means wires go on top
+	pathing_pass_method = TURF_PATHING_PASS_PROC
 	//mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	var/can_cover_up = TRUE
 	var/can_build_on = TRUE
@@ -35,7 +40,7 @@ GLOBAL_DATUM_INIT(openspace_backdrop_one_for_all, /atom/movable/openspace_backdr
 
 /turf/open/openspace/airless
 	initial_gas_mix = AIRLESS_ATMOS
-	temperature = TCMB
+	initial_temperature = TCMB
 	thermal_conductivity = OPEN_HEAT_TRANSFER_COEFFICIENT
 	heat_capacity = 700000
 
@@ -55,7 +60,7 @@ GLOBAL_DATUM_INIT(openspace_backdrop_one_for_all, /atom/movable/openspace_backdr
 /turf/open/openspace/fastload/Initialize()
 	air = new
 	air.copy_from_turf(src)
-	update_air_ref()
+	update_air_ref(0)
 	var/turf/T = locate(x, y, z - 1)
 	if(T)
 		vis_contents += T
@@ -84,7 +89,7 @@ GLOBAL_DATUM_INIT(openspace_backdrop_one_for_all, /atom/movable/openspace_backdr
 
 /turf/open/openspace/LateInitialize()
 	. = ..()
-	AddElement(/datum/element/turf_z_transparency, FALSE)
+	AddElement(/datum/element/turf_z_transparency, is_openspace = TRUE)
 
 /turf/open/openspace/ChangeTurf(path, list/new_baseturfs, flags)
 	UnregisterSignal(src, COMSIG_ATOM_CREATED)
@@ -248,6 +253,11 @@ GLOBAL_DATUM_INIT(openspace_backdrop_one_for_all, /atom/movable/openspace_backdr
 			to_chat(user, span_notice("Строю пол."))
 			PlaceOnTop(/turf/open/floor/plating, flags = CHANGETURF_INHERIT_AIR)
 			return TRUE
+	return FALSE
+
+/turf/open/openspace/CanAStarPass(obj/item/card/id/ID, to_dir, atom/movable/caller)
+	if(caller && !caller.can_z_move(DOWN, src, null , ZMOVE_FALL_FLAGS)) //If we can't fall here (flying/lattice), it's fine to path through
+		return TRUE
 	return FALSE
 
 /turf/open/openspace/icemoon

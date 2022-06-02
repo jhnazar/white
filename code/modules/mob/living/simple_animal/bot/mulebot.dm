@@ -106,7 +106,7 @@
 	if(open)
 		if(cell)
 			. += "<hr><span class='notice'>Внутри установлена [cell].</span>"
-			. += "\n<span class='info'>Можно использовать <b>ломик</b> для изъятия.</span>"
+			. += span_info("\nМожно использовать <b>ломик</b> для изъятия.")
 		else
 			. += "<hr><span class='notice'>Внутри отсутствует <b>батарейка</b>.</span>"
 	if(load) //observer check is so we don't show the name of the ghost that's sitting on it to prevent metagaming who's ded.
@@ -401,10 +401,10 @@
 	switch(type)
 		if(SIGH)
 			audible_message(span_hear("[capitalize(src.name)] вздыхающе гудит."))
-			playsound(src, 'sound/machines/buzz-sigh.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error1.ogg', 50, FALSE)
 		if(ANNOYED)
 			audible_message(span_hear("[capitalize(src.name)] раздражённо жужжит."))
-			playsound(src, 'sound/machines/buzz-two.ogg', 50, FALSE)
+			playsound(src, 'white/valtos/sounds/error2.ogg', 50, FALSE)
 		if(DELIGHT)
 			audible_message(span_hear("[capitalize(src.name)] делает радостный пинг!"))
 			playsound(src, 'sound/machines/ping.ogg', 50, FALSE)

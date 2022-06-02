@@ -125,8 +125,10 @@
 /obj/structure/chair/proc/handle_layer()
 	if(has_buckled_mobs() && dir == NORTH)
 		layer = ABOVE_MOB_LAYER
+		plane = GAME_PLANE_UPPER
 	else
-		layer = initial(layer)
+		layer = OBJ_LAYER
+		plane = GAME_PLANE
 
 /obj/structure/chair/post_buckle_mob(mob/living/M)
 	. = ..()
@@ -169,7 +171,7 @@
 
 /obj/structure/chair/comfy
 	name = "удобный стул"
-	desc = "Это выглядит удобно."
+	desc = "Выглядит удобно."
 	icon = 'icons/obj/chairs.dmi'
 	icon_state = "comfychair"
 	color = rgb(255,255,255)
@@ -182,10 +184,11 @@
 /obj/structure/chair/comfy/Initialize()
 	armrest = GetArmrest()
 	armrest.layer = ABOVE_MOB_LAYER
+	armrest.plane = GAME_PLANE_UPPER
 	return ..()
 
 /obj/structure/chair/comfy/proc/GetArmrest()
-	return mutable_appearance('icons/obj/chairs.dmi', "comfychair_armrest")
+	return mutable_appearance('icons/obj/chairs.dmi', "comfychair_armrest", plane = ABOVE_GAME_PLANE)
 
 /obj/structure/chair/comfy/Destroy()
 	QDEL_NULL(armrest)
@@ -227,7 +230,7 @@
 	buildstacktype = /obj/item/stack/sheet/mineral/titanium
 
 /obj/structure/chair/comfy/shuttle/GetArmrest()
-	return mutable_appearance('icons/obj/chairs.dmi', "shuttle_chair_armrest")
+	return mutable_appearance('icons/obj/chairs.dmi', "shuttle_chair_armrest", plane = ABOVE_GAME_PLANE)
 
 /obj/structure/chair/comfy/shuttle/electrify_self(obj/item/assembly/shock_kit/input_shock_kit, mob/user, list/overlays_from_child_procs)
 	if(!overlays_from_child_procs)
@@ -523,7 +526,7 @@
 
 /obj/structure/chair/plastic/post_buckle_mob(mob/living/Mob)
 	Mob.pixel_y += 2
-	.=..()
+	. = ..()
 	if(iscarbon(Mob))
 		INVOKE_ASYNC(src, .proc/snap_check, Mob)
 
@@ -560,8 +563,7 @@
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "pain_machine"
 	max_integrity = 5000
-	idle_power_usage = 200
-	active_power_usage = 4000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 5
 	anchored = TRUE
 	can_buckle = TRUE
 	buckle_lying = 0 //you sit in a chair, not lay
@@ -572,8 +574,10 @@
 /obj/machinery/painmachine/proc/handle_layer()
 	if(has_buckled_mobs() && dir == NORTH)
 		layer = ABOVE_MOB_LAYER
+		plane = ABOVE_GAME_PLANE
 	else
-		layer = initial(layer)
+		layer = OBJ_LAYER
+		plane = GAME_PLANE
 
 /obj/machinery/painmachine/post_buckle_mob(mob/living/M)
 	. = ..()
@@ -603,6 +607,7 @@
 			L_occupant.emote("agony")
 			addtimer(CALLBACK(L_occupant, /mob/living/carbon.proc/do_jitter_animation, 20), 5)
 			charge += 1
+			use_power(active_power_usage)
 			sleep(30)
 			if (charge == 6)
 				new /obj/item/ammo_casing/caseless/pissball(src.loc)
@@ -630,3 +635,15 @@
 			icon_state = "[initial(icon_state)]5"
 		if(6)
 			icon_state = "[initial(icon_state)]6"
+
+/obj/structure/chair/musical
+	name = "musical chair"
+	desc = "You listen to this. Either by will or by force."
+	item_chair = /obj/item/chair/musical
+	particles = new /particles/musical_notes
+
+/obj/item/chair/musical
+	name = "musical chair"
+	desc = "Oh, so this is like the fucked up Monopoly rules where there are no rules and you can pick up and place the musical chairs as you please."
+	particles = new /particles/musical_notes
+	origin_type = /obj/structure/chair/musical

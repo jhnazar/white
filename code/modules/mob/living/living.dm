@@ -4,20 +4,18 @@
 	if(unique_name)
 		set_name()
 	var/datum/atom_hud/data/human/medical/advanced/medhud = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
-	medhud.add_to_hud(src)
+	medhud.add_atom_to_hud(src)
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.add_to_hud(src)
+		diag_hud.add_atom_to_hud(src)
 	faction += "[REF(src)]"
 	GLOB.mob_living_list += src
 	SSpoints_of_interest.make_point_of_interest(src)
-
-	spawn(5 SECONDS)
-		if(ckey in GLOB.pacifist_list)
-			ADD_TRAIT(src, TRAIT_PACIFISM, "sosi")
+	update_fov()
 
 	add_client_colour(/datum/client_colour/correction)
 
-	AddComponent(/datum/component/battletension)
+	if(client?.prefs?.btprefsnew)
+		AddComponent(/datum/component/battletension)
 
 /mob/living/ComponentInitialize()
 	. = ..()
@@ -66,10 +64,22 @@
 	return ..()
 
 /mob/living/proc/ZImpactDamage(turf/T, levels)
-	visible_message(span_danger("<b>[capitalize(src.name)]</b> влетает в <b>[T]</b> с хрустящим звуком!") , \
-					span_userdanger("Влетаю в [T] с хрустящим звуком!"))
-	adjustBruteLoss((levels * 5) ** 1.5)
+	var/total_damage = (levels * 5) ** 1.5
+	for(var/mob/living/L in T)
+		if(L == src)
+			continue
+		L.adjustBruteLoss(total_damage/2)
+		L.Knockdown(levels * 25)
+		visible_message(span_danger("<b>[capitalize(src.name)]</b> падает на <b>[L]</b>!") , \
+						span_userdanger("Падаю на [L]!"))
+		adjustBruteLoss(total_damage/2)
+		Knockdown(levels * 25)
+		return FALSE
+	visible_message(span_danger("<b>[capitalize(src.name)]</b> падает на <b>[T]</b>!") , \
+					span_userdanger("Падаю на [T]!"))
+	adjustBruteLoss(total_damage)
 	Knockdown(levels * 50)
+	return TRUE
 
 //Generic Bump(). Override MobBump() and ObjBump() instead of this.
 /mob/living/Bump(atom/A)
@@ -373,7 +383,7 @@
 //for more info on why this is not atom/pull, see examinate() in mob.dm
 /mob/living/verb/pulled(atom/movable/AM as mob|obj in oview(1))
 	set name = "Тащить"
-	set category = "Объект"
+	set category = null
 
 	if(istype(AM) && Adjacent(AM))
 		start_pulling(AM)
@@ -390,23 +400,23 @@
 
 /mob/living/verb/stop_pulling1()
 	set name = "Прекратить тащить"
-	set category = "IC"
+	set category = null
 	stop_pulling()
 
 //same as above
 /mob/living/pointed(atom/A as mob|obj|turf in view(client.view, src))
 	if(incapacitated())
 		return FALSE
+
+	if(next_move > world.time)
+		return FALSE
+
 	if(!..())
 		return FALSE
-	var/obj/item/held = get_active_held_item()
-	if(held)
-		var/datum/component/aiming/aiming = held?.GetComponent(/datum/component/aiming)
-		if(aiming && isliving(A))
-			aiming.aim(src, A)
-			return TRUE
+
 	visible_message(span_name("[capitalize(src.name)]</span> показывает на <b>[skloname(A.name, VINITELNI, A.gender)]</b>."),
 					span_notice("Показываю на <b>[skloname(A.name, VINITELNI, A.gender)]</b>."))
+	changeNext_move(1 SECONDS)
 	return TRUE
 
 
@@ -429,9 +439,30 @@
 	death()
 	return TRUE
 
-/mob/living/incapacitated(ignore_restraints = FALSE, ignore_grab = FALSE, ignore_stasis = FALSE)
-	if(HAS_TRAIT(src, TRAIT_INCAPACITATED) || (!ignore_restraints && (HAS_TRAIT(src, TRAIT_RESTRAINED) || (!ignore_grab && pulledby && pulledby.grab_state >= GRAB_AGGRESSIVE))) || (!ignore_stasis && IS_IN_STASIS(src)))
+/**
+ * Checks if a mob is incapacitated
+ *
+ * Normally being restrained, agressively grabbed, or in stasis counts as incapacitated
+ * unless there is a flag being used to check if it's ignored
+ *
+ * args:
+ * * flags (optional) bitflags that determine if special situations are exempt from being considered incapacitated
+ *
+ * bitflags: (see code/__DEFINES/status_effects.dm)
+ * * IGNORE_RESTRAINTS - mob in a restraint (handcuffs) is not considered incapacitated
+ * * IGNORE_STASIS - mob in stasis (stasis bed, etc.) is not considered incapacitated
+ * * IGNORE_GRAB - mob that is agressively grabbed is not considered incapacitated
+**/
+/mob/living/incapacitated(flags)
+	if(HAS_TRAIT(src, TRAIT_INCAPACITATED))
 		return TRUE
+	if(!(flags & IGNORE_RESTRAINTS) && HAS_TRAIT(src, TRAIT_RESTRAINED))
+		return TRUE
+	if(!(flags & IGNORE_GRAB) && pulledby && pulledby.grab_state >= GRAB_AGGRESSIVE)
+		return TRUE
+	if(!(flags & IGNORE_STASIS) && IS_IN_STASIS(src))
+		return TRUE
+	return FALSE
 
 /mob/living/canUseStorage()
 	if (usable_hands <= 0)
@@ -513,7 +544,7 @@
 
 /mob/living/proc/toggle_resting()
 	set name = "Лечь/Встать"
-	set category = "IC"
+	set category = null
 
 	set_resting(!resting, FALSE)
 
@@ -711,7 +742,6 @@
 		adjustToxLoss(-20, TRUE, TRUE) //slime friendly
 		updatehealth()
 		grab_ghost()
-	SEND_SIGNAL(src, COMSIG_LIVING_REVIVE, full_heal, admin_revive)
 	if(full_heal)
 		fully_heal(admin_revive = admin_revive)
 	if(stat == DEAD && can_be_revived()) //in some cases you can't revive (e.g. no brain)
@@ -734,7 +764,52 @@
 	else if(admin_revive)
 		updatehealth()
 		get_up(TRUE)
+	// The signal is called after everything else so components can properly check the updated values
+	SEND_SIGNAL(src, COMSIG_LIVING_REVIVE, full_heal, admin_revive)
 
+/*
+ * Heals up the [target] to up to [heal_to] of the main damage types.
+ * EX: If heal_to is 50, and they have 150 brute damage, they will heal 100 brute (up to 50 brute damage)
+ *
+ * If the target is dead, also revives them and heals their organs / restores blood.
+ * If we have a [revive_message], play a visible message if the revive was successful.
+ *
+ * Arguments
+ * * heal_to - the health threshold to heal the mob up to for each of the main damage types.
+ * * revive_message - if provided, a visible message to show on a successful revive.
+ *
+ * Returns TRUE if the mob is alive afterwards, or FALSE if they're still dead (revive failed).
+ */
+/mob/living/proc/heal_and_revive(heal_to = 50, revive_message)
+
+	// Heal their brute and burn up to the threshold we're looking for
+	var/brute_to_heal = heal_to - getBruteLoss()
+	var/burn_to_heal = heal_to - getFireLoss()
+	var/oxy_to_heal = heal_to - getOxyLoss()
+	var/tox_to_heal = heal_to - getToxLoss()
+	if(brute_to_heal < 0)
+		adjustBruteLoss(brute_to_heal, FALSE)
+	if(burn_to_heal < 0)
+		adjustFireLoss(burn_to_heal, FALSE)
+	if(oxy_to_heal < 0)
+		adjustOxyLoss(oxy_to_heal, FALSE)
+	if(tox_to_heal < 0)
+		adjustToxLoss(tox_to_heal, FALSE, TRUE)
+
+	// Run updatehealth once to set health for the revival check
+	updatehealth()
+
+	// We've given them a decent heal.
+	// If they happen to be dead too, try to revive them - if possible.
+	if(stat == DEAD && can_be_revived())
+		// If the revive is successful, show our revival message (if present).
+		if(revive(FALSE, FALSE, 10) && revive_message)
+			visible_message(revive_message)
+
+	// Finally update health again after we're all done
+	updatehealth()
+
+	return stat != DEAD
 
 /mob/living/proc/remove_CC()
 	SetStun(0)
@@ -767,7 +842,6 @@
 	hallucination = 0
 	heal_overall_damage(INFINITY, INFINITY, INFINITY, null, TRUE) //heal brute and burn dmg on both organic and robotic limbs, and update health right away.
 	extinguish_mob()
-	fire_stacks = 0
 	set_confusion(0)
 	dizziness = 0
 	drowsyness = 0
@@ -889,7 +963,7 @@
 
 	var/list/turfs_to_check = list()
 
-	if(has_limbs)
+	if(!has_limbs)
 		var/turf/T = get_step(src, angle2dir(dir2angle(direction)+90))
 		if (T)
 			turfs_to_check += T
@@ -907,15 +981,18 @@
 				if (AM.density && AM.anchored)
 					pressure_resistance_prob_delta -= 20
 					break
-	if(!force_moving)
-		..(pressure_difference, direction, pressure_resistance_prob_delta)
+	..(pressure_difference, direction, pressure_resistance_prob_delta)
 
 /mob/living/can_resist()
-	return !((next_move > world.time) || incapacitated(ignore_restraints = TRUE, ignore_stasis = TRUE))
+	if(next_move > world.time)
+		return FALSE
+	if(HAS_TRAIT(src, TRAIT_INCAPACITATED))
+		return FALSE
+	return TRUE
 
 /mob/living/verb/resist()
 	set name = "Сопротивляться"
-	set category = "IC"
+	set category = null
 
 	if(!can_resist())
 		return
@@ -1096,7 +1173,7 @@
 			loc_temp = obj_temp
 	else if(isspaceturf(get_turf(src)))
 		var/turf/heat_turf = get_turf(src)
-		loc_temp = heat_turf.temperature
+		loc_temp = heat_turf.initial_temperature
 	if(ismovable(loc))
 		var/atom/movable/occupied_space = loc
 		loc_temp = ((1 - occupied_space.contents_thermal_insulation) * loc_temp) + (occupied_space.contents_thermal_insulation * bodytemperature)
@@ -1140,7 +1217,7 @@
 	if(!(mobility_flags & MOBILITY_UI) && !floor_okay)
 		to_chat(src, span_warning("Не хочу это делать прямо сейчас!"))
 		return FALSE
-	if(be_close && !Adjacent(M) && (M.loc != src))
+	if(be_close && !Adjacent(M) && (M?.loc != src))
 		if(no_tk)
 			to_chat(src, span_warning("Слишком далеко!"))
 			return FALSE
@@ -1242,27 +1319,27 @@
 	if((magic && HAS_TRAIT(src, TRAIT_ANTIMAGIC)) || (holy && HAS_TRAIT(src, TRAIT_HOLY)))
 		return src
 
-/mob/living/proc/fakefireextinguish()
-	return
-
-/mob/living/proc/fakefire()
-	return
-
 /mob/living/proc/unfry_mob() //Callback proc to tone down spam from multiple sizzling frying oil dipping.
 	REMOVE_TRAIT(src, TRAIT_OIL_FRIED, "cooking_oil_react")
 
 //Mobs on Fire
-/mob/living/proc/IgniteMob()
-	if(fire_stacks > 0 && !on_fire)
-		on_fire = TRUE
-		src.visible_message(span_warning("<b>[src]</b> горит!") , \
-						span_userdanger("ГОРЮ!!! Вот это да!"))
-		new/obj/effect/dummy/lighting_obj/moblight/fire(src)
-		throw_alert("fire", /atom/movable/screen/alert/fire)
-		update_fire()
-		SEND_SIGNAL(src, COMSIG_LIVING_IGNITED,src)
+/// Global list that containes cached fire overlays for mobs
+GLOBAL_LIST_EMPTY(fire_appearances)
+
+/mob/living/proc/ignite_mob()
+	if(fire_stacks <= 0)
 		return TRUE
-	return FALSE
+
+	var/datum/status_effect/fire_handler/fire_stacks/fire_status = has_status_effect(/datum/status_effect/fire_handler/fire_stacks)
+	if(!fire_status || fire_status.on_fire)
+		return FALSE
+
+	return fire_status.ignite()
+
+/mob/living/proc/update_fire()
+	var/datum/status_effect/fire_handler/fire_handler = has_status_effect(/datum/status_effect/fire_handler)
+	if(fire_handler)
+		fire_handler.update_overlay()
 
 /**
  * Extinguish all fire on the mob
@@ -1271,16 +1348,10 @@
  * Signals the extinguishing.
  */
 /mob/living/proc/extinguish_mob()
-	if(!on_fire)
+	var/datum/status_effect/fire_handler/fire_stacks/fire_status = has_status_effect(/datum/status_effect/fire_handler/fire_stacks)
+	if(!fire_status || !fire_status.on_fire)
 		return
-	on_fire = FALSE
-	fire_stacks = 0 //If it is not called from set_fire_stacks()
-	for(var/obj/effect/dummy/lighting_obj/moblight/fire/F in src)
-		qdel(F)
-	clear_alert("fire")
-	SEND_SIGNAL(src, COMSIG_CLEAR_MOOD_EVENT, "on_fire")
-	SEND_SIGNAL(src, COMSIG_LIVING_EXTINGUISHED, src)
-	update_fire()
+	remove_status_effect(/datum/status_effect/fire_handler/fire_stacks)
 
 /**
  * Adjust the amount of fire stacks on a mob
@@ -1288,10 +1359,18 @@
  * This modifies the fire stacks on a mob.
  *
  * Vars:
- * * add_fire_stacks: int The amount to modify the fire stacks
+ * * stacks: int The amount to modify the fire stacks
+ * * fire_type: type Type of fire status effect that we apply, should be subtype of /datum/status_effect/fire_handler/fire_stacks
  */
-/mob/living/proc/adjust_fire_stacks(add_fire_stacks)
-	set_fire_stacks(fire_stacks + add_fire_stacks)
+/mob/living/proc/adjust_fire_stacks(stacks, fire_type = /datum/status_effect/fire_handler/fire_stacks)
+	if(stacks < 0)
+		stacks = max(-fire_stacks, stacks)
+	apply_status_effect(fire_type, stacks)
+
+/mob/living/proc/adjust_wet_stacks(stacks, wet_type = /datum/status_effect/fire_handler/wet_stacks)
+	if(stacks < 0)
+		stacks = max(fire_stacks, stacks)
+	apply_status_effect(wet_type, stacks)
 
 /**
  * Set the fire stacks on a mob
@@ -1301,33 +1380,92 @@
  *
  * Vars:
  * * stacks: int The amount to set fire_stacks to
+ * * fire_type: type Type of fire status effect that we apply, should be subtype of /datum/status_effect/fire_handler/fire_stacks
+ * * remove_wet_stacks: bool If we remove all wet stacks upon doing this
  */
-/mob/living/proc/set_fire_stacks(stacks)
-	fire_stacks = clamp(stacks, -20, 20)
-	if(fire_stacks <= 0)
-		extinguish_mob()
+/mob/living/proc/set_fire_stacks(stacks, fire_type = /datum/status_effect/fire_handler/fire_stacks, remove_wet_stacks = TRUE)
+	if(stacks < 0) //Shouldn't happen, ever
+		CRASH("set_fire_stacks recieved negative [stacks] fire stacks")
+
+	if(remove_wet_stacks)
+		remove_status_effect(/datum/status_effect/fire_handler/wet_stacks)
+
+	if(stacks == 0)
+		remove_status_effect(fire_type)
+		return
+
+	apply_status_effect(fire_type, stacks, TRUE)
+
+/mob/living/proc/set_wet_stacks(stacks, wet_type = /datum/status_effect/fire_handler/wet_stacks, remove_fire_stacks = TRUE)
+	if(stacks < 0)
+		CRASH("set_wet_stacks recieved negative [stacks] wet stacks")
+
+	if(remove_fire_stacks)
+		remove_status_effect(/datum/status_effect/fire_handler/fire_stacks)
+
+	if(stacks == 0)
+		remove_status_effect(wet_type)
+		return
+
+	apply_status_effect(wet_type, stacks, TRUE)
 
 //Share fire evenly between the two mobs
 //Called in MobBump() and Crossed()
-/mob/living/proc/spreadFire(mob/living/L)
-	if(!istype(L))
+/mob/living/proc/spreadFire(mob/living/spread_to)
+	if(!istype(spread_to))
 		return
 
-	if(on_fire)
-		if(L.on_fire) // If they were also on fire
-			var/firesplit = (fire_stacks + L.fire_stacks)/2
-			set_fire_stacks(firesplit)
-			L.set_fire_stacks(firesplit)
-		else // If they were not
-			set_fire_stacks(fire_stacks / 2)
-			L.adjust_fire_stacks(fire_stacks)
-			if(L.IgniteMob()) // Ignite them
-				log_game("[key_name(src)] bumped into [key_name(L)] and set them on fire")
+	if(HAS_TRAIT(spread_to, TRAIT_NOFIRE_SPREAD) || HAS_TRAIT(src, TRAIT_NOFIRE_SPREAD))
+		return
 
-	else if(L.on_fire) // If they were on fire and we were not
-		L.set_fire_stacks(L.fire_stacks / 2)
-		adjust_fire_stacks(L.fire_stacks)
-		IgniteMob() // Ignite us
+	var/datum/status_effect/fire_handler/fire_stacks/fire_status = has_status_effect(/datum/status_effect/fire_handler/fire_stacks)
+	var/datum/status_effect/fire_handler/fire_stacks/their_fire_status = spread_to.has_status_effect(/datum/status_effect/fire_handler/fire_stacks)
+	if(fire_status && fire_status.on_fire)
+		if(their_fire_status && their_fire_status.on_fire)
+			var/firesplit = (fire_stacks + spread_to.fire_stacks) / 2
+			var/fire_type = (spread_to.fire_stacks > fire_stacks) ? their_fire_status.type : fire_status.type
+			set_fire_stacks(firesplit, fire_type)
+			spread_to.set_fire_stacks(firesplit, fire_type)
+			return
+
+		adjust_fire_stacks(-fire_stacks / 2, fire_status.type)
+		spread_to.adjust_fire_stacks(fire_stacks, fire_status.type)
+		if(spread_to.ignite_mob())
+			log_game("[key_name(src)] bumped into [key_name(spread_to)] and set them on fire")
+		return
+	if(!their_fire_status || !their_fire_status.on_fire)
+		return
+
+	spread_to.adjust_fire_stacks(-spread_to.fire_stacks / 2, their_fire_status.type)
+	adjust_fire_stacks(spread_to.fire_stacks, their_fire_status.type)
+	ignite_mob()
+
+/**
+ * Sets fire overlay of the mob.
+ *
+ * Vars:
+ * * stacks: Current amount of fire_stacks
+ * * on_fire: If we're lit on fire
+ * * last_icon_state: Holds last fire overlay icon state, used for optimization
+ * * suffix: Suffix for the fire icon state for special fire types
+ *
+ * This should return last_icon_state for the fire status efect
+ */
+
+/mob/living/proc/update_fire_overlay(stacks, on_fire, last_icon_state, suffix = "")
+	return last_icon_state
+
+/**
+ * Handles effects happening when mob is on normal fire
+ *
+ * Vars:
+ * * delta_time
+ * * times_fired
+ * * fire_handler: Current fire status effect that called the proc
+ */
+
+/mob/living/proc/on_fire_stack(delta_time, times_fired, datum/status_effect/fire_handler/fire_stacks/fire_handler)
+	return
 
 //Mobs on Fire end
 
@@ -1369,6 +1507,17 @@
 		L[++L.len] = list("[A.panel]",A.get_panel_text(),A.name,"[REF(A)]")
 	return L
 
+/mob/living/lingcheck()
+	if(mind)
+		var/datum/antagonist/changeling/changeling = mind.has_antag_datum(/datum/antagonist/changeling)
+		if(changeling)
+			if(changeling.changeling_speak)
+				return LINGHIVE_LING
+			return LINGHIVE_OUTSIDER
+	if(mind?.linglink)
+		return LINGHIVE_LINK
+	return LINGHIVE_NONE
+
 /mob/living/forceMove(atom/destination)
 	if(!currently_z_moving)
 		stop_pulling()
@@ -1409,9 +1558,9 @@
 		else
 			registered_z = null
 
-/mob/living/onTransitZ(old_z,new_z)
+/mob/living/on_changed_z_level(turf/old_turf, turf/new_turf)
 	..()
-	update_z(new_z)
+	update_z(new_turf?.z)
 
 /mob/living/MouseDrop_T(atom/dropping, atom/user)
 	var/mob/living/U = user
@@ -1486,9 +1635,6 @@
 			. = TRUE
 		if(NAMEOF(src, resting))
 			set_resting(var_value)
-			. = TRUE
-		if(NAMEOF(src, fire_stacks))
-			set_fire_stacks(var_value)
 			. = TRUE
 		if(NAMEOF(src, lying_angle))
 			set_lying_angle(var_value)
@@ -1624,7 +1770,7 @@
 
 //Checks if the user is incapacitated or on cooldown.
 /mob/living/proc/can_look_up()
-	return !(incapacitated(ignore_restraints = TRUE))
+	return !(incapacitated(IGNORE_RESTRAINTS) || HAS_TRAIT(src, TRAIT_LOOKING_INTO_DISTANCE))
 
 /**
  * look_up Changes the perspective of the mob to any openspace turf above the mob

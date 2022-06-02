@@ -5,16 +5,16 @@
 	icon_state = "crab"
 	icon_living = "crab"
 	icon_dead = "crab_dead"
-	speak_emote = list("clicks")
-	emote_hear = list("clicks.")
-	emote_see = list("clacks.")
+	speak_emote = list("щёлкает")
+	emote_hear = list("щёлкает.")
+	emote_see = list("щёлкает.")
 	speak_chance = 1
 	turns_per_move = 5
 	butcher_results = list(/obj/item/food/meat/rawcrab = 2)
-	response_help_continuous = "pets"
-	response_help_simple = "pet"
-	response_disarm_continuous = "gently pushes aside"
-	response_disarm_simple = "gently push aside"
+	response_help_continuous = "гладит"
+	response_help_simple = "гладит"
+	response_disarm_continuous = "аккуратно отталкивает"
+	response_disarm_simple = "аккуратно отталкивает"
 	response_harm_continuous = "stomps"
 	response_harm_simple = "stomp"
 	stop_automated_movement = 1

@@ -17,8 +17,8 @@
 
 	outfit = /datum/outfit/job/hos
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_MASTER)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT)
+	skills = list(/datum/skill/ranged = SKILL_EXP_MASTER, /datum/skill/parry = SKILL_EXP_MASTER)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_MASTER)
 
 	mind_traits = list(TRAIT_DONUT_LOVER)
 	liver_traits = list(TRAIT_LAW_ENFORCEMENT_METABOLISM, TRAIT_ROYAL_METABOLISM)
@@ -50,7 +50,7 @@
 	head = /obj/item/clothing/head/hos/beret
 	glasses = /obj/item/clothing/glasses/hud/security/sunglasses
 	suit_store = /obj/item/gun/energy/e_gun
-	r_pocket = /obj/item/pda/heads/hos
+	r_pocket = /obj/item/modular_computer/tablet/pda/heads/hos
 	l_pocket = /obj/item/restraints/handcuffs
 	backpack_contents = list(/obj/item/modular_computer/tablet/preset/advanced/command=1, /obj/item/card/id/departmental_budget/sec=1)
 
@@ -59,7 +59,7 @@
 	duffelbag = /obj/item/storage/backpack/duffelbag/sec
 	box = /obj/item/storage/box/survival/security
 
-	implants = list(/obj/item/implant/mindshield)
+	implants = list(/obj/item/implant/mindshield, /obj/item/implant/krav_maga)
 
 	chameleon_extras = list(/obj/item/gun/energy/e_gun/hos, /obj/item/stamp/hos)
 

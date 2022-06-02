@@ -23,6 +23,7 @@
 	icon_state = "palm1"
 	density = TRUE
 	layer = WALL_OBJ_LAYER
+	plane = GAME_PLANE_UPPER
 	anchored = TRUE
 
 /obj/effect/overlay/palmtree_l
@@ -31,6 +32,7 @@
 	icon_state = "palm2"
 	density = TRUE
 	layer = WALL_OBJ_LAYER
+	plane = GAME_PLANE_UPPER
 	anchored = TRUE
 
 /obj/effect/overlay/coconut
@@ -64,5 +66,12 @@
 	invisibility = INVISIBILITY_ABSTRACT
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
-	layer = ATMOS_GROUP_LAYER
 	plane = ATMOS_GROUP_PLANE
+
+/// Door overlay for animating closets
+/obj/effect/overlay/closet_door
+	anchored = TRUE
+	plane = FLOAT_PLANE
+	layer = FLOAT_LAYER
+	vis_flags = VIS_INHERIT_ID
+	appearance_flags = KEEP_TOGETHER | LONG_GLIDE | PIXEL_SCALE

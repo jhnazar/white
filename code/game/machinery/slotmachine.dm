@@ -10,7 +10,7 @@
 #define JACKPOT 10000
 #define SPIN_TIME 65 //As always, deciseconds.
 #define REEL_DEACTIVATE_DELAY 7
-#define SEVEN "<font color='red'>7</font>"
+#define SEVEN span_red("7")
 #define HOLOCHIP 1
 #define COIN 2
 
@@ -22,8 +22,6 @@
 	icon_keyboard = "no_keyboard"
 	icon_screen = "slots_screen"
 	density = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 50
 	circuit = /obj/item/circuitboard/computer/slot_machine
 	light_color = LIGHT_COLOR_BROWN
 	var/money = 3000 //How much money it has CONSUMED
@@ -220,6 +218,7 @@
 /obj/machinery/computer/slot_machine/proc/do_spin()
 	randomize_reels()
 	updateDialog()
+	use_power(active_power_usage)
 
 /obj/machinery/computer/slot_machine/proc/finish_spinning(spin_loop, mob/user, the_name)
 	toggle_reel_spin(0, REEL_DEACTIVATE_DELAY)

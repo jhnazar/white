@@ -32,9 +32,7 @@ DEFINE_BITFIELD(turret_flags, list(
 	invisibility = INVISIBILITY_OBSERVER	//the turret is invisible if it's inside its cover
 	density = TRUE
 	desc = "A covered turret that shoots at its enemies."
-	use_power = IDLE_POWER_USE				//this turret uses and requires power
-	idle_power_usage = 5000		//when inactive, this turret takes up constant 50 Equipment power
-	active_power_usage = 30000	//when active, this turret takes up constant 300 Equipment power
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.15
 	req_access = list(ACCESS_SECURITY) /// Only people with Security access
 	power_channel = AREA_USAGE_EQUIP	//drains power from the EQUIPMENT channel
 	max_integrity = 160		//the turret's health
@@ -451,8 +449,8 @@ DEFINE_BITFIELD(turret_flags, list(
 
 			if(iscyborg(sillycone))
 				var/mob/living/silicon/robot/sillyconerobot = A
-				if((ROLE_SYNDICATE in faction) && sillyconerobot.emagged == TRUE)
-					continue
+				if((ROLE_SYNDICATE in faction) && !sillyconerobot.emagged && LAZYLEN(faction))
+					targets+= sillyconerobot
 
 		else if(iscarbon(A))
 			var/mob/living/carbon/C = A
@@ -509,6 +507,7 @@ DEFINE_BITFIELD(turret_flags, list(
 	raising = 1
 	if(cover)
 		flick("popup", cover)
+	playsound(get_turf(src), 'white/valtos/sounds/trevoga1.ogg', 40)
 	sleep(POPUP_ANIM_TIME)
 	raising = 0
 	if(cover)
@@ -646,7 +645,7 @@ DEFINE_BITFIELD(turret_flags, list(
 	icon_icon = 'icons/mob/actions/actions_mecha.dmi'
 	button_icon_state = "mech_cycle_equip_off"
 
-/datum/action/turret_toggle/Trigger()
+/datum/action/turret_toggle/Trigger(trigger_flags)
 	var/obj/machinery/porta_turret/P = target
 	if(!istype(P))
 		return
@@ -657,7 +656,7 @@ DEFINE_BITFIELD(turret_flags, list(
 	icon_icon = 'icons/mob/actions/actions_mecha.dmi'
 	button_icon_state = "mech_eject"
 
-/datum/action/turret_quit/Trigger()
+/datum/action/turret_quit/Trigger(trigger_flags)
 	var/obj/machinery/porta_turret/P = target
 	if(!istype(P))
 		return

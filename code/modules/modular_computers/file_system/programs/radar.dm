@@ -98,7 +98,7 @@
 
 	if(get_dist_euclidian(here_turf, target_turf) > 24)
 		userot = TRUE
-		rot = round(Get_Angle(here_turf, target_turf))
+		rot = round(get_angle(here_turf, target_turf))
 	else
 		if(target_turf.z > here_turf.z)
 			pointer="caret-up"
@@ -228,7 +228,7 @@
 		var/mob/living/carbon/human/humanoid = i
 		if(!trackable(humanoid))
 			continue
-		var/crewmember_name = "Unknown"
+		var/crewmember_name = "Неизвестный"
 		if(humanoid.wear_id)
 			var/obj/item/card/id/ID = humanoid.wear_id.GetID()
 			if(ID?.registered_name)
@@ -248,6 +248,49 @@
 			if(uniform.has_sensor && uniform.sensor_mode >= SENSOR_COORDS) // Suit sensors must be on maximum
 				return TRUE
 	return FALSE
+
+///Tracks all janitor equipment
+/datum/computer_file/program/radar/custodial_locator
+	filename = "custodiallocator"
+	filedesc = "Custodial Locator"
+	extended_desc = "This program allows for tracking of custodial equipment."
+	requires_ntnet = TRUE
+	transfer_access = list(ACCESS_JANITOR)
+	available_on_ntnet = TRUE
+	program_icon = "broom"
+	size = 2
+	detomatix_resistance = DETOMATIX_RESIST_MINOR
+
+/datum/computer_file/program/radar/custodial_locator/find_atom()
+	return locate(selected) in GLOB.janitor_devices
+
+/datum/computer_file/program/radar/custodial_locator/scan()
+	if(world.time < next_scan)
+		return
+	next_scan = world.time + (2 SECONDS)
+	objects = list()
+	for(var/obj/custodial_tools as anything in GLOB.janitor_devices)
+		if(!trackable(custodial_tools))
+			continue
+		var/tool_name = custodial_tools.name
+
+		if(istype(custodial_tools, /obj/item/mop))
+			var/obj/item/mop/wet_mop = custodial_tools
+			tool_name = "[wet_mop.reagents.total_volume ? "Wet" : "Dry"] [wet_mop.name]"
+
+		if(istype(custodial_tools, /obj/structure/janitorialcart))
+			var/obj/structure/janitorialcart/janicart = custodial_tools
+			tool_name = "[janicart.name] - Water level: [janicart.reagents.total_volume] / [janicart.reagents.maximum_volume]"
+
+		if(istype(custodial_tools, /mob/living/simple_animal/bot/cleanbot))
+			var/mob/living/simple_animal/bot/cleanbot/cleanbots = custodial_tools
+			tool_name = "[cleanbots.name] - [cleanbots.on ? "Online" : "Offline"]"
+
+		var/list/tool_information = list(
+			ref = REF(custodial_tools),
+			name = tool_name,
+		)
+		objects += list(tool_information)
 
 ////////////////////////
 //Nuke Disk Finder App//

@@ -24,6 +24,7 @@ Borg Hypospray
 	var/charge_cost = 50
 	var/charge_timer = 0
 	var/recharge_time = 10 //Time it takes for shots to recharge (in seconds)
+	var/dispensed_temperature = DEFAULT_REAGENT_TEMPERATURE ///Optional variable to override the temperature add_reagent() will use
 	var/bypass_protection = 0 //If the hypospray can go through armor or thick material
 
 	var/list/datum/reagents/reagent_list = list()
@@ -64,7 +65,7 @@ Borg Hypospray
 	reagent_list += RG
 
 	var/datum/reagents/R = reagent_list[reagent_list.len]
-	R.add_reagent(reagent, 30)
+	R.add_reagent(reagent, 30, reagtemp = dispensed_temperature)
 
 	modes[reagent] = modes.len + 1
 
@@ -100,7 +101,7 @@ Borg Hypospray
 				var/datum/reagents/RG = reagent_list[i]
 				if(RG.total_volume < RG.maximum_volume) 	//Don't recharge reagents and drain power if the storage is full.
 					R.cell.use(charge_cost) 					//Take power from borg...
-					RG.add_reagent(reagent_ids[i], 5)		//And fill hypo with reagent.
+					RG.add_reagent(reagent_ids[i], 5, reagtemp = dispensed_temperature) //And fill hypo with reagent.
 
 /obj/item/reagent_containers/borghypo/attack(mob/living/carbon/M, mob/user)
 	var/datum/reagents/R = reagent_list[mode]
@@ -122,7 +123,7 @@ Borg Hypospray
 	log_combat(user, M, "injected", src, "(CHEMICALS: [english_list(injected)])")
 
 /obj/item/reagent_containers/borghypo/attack_self(mob/user)
-	var/chosen_reagent = modes[reagent_names[input(user, "What reagent do you want to dispense?") as null|anything in sortList(reagent_names)]]
+	var/chosen_reagent = modes[reagent_names[input(user, "What reagent do you want to dispense?") as null|anything in sort_list(reagent_names)]]
 	if(!chosen_reagent)
 		return
 	mode = chosen_reagent
@@ -136,7 +137,7 @@ Borg Hypospray
 	. += DescribeContents()	//Because using the standardized reagents datum was just too cool for whatever fuckwit wrote this
 	var/datum/reagent/loaded = modes[mode]
 	. += "<hr>Currently loaded: [initial(loaded.name)]. [initial(loaded.description)]"
-	. += "\n<span class='notice'><i>Alt+ЛКМ</i> чтобы изменить вводимое количество. На данный момент установлена [amount_per_transfer_from_this == 5 ? "обычная доза (5ед)" : "микроскопическая доза (2ед)"].</span>"
+	. += span_notice("\n<i>Alt+ЛКМ</i> чтобы изменить вводимое количество. На данный момент установлена [amount_per_transfer_from_this == 5 ? "обычная доза (5ед)" : "микроскопическая доза (2ед)"].")
 
 /obj/item/reagent_containers/borghypo/proc/DescribeContents()
 	. = list()
@@ -147,7 +148,7 @@ Borg Hypospray
 	for(var/datum/reagents/RS in reagent_list)
 		var/datum/reagent/R = locate() in RS.reagent_list
 		if(R)
-			. += "\n<span class='notice'>На данный момент внутри [R.volume] единиц [R.name].</span>"
+			. += span_notice("\nНа данный момент внутри [R.volume] единиц [R.name].")
 			empty = FALSE
 
 	if(empty)
@@ -207,6 +208,7 @@ Borg Shaker
 	charge_cost = 20 //Lots of reagents all regenerating at once, so the charge cost is lower. They also regenerate faster.
 	recharge_time = 3
 	accepts_reagent_upgrades = FALSE
+	dispensed_temperature = T0C + 1.35
 
 	reagent_ids = list(/datum/reagent/consumable/applejuice, /datum/reagent/consumable/banana, /datum/reagent/consumable/coffee,
 	/datum/reagent/consumable/cream, /datum/reagent/consumable/dr_gibb, /datum/reagent/consumable/grenadine,
@@ -237,7 +239,7 @@ Borg Shaker
 				var/datum/reagents/RG = reagent_list[valueofi]
 				if(RG.total_volume < RG.maximum_volume)
 					R.cell.use(charge_cost)
-					RG.add_reagent(reagent_ids[valueofi], 5)
+					RG.add_reagent(reagent_ids[valueofi], 5, reagtemp = dispensed_temperature)
 
 /obj/item/reagent_containers/borghypo/borgshaker/afterattack(obj/target, mob/user, proximity)
 	. = ..()
@@ -274,6 +276,7 @@ Borg Shaker
 	charge_cost = 20 //Lots of reagents all regenerating at once, so the charge cost is lower. They also regenerate faster.
 	recharge_time = 3
 	accepts_reagent_upgrades = FALSE
+	dispensed_temperature = T0C + 1.35
 
 	reagent_ids = list(/datum/reagent/toxin/fakebeer, /datum/reagent/consumable/ethanol/fernet)
 
@@ -290,7 +293,7 @@ Borg Shaker
 	accepts_reagent_upgrades = FALSE
 
 /obj/item/reagent_containers/borghypo/epi
-	name = "инжектор эпинефрина"
+	name = "инжектор адреналина"
 	desc = "Продвинутый химический синтезатор с системой введения, разработанный для стабилизации пациентов."
 	reagent_ids = list(/datum/reagent/medicine/epinephrine)
 	accepts_reagent_upgrades = FALSE

@@ -96,6 +96,7 @@ GLOBAL_LIST_INIT(sandbag_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/diamond
 	name = "алмаз"
+	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-diamond"
 	inhand_icon_state = "sheet-diamond"
 	singular_name = "алмаз"
@@ -131,7 +132,6 @@ GLOBAL_LIST_INIT(diamond_recipes, list ( \
 	singular_name = "урановый лист"
 	sheettype = "uranium"
 	mats_per_unit = list(/datum/material/uranium=MINERAL_MATERIAL_AMOUNT)
-	novariants = TRUE
 	grind_results = list(/datum/reagent/uranium = 20)
 	point_value = 20
 	merge_type = /obj/item/stack/sheet/mineral/uranium
@@ -157,6 +157,7 @@ GLOBAL_LIST_INIT(uranium_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/plasma
 	name = "твердая плазма"
+	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-plasma"
 	inhand_icon_state = "sheet-plasma"
 	singular_name = "лист плазмы"
@@ -208,6 +209,7 @@ GLOBAL_LIST_INIT(plasma_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/gold
 	name = "золото"
+	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-gold"
 	inhand_icon_state = "sheet-gold"
 	singular_name = "золотой слиток"
@@ -240,6 +242,7 @@ GLOBAL_LIST_INIT(gold_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/silver
 	name = "серебро"
+	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-silver"
 	inhand_icon_state = "sheet-silver"
 	singular_name = "серебрянный слиток"
@@ -328,10 +331,11 @@ GLOBAL_LIST_INIT(titanium_recipes, list ( \
  * Plastitanium
  */
 /obj/item/stack/sheet/mineral/plastitanium
-	name = "пластитаний"
+	name = "пластитан"
+	desc = "Пластитан является сплавом титана и плазмы. Довольно крепкий, однако из за новизны ученые еще не спроектировали основные производственные чертежи."
 	icon_state = "sheet-plastitanium"
 	inhand_icon_state = "sheet-plastitanium"
-	singular_name = "лист пластитания"
+	singular_name = "лист пластитаниума"
 	force = 5
 	throwforce = 5
 	w_class = WEIGHT_CLASS_NORMAL
@@ -346,7 +350,7 @@ GLOBAL_LIST_INIT(titanium_recipes, list ( \
 	walltype = /turf/closed/wall/mineral/plastitanium
 
 GLOBAL_LIST_INIT(plastitanium_recipes, list ( \
-	new/datum/stack_recipe("Пластитановая плитка", /obj/item/stack/tile/mineral/plastitanium, 1, 4, 20), \
+	new/datum/stack_recipe("Пластитаниумная плитка", /obj/item/stack/tile/mineral/plastitanium, 1, 4, 20), \
 	))
 
 /obj/item/stack/sheet/mineral/plastitanium/get_main_recipes()
@@ -391,7 +395,7 @@ GLOBAL_LIST_INIT(snow_recipes, list ( \
 
 
 GLOBAL_LIST_INIT(adamantine_recipes, list(
-	new /datum/stack_recipe("незаконченная оболочка голема-слуги", /obj/item/golem_shell/servant, req_amount=1, res_amount=1),
+	new /datum/stack_recipe("незаконченная оболочка голема-слуги", /obj/item/golem_shell/servant, req_amount=25, res_amount=1),
 	))
 
 /obj/item/stack/sheet/mineral/adamantine
@@ -438,6 +442,7 @@ GLOBAL_LIST_INIT(adamantine_recipes, list(
  */
 /obj/item/stack/sheet/mineral/abductor
 	name = "инопланетный сплав"
+	desc = "Загадочный материал с неизведанными свойствами."
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "sheet-abductor"
 	inhand_icon_state = "sheet-abductor"

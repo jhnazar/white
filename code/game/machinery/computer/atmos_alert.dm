@@ -1,6 +1,6 @@
 /obj/machinery/computer/atmos_alert
-	name = "atmospheric alert console"
-	desc = "Used to monitor the station's air alarms."
+	name = "Консоль тревог АТМОС"
+	desc = "Используется для контроля воздушной сигнализации станции."
 	circuit = /obj/item/circuitboard/computer/atmos_alert
 	icon_screen = "alert:0"
 	icon_keyboard = "atmos_key"
@@ -20,6 +20,7 @@
 	return ..()
 
 /obj/machinery/computer/atmos_alert/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "AtmosAlertConsole", name)

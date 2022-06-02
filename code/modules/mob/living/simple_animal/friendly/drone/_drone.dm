@@ -39,8 +39,8 @@
  *
  */
 /mob/living/simple_animal/drone
-	name = "Drone"
-	desc = "A maintenance drone, an expendable robot built to perform station repairs."
+	name = "Дрон"
+	desc = "Обслуживающий беспилотник, расходный робот, созданный для ремонта станции."
 	icon = 'icons/mob/drone.dmi'
 	icon_state = "drone_maint_grey"
 	icon_living = "drone_maint_grey"
@@ -59,7 +59,7 @@
 	status_flags = (CANPUSH | CANSTUN | CANKNOCKDOWN)
 	gender = NEUTER
 	mob_biotypes = MOB_ROBOTIC
-	speak_emote = list("chirps")
+	speak_emote = list("чирикает")
 	speech_span = SPAN_ROBOT
 	bubble_icon = "machine"
 	initial_language_holder = /datum/language_holder/drone
@@ -145,7 +145,7 @@
 	alert_drones(DRONE_NET_CONNECT)
 
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
-		diag_hud.add_to_hud(src)
+		diag_hud.add_atom_to_hud(src)
 
 	ADD_TRAIT(src, TRAIT_VENTCRAWLER_ALWAYS, INNATE_TRAIT)
 
@@ -260,7 +260,7 @@
 		return
 	Stun(100)
 	to_chat(src, span_danger("<b>ER@%R: MME^RY CO#RU9T!</b> R&$b@0tin)..."))
-	if(severity == 1)
+	if(severity >= EXPLODE_DEVASTATE)
 		adjustBruteLoss(heavy_emp_damage)
 		to_chat(src, span_userdanger("HeAV% DA%^MMA+G TO I/O CIR!%UUT!"))
 

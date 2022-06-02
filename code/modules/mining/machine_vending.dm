@@ -112,8 +112,8 @@
 	return I.mining_points
 
 /obj/machinery/vendor/mining
-	name = "mining equipment vendor"
-	desc = "An equipment vendor for miners, points collected at an ore redemption machine can be spent here."
+	name = "Торговый автомат шахтеров"
+	desc = "Различное оборудование для бригады шахтеров. Очки добываются за сдачу руды в шахтерскую печь и начисляются на персональный счет шахтера."
 	icon = 'icons/obj/machines/mining_machines.dmi'
 	icon_state = "mining"
 	density = TRUE
@@ -137,6 +137,7 @@
 		new /datum/data/vendor_equipment("Stabilizing Serum",			/obj/item/hivelordstabilizer,										400),
 		new /datum/data/vendor_equipment("Fulton Beacon",				/obj/item/fulton_core,												400),
 		new /datum/data/vendor_equipment("Shelter Capsule",				/obj/item/survivalcapsule,											400),
+		new /datum/data/vendor_equipment("Mining Charge",				/obj/item/grenade/c4/miningcharge,									500),
 		new /datum/data/vendor_equipment("GAR Meson Scanners",			/obj/item/clothing/glasses/meson/gar,								500),
 		new /datum/data/vendor_equipment("Explorer's Webbing",			/obj/item/storage/belt/mining,										500),
 		new /datum/data/vendor_equipment("Point Transfer Card",			/obj/item/card/mining_point_card,									500),
@@ -157,6 +158,7 @@
 		new /datum/data/vendor_equipment("Silver Pickaxe",				/obj/item/pickaxe/silver,											1000),
 		new /datum/data/vendor_equipment("Mining Conscription Kit",		/obj/item/storage/backpack/duffelbag/mining_conscript,				1500),
 		new /datum/data/vendor_equipment("Jetpack Upgrade",				/obj/item/tank/jetpack/suit,										2000),
+		new /datum/data/vendor_equipment("Улучшенные ремни сумок",		/obj/item/duffel_anti_slow,											2000),
 		new /datum/data/vendor_equipment("Space Cash",					/obj/item/stack/spacecash/c1000,									2000),
 		new /datum/data/vendor_equipment("Mining Hardsuit",				/obj/item/clothing/suit/space/hardsuit/mining,						2000),
 		new /datum/data/vendor_equipment("Diamond Pickaxe",				/obj/item/pickaxe/diamond,											2000),
@@ -178,6 +180,7 @@
 		new /datum/data/vendor_equipment("KA Range Increase",			/obj/item/borg/upgrade/modkit/range,								1000),
 		new /datum/data/vendor_equipment("KA Damage Increase",			/obj/item/borg/upgrade/modkit/damage,								1000),
 		new /datum/data/vendor_equipment("KA Cooldown Decrease",		/obj/item/borg/upgrade/modkit/cooldown,								1000),
+		new /datum/data/vendor_equipment("KA Hardness Increase",		/obj/item/borg/upgrade/modkit/hardness,								1200),
 		new /datum/data/vendor_equipment("KA AoE Damage",				/obj/item/borg/upgrade/modkit/aoe/mobs,								2000)
 	)
 /datum/data/vendor_equipment
@@ -199,7 +202,7 @@
 /obj/machinery/vendor/proc/RedeemVoucher(obj/item/mining_voucher/voucher, mob/redeemer)
 	var/items = list("Survival Capsule and Explorer's Webbing", "Resonator Kit", "Minebot Kit", "Extraction and Rescue Kit", "Crusher Kit", "Mining Conscription Kit")
 
-	var/selection = input(redeemer, "Pick your equipment", "Mining Voucher Redemption") as null|anything in sortList(items)
+	var/selection = input(redeemer, "Pick your equipment", "Mining Voucher Redemption") as null|anything in sort_list(items)
 	if(!selection || !Adjacent(redeemer) || QDELETED(voucher) || voucher.loc != redeemer)
 		return
 	var/drop_location = drop_location()

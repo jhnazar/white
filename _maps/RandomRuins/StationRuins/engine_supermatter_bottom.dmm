@@ -10,10 +10,6 @@
 /turf/template_noop,
 /area/space/nearstation)
 "ao" = (
-/obj/machinery/door/airlock/maintenance{
-	name = "Engineering Maintenance";
-	req_access_txt = "10"
-	},
 /obj/structure/sign/warning/radiation/rad_area{
 	pixel_x = -32
 	},
@@ -22,6 +18,14 @@
 	dir = 1
 	},
 /obj/structure/cable,
+/obj/machinery/door/airlock/highsecurity{
+	req_access = null;
+	req_access_txt = "10";
+	security_level = 6
+	},
+/obj/machinery/door/poddoor/shutters/preopen{
+	id = "engi_reactor_shutters"
+	},
 /turf/open/floor/plating,
 /area/engineering/main)
 "ar" = (
@@ -227,6 +231,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/general/visible{
 	dir = 4
 	},
+/obj/machinery/camera/autoname,
 /turf/open/floor/engine,
 /area/engineering/main)
 "bN" = (
@@ -430,6 +435,10 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2{
 	dir = 1
 	},
+/obj/machinery/camera/autoname{
+	dir = 5;
+	start_active = 1
+	},
 /turf/open/floor/engine,
 /area/engineering/main)
 "cP" = (
@@ -442,13 +451,12 @@
 /area/engineering/supermatter)
 "cT" = (
 /obj/effect/turf_decal/stripes/line{
-	dir = 8
+	dir = 5
 	},
-/obj/machinery/camera{
-	c_tag = "Engineering Supermatter Port";
-	dir = 4;
-	network = list("ss13","engine")
+/obj/machinery/atmospherics/pipe/smart/manifold4w/cyan/visible{
+	dir = 1
 	},
+/obj/machinery/camera/autoname,
 /turf/open/floor/engine,
 /area/engineering/main)
 "cV" = (
@@ -728,17 +736,9 @@
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
 "dX" = (
-/obj/machinery/camera{
-	c_tag = "Engineering Supermatter Starboard";
-	dir = 8;
-	network = list("ss13","engine")
-	},
-/obj/effect/turf_decal/stripes/line{
-	dir = 4
-	},
-/obj/structure/cable,
+/obj/machinery/camera/autoname,
 /turf/open/floor/engine,
-/area/engineering/main)
+/area/engineering/supermatter)
 "dY" = (
 /turf/open/floor/engine,
 /area/engineering/supermatter)
@@ -824,6 +824,9 @@
 /obj/effect/decal/cleanable/dirt,
 /obj/machinery/atmospherics/components/binary/pump{
 	name = "Gas to Chamber"
+	},
+/obj/machinery/camera/autoname{
+	dir = 8
 	},
 /turf/open/floor/engine,
 /area/engineering/supermatter)
@@ -1185,6 +1188,17 @@
 	},
 /turf/open/floor/engine,
 /area/engineering/main)
+"jA" = (
+/obj/effect/turf_decal/stripes/box,
+/obj/structure/cable/multilayer/multiz,
+/obj/machinery/button/door{
+	id = "engi_reactor_shutters";
+	name = "бронеставни выхода в теха";
+	pixel_y = 32;
+	req_access_txt = "10"
+	},
+/turf/open/floor/plating,
+/area/engineering/main)
 "kf" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 6
@@ -1238,8 +1252,14 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/general/visible{
 	dir = 10
 	},
+/obj/machinery/camera/autoname,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"nq" = (
+/obj/structure/lattice/catwalk,
+/obj/machinery/camera/autoname,
+/turf/template_noop,
+/area/template_noop)
 "nF" = (
 /obj/machinery/atmospherics/pipe/multiz/scrubbers/visible/layer2{
 	color = "#ff0000";
@@ -1406,12 +1426,12 @@
 	},
 /turf/open/floor/engine,
 /area/engineering/main)
-"CS" = (
-/obj/effect/turf_decal/stripes/line{
+"DW" = (
+/obj/structure/cable,
+/obj/machinery/camera/autoname{
 	dir = 1
 	},
-/obj/structure/cable,
-/turf/open/floor/engine,
+/turf/open/floor/plating,
 /area/engineering/main)
 "Fw" = (
 /turf/closed/wall/r_wall,
@@ -1577,6 +1597,13 @@
 	},
 /turf/open/floor/engine,
 /area/engineering/main)
+"WX" = (
+/obj/structure/lattice/catwalk,
+/obj/machinery/camera/autoname{
+	dir = 8
+	},
+/turf/template_noop,
+/area/space/nearstation)
 "Zc" = (
 /obj/structure/reflector/single/anchored{
 	dir = 9
@@ -1927,7 +1954,7 @@ oi
 eD
 oi
 eD
-at
+WX
 ab
 ab
 ab
@@ -1972,7 +1999,7 @@ bD
 dB
 dB
 dB
-cT
+dB
 dB
 dB
 wC
@@ -2097,7 +2124,7 @@ fj
 fj
 fr
 fr
-fj
+DW
 ad
 ab
 ab
@@ -2135,7 +2162,7 @@ ab
 "}
 (20,1,1) = {"
 ao
-CS
+aV
 cg
 cx
 bh
@@ -2163,7 +2190,7 @@ ab
 "}
 (21,1,1) = {"
 ad
-aM
+jA
 cg
 cy
 dO
@@ -2253,7 +2280,7 @@ cD
 dU
 by
 bk
-dY
+dX
 dF
 dY
 bk
@@ -2265,7 +2292,7 @@ fj
 fj
 nZ
 fj
-fj
+DW
 ad
 ab
 ab
@@ -2360,11 +2387,11 @@ ab
 (28,1,1) = {"
 ad
 ad
-eW
+cT
 dt
 ed
 aM
-dX
+eA
 aw
 eA
 eA
@@ -2428,7 +2455,7 @@ cV
 bi
 sL
 ad
-dk
+nq
 dk
 Fw
 Fw

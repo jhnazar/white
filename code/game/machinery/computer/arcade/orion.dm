@@ -14,8 +14,8 @@ GLOBAL_LIST_INIT(orion_events, generate_orion_events())
 		.[new_event] = new_event.weight
 
 /obj/machinery/computer/arcade/orion_trail
-	name = "The Orion Trail"
-	desc = "Learn how our ancestors got to Orion, and have fun in the process!"
+	name = "Пояс Ориона"
+	desc = "Узнайте, как наши предки попали на Орион, и получайте удовольствие в процессе!"
 	icon_state = "arcade"
 	circuit = /obj/item/circuitboard/computer/arcade/orion_trail
 	var/busy = FALSE //prevent clickspam that allowed people to ~speedrun~ the game.
@@ -45,7 +45,7 @@ GLOBAL_LIST_INIT(orion_events, generate_orion_events())
 /obj/machinery/computer/arcade/orion_trail/Initialize()
 	. = ..()
 	radio = new /obj/item/radio(src)
-	radio.listening = 0
+	radio.set_listening(FALSE)
 	setup_events()
 
 /obj/machinery/computer/arcade/orion_trail/proc/setup_events()
@@ -131,6 +131,8 @@ GLOBAL_LIST_INIT(orion_events, generate_orion_events())
 
 		radio.set_frequency(FREQ_MEDICAL)
 		radio.talk_into(src, "PSYCH ALERT: Crewmember [gamer] recorded displaying antisocial tendencies in [get_area(src)]. Please schedule psych evaluation.", FREQ_MEDICAL)
+
+		remove_radio_all(radio)//so we dont keep transmitting sec and medical comms
 
 		gamers[gamer] = ORION_GAMER_PAMPHLET //next report send a pamph
 
@@ -355,7 +357,7 @@ GLOBAL_LIST_INIT(orion_events, generate_orion_events())
 			reason = "You ran out of fuel, and drift, slowly, into a star."
 			if(obj_flags & EMAGGED)
 				gamer.adjust_fire_stacks(5)
-				gamer.IgniteMob() //flew into a star, so you're on fire
+				gamer.ignite_mob() //flew into a star, so you're on fire
 				to_chat(gamer, span_userdanger("You feel an immense wave of heat emanate from the arcade machine. Your skin bursts into flames."))
 
 	if(obj_flags & EMAGGED)
@@ -524,10 +526,10 @@ GLOBAL_LIST_INIT(orion_events, generate_orion_events())
 	say("Uh, Port? Having some issues with our reactor, could you check it out? Over.")
 	sleep(30)
 	say("Oh, God! Code Eight! CODE EIGHT! IT'S GONNA BL-")
-	playsound(loc, 'sound/machines/buzz-sigh.ogg', 25, TRUE)
+	playsound(loc, 'white/valtos/sounds/error1.ogg', 25, TRUE)
 	sleep(3.6)
 	visible_message(span_userdanger("[src] explodes!"))
-	explosion(loc, 2,4,8, flame_range = 16)
+	explosion(src, devastation_range = 2, heavy_impact_range = 4, light_impact_range = 8, flame_range = 16)
 	qdel(src)
 
 #undef ORION_TRAIL_WINTURN

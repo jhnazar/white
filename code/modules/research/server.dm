@@ -1,6 +1,6 @@
 /obj/machinery/rnd/server
-	name = "\improper R&D Server"
-	desc = "A computer system running a deep neural network that processes arbitrary information to produce data useable in the development of new technologies. In layman's terms, it makes research points."
+	name = "Сервер РнД"
+	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки компьютерного ботана, оно производит очки исследований."
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "RD-server-on"
 	var/heat_health = 100
@@ -28,6 +28,7 @@
 	return ..()
 
 /obj/machinery/rnd/server/RefreshParts()
+	. = ..()
 	var/tot_rating = 0
 	for(var/obj/item/stock_parts/SP in src)
 		tot_rating += SP.rating
@@ -49,8 +50,10 @@
 /obj/machinery/rnd/server/proc/refresh_working()
 	if(machine_stat & EMPED || research_disabled || machine_stat & NOPOWER)
 		working = FALSE
+		update_use_power(NO_POWER_USE)
 	else
 		working = TRUE
+		update_use_power(ACTIVE_POWER_USE)
 	update_icon()
 
 /obj/machinery/rnd/server/emp_act()
@@ -72,7 +75,7 @@
 /obj/machinery/rnd/server/proc/get_env_temp()
 	var/turf/open/L = loc
 	if(isturf(L))
-		return L.temperature
+		return L.initial_temperature
 	return 0 //what
 
 /obj/machinery/rnd/server/proc/produce_heat(heat_amt)
@@ -94,7 +97,7 @@
 					removed.set_temperature(min((removed.return_temperature()*heat_capacity + heating_power)/heat_capacity, 1000))
 
 				env.merge(removed)
-				air_update_turf(FALSE, FALSE)
+				air_update_turf()
 
 /proc/fix_noid_research_servers()
 	var/list/no_id_servers = list()
@@ -120,8 +123,8 @@
 
 
 /obj/machinery/computer/rdservercontrol
-	name = "R&D Server Controller"
-	desc = "Used to manage access to research and manufacturing databases."
+	name = "Серверный контроллер РнД"
+	desc = "Используется для доступа к серверам производственно-исследовательских баз данных."
 	icon_screen = "rdcomp"
 	icon_keyboard = "rd_key"
 	var/screen = 0

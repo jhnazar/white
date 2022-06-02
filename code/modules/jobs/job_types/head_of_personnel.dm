@@ -17,6 +17,9 @@
 
 	outfit = /datum/outfit/job/hop
 
+	skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
+
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_SRV
 	bounty_types = CIV_JOB_RANDOM
@@ -42,7 +45,7 @@
 	jobtype = /datum/job/head_of_personnel
 
 	id = /obj/item/card/id/advanced/silver
-	belt = /obj/item/pda/heads/hop
+	belt = /obj/item/modular_computer/tablet/pda/heads/hop
 	ears = /obj/item/radio/headset/heads/hop
 	uniform = /obj/item/clothing/under/rank/civilian/head_of_personnel
 	shoes = /obj/item/clothing/shoes/sneakers/brown

@@ -16,6 +16,8 @@
 	anchorable = FALSE
 	mouse_drag_pointer = MOUSE_ACTIVE_POINTER
 	drag_slowdown = 0
+	has_closed_overlay = FALSE
+	door_anim_time = 0 // no animation
 	var/foldedbag_path = /obj/item/bodybag
 	var/obj/item/bodybag/foldedbag_instance = null
 	var/tagged = FALSE // so closet code knows to put the tag overlay back
@@ -138,7 +140,7 @@
 		var/atom/movable/content = am
 		content.forceMove(B)
 		if(isliving(content))
-			to_chat(content, span_userdanger("Вы внезапно оказались в крошечном, сжатом пространстве!"))
+			to_chat(content, span_userdanger("Внезапно оказались в крошечном, сжатом пространстве!"))
 		if(!isitem(content))
 			max_weight_of_contents = max(WEIGHT_CLASS_BULKY, max_weight_of_contents)
 			continue
@@ -309,8 +311,8 @@
 	air_contents = new(50) //liters
 	air_contents.set_temperature(T20C)
 
-	air_contents.set_moles(/datum/gas/oxygen, (ONE_ATMOSPHERE*50)/(R_IDEAL_GAS_EQUATION*T20C) * O2STANDARD)
-	air_contents.set_moles(/datum/gas/nitrous_oxide, (ONE_ATMOSPHERE*50)/(R_IDEAL_GAS_EQUATION*T20C) * N2STANDARD)
+	air_contents.set_moles(GAS_O2, (ONE_ATMOSPHERE*50)/(R_IDEAL_GAS_EQUATION*T20C) * O2STANDARD)
+	air_contents.set_moles(GAS_NITROUS, (ONE_ATMOSPHERE*50)/(R_IDEAL_GAS_EQUATION*T20C) * N2STANDARD)
 
 /obj/structure/closet/body_bag/environmental/prisoner/syndicate/Destroy()
 	if(air_contents)

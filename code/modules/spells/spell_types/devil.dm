@@ -54,7 +54,7 @@
 					user.put_in_hands(contract)
 			else
 				var/obj/item/paper/contract/infernal/contract  // = new(user.loc, C.mind, contractType, user.mind)
-				var/contractTypeName = input(user, "What type of contract?") in sortList(list("Power", "Wealth", "Prestige", "Magic", "Knowledge", "Friendship"))
+				var/contractTypeName = input(user, "What type of contract?") in sort_list(list("Power", "Wealth", "Prestige", "Magic", "Knowledge", "Friendship"))
 				switch(contractTypeName)
 					if("Power")
 						contract = new /obj/item/paper/contract/infernal/power(C.loc, C.mind, user.mind)
@@ -119,14 +119,12 @@
 				return ..()
 		else
 			user.notransform = TRUE
-			user.fakefire()
 			to_chat(src, span_warning("You begin to phase back into sinful flames."))
 			if(do_mob(user,user,150))
 				user.infernalphaseout()
 			else
 				to_chat(user, span_warning("You must remain still while exiting."))
 				user.notransform = FALSE
-				user.fakefireextinguish()
 		start_recharge()
 		return
 	revert_cast()
@@ -150,18 +148,15 @@
 	forceMove(holder)
 	holder = holder
 	notransform = FALSE
-	fakefireextinguish()
 
 /mob/living/proc/infernalphasein()
 	if(notransform)
 		to_chat(src, span_warning("You're too busy to jaunt in."))
 		return FALSE
-	fakefire()
 	forceMove(drop_location())
 	client.eye = src
 	visible_message(span_warning("<B>[src] appears in a fiery blaze!</B>"))
 	playsound(get_turf(src), 'sound/magic/exit_blood.ogg', 100, TRUE, -1)
-	addtimer(CALLBACK(src, .proc/fakefireextinguish), 15, TIMER_UNIQUE)
 
 /obj/effect/proc_holder/spell/targeted/sintouch
 	name = "Sin Touch"

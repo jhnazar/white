@@ -2,7 +2,7 @@
 
 /obj/structure/closet/gmcloset
 	name = "шкаф с формальной одеждой"
-	desc = "Это хранилище для формальной одежды."
+	desc = "Хранилище для формальной одежды."
 	icon_door = "black"
 
 /obj/structure/closet/gmcloset/PopulateContents()
@@ -26,7 +26,7 @@
 
 /obj/structure/closet/chefcloset
 	name = "\proper шкаф шеф-повара"
-	desc = "Это хранилище для продуктов питания и мышеловок."
+	desc = "Хранилище для продуктов питания и мышеловок."
 	icon_door = "black"
 
 /obj/structure/closet/chefcloset/PopulateContents()
@@ -47,13 +47,12 @@
 
 /obj/structure/closet/jcloset
 	name = "кладовка"
-	desc = "Это хранилище для одежды и инструментов уборщиков."
+	desc = "Хранилище для одежды и инструментов уборщиков."
 	icon_door = "mixed"
 
 /obj/structure/closet/jcloset/PopulateContents()
 	..()
 	new /obj/item/clothing/under/rank/civilian/janitor(src)
-	new /obj/item/cartridge/janitor(src)
 	new /obj/item/clothing/gloves/color/black(src)
 	new /obj/item/clothing/head/soft/purple(src)
 	new /obj/item/paint/paint_remover(src)
@@ -72,7 +71,7 @@
 
 /obj/structure/closet/lawcloset
 	name = "шкаф законника"
-	desc = "Это хранилище для одежды и предметов для зала суда."
+	desc = "Хранилище для одежды и предметов для зала суда."
 	icon_door = "blue"
 
 /obj/structure/closet/lawcloset/PopulateContents()
@@ -94,7 +93,7 @@
 
 /obj/structure/closet/wardrobe/chaplain_black
 	name = "гардероб часовни"
-	desc = "Это хранилище, для одобренной НаноТрейсеном, религиозной одежды."
+	desc = "Хранилище, для одобренной NanoTrasen религиозной одежды."
 	icon_door = "black"
 
 /obj/structure/closet/wardrobe/chaplain_black/PopulateContents()
@@ -145,7 +144,7 @@
 	generate_items_inside(items_inside,src)
 
 /obj/structure/closet/wardrobe/atmospherics_yellow
-	name = "гардероб атмосферников"
+	name = "атмосферный гардероб"
 	icon_door = "atmos_wardrobe"
 
 /obj/structure/closet/wardrobe/atmospherics_yellow/PopulateContents()
@@ -161,8 +160,13 @@
 	return
 
 /obj/structure/closet/wardrobe/engineering_yellow
-	name = "гардероб инженегров"
+	name = "инженерный гардероб"
 	icon_door = "yellow"
+
+/obj/structure/closet/wardrobe/engineering_yellow/Initialize(mapload)
+	. = ..()
+	if(prob(10))
+		name = "гардероб инженегров"
 
 /obj/structure/closet/wardrobe/engineering_yellow/PopulateContents()
 	var/static/items_inside = list(
@@ -179,7 +183,7 @@
 	return
 
 /obj/structure/closet/wardrobe/white/medical
-	name = "гардероб медиков"
+	name = "медицинский гардероб"
 
 /obj/structure/closet/wardrobe/white/medical/PopulateContents()
 	var/static/items_inside = list(
@@ -222,7 +226,7 @@
 
 
 /obj/structure/closet/wardrobe/chemistry_white
-	name = "гардероб химиков"
+	name = "гардероб химии"
 	icon_door = "white"
 
 /obj/structure/closet/wardrobe/chemistry_white/PopulateContents()
@@ -286,7 +290,7 @@
 	return
 
 /obj/structure/closet/wardrobe/botanist
-	name = "гардероб ботаника"
+	name = "гардероб ботаники"
 	icon_door = "green"
 
 /obj/structure/closet/wardrobe/botanist/PopulateContents()

@@ -22,6 +22,25 @@
 	var/failed = FALSE		//to prevent constantly running failing code
 	var/operated = FALSE	//whether the heart's been operated on to fix some of its damages
 
+	var/key_for_dreamer = null
+
+/obj/item/organ/heart/examine(mob/user)
+	. = ..()
+	if((IS_DREAMER(user) && key_for_dreamer))
+		SEND_SOUND(user, pick(RANDOM_DREAMER_SOUNDS))
+		to_chat(user, span_holoparasite("... [GLOB.dreamer_clues[key_for_dreamer]] ..."))
+		var/datum/component/dreamer/DRE = user.GetComponent(/datum/component/dreamer)
+		if(!DRE)
+			stack_trace("DREAMER EXAMINED HEART WITHOUT DREAMER COMPONENT!")
+		if(key_for_dreamer in DRE.known_clues)
+			key_for_dreamer = null
+			return
+		DRE.known_clues += key_for_dreamer
+		DRE.grip--
+		DRE.update_grip()
+		user.mind.store_memory("ЧУДО [key_for_dreamer] - [GLOB.dreamer_clues[key_for_dreamer]]")
+		key_for_dreamer = null
+
 /obj/item/organ/heart/update_icon_state()
 	if(beating)
 		icon_state = "[icon_base]-on"
@@ -151,7 +170,7 @@
 	name = "Качать кровь"
 
 //You are now brea- pumping blood manually
-/datum/action/item_action/organ_action/cursed_heart/Trigger()
+/datum/action/item_action/organ_action/cursed_heart/Trigger(trigger_flags)
 	. = ..()
 	if(. && istype(target, /obj/item/organ/heart/cursed))
 		var/obj/item/organ/heart/cursed/cursed_heart = target
@@ -256,9 +275,6 @@
 		if(owner.reagents.get_reagent_amount(/datum/reagent/medicine/ephedrine) < 20)
 			owner.reagents.add_reagent(/datum/reagent/medicine/ephedrine, 10)
 
-
-
-
 /obj/item/organ/heart/ethereal
 	name = "Кристаллическое ядро"
 	icon_state = "ethereal_heart" //Welp. At least it's more unique in functionaliy.
@@ -313,11 +329,11 @@
 
 	switch(timeleft(crystalize_timer_id))
 		if(0 to CRYSTALIZE_STAGE_ENGULFING)
-			examine_list += "\n<span class='warning'>Crystals are almost engulfing [examined_human]! </span>"
+			examine_list += span_warning("\nCrystals are almost engulfing [examined_human]! ")
 		if(CRYSTALIZE_STAGE_ENGULFING to CRYSTALIZE_STAGE_ENCROACHING)
-			examine_list += "\n<span class='notice'>Crystals are starting to cover [examined_human]. </span>"
+			examine_list += span_notice("\nCrystals are starting to cover [examined_human]. ")
 		if(CRYSTALIZE_STAGE_SMALL to INFINITY)
-			examine_list += "\n<span class='notice'>Some crystals are coming out of [examined_human]. </span>"
+			examine_list += span_notice("\nSome crystals are coming out of [examined_human]. ")
 
 ///On stat changes, if the victim is no longer dead but they're crystalizing, cancel it, if they become dead, start the crystalizing process if possible
 /obj/item/organ/heart/ethereal/proc/on_stat_change(mob/living/victim, new_stat)

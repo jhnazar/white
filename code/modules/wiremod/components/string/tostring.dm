@@ -5,7 +5,7 @@
  */
 /obj/item/circuit_component/tostring
 	display_name = "В строку"
-	desc = "A component that converts its input to text."
+	desc = "Компонент, который преобразует входные данные в текст."
 
 	/// The input port
 	var/datum/port/input/input_port
@@ -26,8 +26,8 @@
 	var/value = input_port.value
 	if(isatom(value))
 		var/turf/location = get_turf(src)
-		var/atom/object = value
-		if(object.z != location.z || get_dist(location, object) > max_range)
+		var/turf/target_location = get_turf(value)
+		if(target_location.z != location.z || get_dist(location, target_location) > max_range)
 			output.set_output(PORT_TYPE_ATOM)
 			return
 

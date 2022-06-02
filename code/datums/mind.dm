@@ -45,18 +45,22 @@
 
 	var/list/spell_list = list() // Wizard mode & "Give Spell" badmin button.
 
+	var/linglink
 	var/datum/martial_art/martial_art
 	var/static/default_martial_art = new/datum/martial_art
 	var/miming = FALSE // Mime's vow of silence
 	var/list/antag_datums
-	var/antag_hud_icon_state = null //this mind's ANTAG_HUD should have this icon_state
-	var/datum/atom_hud/antag/antag_hud = null //this mind's antag HUD
+	///this mind's ANTAG_HUD should have this icon_state
+	var/antag_hud_icon_state = null
+	///this mind's antag HUD
+	var/datum/atom_hud/alternate_appearance/basic/antagonist_hud/antag_hud = null
 	var/damnation_type = 0
 	var/datum/mind/soulOwner //who owns the soul.  Under normal circumstances, this will point to src
 	var/hasSoul = TRUE // If false, renders the character unable to sell their soul.
 	var/holy_role = NONE //is this person a chaplain or admin role allowed to use bibles, Any rank besides 'NONE' allows for this.
 
-	var/mob/living/enslaved_to //If this mind's master is another mob (i.e. adamantine golems)
+	///If this mind's master is another mob (i.e. adamantine golems)
+	var/mob/living/enslaved_to
 	var/datum/language_holder/language_holder
 	var/unconvertable = FALSE
 	var/late_joiner = FALSE
@@ -100,6 +104,7 @@
 
 /datum/mind/Destroy()
 	SSticker.minds -= src
+	QDEL_NULL(antag_hud)
 	QDEL_LIST(antag_datums)
 	QDEL_NULL(language_holder)
 	set_current(null)
@@ -139,19 +144,19 @@
 	if(new_character.mind) //disassociate any mind currently in our new body's mind variable
 		new_character.mind.set_current(null)
 
-	var/datum/atom_hud/antag/hud_to_transfer = antag_hud//we need this because leave_hud() will clear this list
 	var/mob/living/old_current = current
 	if(current)
 		current.transfer_observers_to(new_character) //transfer anyone observing the old character to the new one
 	set_current(new_character) //associate ourself with our new body
+	QDEL_NULL(antag_hud)
 	new_character.mind = src //and associate our new body with ourself
+	antag_hud = new_character.add_alt_appearance(/datum/atom_hud/alternate_appearance/basic/antagonist_hud, "combo_hud", src)
 	for(var/a in antag_datums) //Makes sure all antag datums effects are applied in the new body
 		var/datum/antagonist/A = a
 		A.on_body_transfer(old_current, current)
 	if(iscarbon(new_character))
 		var/mob/living/carbon/C = new_character
 		C.last_mind = src
-	transfer_antag_huds(hud_to_transfer)				//inherit the antag HUD
 	transfer_actions(new_character)
 	transfer_martial_arts(new_character)
 	RegisterSignal(new_character, COMSIG_LIVING_DEATH, .proc/set_death_time)
@@ -377,8 +382,8 @@
 	if (!istype(traitor_mob))
 		return
 
-	var/list/all_contents = traitor_mob.GetAllContents()
-	var/obj/item/pda/PDA = locate() in all_contents
+	var/list/all_contents = traitor_mob.get_all_contents()
+	var/obj/item/modular_computer/tablet/pda/PDA = locate() in all_contents
 	var/obj/item/radio/R = locate() in all_contents
 	var/obj/item/pen/P
 
@@ -474,8 +479,9 @@
 		recipient = current
 	var/output = ""
 	if(window)
-		output += "<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>"
-	output += "<B>Воспоминания [current.real_name]:</B><br>"
+		output += "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'><title>Воспоминания [current.real_name]</title></head>"
+	else
+		output += "<B>Воспоминания [current.real_name]:</B><br>"
 	output += memory
 
 
@@ -485,7 +491,7 @@
 		all_objectives |= A.objectives
 
 	if(all_objectives.len)
-		output += "<B>Мои цели:</B>"
+		output += "<B>Цели:</B>"
 		var/obj_count = 1
 		for(var/datum/objective/objective in all_objectives)
 			output += "<br><B>Цель #[obj_count++]</B>: [objective.explanation_text]"
@@ -497,12 +503,15 @@
 				output += "</ul>"
 
 	if(window)
-		recipient << browse(output,"window=memory")
+		output += "</body></html>"
+		var/datum/browser/popup = new(recipient, "memory", "Воспоминания [current.real_name]", 350, 350)
+		popup.set_content(output)
+		popup.open()
 	else if(all_objectives.len || memory)
 		to_chat(recipient, "<i>[output]</i>")
 
 /datum/mind/Topic(href, href_list)
-	if(!check_rights(R_ADMIN))
+	if(!check_rights(R_FUN))
 		return
 
 	var/self_antagging = usr == current
@@ -517,7 +526,7 @@
 		A.admin_remove(usr)
 
 	if (href_list["role_edit"])
-		var/new_role = input("Select new role", "Assigned role", assigned_role) as null|anything in sortList(SSjob.station_jobs)
+		var/new_role = input("Select new role", "Assigned role", assigned_role) as null|anything in sort_list(SSjob.station_jobs)
 		if (!new_role)
 			return
 		assigned_role = new_role
@@ -557,7 +566,7 @@
 					if(1)
 						target_antag = antag_datums[1]
 					else
-						var/datum/antagonist/target = input("Which antagonist gets the objective:", "Antagonist", "(new custom antag)") as null|anything in sortList(antag_datums) + "(new custom antag)"
+						var/datum/antagonist/target = input("Which antagonist gets the objective:", "Antagonist", "(new custom antag)") as null|anything in sort_list(antag_datums) + "(new custom antag)"
 						if (QDELETED(target))
 							return
 						else if(target == "(new custom antag)")
@@ -693,7 +702,7 @@
 		obj_count++
 
 /datum/mind/proc/find_syndicate_uplink()
-	var/list/L = current.GetAllContents()
+	var/list/L = current.get_all_contents()
 	for (var/i in L)
 		var/atom/movable/I = i
 		. = I.GetComponent(/datum/component/uplink)
@@ -756,7 +765,7 @@
 		if(istype(S, spell))
 			spell_list -= S
 			qdel(S)
-	current?.client << output(null, "statbrowser:check_spells")
+	current?.client.stat_panel.send_message("check_spells")
 
 /datum/mind/proc/RemoveAllSpells()
 	for(var/obj/effect/proc_holder/S in spell_list)

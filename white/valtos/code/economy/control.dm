@@ -59,7 +59,8 @@
 	log_self(" -!- Очищено Оператором Системы -!- ")
 
 /obj/item/circuitboard/computer/price_controller
-	name = "Контроллер цен (Консоль)"
+	name = "контроллер цен"
+	desc = "Используется для искусственных манипуляций внутренним рынком."
 	icon_state = "supply"
 	build_path = /obj/machinery/computer/price_controller
 
@@ -67,6 +68,7 @@
 	if(!authed)
 		to_chat(user, span_warning("Консоль заблокирована!"))
 		return
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "EconomyController", name)

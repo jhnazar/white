@@ -51,8 +51,6 @@ SUBSYSTEM_DEF(ticker)
 
 	var/news_report
 
-	var/late_join_disabled
-
 	var/roundend_check_paused = FALSE
 
 	var/round_start_time = 0
@@ -70,6 +68,8 @@ SUBSYSTEM_DEF(ticker)
 
 /datum/controller/subsystem/ticker/Initialize(timeofday)
 	load_mode()
+
+	load_mentors()
 
 	var/list/byond_sound_formats = list(
 		"mid"  = TRUE,
@@ -152,6 +152,10 @@ SUBSYSTEM_DEF(ticker)
 	return ..()
 
 /datum/controller/subsystem/ticker/fire()
+	if(world.time > 30 MINUTES && !GLOB.cryopods_enabled)
+		GLOB.cryopods_enabled = TRUE
+		for(var/obj/machinery/cryopod/pod as anything in GLOB.cryopods)
+			pod.PowerOn()
 	switch(current_state)
 		if(GAME_STATE_STARTUP)
 			if(Master.initializations_finished_with_no_players_logged_in)
@@ -201,6 +205,7 @@ SUBSYSTEM_DEF(ticker)
 				start_at = world.time + (60 SECONDS)
 				timeLeft = null
 				Master.SetRunLevel(RUNLEVEL_LOBBY)
+				SEND_SIGNAL(src, COMSIG_TICKER_ERROR_SETTING_UP)
 			else
 				webhook_send_roundstatus("ingame")
 
@@ -289,8 +294,8 @@ SUBSYSTEM_DEF(ticker)
 		var/list/modes = new
 		for (var/datum/game_mode/M in runnable_modes)
 			modes += M.name
-		modes = sortList(modes)
-		message_admins("<b>The gamemode is: secret!\nPossibilities:</B> [english_list(modes)]")
+		modes = sort_list(modes)
+		to_chat(world, "<b>Возможный режим:</B> [english_list(modes)]")
 	else
 		mode.announce()
 
@@ -343,6 +348,8 @@ SUBSYSTEM_DEF(ticker)
 		var/datum/major_mode/mm = pick(subtypesof(/datum/major_mode))
 		maj_mode = new mm()
 		message_admins("<b>Основной режим определён как [maj_mode.name].</b>")
+
+	SStitle.update_lobby()
 
 	return TRUE
 

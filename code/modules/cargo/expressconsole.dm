@@ -1,5 +1,5 @@
 #define MAX_EMAG_ROCKETS 5
-#define BEACON_COST 500
+#define BEACON_COST 5000
 #define SP_LINKED 1
 #define SP_READY 2
 #define SP_LAUNCH 3
@@ -10,7 +10,7 @@
 	name = "экспресс консоль"
 	desc = "Эта консоль позволяет пользователю приобрести пакет \
 		с 1/40 от времени доставки: стало возможным благодаря новой \
-		орбитальной пушки НТ \
+		орбитальной пушки NT \
 		Все продажи практически мгновенные - пожалуйста, выбирайте внимательно"
 	icon_screen = "supply_express"
 	circuit = /obj/item/circuitboard/computer/cargo/express
@@ -95,6 +95,7 @@
 		))
 
 /obj/machinery/computer/cargo/express/ui_interact(mob/living/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "CargoExpress", name)

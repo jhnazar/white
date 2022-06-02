@@ -4,8 +4,8 @@
  * A component that emits a sound when it receives an input.
  */
 /obj/item/circuit_component/soundemitter
-	display_name = "Sound Emitter"
-	desc = "A component that emits a sound when it receives an input. The frequency is a multiplier which determines the speed at which the sound is played"
+	display_name = "Пищалка"	// С любовью для Шрум-Шрума
+	desc = "Компонент, издающий звук, при получении входящий сигнал. Частота - это множитель, определяющий скорость воспроизведения звука."
 	circuit_flags = CIRCUIT_FLAG_INPUT_SIGNAL|CIRCUIT_FLAG_OUTPUT_SIGNAL
 
 	/// Sound to play
@@ -33,8 +33,8 @@
 
 /obj/item/circuit_component/soundemitter/populate_options()
 	var/static/component_options = list(
-		"Buzz" = 'sound/machines/buzz-sigh.ogg',
-		"Buzz Twice" = 'sound/machines/buzz-two.ogg',
+		"Buzz" = 'white/valtos/sounds/error1.ogg',
+		"Buzz Twice" = 'white/valtos/sounds/error2.ogg',
 		"Chime" = 'sound/machines/chime.ogg',
 		"Honk" = 'sound/items/bikehorn.ogg',
 		"Ping" = 'sound/machines/ping.ogg',

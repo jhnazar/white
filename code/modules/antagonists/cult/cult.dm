@@ -12,7 +12,6 @@
 	var/datum/action/innate/cult/mastervote/vote = new
 	var/datum/action/innate/cult/blood_magic/magic = new
 	job_rank = ROLE_CULTIST
-	antag_hud_type = ANTAG_HUD_CULT
 	antag_hud_name = "cult"
 	var/ignore_implant = FALSE
 	var/give_equipment = FALSE
@@ -104,7 +103,6 @@
 	var/mob/living/current = owner.current
 	if(mob_override)
 		current = mob_override
-	add_antag_hud(antag_hud_type, antag_hud_name, current)
 	handle_clown_mutation(current, mob_override ? null : "Your training has allowed you to overcome your clownish nature, allowing you to wield weapons without harming yourself.")
 	current.faction |= "cult"
 	current.grant_language(/datum/language/narsie, TRUE, TRUE, LANGUAGE_CULTIST)
@@ -119,12 +117,13 @@
 		if(cult_team.cult_ascendent)
 			cult_team.ascend(current)
 
+	add_team_hud(current)
+
 /datum/antagonist/cult/remove_innate_effects(mob/living/mob_override)
 	. = ..()
 	var/mob/living/current = owner.current
 	if(mob_override)
 		current = mob_override
-	remove_antag_hud(antag_hud_type, current)
 	handle_clown_mutation(current, removing = FALSE)
 	current.faction -= "cult"
 	current.remove_language(/datum/language/narsie, TRUE, TRUE, LANGUAGE_CULTIST)
@@ -133,12 +132,14 @@
 	magic.Remove(current)
 	current.clear_alert("bloodsense")
 	if(ishuman(current))
-		var/mob/living/carbon/human/H = current
-		H.eye_color = initial(H.eye_color)
-		H.dna.update_ui_block(DNA_EYE_COLOR_BLOCK)
-		REMOVE_TRAIT(H, TRAIT_CULT_EYES, CULT_TRAIT)
-		H.remove_overlay(HALO_LAYER)
-		H.update_body()
+		var/mob/living/carbon/human/human_parent = current
+		human_parent.eye_color_left = initial(human_parent.eye_color_left)
+		human_parent.eye_color_right = initial(human_parent.eye_color_right)
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_LEFT_BLOCK)
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_RIGHT_BLOCK)
+		REMOVE_TRAIT(human_parent, TRAIT_CULT_EYES, null)
+		human_parent.remove_overlay(HALO_LAYER)
+		human_parent.update_body()
 
 /datum/antagonist/cult/on_removal()
 	SSticker.mode.cult -= owner
@@ -177,13 +178,14 @@
 
 /datum/antagonist/cult/proc/admin_take_all(mob/admin)
 	var/mob/living/current = owner.current
-	for(var/o in current.GetAllContents())
+	for(var/o in current.get_all_contents())
 		if(istype(o, /obj/item/melee/cultblade/dagger) || istype(o, /obj/item/stack/sheet/runed_metal))
 			qdel(o)
 
 /datum/antagonist/cult/master
 	ignore_implant = TRUE
 	show_in_antagpanel = FALSE //Feel free to add this later
+	antag_hud_name = "cultmaster"
 	var/datum/action/innate/cult/master/finalreck/reckoning = new
 	var/datum/action/innate/cult/master/cultmark/bloodmark = new
 	var/datum/action/innate/cult/master/pulse/throwing = new
@@ -194,11 +196,6 @@
 	QDEL_NULL(bloodmark)
 	QDEL_NULL(throwing)
 	return ..()
-
-/datum/antagonist/cult/master/on_gain()
-	. = ..()
-	var/mob/living/current = owner.current
-	set_antag_hud(current, "cultmaster")
 
 /datum/antagonist/cult/master/greet()
 	to_chat(owner.current, "<span class='cultlarge'>You are the cult's Master</span>. As the cult's Master, you have a unique title and loud voice when communicating, are capable of marking \
@@ -220,6 +217,7 @@
 		cult_team.rise(current)
 		if(cult_team.cult_ascendent)
 			cult_team.ascend(current)
+	add_team_hud(current, /datum/antagonist/cult)
 
 /datum/antagonist/cult/master/remove_innate_effects(mob/living/mob_override)
 	. = ..()
@@ -233,12 +231,14 @@
 	current.remove_status_effect(/datum/status_effect/cult_master)
 
 	if(ishuman(current))
-		var/mob/living/carbon/human/H = current
-		H.eye_color = initial(H.eye_color)
-		H.dna.update_ui_block(DNA_EYE_COLOR_BLOCK)
-		REMOVE_TRAIT(H, TRAIT_CULT_EYES, null)
-		H.remove_overlay(HALO_LAYER)
-		H.update_body()
+		var/mob/living/carbon/human/human_parent = current
+		human_parent.eye_color_left = initial(human_parent.eye_color_left)
+		human_parent.eye_color_right = initial(human_parent.eye_color_right)
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_LEFT_BLOCK)
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_RIGHT_BLOCK)
+		REMOVE_TRAIT(human_parent, TRAIT_CULT_EYES, null)
+		human_parent.remove_overlay(HALO_LAYER)
+		human_parent.update_body()
 
 /datum/team/cult
 	name = "Cult"
@@ -285,11 +285,13 @@
 
 /datum/team/cult/proc/rise(cultist)
 	if(ishuman(cultist))
-		var/mob/living/carbon/human/H = cultist
-		H.eye_color = "f00"
-		H.dna.update_ui_block(DNA_EYE_COLOR_BLOCK)
-		ADD_TRAIT(H, CULT_EYES, CULT_TRAIT)
-		H.update_body()
+		var/mob/living/carbon/human/human_parent = cultist
+		human_parent.eye_color_left = BLOODCULT_EYE
+		human_parent.eye_color_right = BLOODCULT_EYE
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_LEFT_BLOCK)
+		human_parent.dna.update_ui_block(DNA_EYE_COLOR_RIGHT_BLOCK)
+		ADD_TRAIT(human_parent, CULT_EYES, CULT_TRAIT)
+		human_parent.update_body()
 
 /datum/team/cult/proc/ascend(cultist)
 	if(ishuman(cultist))

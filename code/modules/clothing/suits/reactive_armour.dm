@@ -38,6 +38,7 @@
 	actions_types = list(/datum/action/item_action/toggle)
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | ACID_PROOF
 	hit_reaction_chance = 50
+	allowed = list(/obj/item/ammo_box, /obj/item/ammo_casing, /obj/item/flashlight, /obj/item/gun/ballistic, /obj/item/gun/energy, /obj/item/kitchen/knife/combat, /obj/item/melee/baton, /obj/item/melee/classic_baton, /obj/item/reagent_containers/spray/pepper, /obj/item/restraints/handcuffs, /obj/item/tank/internals/emergency_oxygen, /obj/item/tank/internals/plasmaman, /obj/item/storage/belt/holster/detective, /obj/item/storage/belt/holster/thermal, /obj/item/storage/belt/holster/nukie, /obj/item/tank/internals/emergency_oxygen, /obj/item/healthanalyzer, /obj/item/medbot_carrier, /obj/item/gun/syringe, /obj/item/solnce)
 
 /obj/item/clothing/suit/armor/reactive/attack_self(mob/user)
 	active = !(active)
@@ -102,7 +103,7 @@
 		for(var/mob/living/carbon/C in range(6, owner))
 			if(C != owner)
 				C.adjust_fire_stacks(8)
-				C.IgniteMob()
+				C.ignite_mob()
 		owner.set_fire_stacks(-20)
 		reactivearmor_cooldown = world.time + reactivearmor_cooldown_duration
 		return TRUE
@@ -208,7 +209,7 @@
 			owner.visible_message(span_danger("Реактивная броня на перезарядке!"))
 			return
 		owner.visible_message(span_danger("Реактивная система телепортации сбрасывает [H] от [attack_text] и бросает [H.ru_na()] на созданный стол!"))
-		owner.visible_message("<font color='red' size='3'>[H] ОТПРАВЛЯЕТСЯ НА СТОЛ!!!</font>")
+		owner.visible_message(span_boldwarning("[H] ОТПРАВЛЯЕТСЯ НА СТОЛ!!!"))
 		owner.Paralyze(40)
 		do_teleport(owner, get_turf(owner), tele_range, no_effects = TRUE, channel = TELEPORT_CHANNEL_BLUESPACE)
 		new /obj/structure/table(get_turf(owner))

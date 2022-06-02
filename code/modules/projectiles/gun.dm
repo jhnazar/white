@@ -3,8 +3,8 @@
 #define FIRING_PIN_REMOVAL_DELAY 50
 
 /obj/item/gun
-	name = "gun"
-	desc = "It's a gun. It's pretty terrible, though."
+	name = "оружие"
+	desc = "Пистолет. Хотя, довольно ужасный."
 	icon = 'icons/obj/guns/projectile.dmi'
 	icon_state = "detective"
 	inhand_icon_state = "gun"
@@ -71,12 +71,6 @@
 	var/flight_x_offset = 0
 	var/flight_y_offset = 0
 
-	//Zooming
-	var/zoomable = FALSE //whether the gun generates a Zoom action on creation
-	var/zoomed = FALSE //Zoom toggle
-	var/zoom_amt = 3 //Distance in TURFs to move the user's screen forward (the "zoom" effect)
-	var/zoom_out_amt = 0
-	var/datum/action/toggle_scope_zoom/azoom
 	var/pb_knockback = 0
 	hud_possible = list(HACKER_HUD)
 	var/extra_damage = 0				//Number to add to individual bullets.
@@ -90,8 +84,7 @@
 		pin = new pin(src)
 	if(gun_light)
 		alight = new(src)
-	build_zooming()
-	makeJamming()
+	make_jamming()
 	RegisterSignal(src, COMSIG_CLICK_CTRL_SHIFT, .proc/change_skin)
 
 /obj/item/gun/Destroy()
@@ -103,8 +96,6 @@
 		QDEL_NULL(bayonet)
 	if(chambered) //Not all guns are chambered (EMP'ed energy guns etc)
 		QDEL_NULL(chambered)
-	if(azoom)
-		QDEL_NULL(azoom)
 	if(isatom(suppressed)) //SUPPRESSED IS USED AS BOTH A TRUE/FALSE AND AS A REF, WHAT THE FUCKKKKKKKKKKKKKKKKK
 		QDEL_NULL(suppressed)
 	return ..()
@@ -152,11 +143,6 @@
 	else if(can_bayonet)
 		. += "\n"
 		. += "Сюда можно прикрепить <b>штык</b>."
-
-/obj/item/gun/equipped(mob/living/user, slot)
-	. = ..()
-	if(zoomed && user.get_active_held_item() != src)
-		zoom(user, user.dir, FALSE) //we can only stay zoomed in if it's in our hands //yeah and we only unzoom if we're actually zoomed using the gun!!
 
 //called after the gun has successfully fired its chambered ammo.
 /obj/item/gun/proc/process_chamber(empty_chamber = TRUE, from_firing = TRUE, chamber_next_round = TRUE)
@@ -225,7 +211,8 @@
 		return
 	if(firing_burst)
 		return
-
+	if(SEND_SIGNAL(src, COMSIG_GUN_TRY_FIRE, user, target, flag, params) & COMPONENT_CANCEL_GUN_FIRE)
+		return
 	if(flag) //It's adjacent, is the user, or is on the user's person
 		if(target in user.contents) //can't shoot stuff inside us.
 			return
@@ -316,7 +303,7 @@
 		if(iteration > 1 && !(user.is_holding(src))) //for burst firing
 			firing_burst = FALSE
 			return FALSE
-	if(chambered?.BB)
+	if(chambered?.loaded_projectile)
 		if(HAS_TRAIT(user, TRAIT_PACIFISM)) // If the user has the pacifist trait, then they won't be able to fire [src] if the round chambered inside of [src] is lethal.
 			if(chambered.harmful) // Is the bullet chambered harmful?
 				to_chat(user, span_warning("[capitalize(src.name)] заряжен летально! Я же ведь не хочу навредить кому-то..."))
@@ -347,7 +334,8 @@
 
 /obj/item/gun/proc/process_fire(atom/target, mob/living/user, message = TRUE, params = null, zone_override = "", bonus_spread = 0)
 	if(user)
-		SEND_SIGNAL(user, COMSIG_MOB_FIRED_GUN, src, target, params, zone_override)
+		if(SEND_SIGNAL(user, COMSIG_MOB_FIRED_GUN, src, target, params, zone_override) & COMSIG_GUN_FIRED_CANCEL)
+			return
 
 	if(SEND_SIGNAL(src, COMSIG_GUN_FIRED, user, target, params, zone_override) & COMSIG_GUN_FIRED_CANCEL)
 		return
@@ -370,7 +358,7 @@
 		randomized_gun_spread =	rand(0,spread)
 	var/randomized_bonus_spread = rand(base_bonus_spread, bonus_spread)
 
-	if(check_for_assblast(user, "R_U_A_WIZARD?")) //nice shootin' tex nice shootin' tex nice shootin' tex nice shootin' tex
+	if(check_for_assblast(user, ASSBLAST_WIZARD)) //nice shootin' tex nice shootin' tex nice shootin' tex nice shootin' tex
 		user.emote("spin")
 		randomized_gun_spread = 360
 		randomized_bonus_spread = 0
@@ -604,18 +592,6 @@
 	update_appearance()
 	update_action_buttons()
 
-/obj/item/gun/pickup(mob/user)
-	..()
-	if(azoom)
-		azoom.Grant(user)
-
-/obj/item/gun/dropped(mob/user)
-	. = ..()
-	if(azoom)
-		azoom.Remove(user)
-	if(zoomed)
-		zoom(user, user.dir, FALSE)
-
 /obj/item/gun/update_overlays()
 	. = ..()
 	if(gun_light)
@@ -668,16 +644,16 @@
 
 	target.visible_message(span_warning("[user] pulls the trigger!"), span_userdanger("[(user == target) ? "You pull" : "[user] pulls"] the trigger!"))
 
-	if(chambered?.BB)
-		chambered.BB.damage *= 5
-		if(chambered.BB.wound_bonus != CANT_WOUND)
-			chambered.BB.wound_bonus += 5 // much more dramatic on multiple pellet'd projectiles really
+	if(chambered?.loaded_projectile)
+		chambered.loaded_projectile.damage *= 5
+		if(chambered.loaded_projectile.wound_bonus != CANT_WOUND)
+			chambered.loaded_projectile.wound_bonus += 5 // much more dramatic on multiple pellet'd projectiles really
 
 	var/fired = process_fire(target, user, TRUE, params, BODY_ZONE_HEAD)
-	if(!fired && chambered?.BB)
-		chambered.BB.damage /= 5
-		if(chambered.BB.wound_bonus != CANT_WOUND)
-			chambered.BB.wound_bonus -= 5
+	if(!fired && chambered?.loaded_projectile)
+		chambered.loaded_projectile.damage /= 5
+		if(chambered.loaded_projectile.wound_bonus != CANT_WOUND)
+			chambered.loaded_projectile.wound_bonus -= 5
 
 /obj/item/gun/proc/unlock() //used in summon guns and as a convience for admins
 	if(pin)
@@ -687,67 +663,6 @@
 //Happens before the actual projectile creation
 /obj/item/gun/proc/before_firing(atom/target,mob/user)
 	return
-
-/////////////
-// ZOOMING //
-/////////////
-
-/datum/action/toggle_scope_zoom
-	name = "Toggle Scope"
-	check_flags = AB_CHECK_CONSCIOUS|AB_CHECK_HANDS_BLOCKED|AB_CHECK_IMMOBILE|AB_CHECK_LYING
-	icon_icon = 'icons/mob/actions/actions_items.dmi'
-	button_icon_state = "sniper_zoom"
-	var/obj/item/gun/gun = null
-
-/datum/action/toggle_scope_zoom/Trigger()
-	. = ..()
-	if(!.)
-		return
-	gun.zoom(owner, owner.dir)
-
-/datum/action/toggle_scope_zoom/IsAvailable()
-	. = ..()
-	if(owner.get_active_held_item() != gun)
-		. = FALSE
-	if(!. && gun)
-		gun.zoom(owner, owner.dir, FALSE)
-
-/datum/action/toggle_scope_zoom/Remove(mob/living/L)
-	gun.zoom(L, L.dir, FALSE)
-	..()
-
-/obj/item/gun/proc/rotate(atom/thing, old_dir, new_dir)
-	SIGNAL_HANDLER
-
-	if(ismob(thing))
-		var/mob/lad = thing
-		lad.client.view_size.zoomOut(zoom_out_amt, zoom_amt, new_dir)
-
-/obj/item/gun/proc/zoom(mob/living/user, direc, forced_zoom)
-	if(!user || !user.client)
-		return
-
-	if(isnull(forced_zoom))
-		zoomed = !zoomed
-	else
-		zoomed = forced_zoom
-
-	if(zoomed)
-		RegisterSignal(user, COMSIG_ATOM_DIR_CHANGE, .proc/rotate)
-		user.client.view_size.zoomOut(zoom_out_amt, zoom_amt, direc)
-	else
-		UnregisterSignal(user, COMSIG_ATOM_DIR_CHANGE)
-		user.client.view_size.zoomIn()
-	return zoomed
-
-//Proc, so that gun accessories/scopes/etc. can easily add zooming.
-/obj/item/gun/proc/build_zooming()
-	if(azoom)
-		return
-
-	if(zoomable)
-		azoom = new()
-		azoom.gun = src
 
 #undef FIRING_PIN_REMOVAL_DELAY
 #undef DUALWIELD_PENALTY_EXTRA_MULTIPLIER

@@ -79,7 +79,7 @@
 	name = "EngiDrobe"
 	desc = "Торговый автомат, известный торговлей одеждой промышленного класса."
 	icon_state = "engidrobe"
-	product_ads = "Гарантированно защитит ваши ноги от несчастных случаев на производстве!;Боитесь радиации? Тогда наденьте желтое!"
+	product_ads = "Гарантированно защитит ноги от несчастных случаев на производстве!;Боитесь радиации? Тогда наденьте желтое!"
 	vend_reply = "Спасибо за использование EngiDrobe!"
 	products = list(/obj/item/clothing/accessory/pocketprotector = 3,
 					/obj/item/storage/backpack/duffelbag/engineering = 3,
@@ -155,6 +155,8 @@
 	product_ads = "Вы превращаете меня в ИСТИНУ, используя определения!;0110001101101100011011110111010001101000011001010111001101101000011001010111001001100101"
 	vend_reply = "Спасибо за использование RoboDrobe!"
 	products = list(/obj/item/clothing/glasses/hud/diagnostic = 2,
+					/obj/item/storage/belt = 2,
+					/obj/item/storage/belt/utility = 2,
 					/obj/item/clothing/under/rank/rnd/roboticist = 2,
 					/obj/item/clothing/under/rank/rnd/roboticist/skirt = 2,
 					/obj/item/clothing/suit/toggle/labcoat/roboticist = 2,
@@ -305,7 +307,6 @@
 	product_ads = "Приходите и возьмите свою одежду для уборщиков, которую теперь одобряют уборщики-ящеры повсюду!"
 	vend_reply = "Спасибо за использование JaniDrobe!"
 	products = list(/obj/item/clothing/under/rank/civilian/janitor = 2,
-					/obj/item/cartridge/janitor = 2,
 					/obj/item/clothing/under/rank/civilian/janitor/skirt = 2,
 					/obj/item/clothing/gloves/color/black = 2,
 					/obj/item/clothing/head/soft/purple = 2,

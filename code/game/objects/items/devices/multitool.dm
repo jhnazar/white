@@ -104,10 +104,10 @@
 /obj/item/multitool/ai_detect/proc/show_hud(mob/user)
 	if(user && hud_type)
 		var/atom/movable/screen/plane_master/camera_static/PM = user.hud_used.plane_masters["[CAMERA_STATIC_PLANE]"]
-		PM.alpha = 150
+		PM.alpha = 64
 		var/datum/atom_hud/H = GLOB.huds[hud_type]
-		if(!H.hudusers[user])
-			H.add_hud_to(user)
+		if(!H.hud_users[user])
+			H.show_to(user)
 		eye.eye_user = user
 		eye.setLoc(get_turf(src))
 
@@ -116,7 +116,7 @@
 		var/atom/movable/screen/plane_master/camera_static/PM = user.hud_used.plane_masters["[CAMERA_STATIC_PLANE]"]
 		PM.alpha = 255
 		var/datum/atom_hud/H = GLOB.huds[hud_type]
-		H.remove_hud_from(user)
+		H.hide_from(user)
 		if(eye)
 			eye.setLoc(null)
 			eye.eye_user = null
@@ -146,23 +146,22 @@
 /mob/camera/ai_eye/remote/ai_detector
 	name = "AI detector eye"
 	ai_detector_visible = FALSE
-	use_static = USE_STATIC_TRANSPARENT
 	visible_icon = FALSE
 
 /datum/action/item_action/toggle_multitool
 	name = "Toggle AI detector HUD"
 	check_flags = NONE
 
-/datum/action/item_action/toggle_multitool/Trigger()
+/datum/action/item_action/toggle_multitool/Trigger(trigger_flags)
 	if(!..())
-		return 0
+		return FALSE
 	if(target)
 		var/obj/item/multitool/ai_detect/M = target
 		M.toggle_hud(owner)
-	return 1
+	return TRUE
 
 /obj/item/multitool/abductor
-	name = "чужеродный мультитул"
+	name = "инопланетный мультитул"
 	desc = "Омни-технологический интерфейс."
 	icon = 'icons/obj/abductor.dmi'
 	icon_state = "multitool"

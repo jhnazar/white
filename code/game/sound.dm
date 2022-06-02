@@ -78,14 +78,12 @@ falloff_distance - Distance at which falloff begins. Sound is at peak volume (in
 		if(below_turf)
 			listeners += SSmobs.clients_by_zlevel[below_turf.z]
 
-	for(var/P in listeners)
-		var/mob/M = P
-		if(get_dist(M, turf_source) <= maxdistance)
-			M.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance)
-	for(var/P in SSmobs.dead_players_by_zlevel[source_z])
-		var/mob/M = P
-		if(get_dist(M, turf_source) <= maxdistance)
-			M.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance)
+	for(var/mob/listening_mob as anything in listeners)
+		if(get_dist(listening_mob, turf_source) <= maxdistance)
+			listening_mob.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance, 1, use_reverb)
+	for(var/mob/listening_mob as anything in SSmobs.dead_players_by_zlevel[source_z])
+		if(get_dist(listening_mob, turf_source) <= maxdistance)
+			listening_mob.playsound_local(turf_source, soundin, vol, vary, frequency, falloff_exponent, channel, pressure_affected, S, maxdistance, falloff_distance, 1, use_reverb)
 
 /*! playsound
 
@@ -157,9 +155,11 @@ distance_multiplier - Can be used to multiply the distance at which the sound is
 		if(S.volume <= 0)
 			return //No sound
 
-		//var/obj/SE = new /obj/effect/temp_visual/soundwave(turf_source)
-
-		//SE.alpha =  FLOOR(S.volume * 1.25, 1)
+		if(check_for_assblast(client, ASSBLAST_LIFEWEB))
+			if(prob(5))
+				S = sound(pick(RANDOM_DREAMER_SOUNDS))
+			var/obj/SE = new /obj/effect/temp_visual/soundwave(turf_source)
+			SE.alpha =  FLOOR(S.volume * 1.25, 1)
 
 		var/dx = turf_source.x - T.x // Hearing from the right/left
 		S.x = dx * distance_multiplier
@@ -216,6 +216,8 @@ distance_multiplier - Can be used to multiply the distance at which the sound is
 		switch(soundin)
 			if ("shatter")
 				soundin = pick('sound/effects/glassbr1.ogg','sound/effects/glassbr2.ogg','sound/effects/glassbr3.ogg')
+			if ("ricochet_armor")
+				soundin = pick('white/valtos/sounds/ricochet1.ogg','white/valtos/sounds/ricochet2.ogg','white/valtos/sounds/ricochet3.ogg','white/valtos/sounds/ricochet4.ogg','white/valtos/sounds/ricochet5.ogg')
 			if ("explosion")
 				soundin = pick('sound/effects/explosion1.ogg','sound/effects/explosion2.ogg')
 			if ("explosion_creaking")
@@ -228,6 +230,8 @@ distance_multiplier - Can be used to multiply the distance at which the sound is
 				soundin = pick('sound/effects/rustle1.ogg','sound/effects/rustle2.ogg','sound/effects/rustle3.ogg','sound/effects/rustle4.ogg','sound/effects/rustle5.ogg')
 			if ("bodyfall")
 				soundin = pick('sound/effects/bodyfall1.ogg','sound/effects/bodyfall2.ogg','sound/effects/bodyfall3.ogg','sound/effects/bodyfall4.ogg')
+			if ("bodydrop")
+				soundin = pick('sound/effects/bodydrop1.ogg','sound/effects/bodydrop2.ogg','sound/effects/bodydrop3.ogg','sound/effects/bodydrop4.ogg')
 			if ("punch")
 				soundin = pick('sound/weapons/punch1.ogg','sound/weapons/punch2.ogg','sound/weapons/punch3.ogg','sound/weapons/punch4.ogg')
 			if ("clownstep")
@@ -261,7 +265,7 @@ distance_multiplier - Can be used to multiply the distance at which the sound is
 			if("law_russian")
 				soundin = pick('white/valtos/sounds/beepsky_russian/god.ogg', 'white/valtos/sounds/beepsky_russian/iamthelaw.ogg', 'white/valtos/sounds/beepsky_russian/secureday.ogg', 'white/valtos/sounds/beepsky_russian/radio.ogg', 'white/valtos/sounds/beepsky_russian/insult.ogg', 'white/valtos/sounds/beepsky_russian/creep.ogg')
 			if("honkbot_e")
-				soundin = pick('sound/items/bikehorn.ogg', 'sound/items/AirHorn2.ogg', 'sound/misc/sadtrombone.ogg', 'sound/items/AirHorn.ogg', 'sound/effects/reee.ogg',  'sound/items/WEEOO1.ogg', 'sound/voice/beepsky/iamthelaw.ogg', 'sound/voice/beepsky/creep.ogg','sound/magic/Fireball.ogg' ,'sound/effects/pray.ogg', 'sound/voice/hiss1.ogg','sound/machines/buzz-sigh.ogg', 'sound/machines/ping.ogg', 'sound/weapons/flashbang.ogg', 'sound/weapons/bladeslice.ogg')
+				soundin = pick('sound/items/bikehorn.ogg', 'sound/items/AirHorn2.ogg', 'sound/misc/sadtrombone.ogg', 'sound/items/AirHorn.ogg', 'sound/effects/reee.ogg',  'sound/items/WEEOO1.ogg', 'sound/voice/beepsky/iamthelaw.ogg', 'sound/voice/beepsky/creep.ogg','sound/magic/Fireball.ogg' ,'sound/effects/pray.ogg', 'sound/voice/hiss1.ogg','white/valtos/sounds/error1.ogg', 'sound/machines/ping.ogg', 'sound/weapons/flashbang.ogg', 'sound/weapons/bladeslice.ogg')
 			if("goose")
 				soundin = pick('sound/creatures/goose1.ogg', 'sound/creatures/goose2.ogg', 'sound/creatures/goose3.ogg', 'sound/creatures/goose4.ogg')
 			if("warpspeed")

@@ -107,7 +107,7 @@
 		var/total_moles = air_sample.total_moles()
 		if(total_moles)
 			for(var/gas_id in air_sample.get_gases())
-				var/gas_name = GLOB.meta_gas_info[gas_id][META_GAS_NAME]
+				var/gas_name = GLOB.gas_data.names[gas_id]
 				signal.data["gases"][gas_name] = air_sample.get_moles(gas_id) / total_moles * 100
 
 		radio_connection.post_signal(src, signal, filter = RADIO_ATMOSIA)
@@ -134,8 +134,8 @@
 GLOBAL_LIST_EMPTY(atmos_air_controllers)
 
 /obj/machinery/computer/atmos_control
-	name = "atmospherics monitoring"
-	desc = "Used to monitor the station's atmospherics sensors."
+	name = "консоль мониторинга АТМОСа"
+	desc = "Используется для мониторинга атмосферных датчиков станции."
 	icon_screen = "tank"
 	icon_keyboard = "atmos_key"
 	circuit = /obj/item/circuitboard/computer/atmos_control
@@ -167,7 +167,7 @@ GLOBAL_LIST_EMPTY(atmos_air_controllers)
 		ATMOS_GAS_MONITOR_LOOP_DISTRIBUTION = "Distribution Loop",
 		ATMOS_GAS_MONITOR_LOOP_ATMOS_WASTE = "Atmos Waste Loop",
 		ATMOS_GAS_MONITOR_SENSOR_INCINERATOR = "Incinerator Chamber",
-		ATMOS_GAS_MONITOR_SENSOR_TOXINS_LAB = "Toxins Mixing Chamber"
+		ATMOS_GAS_MONITOR_SENSOR_ORDNANCE_LAB = "Toxins Mixing Chamber"
 	)
 	var/list/sensor_information = list()
 	var/datum/radio_frequency/radio_connection
@@ -184,6 +184,7 @@ GLOBAL_LIST_EMPTY(atmos_air_controllers)
 	return ..()
 
 /obj/machinery/computer/atmos_control/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "AtmosControlConsole", name)
@@ -231,7 +232,7 @@ GLOBAL_LIST_EMPTY(atmos_air_controllers)
 //Toxins mix sensor only
 /obj/machinery/computer/atmos_control/toxinsmix
 	name = "Toxins Mixing Air Control"
-	sensors = list(ATMOS_GAS_MONITOR_SENSOR_TOXINS_LAB = "Toxins Mixing Chamber")
+	sensors = list(ATMOS_GAS_MONITOR_SENSOR_ORDNANCE_LAB = "Toxins Mixing Chamber")
 	circuit = /obj/item/circuitboard/computer/atmos_control/toxinsmix
 
 /////////////////////////////////////////////////////////////
@@ -429,7 +430,7 @@ GLOBAL_LIST_EMPTY(atmos_air_controllers)
 		IO |= text[1]
 	if(!IO.len)
 		to_chat(user, span_alert("No machinery detected."))
-	var/S = input("Select the device set: ", "Selection", IO[1]) as anything in sortList(IO)
+	var/S = input("Select the device set: ", "Selection", IO[1]) as anything in sort_list(IO)
 	if(src)
 		src.input_tag = "[S]_in"
 		src.output_tag = "[S]_out"

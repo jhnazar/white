@@ -25,7 +25,7 @@
 	name = "Lawyer"
 	jobtype = /datum/job/lawyer
 
-	belt = /obj/item/pda/lawyer
+	belt = /obj/item/modular_computer/tablet/pda/lawyer
 	ears = /obj/item/radio/headset/headset_srvsec
 	uniform = /obj/item/clothing/under/rank/civilian/lawyer/bluesuit
 	suit = /obj/item/clothing/suit/toggle/lawyer
@@ -33,7 +33,6 @@
 	l_hand = /obj/item/storage/briefcase/lawyer
 	l_pocket = /obj/item/laser_pointer
 	r_pocket = /obj/item/clothing/accessory/lawyers_badge
-	backpack_contents = list(/obj/item/modular_computer/tablet/preset/cheap=1)
 
 	chameleon_extras = /obj/item/stamp/law
 

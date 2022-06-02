@@ -3,12 +3,14 @@
 	name = "дверь"
 	desc = "Открывается и закрывается. Удивительно."
 	icon = 'icons/obj/doors/Doorint.dmi'
+	base_icon_state = "door"
 	icon_state = "door1"
 	opacity = TRUE
 	density = TRUE
 	move_resist = MOVE_FORCE_VERY_STRONG
 	layer = OPEN_DOOR_LAYER
 	power_channel = AREA_USAGE_ENVIRON
+	pass_flags_self = PASSDOORS
 	max_integrity = 350
 	armor = list(MELEE = 20, BULLET = 30, LASER = 20, ENERGY = 20, BOMB = 10, BIO = 100, RAD = 100, FIRE = 80, ACID = 70)
 	CanAtmosPass = ATMOS_PASS_DENSITY
@@ -19,6 +21,9 @@
 	interaction_flags_atom = INTERACT_ATOM_UI_INTERACT
 
 	var/air_tight = FALSE	//TRUE means density will be set as soon as the door begins to close
+
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.1
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.2
 
 	var/secondsElectrified = MACHINE_NOT_ELECTRIFIED
 	var/shockedby
@@ -48,7 +53,7 @@
 	. = ..()
 	if(red_alert_access)
 		. += "<hr>"
-		if(GLOB.security_level >= SEC_LEVEL_RED)
+		if(SSsecurity_level.current_level >= SEC_LEVEL_RED)
 			. += "<span class='notice'>Учитывая угрозу, требования по доступу повышены!</span>\n"
 		else
 			. += "<span class='notice'>Учитывая красный код, требования по доступу повышены.</span>\n"
@@ -58,7 +63,7 @@
 		. += "<hr><span class='notice'>Здесь есть надпись, что этот шлюз откроется <b>просто твоими руками</b>, если здесь не будет энергии.</span>"
 
 /obj/machinery/door/check_access_list(list/access_list)
-	if(red_alert_access && GLOB.security_level >= SEC_LEVEL_RED)
+	if(red_alert_access && SSsecurity_level.current_level >= SEC_LEVEL_RED)
 		return TRUE
 	return ..()
 
@@ -66,7 +71,7 @@
 	. = ..()
 	set_init_door_layer()
 	update_freelook_sight()
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 	GLOB.airlocks += src
 	spark_system = new /datum/effect_system/spark_spread
 	spark_system.set_up(2, 1, src)
@@ -78,6 +83,7 @@
 	//doors only block while dense though so we have to use the proc
 	real_explosion_block = explosion_block
 	explosion_block = EXPLOSION_BLOCK_PROC
+	RegisterSignal(SSsecurity_level, COMSIG_SECURITY_LEVEL_CHANGED, .proc/check_security_level)
 
 /obj/machinery/door/proc/set_init_door_layer()
 	if(density)
@@ -91,8 +97,25 @@
 	if(spark_system)
 		qdel(spark_system)
 		spark_system = null
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	return ..()
+
+/**
+ * Signal handler for checking if we notify our surrounding that access requirements are lifted accordingly to a newly set security level
+ *
+ * Arguments:
+ * * source The datum source of the signal
+ * * new_level The new security level that is in effect
+ */
+/obj/machinery/door/proc/check_security_level(datum/source, new_level)
+	SIGNAL_HANDLER
+
+	if(new_level <= SEC_LEVEL_BLUE)
+		return
+	if(!red_alert_access)
+		return
+	audible_message("<span class='notice'>[src] издаёт странные звуки, похоже уровень доступа изменился!</span>")
+	playsound(src, 'sound/machines/boltsup.ogg', 50, TRUE)
 
 /obj/machinery/door/proc/try_safety_unlock(mob/user)
 	if(safety_mode && !hasPower() && density)
@@ -324,6 +347,7 @@
 	if(operating)
 		return
 	operating = TRUE
+	use_power(active_power_usage)
 	do_animate("opening")
 	set_opacity(0)
 	sleep(5)
@@ -334,7 +358,7 @@
 	update_icon()
 	set_opacity(0)
 	operating = FALSE
-	air_update_turf(TRUE, FALSE)
+	air_update_turf(TRUE)
 	update_freelook_sight()
 	if(autoclose)
 		autoclose_in(DOOR_CLOSE_WAIT)
@@ -366,7 +390,7 @@
 	if(visible && !glass)
 		set_opacity(1)
 	operating = FALSE
-	air_update_turf(TRUE, TRUE)
+	air_update_turf(TRUE)
 	update_freelook_sight()
 
 	if(!can_crush)
@@ -421,11 +445,6 @@
 	if(!glass && GLOB.cameranet)
 		GLOB.cameranet.updateVisibility(src, 0)
 
-/obj/machinery/door/BlockSuperconductivity() // All non-glass airlocks block heat, this is intended.
-	if(opacity || heat_proof)
-		return 1
-	return 0
-
 /obj/machinery/door/morgue
 	icon = 'icons/obj/doors/doormorgue.dmi'
 
@@ -448,7 +467,7 @@
 
 /obj/machinery/door/ex_act(severity, target)
 	//if it blows up a wall it should blow up a door
-	..(severity ? max(1, severity - 1) : 0, target)
+	return ..(severity ? min(EXPLODE_DEVASTATE, severity + 1) : EXPLODE_NONE, target)
 
 /obj/machinery/door/GetExplosionBlock()
 	return density ? real_explosion_block : 0

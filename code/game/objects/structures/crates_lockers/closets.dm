@@ -1,8 +1,13 @@
 #define LOCKER_FULL -1
+//password stuff
+#define MODE_OPTIONAL 1
+#define MODE_PASSWORD 2
+#define MODE_CARD 3
+#define PASSWORD_LENGHT 3
 
 /obj/structure/closet
 	name = "шкаф"
-	desc = "Это наиболее распространенный вид хранилища."
+	desc = "Наиболее распространенный вид хранилища."
 	icon = 'icons/obj/closet.dmi'
 	icon_state = "generic"
 	density = TRUE
@@ -10,12 +15,31 @@
 	max_integrity = 200
 	integrity_failure = 0.25
 	armor = list(MELEE = 20, BULLET = 10, LASER = 10, ENERGY = 0, BOMB = 10, BIO = 0, RAD = 0, FIRE = 70, ACID = 60)
+	blocks_emissive = EMISSIVE_BLOCK_UNIQUE
+	interaction_flags_atom = null
 
+	/// The overlay for the closet's door
+	var/obj/effect/overlay/closet_door/door_obj
+	/// Whether or not this door is being animated
+	var/is_animating_door = FALSE
+	/// Vertical squish of the door
+	var/door_anim_squish = 0.12
+	/// The maximum angle the door will be drawn at
+	var/door_anim_angle = 136
+	/// X position of the closet door hinge
+	var/door_hinge_x = -6.5
+	/// Amount of time it takes for the door animation to play
+	var/door_anim_time = 1.5 // set to 0 to make the door not animate at all
+
+	/// Controls whether a door overlay should be applied using the icon_door value as the icon state
+	var/enable_door_overlay = TRUE
+	var/has_opened_overlay = TRUE
+	var/has_closed_overlay = TRUE
 	var/icon_door = null
-	var/icon_door_override = FALSE //override to have open overlay use icon different to its base's
 	var/secure = FALSE //secure locker or not, also used if overriding a non-secure locker with a secure door overlay to add fancy lights
 	var/opened = FALSE
 	var/welded = FALSE
+	var/reinforced = FALSE
 	var/locked = FALSE
 	var/large = TRUE
 	var/wall_mounted = 0 //never solid (You can always pass over it)
@@ -39,6 +63,7 @@
 	var/delivery_icon = "deliverycloset" //which icon to use when packagewrapped. null to be unwrappable.
 	var/anchorable = TRUE
 	var/icon_welded = "welded"
+	var/icon_reinforced = "reinforced"
 
 	var/hack_progress = 0
 	var/datum/gas_mixture/air_contents
@@ -54,13 +79,74 @@
 	var/divable = TRUE
 	/// true whenever someone with the strong pull component is dragging this, preventing opening
 	var/strong_grab = FALSE
+	/// passwords
+	var/open_mode = MODE_OPTIONAL
+	var/password = ""
+	var/keypad_input = ""
+	var/busy_hacked = FALSE
 
 /obj/structure/closet/Initialize(mapload)
 	if(mapload && !opened && isturf(loc))		// if closed, any item at the crate's loc is put in the contents
 		addtimer(CALLBACK(src, .proc/take_contents), 0)
+	if(locked && secure)
+		create_password()
 	. = ..()
 	update_icon()
 	PopulateContents()
+
+/obj/structure/closet/proc/create_password()
+	var/pass = ""
+	for(var/i in 1 to 3)
+		pass+="[rand(0,9)]"
+	password = pass
+
+/obj/structure/closet/ui_interact(mob/user, datum/tgui/ui)
+	if(isobserver(user))
+		return
+	ui = SStgui.try_update_ui(user, src, ui)
+	if(!ui)
+		ui = new(user, src, "LockerPad", name)
+		ui.open()
+
+/obj/structure/closet/ui_data(mob/user)
+	var/list/data = list()
+	var/shown_input = keypad_input
+	for(var/i in 1 to PASSWORD_LENGHT-length(keypad_input))
+		shown_input+="_ "
+
+	data["keypad"] = shown_input
+
+	return data
+
+/obj/structure/closet/ui_act(action, params)
+	. = ..()
+	if(.)
+		return
+
+	switch(action)
+		if("keypad")
+			switch(params["digit"])
+				if("C")
+					playsound(src, 'white/maxsc/sound/numpad-button.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+					keypad_input = ""
+				if("E")
+					if(length(keypad_input) != PASSWORD_LENGHT || keypad_input != password)
+						playsound(src, 'white/maxsc/sound/numpad-error.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+						return
+					if(keypad_input == password && locked)
+						locked = FALSE
+						keypad_input = ""
+						usr.visible_message(span_notice("[usr] [locked ? "блокирует" : "разблокировывает"] [src].") ,
+							span_notice("[locked ? "Блокирую" : "Разблокировываю"] [src]."))
+						playsound(src, 'white/valtos/sounds/locker.ogg', 25, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+						update_icon()
+				if("0","1","2","3","4","5","6","7","8","9")
+					if(length(keypad_input) >= PASSWORD_LENGHT)
+						playsound(src, 'white/maxsc/sound/numpad-error.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+						return
+					playsound(src, 'white/maxsc/sound/numpad-button.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+					keypad_input+=params["digit"]
+			ui_interact(usr) //quicker ui update
 
 //USE THIS TO FILL IT, NOT INITIALIZE OR NEW
 /obj/structure/closet/proc/PopulateContents()
@@ -68,6 +154,7 @@
 
 /obj/structure/closet/Destroy()
 	dump_contents()
+	QDEL_NULL(door_obj)
 	return ..()
 
 /obj/structure/closet/update_icon()
@@ -85,33 +172,86 @@
 
 /obj/structure/closet/proc/closet_update_overlays(list/new_overlays)
 	. = new_overlays
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
-	luminosity = 0
-	if(!opened)
-		if(icon_door)
-			. += "[icon_door]_door"
+	if(enable_door_overlay && !is_animating_door)
+		if(opened && has_opened_overlay)
+			var/mutable_appearance/door_overlay = mutable_appearance(icon, "[icon_state]_open", alpha = src.alpha)
+			. += door_overlay
+			door_overlay.overlays += emissive_blocker(door_overlay.icon, door_overlay.icon_state, alpha = door_overlay.alpha) // If we don't do this the door doesn't block emissives and it looks weird.
+		else if(has_closed_overlay)
+			. += "[icon_door || icon_state]_door"
+
+	if(opened)
+		return
+
+	if(welded)
+		. += icon_welded
+
+	if(broken || !secure)
+		return
+
+	if(reinforced)
+		. += icon_reinforced
+
+	//Overlay is similar enough for both that we can use the same mask for both
+	. += emissive_appearance(icon, "locked", alpha = src.alpha)
+	. += locked ? "locked" : "unlocked"
+
+/// Animates the closet door opening and closing
+/obj/structure/closet/proc/animate_door(closing = FALSE)
+	if(!door_anim_time)
+		return
+	if(!door_obj)
+		door_obj = new
+	var/default_door_icon = "[icon_door || icon_state]_door"
+	vis_contents += door_obj
+	door_obj.icon = icon
+	door_obj.icon_state = default_door_icon
+	is_animating_door = TRUE
+	var/num_steps = door_anim_time / world.tick_lag
+
+	for(var/step in 0 to num_steps)
+		var/angle = door_anim_angle * (closing ? 1 - (step/num_steps) : (step/num_steps))
+		var/matrix/door_transform = get_door_transform(angle)
+		var/door_state
+		var/door_layer
+
+		if (angle >= 90)
+			door_state = "[icon_state]_back"
+			door_layer = FLOAT_LAYER
 		else
-			. += "[icon_state]_door"
-		if(welded)
-			. += icon_welded
-		if(secure && !broken)
-			//Overlay is similar enough for both that we can use the same mask for both
-			luminosity = 1
-			SSvis_overlays.add_vis_overlay(src, icon, "locked", EMISSIVE_LAYER, EMISSIVE_PLANE, dir, alpha)
-			if(locked)
-				. += "locked"
-			else
-				. += "unlocked"
-	else
-		if(icon_door_override)
-			. += "[icon_door]_open"
+			door_state = default_door_icon
+			door_layer = ABOVE_MOB_LAYER
+
+		if(step == 0)
+			door_obj.transform = door_transform
+			door_obj.icon_state = door_state
+			door_obj.layer = door_layer
+		else if(step == 1)
+			animate(door_obj, transform = door_transform, icon_state = door_state, layer = door_layer, time = world.tick_lag, flags = ANIMATION_END_NOW)
 		else
-			. += "[icon_state]_open"
+			animate(transform = door_transform, icon_state = door_state, layer = door_layer, time = world.tick_lag)
+	addtimer(CALLBACK(src, .proc/end_door_animation), door_anim_time, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_CLIENT_TIME)
+
+/// Ends the door animation and removes the animated overlay
+/obj/structure/closet/proc/end_door_animation()
+	is_animating_door = FALSE
+	vis_contents -= door_obj
+	update_icon()
+
+/// Calculates the matrix to be applied to the animated door overlay
+/obj/structure/closet/proc/get_door_transform(angle)
+	var/matrix/door_matrix = matrix()
+	door_matrix.Translate(-door_hinge_x, 0)
+	door_matrix.Multiply(matrix(cos(angle), 0, 0, -sin(angle) * door_anim_squish, 1, 0))
+	door_matrix.Translate(door_hinge_x, 0)
+	return door_matrix
 
 /obj/structure/closet/examine(mob/user)
 	. = ..()
 	if(welded)
 		. += "<hr><span class='notice'>Это приварено.</span>"
+	if(reinforced)
+		. += "<hr><span class='notice'>Шкаф укреплён пласталью.</span>"
 	if(anchored)
 		. += "<hr><span class='notice'>Это <b>прикручено</b> к полу.</span>"
 	if(opened)
@@ -167,7 +307,7 @@
 	for(var/atom/movable/AM in L)
 		if(AM != src && insert(AM) == LOCKER_FULL) // limit reached
 			break
-	for(var/i in reverseRange(L.GetAllContents()))
+	for(var/i in reverseRange(L.get_all_contents()))
 		var/atom/movable/thing = i
 		SEND_SIGNAL(thing, COMSIG_TRY_STORAGE_HIDE_ALL)
 
@@ -176,6 +316,8 @@
 		return
 	if(opened)
 		return
+	if(SEND_SIGNAL(src, COMSIG_CLOSET_PRE_OPEN, user, force) & BLOCK_OPEN)
+		return
 	welded = FALSE
 	locked = FALSE
 	playsound(loc, open_sound, open_sound_volume, TRUE, -3)
@@ -183,9 +325,11 @@
 	if(!dense_when_open)
 		set_density(FALSE)
 	dump_contents()
+	animate_door(FALSE)
 	update_icon()
 	update_airtightness()
 	after_open(user, force)
+	SEND_SIGNAL(src, COMSIG_CLOSET_POST_OPEN, force)
 	return TRUE
 
 ///Proc to override for effects after opening a door
@@ -241,6 +385,7 @@
 	playsound(loc, close_sound, close_sound_volume, TRUE, -3)
 	opened = FALSE
 	set_density(TRUE)
+	animate_door(TRUE)
 	update_appearance()
 	update_airtightness()
 	after_close(user)
@@ -301,15 +446,15 @@
 		if(!W.tool_start_check(user, amount=0))
 			return
 
-		to_chat(user, span_notice("Начинаю резать [welded ? "развариваю":"свариваю"] <b>[src.name]</b>..."))
+		to_chat(user, span_notice("Начинаю [welded ? "разваривать":"заваривать"] <b>[src.name]</b>..."))
 		if(W.use_tool(src, user, 40, volume=50))
 			if(opened)
 				return
 			welded = !welded
 			after_weld(welded)
 			update_airtightness()
-			user.visible_message(span_notice("[user] [welded ? "сварные швы заварены" : "разварено"] <b>[src.name]</b>.") ,
-							span_notice("[welded ? "сварил" : "разварил"] <b>[src.name]</b> с помощью [W].") ,
+			user.visible_message(span_notice("[user] [welded ? "заваривает" : "разваривает"] <b>[src.name]</b>.") ,
+							span_notice("[welded ? "Завариваю" : "Развариваю"] <b>[src.name]</b> используя [W].") ,
 							span_hear("Слышу сварку."))
 			log_game("[key_name(user)] [welded ? "welded":"unwelded"] closet [src] with [W] at [AREACOORD(src)]")
 			update_icon()
@@ -321,59 +466,84 @@
 		user.visible_message(span_notice("<b>[user]</b> [anchored ? "прикручивает" : "откручивает"] <b>[src.name]</b> [anchored ? "к полу" : "от пола"].") , \
 						span_notice("[anchored ? "Прикручиваю" : "Откручиваю"] <b>[src.name]</b> [anchored ? "к полу" : "от полу"].") , \
 						span_hear("Слышу трещотку."))
-/*	if(W.tool_behaviour == TOOL_MULTITOOL && secure)
-
+	else if(istype(W, /obj/item/stack/sheet/plasteel) && secure)
+		if(reinforced)
+			to_chat(user, span_warning("Уже укреплено. Если поставить больше, то шкаф развалится."))
+			return
+		var/obj/item/stack/S = W
+		if(!S.use(5))
+			to_chat(user, span_warning("Нужно 5 листов пластали для укрепления шкафа."))
+			return
+		user.visible_message(span_notice("<b>[user]</b> укрепляет <b>[src.name]</b> пласталью.") , \
+						span_notice("Укрепляю <b>[src.name]</b> пласталью. Теперь ему не страшны копья.") , \
+						span_hear("Слышу лязг метала."))
+		armor = armor.modifyRating(melee = 10, bullet = 10, laser = 10, energy = 10, bomb = 10, fire = 10)
+		reinforced = TRUE
+		update_icon()
+		return
+	else if(W.tool_behaviour == TOOL_SCREWDRIVER && secure)
 		if(!locked)
+			var/list/choices = list(
+				"Пароль и ID-Карта" = icon('white/valtos/icons/radial.dmi', "pai"),
+				"Только ID-Карта" = icon('white/valtos/icons/radial.dmi', "i"),
+				"Только Пароль" = icon('white/valtos/icons/radial.dmi', "p"),
+			)
+			var/answer = show_radial_menu(user, src, choices, require_near=TRUE)
+			if(!answer)
+				return
+			var/list/l = list("Пароль и ID-Карта"=MODE_OPTIONAL, "Только ID-Карта"=MODE_CARD, "Только Пароль"=MODE_PASSWORD)
+			open_mode = l[answer]
+			to_chat(user, span_notice("Меняю режим на [lowertext(answer)]."))
 			user.visible_message(span_warning("[user] блокирует <b>[src]</b> используя [W].") ,
 									span_warning("Блокирую <b>[src]</b>."))
 			locked = TRUE
+			playsound(src, 'white/valtos/sounds/locker.ogg', 25, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
 			update_icon()
 			return
-
-		var/list/choices = list(
-			"красный"    = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "red"),
-			"зелёный"    = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "green"),
-			"синий"      = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "blue"),
-			"жёлтый"     = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "yellow"),
-			"фиолетовый" = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "violet"),
-			"оранжевый"  = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "orange"),
-			"белый"      = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "white"),
-			"чёрный"     = image(icon = 'white/valtos/icons/hacking.dmi', icon_state = "black")
-		)
-
-		var/true_pick = pick("красный", "зелёный", "синий", "жёлтый", "фиолетовый", "оранжевый", "белый", "чёрный")
-
-		to_chat(user, span_revenbignotice("Фаза [hack_progress + 1]/6. Нужен <b>[true_pick]</b> провод!"))
-
-		var/pick = show_radial_menu(user, src, choices, require_near = TRUE)
-
-		if(W.use_tool(src, user, 5, volume=15))
-
-			if(!pick)
-				hack_progress = 0
-				to_chat(user, span_warning("Выбрать надо было провод! Начинаем сначала."))
-				return
-
-			if(pick != true_pick)
-				hack_progress = 0
-				to_chat(user, span_warning("НЕПРАВИЛЬНО! Начинаем сначала."))
-				return
-
-			hack_progress++
-
-			if(hack_progress != 6)
-				return
-
-			locked = FALSE
-
-			hack_progress = 0
-
-			update_icon()
-
-			user.visible_message(span_warning("[user] взламывает <b>[src]</b> используя [W].") ,
-									span_warning("Взламываю замок <b>[src]</b>."))
+	else if(W.tool_behaviour == TOOL_MULTITOOL && secure)
+		if(!locked && password)
+			to_chat(user, span_notice("Пароль: [password]."))
+		if(locked && open_mode == MODE_PASSWORD | open_mode == MODE_OPTIONAL)
+			ui_interact(user)
+	else if(istype(W, /obj/item/closet_hacker) && locked && secure && password)
+		if(length(keypad_input)>=PASSWORD_LENGHT)
 			return
-*/
+		var/obj/item/closet_hacker/H = W
+		if(!busy_hacked)
+			busy_hacked = TRUE
+			to_chat(user, span_notice("Начинаю взлом [src]."))
+			if(do_after(user, H.hack_time, src))
+				keypad_input+=password[length(keypad_input)+1]
+				playsound(src, 'white/maxsc/sound/numpad-button.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+			to_chat(user, span_notice("Заканчиваю взлом [src]."))
+			busy_hacked = FALSE
+	else if(istype(W, /obj/item/electronics/airlock) && !secure && !opened)
+		var/obj/item/electronics/airlock/A = W
+		var/input = tgui_input_text(user, "Введите пароль для шкафа", "Пароль", default="000", max_length=3)
+		var/valid = TRUE
+		var/obj/structure/closet/secure_closet/S = new(get_turf(src))
+		S.req_access = A.accesses
+		S.create_password()
+		if(input)
+			if(length(input) != 3)
+				valid = FALSE
+			for(var/i in splittext(input, ""))
+				if(!(i in list("0","1","2","3","4","5","6","7","8","9")))
+					valid = FALSE
+			if(valid)
+				S.password = input
+			else
+				to_chat(user, span_notice("Не удалось назначить указанный пароль, используется стандартный."))
+		user.visible_message(span_notice("[user] прикручивает [A] к [src]."),
+		span_notice("Прикручиваю [A] к [src]"))
+		playsound(S, 'sound/items/screwdriver.ogg', 20, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+		S.locked = FALSE
+		S.update_icon()
+		for(var/atom/movable/AM in src)
+			AM.forceMove(S)
+		qdel(A)
+		qdel(src)
+		return
 	else if(user.a_intent != INTENT_HARM)
 		var/item_is_id = W.GetID()
 		if(!item_is_id)
@@ -449,6 +619,11 @@
 	if(!toggle(user))
 		togglelock(user)
 
+/obj/structure/closet/attack_ghost(mob/user)
+	var/mob/living/carbon/human/possible_human = locate(/mob/living/carbon/human) in contents
+	if(possible_human && HAS_TRAIT(possible_human, TRAIT_CLIENT_LEAVED))
+		return possible_human.attack_ghost(user)
+	. = ..()
 
 /obj/structure/closet/attack_paw(mob/user)
 	return attack_hand(user)
@@ -539,7 +714,19 @@
 
 /obj/structure/closet/proc/togglelock(mob/living/user, silent)
 	if(secure && !broken)
-		if(allowed(user))
+		if(open_mode == MODE_PASSWORD)
+			if(iscarbon(user))
+				add_fingerprint(user)
+			if(locked)
+				INVOKE_ASYNC(src, /datum/.proc/ui_interact, user)
+			else
+				locked = !locked
+				playsound(src, 'white/valtos/sounds/locker.ogg', 25, FALSE, SHORT_RANGE_SOUND_EXTRARANGE)
+				user.visible_message(span_notice("[user] [locked ? "блокирует" : "разблокировывает"] [src].") ,
+								span_notice("[locked ? "Блокирую" : "Разблокировываю"] [src]."))
+				update_icon()
+			return
+		if(allowed(user) && open_mode == MODE_OPTIONAL | open_mode == MODE_CARD )
 			if(iscarbon(user))
 				add_fingerprint(user)
 			locked = !locked
@@ -547,6 +734,11 @@
 			user.visible_message(span_notice("[user] [locked ? "блокирует" : "разблокировывает"] [src].") ,
 							span_notice("[locked ? "Блокирую" : "Разблокировываю"] [src]."))
 			update_icon()
+		else if(!allowed(user) && open_mode == MODE_OPTIONAL)
+			if(iscarbon(user))
+				add_fingerprint(user)
+			if(locked)
+				INVOKE_ASYNC(src, /datum/.proc/ui_interact, user)
 		else if(!silent)
 			to_chat(user, span_alert("Доступ запрещён."))
 	else if(secure && broken)
@@ -671,3 +863,8 @@
 	if(air_contents)
 		return air_contents.return_temperature()
 
+
+#undef MODE_PASSWORD
+#undef MODE_OPTIONAL
+#undef MODE_CARD
+#undef PASSWORD_LENGHT

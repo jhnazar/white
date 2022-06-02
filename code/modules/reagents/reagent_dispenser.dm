@@ -49,6 +49,8 @@
 	if(reagent_id)
 		reagents.add_reagent(reagent_id, tank_volume)
 	. = ..()
+	if(icon_state == "water" && SSevents.holidays?[APRIL_FOOLS])
+		icon_state = "water_fools"
 
 /obj/structure/reagent_dispensers/proc/boom()
 	visible_message(span_danger("<b>[src.name]</b> разрывается!"))
@@ -86,8 +88,13 @@
 	icon_state = "fuel"
 	reagent_id = /datum/reagent/fuel
 
+/obj/structure/reagent_dispensers/fueltank/Initialize(mapload)
+	. = ..()
+	if(SSevents.holidays?[APRIL_FOOLS])
+		icon_state = "fuel_fools"
+
 /obj/structure/reagent_dispensers/fueltank/boom()
-	explosion(get_turf(src), 0, 1, 5, flame_range = 5)
+	explosion(src, heavy_impact_range = 1, light_impact_range = 5, flame_range = 5)
 	qdel(src)
 
 /obj/structure/reagent_dispensers/fueltank/blob_act(obj/structure/blob/B)
@@ -140,7 +147,7 @@
 			. = SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 			user.visible_message(span_danger("[user] начинает ТАКТИКУЛЬНО греть [src] с помощью [user.ru_ego()] [I.name]!"), span_userdanger("Прикол инбаунд."))
 			if(do_after(user, 10 SECONDS, src))
-				explosion(get_turf(src), 1, 3, 7, flame_range = 9)
+				explosion(src, devastation_range = 1, heavy_impact_range = 3, light_impact_range = 7, flame_range = 7)
 				qdel(src)
 
 /obj/structure/reagent_dispensers/fueltank/large
@@ -150,7 +157,17 @@
 	tank_volume = 5000
 
 /obj/structure/reagent_dispensers/fueltank/large/boom()
-	explosion(get_turf(src), 1, 2, 7, flame_range = 12)
+	explosion(src, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 7, flame_range = 12)
+	qdel(src)
+
+/obj/structure/reagent_dispensers/fueltank/limitka
+	name = "фуелтанк-лимитка"
+	desc = "<font size=+2><b>Пиздец блядь нахуй!</b></font>"
+	icon_state = "fuel_pizdec"
+	tank_volume = 100000
+
+/obj/structure/reagent_dispensers/fueltank/limitka/boom()
+	explosion(src, heavy_impact_range = 7, light_impact_range = 14, flame_range = 21, flash_range = 34)
 	qdel(src)
 
 /obj/structure/reagent_dispensers/peppertank
@@ -222,14 +239,14 @@
 
 /obj/structure/reagent_dispensers/beerkeg/attack_animal(mob/living/simple_animal/M)
 	if(isdog(M))
-		explosion(src.loc,0,3,5,7,10)
+		explosion(src, light_impact_range = 3, flame_range = 5, flash_range = 10)
 		if(!QDELETED(src))
 			qdel(src)
 		return TRUE
 	. = ..()
 
 /obj/structure/reagent_dispensers/beerkeg/blob_act(obj/structure/blob/B)
-	explosion(src.loc,0,3,5,7,10)
+	explosion(src, light_impact_range = 3, flame_range = 5, flash_range = 10)
 	if(!QDELETED(src))
 		qdel(src)
 
@@ -299,13 +316,15 @@
 
 /obj/structure/reagent_dispensers/plumbed/storage/update_overlays()
 	. = ..()
-	if(reagents)
-		if(reagents.total_volume)
-			var/mutable_appearance/tank_color = mutable_appearance('icons/obj/chemical_tanks.dmi', "tank_chem_overlay")
-			tank_color.color = mix_color_from_reagents(reagents.reagent_list)
-			add_overlay(tank_color)
-		else
-			cut_overlays()
+	if(!reagents)
+		return
+
+	if(!reagents.total_volume)
+		return
+
+	var/mutable_appearance/tank_color = mutable_appearance('icons/obj/chemical_tanks.dmi', "tank_chem_overlay")
+	tank_color.color = mix_color_from_reagents(reagents.reagent_list)
+	. += tank_color
 
 /obj/structure/reagent_dispensers/plumbed/storage/proc/can_be_rotated(mob/user, rotation_type)
 	if(anchored)

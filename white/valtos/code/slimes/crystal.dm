@@ -23,8 +23,6 @@
 
 	qdel(src)
 
-GLOBAL_LIST_EMPTY(bluespace_slime_crystals)
-
 /obj/structure/slime_crystal
 	name = "slimic pylon"
 	desc = "Glassy, pure, transparent. Powerful artifact that relays the slimecore's influence onto space around it."
@@ -155,7 +153,7 @@ GLOBAL_LIST_EMPTY(bluespace_slime_crystals)
 		return
 	var/mob/living/carbon/carbon_mob = affected_mob
 	carbon_mob.fire_stacks++
-	carbon_mob.IgniteMob()
+	carbon_mob.ignite_mob()
 
 /obj/structure/slime_crystal/orange/process()
 	. = ..()
@@ -250,8 +248,8 @@ GLOBAL_LIST_EMPTY(bluespace_slime_crystals)
 	var/turf/open/open_turf = T
 	var/datum/gas_mixture/air = open_turf.return_air()
 
-	if(air.get_moles(/datum/gas/plasma) > 15)
-		air.adjust_moles(/datum/gas/plasma, -15)
+	if(air.get_moles(GAS_PLASMA) > 15)
+		air.adjust_moles(GAS_PLASMA, -15)
 		new /obj/item/stack/sheet/mineral/plasma(open_turf)
 
 /obj/structure/slime_crystal/darkpurple/Destroy()
@@ -654,7 +652,7 @@ GLOBAL_LIST_EMPTY(bluespace_slime_crystals)
 /obj/item/slimecross/crystalized
 	name = "crystalized extract"
 	desc = "It's crystalline,"
-	effect = "adamantine"
+	effect = "crystalized"
 	icon = 'white/valtos/icons/slimecrossing.dmi'
 	icon_state = "crystalline"
 	var/obj/structure/slime_crystal/crystal_type
@@ -669,7 +667,7 @@ GLOBAL_LIST_EMPTY(bluespace_slime_crystals)
 
 	var/user_turf = get_turf(user)
 
-	if(!do_after(user,15 SECONDS,FALSE,user_turf))
+	if(!do_after(user, 15 SECONDS, user_turf))
 		return
 
 	new crystal_type(user_turf)

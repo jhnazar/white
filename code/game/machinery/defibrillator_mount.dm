@@ -69,7 +69,7 @@
 	. = ..()
 	if(defib)
 		. += "<hr><span class='notice'>There is a defib unit hooked up. ПКМ to remove it.</span>"
-		if(GLOB.security_level >= SEC_LEVEL_RED)
+		if(SSsecurity_level.current_level >= SEC_LEVEL_RED)
 			. += "<hr><span class='notice'>Due to a security situation, its locking clamps can be toggled by swiping any ID.</span>"
 		else
 			. += "<hr><span class='notice'>Its locking clamps can be [clamps_locked ? "dis" : ""]engaged by swiping an ID with access.</span>"
@@ -134,7 +134,7 @@
 		return
 	var/obj/item/card/id = I.GetID()
 	if(id)
-		if(check_access(id) || GLOB.security_level >= SEC_LEVEL_RED) //anyone can toggle the clamps in red alert!
+		if(check_access(id) || SSsecurity_level.current_level >= SEC_LEVEL_RED) //anyone can toggle the clamps in red alert!
 			if(!defib)
 				to_chat(user, span_warning("You can't engage the clamps on a defibrillator that isn't there."))
 				return
@@ -208,7 +208,6 @@
 	desc = "Рама для закрепления дефибриллятора на стене. Подключает устройство к станционной энергосети."
 	icon_state = "penlite_mount"
 	use_power = IDLE_POWER_USE
-	idle_power_usage = 1
 	wallframe_type = /obj/item/wallframe/defib_mount/charging
 
 
@@ -230,7 +229,7 @@
 	if(!C || !is_operational)
 		return PROCESS_KILL
 	if(C.charge < C.maxcharge)
-		use_power(50 * delta_time)
+		use_power(active_power_usage * delta_time)
 		C.give(40 * delta_time)
 		update_icon()
 

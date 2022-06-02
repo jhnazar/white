@@ -69,9 +69,7 @@
 /turf/open/floor/wood,
 /area/ruin/unpowered)
 "K" = (
-/obj/item/storage/backpack/duffelbag/syndie/x4{
-	pixel_x = 7
-	},
+/obj/item/storage/backpack/duffelbag/c4_no_slowdown,
 /turf/open/floor/plasteel,
 /area/ruin/unpowered)
 "M" = (
@@ -86,7 +84,7 @@
 /area/ruin/unpowered)
 "R" = (
 /obj/structure/table,
-/obj/item/storage/blister/twocap/stimulant,
+/obj/machinery/recharger,
 /turf/open/floor/wood,
 /area/ruin/unpowered)
 "S" = (

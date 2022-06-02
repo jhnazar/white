@@ -86,13 +86,13 @@
 			. += span_info("Эта штука неподвижна.")
 
 		if(!eyes)
-			. += "\n<span class='info'>Глаза [real_name] отсутствуют.</span>"
+			. += span_info("\nГлаза [real_name] отсутствуют.")
 
 		if(!ears)
-			. += "\n<span class='info'>Уши [real_name] отсутствуют.</span>"
+			. += span_info("\nУши [real_name] отсутствуют.")
 
 		if(!tongue)
-			. += "\n<span class='info'>Язык [real_name] отсутствует.</span>"
+			. += span_info("\nЯзык [real_name] отсутствует.")
 
 
 /obj/item/bodypart/head/can_dismember(obj/item/I)
@@ -242,14 +242,17 @@
 			lips_overlay.color = lip_color
 			. += lips_overlay
 
-		// eyes
-		var/image/eyes_overlay = image('icons/mob/human_face.dmi', "eyes_missing", -BODY_LAYER, SOUTH)
-		. += eyes_overlay
-		if(eyes)
-			eyes_overlay.icon_state = eyes.eye_icon_state
-
-			if(eyes.eye_color)
-				eyes_overlay.color = "#" + eyes.eye_color
+		if(eyes) // This is a bit of copy/paste code from eyes.dm:generate_body_overlay
+			var/image/eye_left = image('icons/mob/human_face.dmi', "[eyes.eye_icon_state]_l", -BODY_LAYER, SOUTH)
+			var/image/eye_right = image('icons/mob/human_face.dmi', "[eyes.eye_icon_state]_r", -BODY_LAYER, SOUTH)
+			if(eyes.eye_color_left)
+				eye_left.color = eyes.eye_color_left
+			if(eyes.eye_color_right)
+				eye_right.color = eyes.eye_color_right
+			. += eye_left
+			. += eye_right
+		else
+			. += image('icons/mob/human_face.dmi', "eyes_missing", -BODY_LAYER, SOUTH)
 
 /obj/item/bodypart/head/monkey
 	icon = 'icons/mob/animal_parts.dmi'

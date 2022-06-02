@@ -190,7 +190,9 @@
 #define HYDRATION_LEVEL_DEHYDRATED 0
 #define HYDRATION_LEVEL_START_MIN 150
 #define HYDRATION_LEVEL_START_MAX 200
-#define HYDRATION_LOSS_PER_LIFE 0.001
+#define HYDRATION_LEVEL_MIN_CAP -10
+#define HYDRATION_LOSS_PER_LIFE 0.15
+#define HYDRATION_LOSS_PER_MOVE 0.0025
 #define DRINK_HYDRATION_FACTOR_HIGH 1.5
 #define DRINK_HYDRATION_FACTOR_MEDIUM 1
 #define DRINK_HYDRATION_FACTOR_LOW 0.5
@@ -377,7 +379,8 @@
 #define MAX_REVIVE_FIRE_DAMAGE 180
 #define MAX_REVIVE_BRUTE_DAMAGE 180
 
-#define HUMAN_FIRE_STACK_ICON_NUM	3
+// If a mob has a higher threshold than this, the icon shown will be increased to the big fire icon.
+#define MOB_BIG_FIRE_STACK_THRESHOLD 3
 
 #define GRAB_PIXEL_SHIFT_PASSIVE 6
 #define GRAB_PIXEL_SHIFT_AGGRESSIVE 12
@@ -417,7 +420,13 @@
 // Bit mask of possible return values by can_defib that would result in a revivable patient
 #define DEFIB_REVIVABLE_STATES (DEFIB_FAIL_NO_HEART | DEFIB_FAIL_FAILING_HEART | DEFIB_FAIL_HUSK | DEFIB_FAIL_TISSUE_DAMAGE | DEFIB_FAIL_FAILING_BRAIN | DEFIB_POSSIBLE)
 
-#define SLEEP_CHECK_DEATH(X) sleep(X); if(QDELETED(src) || stat == DEAD) return;
+#define SLEEP_CHECK_DEATH(X, A) \
+	sleep(X); \
+	if(QDELETED(A)) return; \
+	if(ismob(A)) { \
+		var/mob/sleep_check_death_mob = A; \
+		if(sleep_check_death_mob.stat == DEAD) return; \
+	}
 
 #define DOING_INTERACTION(user, interaction_key) (LAZYACCESS(user.do_afters, interaction_key))
 #define DOING_INTERACTION_LIMIT(user, interaction_key, max_interaction_count) ((LAZYACCESS(user.do_afters, interaction_key) || 0) >= max_interaction_count)

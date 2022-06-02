@@ -1,6 +1,3 @@
-
-GLOBAL_LIST_EMPTY(objective_computers)
-
 /obj/machinery/computer/objective
 	name = "консоль заданий"
 	desc = "Консоль, которая загружает список свежих заданий от Центрального Командования."
@@ -23,6 +20,7 @@ GLOBAL_LIST_EMPTY(objective_computers)
 	return GLOB.default_state
 
 /obj/machinery/computer/objective/ui_interact(mob/user, datum/tgui/ui)
+	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "Objective")
@@ -30,6 +28,7 @@ GLOBAL_LIST_EMPTY(objective_computers)
 	viewing_mobs += user
 
 /obj/machinery/computer/objective/ui_close(mob/user, datum/tgui/tgui)
+	. = ..()
 	viewing_mobs -= user
 
 /obj/machinery/computer/objective/ui_static_data(mob/user)

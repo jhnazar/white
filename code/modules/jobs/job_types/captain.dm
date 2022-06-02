@@ -6,7 +6,7 @@
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
-	supervisors = "представителям Нанотрейзен и космозакону"
+	supervisors = "представителям NanoTrasen и космозакону"
 	selection_color = "#ccccff"
 	req_admin_notify = 1
 	minimal_player_age = 60
@@ -15,6 +15,9 @@
 	exp_type_department = EXP_TYPE_COMMAND
 
 	outfit = /datum/outfit/job/captain
+
+	skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_EXPERT)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_EXPERT)
 
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_SEC
@@ -41,7 +44,7 @@
 	jobtype = /datum/job/captain
 
 	id = /obj/item/card/id/advanced/gold
-	belt = /obj/item/pda/captain
+	belt = /obj/item/modular_computer/tablet/pda/heads/captain
 	glasses = /obj/item/clothing/glasses/sunglasses
 	ears = /obj/item/radio/headset/heads/captain/alt
 	gloves = /obj/item/clothing/gloves/color/captain

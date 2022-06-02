@@ -211,11 +211,11 @@
 		return
 
 	var/zone_name = parse_zone(def_zone)
-	var/break_verb = ((damage_type == BRUTE) ? "torn" : "burned")
+	var/break_verb = ((damage_type == BRUTE) ? "отрывается" : "сгорает")
 
 	if(iscarbon(loc))
 		var/mob/living/carbon/C = loc
-		C.visible_message(span_danger("The [zone_name] on [C] [src.name] is [break_verb] away!") , span_userdanger("The [zone_name] on your [src.name] is [break_verb] away!") , vision_distance = COMBAT_MESSAGE_RANGE)
+		C.visible_message(span_danger("[capitalize(zone_name)] [src.name] на [C] [break_verb]!"), span_userdanger("[capitalize(zone_name)] [src.name] [break_verb]!"), vision_distance = COMBAT_MESSAGE_RANGE)
 		RegisterSignal(C, COMSIG_MOVABLE_MOVED, .proc/bristle, override = TRUE)
 
 	zones_disabled++
@@ -241,7 +241,7 @@
 	QDEL_NULL(moth_snack)
 	return ..()
 
-/obj/item/clothing/dropped(mob/user)
+/obj/item/clothing/dropped(mob/living/user)
 	..()
 	if(!istype(user))
 		return
@@ -256,7 +256,7 @@
 					user.vars[variable] = user_vars_remembered[variable]
 		user_vars_remembered = initial(user_vars_remembered) // Effectively this sets it to null.
 
-/obj/item/clothing/equipped(mob/user, slot)
+/obj/item/clothing/equipped(mob/living/user, slot)
 	. = ..()
 	if (!istype(user))
 		return
@@ -277,7 +277,7 @@
 	. += "<hr>"
 
 	if(damaged_clothes == CLOTHING_SHREDDED)
-		. += "<span class='warning'><b>Полностью разорвано и требует починки!</b></span>"
+		. += span_warning("<b>Полностью разорвано и требует починки!</b>")
 		return
 
 	switch (max_heat_protection_temperature)
@@ -293,23 +293,23 @@
 		var/zone_name = parse_zone(zone)
 		switch(pct_damage_part)
 			if(100 to INFINITY)
-				. += span_smalldanger("<span class='warning'><b>[capitalize(zone_name)] бесполезна и требует починки!</b></span>")
+				. += span_smalldanger(span_warning("<b>[capitalize(zone_name)] [src.name] разорвана в клочья!</b>"))
 			if(60 to 99)
-				. += span_notice("<span class='warning'>[capitalize(zone_name)] достаточно разорвана!</span>")
+				. += span_notice(span_warning("[capitalize(zone_name)] [src.name] сильно потрёпана!"))
 			if(30 to 59)
-				. += span_smallnotice("<span class='danger'>[capitalize(zone_name)] немного порвана.</span>")
+				. += span_smallnotice(span_danger("[capitalize(zone_name)] [src.name] немного порвана."))
 
 	var/datum/component/storage/pockets = GetComponent(/datum/component/storage)
 	if(pockets)
 		var/list/how_cool_are_your_threads = list("<hr><span class='notice'>")
 		if(pockets.attack_hand_interact)
-			how_cool_are_your_threads += "[src] показывает хранилище при клике.\n"
+			how_cool_are_your_threads += "[capitalize(src.name)] показывает хранилище при клике.\n"
 		else
-			how_cool_are_your_threads += "[src] показывает хранилище при перетягивании на себя.\n"
+			how_cool_are_your_threads += "[capitalize(src.name)] показывает хранилище при перетягивании на себя.\n"
 		if (pockets.can_hold?.len) // If pocket type can hold anything, vs only specific items
-			how_cool_are_your_threads += "[src] может хранить [pockets.max_items] <a href='?src=[REF(src)];show_valid_pocket_items=1'>предметов</a>.\n"
+			how_cool_are_your_threads += "[capitalize(src.name)] может хранить [pockets.max_items] <a href='?src=[REF(src)];show_valid_pocket_items=1'>предметов</a>.\n"
 		else
-			how_cool_are_your_threads += "[src] может хранить [pockets.max_items] [weightclass2text(pockets.max_w_class)] размера или меньше.\n"
+			how_cool_are_your_threads += "[capitalize(src.name)] может хранить [pockets.max_items] [weightclass2text(pockets.max_w_class)] размера или меньше.\n"
 		if(pockets.quickdraw)
 			how_cool_are_your_threads += "Могу быстро вытащить предмет из [src] используя ПКМ.\n"
 		if(pockets.silent)
@@ -461,6 +461,7 @@ BLIND     // can't see anything
 
 /obj/item/clothing/proc/visor_toggling() //handles all the actual toggling of flags
 	up = !up
+	SEND_SIGNAL(src, COMSIG_CLOTHING_VISOR_TOGGLE, up)
 	clothing_flags ^= visor_flags
 	flags_inv ^= visor_flags_inv
 	flags_cover ^= initial(flags_cover)
@@ -472,6 +473,7 @@ BLIND     // can't see anything
 
 /obj/item/clothing/head/helmet/space/plasmaman/visor_toggling() //handles all the actual toggling of flags
 	up = !up
+	SEND_SIGNAL(src, COMSIG_CLOTHING_VISOR_TOGGLE, up)
 	clothing_flags ^= visor_flags
 	flags_inv ^= visor_flags_inv
 	icon_state = "[initial(icon_state)]"
@@ -486,11 +488,13 @@ BLIND     // can't see anything
 			return 1
 	return 0
 
+/obj/item/clothing/proc/_spawn_shreds()
+	new /obj/effect/decal/cleanable/shreds(get_turf(src), name)
+
 /obj/item/clothing/obj_destruction(damage_flag)
 	if(damage_flag == BOMB)
-		var/turf/T = get_turf(src)
 		//so the shred survives potential turf change from the explosion.
-		addtimer(CALLBACK_NEW(/obj/effect/decal/cleanable/shreds, list(T, name)), 1)
+		addtimer(CALLBACK(src, .proc/_spawn_shreds), 1)
 		deconstruct(FALSE)
 	if(damage_flag == CONSUME) //This allows for moths to fully consume clothing, rather than damaging it like other sources like brute
 		var/turf/current_position = get_turf(src)
@@ -506,10 +510,10 @@ BLIND     // can't see anything
 		if(isliving(loc))
 			var/mob/living/M = loc
 			if(src in M.get_equipped_items(FALSE)) //make sure they were wearing it and not attacking the item in their hands / eating it if they were a moth.
-				M.visible_message(span_danger("[M] [src.name] fall[p_s()] off, [p_theyre()] completely shredded!") , span_warning("<b>Your [src.name] fall[p_s()] off, [p_theyre()] completely shredded!</b>") , vision_distance = COMBAT_MESSAGE_RANGE)
+				M.visible_message(span_danger("[capitalize(src.name)] [M] распадается на части!"), span_warning("<b>[capitalize(src.name)] распадается на части!</b>"), vision_distance = COMBAT_MESSAGE_RANGE)
 				M.dropItemToGround(src)
 			else
-				M.visible_message(span_danger("[capitalize(src.name)] fall[p_s()] apart, completely shredded!") , vision_distance = COMBAT_MESSAGE_RANGE)
+				M.visible_message(span_danger("[capitalize(src.name)] распадается на части!"), vision_distance = COMBAT_MESSAGE_RANGE)
 		name = "изорванный [initial(name)]" // change the name -after- the message, not before.
 	else
 		..()
@@ -521,6 +525,6 @@ BLIND     // can't see anything
 	if(!istype(L))
 		return
 	if(prob(0.2))
-		to_chat(L, span_warning("Порванные нитки на моем [src.name] раздражают!"))
+		to_chat(L, span_warning("Порванные нитки на [src.name] шевелятся!"))
 
 #undef MOTH_EATING_CLOTHING_DAMAGE

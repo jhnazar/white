@@ -8,22 +8,6 @@
 	message = "плачет."
 	emote_type = EMOTE_AUDIBLE
 
-/datum/emote/living/carbon/human/cry/get_sound(mob/living/user)
-	if(!ishuman(user))
-		return
-	var/mob/living/carbon/human/H = user
-	if(H.mind?.miming)
-		return
-	if(ishumanbasic(H) || isfelinid(H))
-		if(user.gender == FEMALE)
-			return pick('white/rebolution228/sounds/emotes/female_crying01.ogg',\
-						'white/rebolution228/sounds/emotes/female_crying02.ogg',\
-						'white/rebolution228/sounds/emotes/female_crying03.ogg',\
-						'white/rebolution228/sounds/emotes/female_crying04.ogg')
-		else
-			return pick('white/rebolution228/sounds/emotes/male_crying01.ogg', 'white/rebolution228/sounds/emotes/male_crying02.ogg', 'white/rebolution228/sounds/emotes/male_crying03.ogg', 'white/rebolution228/sounds/emotes/male_crying04.ogg')
-	else if(ismonkey(user))
-		return
 
 /datum/emote/living/carbon/human/dap
 	key = "dap"
@@ -133,20 +117,31 @@
 	var/mob/living/carbon/human/H = user
 	if(H.mind?.miming)
 		return
-	if(user.gender == FEMALE)
-		return pick('white/valtos/sounds/emotes/agony_female_1.ogg',\
-					'white/valtos/sounds/emotes/agony_female_2.ogg',\
-					'white/valtos/sounds/emotes/agony_female_3.ogg')
-	else
-		return pick('white/valtos/sounds/emotes/agony_male_1.ogg',\
-					'white/valtos/sounds/emotes/agony_male_2.ogg',\
-					'white/valtos/sounds/emotes/agony_male_3.ogg',\
-					'white/valtos/sounds/emotes/agony_male_4.ogg',\
-					'white/valtos/sounds/emotes/agony_male_5.ogg',\
-					'white/valtos/sounds/emotes/agony_male_6.ogg',\
-					'white/valtos/sounds/emotes/agony_male_7.ogg',\
-					'white/valtos/sounds/emotes/agony_male_8.ogg',\
-					'white/valtos/sounds/emotes/agony_male_9.ogg')
+	if(ismonkey(user))
+		return pick('sound/creatures/monkey/monkey_screech_1.ogg',\
+					'sound/creatures/monkey/monkey_screech_2.ogg',\
+					'sound/creatures/monkey/monkey_screech_3.ogg',\
+					'sound/creatures/monkey/monkey_screech_4.ogg',\
+					'sound/creatures/monkey/monkey_screech_5.ogg',\
+					'sound/creatures/monkey/monkey_screech_6.ogg',\
+					'sound/creatures/monkey/monkey_screech_7.ogg')
+	if(ishumanbasic(H) || isfelinid(H))		
+		if(user.gender == FEMALE)
+			return pick('white/valtos/sounds/emotes/agony_female_1.ogg',\
+						'white/valtos/sounds/emotes/agony_female_2.ogg',\
+						'white/valtos/sounds/emotes/agony_female_3.ogg')
+		else
+			return pick('white/valtos/sounds/emotes/agony_male_1.ogg',\
+						'white/valtos/sounds/emotes/agony_male_2.ogg',\
+						'white/valtos/sounds/emotes/agony_male_3.ogg',\
+						'white/valtos/sounds/emotes/agony_male_4.ogg',\
+						'white/valtos/sounds/emotes/agony_male_5.ogg',\
+						'white/valtos/sounds/emotes/agony_male_6.ogg',\
+						'white/valtos/sounds/emotes/agony_male_7.ogg',\
+						'white/valtos/sounds/emotes/agony_male_8.ogg',\
+						'white/valtos/sounds/emotes/agony_male_9.ogg')
+	else if(ismoth(H))
+		return 'sound/voice/moth/scream_moth.ogg'
 
 
 /datum/emote/living/carbon/human/pale

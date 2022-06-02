@@ -24,7 +24,6 @@
 
 /obj/item/camera/siliconcam/proc/selectpicture(mob/user)
 	var/list/nametemp = list()
-	var/find
 	if(!stored.len)
 		to_chat(usr, span_boldannounce("Не сохранено изображений"))
 		return
@@ -33,8 +32,10 @@
 		var/datum/picture/p = i
 		nametemp += p.picture_name
 		temp[p.picture_name] = p
-	find = input(user, "Выбрать изображение") in nametemp|null
-	if(!find)
+	var/find = tgui_input_list(user, "Выберите изображение", "Хранилище", nametemp)
+	if(isnull(find))
+		return
+	if(isnull(temp[find]))
 		return
 	return temp[find]
 
@@ -89,3 +90,12 @@
 	C.toner -= printcost	 //All fun allowed.
 	visible_message(span_notice("[C.name] выплёвывает фотографию из под своего днища."))
 	to_chat(usr, span_notice("Печатаю фотографию."))
+
+/obj/item/camera/siliconcam/proc/paiprint(mob/user)
+	var/mob/living/silicon/pai/paimob = loc
+	var/datum/picture/selection = selectpicture(user)
+	if(!istype(selection))
+		to_chat(user, span_warning("Invalid Image."))
+		return
+	printpicture(user,selection)
+	user.visible_message(span_notice("A picture appears on top of the chassis of [paimob.name]!"), span_notice("You print a photograph."))

@@ -83,6 +83,9 @@
 	new /obj/item/analyzer(src)
 	new /obj/item/wirecutters(src)
 
+/obj/item/storage/toolbox/mechanical/empty/PopulateContents()
+	return
+
 /obj/item/storage/toolbox/mechanical/old
 	name = "ржавый синий ящик"
 	icon_state = "toolbox_blue_old"
@@ -109,7 +112,7 @@
 
 /obj/item/storage/toolbox/mechanical/old/clean/proc/calc_damage()
 	var/power = 0
-	for (var/obj/item/stack/telecrystal/TC in GetAllContents())
+	for (var/obj/item/stack/telecrystal/TC in get_all_contents())
 		power += TC.amount
 	force = 19 + power
 	throwforce = 22 + power

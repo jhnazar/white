@@ -434,8 +434,8 @@
 		return TRUE
 
 	cheek_kiss = (offerer.zone_selected != BODY_ZONE_PRECISE_MOUTH)
-	offerer.visible_message(span_notice("[offerer] слегка наклоняется, предлагая поцеловать [offerer.ru_ego()][cheek_kiss ? " в щеку" : ""]!"),
-		span_notice("Немного наклоняюсь, предлагая поцеловать меня[cheek_kiss ? " в щеку" : ""]!"), null, 2)
+	offerer.visible_message(span_notice("[offerer] слегка наклоняется, предлагая поцелуй [cheek_kiss ? " в щеку" : ""]!"),
+		span_notice("Немного наклоняюсь, предлагая поцелуй[cheek_kiss ? " в щеку" : ""]!"), null, 2)
 	offerer.apply_status_effect(STATUS_EFFECT_OFFERING, src)
 	return TRUE
 
@@ -501,13 +501,8 @@
 /obj/projectile/kiss/proc/harmless_on_hit(mob/living/living_target)
 	playsound(get_turf(living_target), hitsound, 100, TRUE)
 	if(!suppressed)  // direct
-		living_target.visible_message(span_userdanger("Мне отправили воздушный поцелуй!"), vision_distance=COMBAT_MESSAGE_RANGE)
-
-	//living_target.mind?.add_memory(MEMORY_KISS, list(DETAIL_PROTAGONIST = living_target, DETAIL_KISSER = firer), story_value = STORY_VALUE_OKAY)
+		living_target.visible_message(span_danger("В <b>[living_target]</b> попадает <b>[src.name]</b>."), span_userdanger("В меня попадает <b>[src.name]</b>!"), vision_distance=COMBAT_MESSAGE_RANGE)
 	SEND_SIGNAL(living_target, COMSIG_ADD_MOOD_EVENT, "kiss", /datum/mood_event/kiss, firer, suppressed)
-	//if(isliving(firer))
-	//	var/mob/living/kisser = firer
-	//	kisser.mind?.add_memory(MEMORY_KISS, list(DETAIL_PROTAGONIST = living_target, DETAIL_KISSER = firer), story_value = STORY_VALUE_OKAY, memory_flags = MEMORY_CHECK_BLINDNESS)
 	try_fluster(living_target)
 
 /obj/projectile/kiss/proc/try_fluster(mob/living/living_target)
@@ -535,7 +530,7 @@
 			living_target.face_atom(firer)
 			living_target.Stun(rand(3 SECONDS, 8 SECONDS))
 
-	living_target.visible_message("<b>[living_target]</b> [other_msg]", "<span class='userdanger'>Ой-ой! [self_msg]<span>")
+	living_target.visible_message("<b>[living_target]</b> [other_msg]", span_userdanger("Ой-ой! [self_msg]"))
 
 /obj/projectile/kiss/on_hit(atom/target, blocked, pierce_hit)
 	def_zone = BODY_ZONE_HEAD // let's keep it PG, people

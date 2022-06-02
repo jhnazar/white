@@ -17,6 +17,8 @@
 	var/list/icon/current = list() //the current hud icons
 	var/vision_correction = FALSE //does wearing these glasses correct some of our vision defects?
 	var/glass_colour_type //colors your vision when worn
+	/// Whether or not vision coloring is forcing
+	var/forced_glass_color = FALSE
 
 /obj/item/clothing/glasses/suicide_act(mob/living/carbon/user)
 	user.visible_message(span_suicide("[user] тычет <b>[src.name]</b> в [user.ru_ego()] глаза! Выглядит так, будто [user.p_theyre()] пытается покончить с собой!"))
@@ -25,7 +27,7 @@
 /obj/item/clothing/glasses/examine(mob/user)
 	. = ..()
 	. += "<hr>"
-	if(glass_colour_type && ishuman(user))
+	if(glass_colour_type && !forced_glass_color && ishuman(user))
 		. += span_notice("ПКМ, чтобы поменять их цвета.")
 
 /obj/item/clothing/glasses/visor_toggling()
@@ -56,7 +58,7 @@
 				eyes.applyOrganDamage(5)
 
 /obj/item/clothing/glasses/AltClick(mob/user)
-	if(glass_colour_type && ishuman(user))
+	if(glass_colour_type && !forced_glass_color && ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(H.client)
 			if(H.client.prefs)
@@ -82,14 +84,14 @@
 
 
 /mob/living/carbon/human/proc/update_glasses_color(obj/item/clothing/glasses/G, glasses_equipped)
-	if(client?.prefs.uses_glasses_colour && glasses_equipped)
+	if((client?.prefs.uses_glasses_colour || G.forced_glass_color) && glasses_equipped)
 		add_client_colour(G.glass_colour_type)
 	else
 		remove_client_colour(G.glass_colour_type)
 
 
 /obj/item/clothing/glasses/meson
-	name = "оптический мезонный сканер"
+	name = "мезонные очки"
 	desc = "Используется инженерным и горнодобывающим персоналом для просмотра основных структурных и рельефных планировок сквозь стены независимо от условий освещения."
 	icon_state = "meson"
 	inhand_icon_state = "meson"
@@ -148,6 +150,22 @@
 	if(slot == ITEM_SLOT_EYES)
 		return 1
 
+/obj/item/clothing/glasses/science/night
+	name = "научный HUD с ПНВ"
+	desc = "Научный интерфейс химиков и ученых со встроенной подсветкой."
+	icon_state = "scihudnight"
+	inhand_icon_state = "glasses"
+	darkness_view = 8
+	flash_protect = FLASH_PROTECTION_SENSITIVE
+	lighting_alpha = LIGHTING_PLANE_ALPHA_MOSTLY_VISIBLE
+	glass_colour_type = /datum/client_colour/glass_colour/green
+
+/obj/item/clothing/glasses/sunglasses/chemical
+	name = "тактические научные очки"
+	desc = "Тактические очки с научным интерфейсом и встроенным светофильтром, защищающим глаза от ярких вспышек."
+	icon_state = "sunhudsci"
+	clothing_flags = SCAN_REAGENTS
+
 /obj/item/clothing/glasses/science/prescription
 	name = "научные очки по рецепту"
 	desc = "Странная комбинация из обычных очков и научного сканера."
@@ -157,8 +175,8 @@
 	vision_correction = 1
 
 /obj/item/clothing/glasses/night
-	name = "очки ночного видения"
-	desc = "Вы можете полностью видеть в темноте сейчас!"
+	name = "очки с ПНВ"
+	desc = "Можно полностью видеть в темноте сейчас!"
 	icon_state = "night"
 	inhand_icon_state = "glasses"
 	darkness_view = 8
@@ -255,12 +273,6 @@
 	desc = "Пара солнцезащитных очков оснащена аппаратом для сканирования реагентов, а также обеспечивает врожденное понимание вязкости жидкости во время движения."
 	clothing_flags = SCAN_REAGENTS
 	clothing_traits = list(TRAIT_BOOZE_SLIDER)
-
-/obj/item/clothing/glasses/sunglasses/chemical
-	name = "научные очки"
-	icon_state = "sunhudsci"
-	desc = "Пара липких фиолетовых солнцезащитных очков, которые позволяют носящему распознавать различные химические соединения с первого взгляда."
-	clothing_flags = SCAN_REAGENTS
 
 /obj/item/clothing/glasses/sunglasses/garb
 	name = "чёрные гар очки"
@@ -363,7 +375,7 @@
 
 /obj/item/clothing/glasses/blindfold/white/update_icon(mob/living/carbon/human/user)
 	if(ishuman(user) && !colored_before)
-		add_atom_colour("#[user.eye_color]", FIXED_COLOUR_PRIORITY)
+		add_atom_colour("#[user.eye_color_left]", FIXED_COLOUR_PRIORITY)
 		colored_before = TRUE
 
 /obj/item/clothing/glasses/blindfold/white/worn_overlays(isinhands = FALSE, file2use)
@@ -372,7 +384,7 @@
 		var/mob/living/carbon/human/H = loc
 		var/mutable_appearance/M = mutable_appearance('icons/mob/clothing/eyes.dmi', "blindfoldwhite")
 		M.appearance_flags |= RESET_COLOR
-		M.color = "#[H.eye_color]"
+		M.color = "#[H.eye_color_left]"
 		. += M
 
 /obj/item/clothing/glasses/sunglasses/big
@@ -501,7 +513,7 @@
 	if(ishuman(user))
 		for(var/hud in hudlist)
 			var/datum/atom_hud/H = GLOB.huds[hud]
-			H.add_hud_to(user)
+			H.show_to(user)
 		ADD_TRAIT(user, TRAIT_MEDICAL_HUD, GLASSES_TRAIT)
 		ADD_TRAIT(user, TRAIT_SECURITY_HUD, GLASSES_TRAIT)
 
@@ -512,7 +524,7 @@
 	if(ishuman(user))
 		for(var/hud in hudlist)
 			var/datum/atom_hud/H = GLOB.huds[hud]
-			H.remove_hud_from(user)
+			H.hide_from(user)
 
 /obj/item/clothing/glasses/debug/AltClick(mob/user)
 	. = ..()
@@ -536,3 +548,11 @@
 	desc = "Lookin' cool."
 	icon_state = "phantom_glasses"
 	inhand_icon_state = "phantom_glasses"
+
+/obj/item/clothing/glasses/nightmare_vision
+	name = "nightmare vision goggles"
+	desc = "They give off a putrid stench. Seemingly no effect on anything."
+	icon_state = "nightmare"
+	inhand_icon_state = "glasses"
+	glass_colour_type = /datum/client_colour/glass_colour/nightmare
+	forced_glass_color = TRUE

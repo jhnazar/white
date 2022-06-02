@@ -121,7 +121,7 @@ This section is for the event controller
 		var/area/center_area = get_area(center_turf)
 		center_areas += center_area
 
-		explosion(center_turf,0,0,5,7,7)
+		explosion(center_turf, light_impact_range = 5, flame_range = 7, flash_range = 7)
 
 		new /obj/structure/crystal_portal/huge(center_turf)
 
@@ -249,7 +249,7 @@ This section is for the event controller
 			spawners += temp
 	for(var/i in 1 to rand(15, 25))
 		spawn_portal(GLOB.crystal_invasion_waves["huge wave"], spawners)
-	explosion(dest_crystal.loc, 15, 26, 33, 35, 1, 1) //a bit smaller than max supermatter explosion
+	explosion(dest_crystal, devastation_range = 15, heavy_impact_range = 26, light_impact_range = 33, flash_range = 35, adminlog = TRUE, ignorecap = TRUE) //a bit smaller than max supermatter explosion
 	priority_announce("WARNING - Portal are appearing everywhere, you failed to contain the event. You people should feel ashamed of yourselves!","Alarm")
 	QDEL_NULL(dest_crystal)
 
@@ -368,11 +368,11 @@ This section is for the destabilized SM
 		return
 
 	if(!removed || !removed.total_moles() || isspaceturf(loc_turf))
-		removed.adjust_moles(/datum/gas/bz, 0.5)
-	removed.adjust_moles(/datum/gas/bz, 15.5)
-	removed.adjust_moles(/datum/gas/miasma, 5.5)
+		removed.adjust_moles(GAS_BZ, 0.5)
+	removed.adjust_moles(GAS_BZ, 15.5)
+	removed.adjust_moles(GAS_MIASMA, 5.5)
 	env.merge(removed)
-	air_update_turf(FALSE, FALSE)
+	air_update_turf()
 
 /obj/machinery/destabilized_crystal/attackby(obj/item/W, mob/living/user, params)
 	if(!istype(user))
@@ -407,9 +407,9 @@ This section is for the destabilized SM
 	. = ..()
 	. += "<hr><span class='notice'>The Crystal appears to be heavily destabilized. Maybe it can be fixed by injecting it with something from another world.</span>"
 	if(length(GLOB.huge_crystal_portals) > 0)
-		. += "\n<span class='notice'>Дестабилизированный Кристалл защищен неким щитом.</span>"
+		. += span_notice("\nДестабилизированный Кристалл защищен неким щитом.")
 	else
-		. += "\n<span class='notice'>Щита, что защищает кристалл, больше нет, время восстановить кристалл.</span>"
+		. += span_notice("\nЩита, что защищает кристалл, больше нет, время восстановить кристалл.")
 
 /obj/machinery/destabilized_crystal/Bumped(atom/movable/movable_atom)
 	if(!isliving(movable_atom))
@@ -442,7 +442,7 @@ This section is for the crystal stabilizer item and the crystal from the closed 
 */
 /obj/item/crystal_stabilizer
 	name = "Стабилизатор Суперматерии"
-	desc = "Used when the Supermatter Matrix is starting to reach the destruction point."
+	desc = "Используется, когда Матрица Сверхматерии начинает достигать точки разрушения."
 	icon = 'icons/obj/supermatter.dmi'
 	icon_state = "stabilizer"
 	slot_flags = ITEM_SLOT_BACK
@@ -454,9 +454,9 @@ This section is for the crystal stabilizer item and the crystal from the closed 
 	. = ..()
 	. += "<hr><span class='notice'>There is a compartment for something small... like a crystal...</span>"
 	if(!filled)
-		. += "\n<span class='notice'>The [src] is empty.</span>"
+		. += span_notice("\nThe [src] is empty.")
 	else
-		. += "\n<span class='notice'>[src] полон и может быть использован для стабилизации Суперматерии.</span>"
+		. += span_notice("\n[src] полон и может быть использован для стабилизации Суперматерии.")
 
 /obj/item/crystal_stabilizer/attackby(obj/item/W, mob/living/user, params)
 	. = ..()
@@ -504,7 +504,7 @@ This section is for the crystal portals variations
 */
 /obj/structure/crystal_portal
 	name = "crystal portal"
-	desc = "Этого тут не должно быть."
+	desc = "<font size=+4>Если вы видите это, то немедленно пишите анпедал на пидораса, что вызвал эту хуйню.</font>"
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "anom"
 	color = COLOR_SILVER
@@ -549,13 +549,13 @@ This section is for the crystal portals variations
 	if(!closed)
 		switch(name)
 			if("Small Portal")
-				explosion(loc, 0,1,3)
+				explosion(src, heavy_impact_range = 1, light_impact_range = 3)
 			if("Medium Portal")
-				explosion(loc, 0,3,5)
+				explosion(src, heavy_impact_range = 3, light_impact_range = 5)
 			if("Big Portal")
-				explosion(loc, 1,3,5)
+				explosion(src, devastation_range = 1, heavy_impact_range = 3, light_impact_range = 5)
 			if("Huge Portal")
-				explosion(loc, 2,5,7)
+				explosion(src, devastation_range = 2, heavy_impact_range = 5, light_impact_range = 7)
 	new/obj/item/stack/sheet/otherworld_crystal(loc)
 	return ..()
 
@@ -650,8 +650,8 @@ This section is for the crystal monsters variations
 	gender = NEUTER
 	mob_biotypes = MOB_MINERAL|MOB_HUMANOID
 	turns_per_move = 1
-	speak_emote = list("resonates")
-	emote_see = list("resonates")
+	speak_emote = list("резонирует")
+	emote_see = list("резонирует")
 	a_intent = INTENT_HARM
 	minbodytemp = 0
 	maxbodytemp = 1500

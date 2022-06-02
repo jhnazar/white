@@ -64,7 +64,7 @@
 		return
 	. += "<hr><span class='info'>ПКМ для очистки показателей.</span>"
 	if(obj_flags & EMAGGED)
-		. += "\n<span class='warning'>Дисплей выдаёт ересь.</span>"
+		. += span_warning("\nДисплей выдаёт ересь.")
 		return
 	. += "<hr>"
 	switch(radiation_count)
@@ -81,7 +81,7 @@
 		if(RAD_LEVEL_CRITICAL + 1 to INFINITY)
 			. += span_boldannounce("Уровни внешней радиации выше критического уровня!")
 
-	. += "\n<span class='notice'>Последнее обнаруженное количество радиации было [last_tick_amount]</span>"
+	. += span_notice("\nПоследнее обнаруженное количество радиации было [last_tick_amount]")
 
 /obj/item/geiger_counter/update_icon_state()
 	if(!scanning)
@@ -131,7 +131,7 @@
 	if(user.a_intent == INTENT_HELP)
 		if(!(obj_flags & EMAGGED))
 			user.visible_message(span_notice("[user] сканирует [target] используя [src.name].") , span_notice("Сканирую [target] radiation levels with [src.name]..."))
-			addtimer(CALLBACK(src, .proc/scan, target, user), 20, TIMER_UNIQUE) // Let's not have spamming GetAllContents
+			addtimer(CALLBACK(src, .proc/scan, target, user), 20, TIMER_UNIQUE) // Let's not have spamming get_all_contents
 		else
 			user.visible_message(span_notice("[user] сканирует [target] используя [src.name].") , span_danger("Вкачиваю радиацию запасённую [src.name] в [target]!"))
 			target.rad_act(radiation_count)

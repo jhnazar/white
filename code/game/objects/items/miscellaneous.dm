@@ -32,14 +32,14 @@
 	if(user.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
 		return TRUE
 	else
-		playsound(src, 'sound/machines/buzz-sigh.ogg', 40, TRUE)
+		playsound(src, 'white/valtos/sounds/error1.ogg', 40, TRUE)
 		return FALSE
 
 /obj/item/choice_beacon/proc/generate_options(mob/living/M)
 	var/list/display_names = generate_display_names()
 	if(!display_names.len)
 		return
-	var/choice = input(M,"Which item would you like to order?","Select an Item") as null|anything in sortList(display_names)
+	var/choice = input(M,"Which item would you like to order?","Select an Item") as null|anything in sort_list(display_names)
 	if(!choice || !M.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
 		return
 
@@ -224,7 +224,7 @@
 	desc = "This box should not exist, contact the proper authorities."
 
 /obj/item/storage/box/ingredients/random/Initialize()
-	.=..()
+	. = ..()
 	var/chosen_box = pick(subtypesof(/obj/item/storage/box/ingredients) - /obj/item/storage/box/ingredients/random)
 	new chosen_box(loc)
 	return INITIALIZE_HINT_QDEL

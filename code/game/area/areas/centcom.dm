@@ -43,7 +43,11 @@
 	name = "ЦК: Дебаг"
 
 /area/centcom/scp
-	name = "ЦК: SCP"
+	name = "SCP"
+
+/area/centcom/scp/labyrinth
+	name = "SCP: Лабиринт"
+	map_generator = /datum/map_generator/labyrinth
 
 /area/centcom/brief
 	name = "ЦК: Брифинг"
@@ -172,6 +176,8 @@
 	icon_state = "yellow"
 	requires_power = FALSE
 	area_flags = UNIQUE_AREA | NOTELEPORT
+
+	static_lighting = FALSE
 	base_lighting_color = COLOR_WHITE
 	base_lighting_alpha = 255
 	has_gravity = STANDARD_GRAVITY

@@ -53,8 +53,7 @@
 			SEND_SIGNAL(exposed_mob, COMSIG_ADD_MOOD_EVENT, "quality_food", /datum/mood_event/amazingtaste)
 
 	if(reagent_state == LIQUID)
-		if(exposed_mob.getorganslot(ORGAN_SLOT_KIDNEYS))
-			exposed_mob.hydration += max(0.5, nutriment_factor) * hydration_factor
+		exposed_mob.hydration += max(0.5, nutriment_factor) * hydration_factor
 
 /datum/reagent/consumable/nutriment
 	name = "Питательные вещества"
@@ -149,7 +148,7 @@
 	if(isspaceturf(exposed_turf))
 		return
 
-	var/obj/effect/decal/cleanable/cum/reagentdecal = new(exposed_turf)
+	var/obj/effect/decal/cleanable/cum/reagentdecal = new(exposed_turf,,FALSE)
 	reagentdecal = locate() in exposed_turf
 	if(reagentdecal)
 		reagentdecal.reagents.add_reagent(/datum/reagent/consumable/nutriment/protein/semen, reac_volume)
@@ -453,7 +452,7 @@
 	hydration_factor = DRINK_HYDRATION_FACTOR_SALTY
 
 /datum/reagent/consumable/coco/on_mob_add(mob/living/carbon/M)
-	.=..()
+	. = ..()
 	if(isfelinid(M))
 		to_chat(M, span_warning("Ваши внутренности переворачиваются от шоколада!"))
 		M.vomit(20)

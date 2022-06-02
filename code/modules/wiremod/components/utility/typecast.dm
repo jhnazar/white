@@ -4,8 +4,8 @@
  * A component that casts a value to a type if it matches or outputs null.
  */
 /obj/item/circuit_component/typecast
-	display_name = "Typecast"
-	desc = "A component that casts a value to a type if it matches or outputs null."
+	display_name = "Классификация"
+	desc = "Компонент, присваиваивающий значение типу, при соответствии или же выводит значение null."
 	circuit_flags = CIRCUIT_FLAG_INPUT_SIGNAL|CIRCUIT_FLAG_OUTPUT_SIGNAL
 
 	var/datum/port/input/option/typecast_options
@@ -25,7 +25,7 @@
 	var/static/list/component_options = list(
 		PORT_TYPE_STRING,
 		PORT_TYPE_NUMBER,
-		PORT_TYPE_LIST,
+		PORT_COMPOSITE_TYPE_LIST,
 		PORT_TYPE_ATOM,
 	)
 	typecast_options = add_option_port("Typecast Options", component_options)
@@ -48,7 +48,7 @@
 		if(PORT_TYPE_NUMBER)
 			if(isnum(value))
 				value_to_set = value
-		if(PORT_TYPE_LIST)
+		if(PORT_COMPOSITE_TYPE_LIST)
 			if(islist(value))
 				value_to_set = value
 		if(PORT_TYPE_ATOM)

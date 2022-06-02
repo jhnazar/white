@@ -49,7 +49,7 @@
  */
 /obj/structure/training_machine/obj_destruction(damage_flag)
 	remove_attached_item(throwing = TRUE)
-	explosion(src, 0,0,1, flame_range = 2)
+	explosion(src, light_impact_range = 1, flash_range = 2)
 	return ..()
 
 /obj/structure/training_machine/ui_state(mob/user)
@@ -163,7 +163,7 @@
 		UnregisterSignal(attached_item, COMSIG_PARENT_QDELETING)
 		qdel(attached_item)
 	else if (user)
-		user.put_in_hands(attached_item)
+		INVOKE_ASYNC(user, /mob/proc/put_in_hands, attached_item)
 	else
 		attached_item.forceMove(drop_location())
 	if (throwing && !QDELETED(attached_item)) //Fun little thing where we throw out the old attached item when emagged

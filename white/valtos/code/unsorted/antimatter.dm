@@ -58,18 +58,18 @@
 
 /obj/item/am_containment/ex_act(severity, target)
 	switch(severity)
-		if(1)
-			explosion(get_turf(src), 1, 2, 3, 5)//Should likely be larger but this works fine for now I guess
+		if(EXPLODE_DEVASTATE)
+			explosion(src, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 3, flame_range = 5)
 			if(src)
 				qdel(src)
-		if(2)
+		if(EXPLODE_HEAVY)
 			if(prob((fuel/10)-stability))
-				explosion(get_turf(src), 1, 2, 3, 5)
+				explosion(src, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 3, flame_range = 5)
 				if(src)
 					qdel(src)
 				return
 			stability -= 40
-		if(3)
+		if(EXPLODE_LIGHT)
 			stability -= 20
 	//check_stability()
 	return
@@ -87,9 +87,6 @@
 	icon_state = "control"
 	anchored = FALSE
 	density = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 100
-	active_power_usage = 1000
 
 	interaction_flags_atom = INTERACT_ATOM_ATTACK_HAND | INTERACT_ATOM_UI_INTERACT | INTERACT_ATOM_REQUIRES_ANCHORED
 
@@ -129,7 +126,8 @@
 
 /obj/machinery/power/am_control_unit/process()
 	if(exploding)
-		explosion(get_turf(src),8,12,18,12)
+		GLOB.is_engine_sabotaged = TRUE
+		explosion(src, devastation_range = 8, heavy_impact_range = 12, light_impact_range = 18, flame_range = 12)
 		if(src)
 			qdel(src)
 
@@ -142,7 +140,7 @@
 
 	if(!fueljar)//No fuel but we are on, shutdown
 		toggle_power()
-		playsound(src.loc, 'sound/machines/buzz-two.ogg', 50, 0)
+		playsound(src.loc, 'white/valtos/sounds/error2.ogg', 50, 0)
 		return
 
 	add_avail(stored_power)
@@ -427,8 +425,6 @@
 	density = TRUE
 	dir = NORTH
 	use_power = NO_POWER_USE//Living things generally dont use power
-	idle_power_usage = 0
-	active_power_usage = 0
 
 	var/obj/machinery/power/am_control_unit/control_unit = null
 	var/processing = FALSE//To track if we are in the update list or not, we need to be when we are damaged and if we ever

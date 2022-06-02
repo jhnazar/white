@@ -31,6 +31,7 @@
 		. += "<hr><span class='notice'><b>Энергия:</b> [hooked_singulo.energy].</span>"
 
 /obj/machinery/magnetic_concentrator/RefreshParts()
+	. = ..()
 	var/t = 0
 	for(var/obj/item/stock_parts/L in component_parts)
 		t += L.rating * 20
@@ -41,7 +42,7 @@
 	luminosity = 0
 	if(magpower > 1)
 		luminosity = 1
-		SSvis_overlays.add_vis_overlay(src, icon, "magnetic_concentrator_overlay", EMISSIVE_LAYER, ABOVE_LIGHTING_PLANE, dir, alpha)
+		SSvis_overlays.add_vis_overlay(src, icon, "magnetic_concentrator_overlay", plane = ABOVE_LIGHTING_PLANE, dir = src.dir, alpha = src.alpha)
 
 /obj/machinery/magnetic_concentrator/bullet_act(obj/projectile/Proj)
 	if(Proj.flag != BULLET)
@@ -136,18 +137,19 @@
 	. = ..()
 	. += "<hr><span class='notice'><b>Режим:</b> [asteroid_mode ? "АСТЕРОИДЫ" : "МЕТЕОРЫ"].</span>"
 	if(asteroid_mode)
-		. += "\n<span class='notice'>Ловит объекты размером максимум <b>[catch_power] метров</b>.</span>"
+		. += span_notice("\nЛовит объекты размером максимум <b>[catch_power] метров</b>.")
 		if(asteroid_catching)
 			if(!asteroid_catched)
-				. += "\n<span class='notice'>Время до прилёта объекта <b>[DisplayTimeText(asteroid_catch_time / catch_power)]</b>.</span>"
+				. += span_notice("\nВремя до прилёта объекта <b>[DisplayTimeText(asteroid_catch_time / catch_power)]</b>.")
 			else
-				. += "\n<span class='notice'>Время до отправки объекта <b>[DisplayTimeText(asteroid_catch_time / catch_power)]</b>.</span>"
-		. += "\n<span class='notice'><b>Последняя ошибка:</b> [last_err].</span>"
+				. += span_notice("\nВремя до отправки объекта <b>[DisplayTimeText(asteroid_catch_time / catch_power)]</b>.")
+		. += span_notice("\n<b>Последняя ошибка:</b> [last_err].")
 	else
-		. += "\n<span class='notice'>Ловит максимум <b>[catch_power] метеоров</b>.</span>"
+		. += span_notice("\nЛовит максимум <b>[catch_power] метеоров</b>.")
 
 
 /obj/machinery/meteor_catcher/RefreshParts()
+	. = ..()
 	var/t = 0
 	for(var/obj/item/stock_parts/L in component_parts)
 		t += L.rating
@@ -224,7 +226,8 @@
 					else
 						T.ChangeTurf(/turf/open/openspace/airless, /turf/open/openspace/airless)
 					for(var/atom/A in T)
-						qdel(A)
+						if(isobj(A))
+							qdel(A)
 				asteroid_catched = FALSE
 				asteroid_catch_time = 600 SECONDS
 				asteroid_catching = FALSE
@@ -249,7 +252,7 @@
 				if(SOUTH)
 					target = locate(x,1,z)
 					point = locate(x,y - (catch_power + 1),z)
-			for(var/T in getline(get_step(point, dir), target))
+			for(var/T in get_line(get_step(point, dir), target))
 				var/turf/tile = T
 				if(isclosedturf(tile))
 					Beam(tile, icon_state = "nzcrentrs_power", time = 5 SECONDS)
@@ -257,7 +260,7 @@
 					last_err = "ЧТО-ТО МАССИВНОЕ НА ПУТИ. ОТМЕНА"
 					return PROCESS_KILL
 			valid_turfs.Cut()
-			for(var/T in circleviewturfs(point, round(catch_power * 0.75)))
+			for(var/T in circle_view_turfs(point, round(catch_power * 0.75)))
 				if(isopenspace(T) || isspaceturf(T))
 					valid_turfs += T
 				else

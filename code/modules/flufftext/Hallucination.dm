@@ -103,6 +103,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	var/col_mod = null
 	var/image/current_image = null
 	var/image_layer = MOB_LAYER
+	var/image_plane = GAME_PLANE
 	var/active = TRUE //qdelery
 
 /obj/effect/hallucination/singularity_pull()
@@ -120,6 +121,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 
 /obj/effect/hallucination/simple/proc/GetImage()
 	var/image/I = image(image_icon,src,image_state,image_layer,dir=src.dir)
+	I.plane = image_plane
 	I.pixel_x = px
 	I.pixel_y = py
 	if(col_mod)
@@ -162,7 +164,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	icon_state = "nothing"
 	anchored = TRUE
 	layer = FLY_LAYER
-	plane = GAME_PLANE
+	plane = ABOVE_GAME_PLANE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
 /datum/hallucination/fake_flood
@@ -189,7 +191,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	var/obj/effect/plasma_image_holder/pih = new(center)
 	var/image/plasma_image = image(image_icon, pih, image_state, FLY_LAYER)
 	plasma_image.alpha = 50
-	plasma_image.plane = GAME_PLANE
+	plasma_image.plane = ABOVE_GAME_PLANE
 	flood_images += plasma_image
 	flood_image_holders += pih
 	flood_turfs += center
@@ -220,7 +222,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 			var/obj/effect/plasma_image_holder/pih = new(T)
 			var/image/new_plasma = image(image_icon, pih, image_state, FLY_LAYER)
 			new_plasma.alpha = 50
-			new_plasma.plane = GAME_PLANE
+			new_plasma.plane = ABOVE_GAME_PLANE
 			flood_images += new_plasma
 			flood_image_holders += pih
 			flood_turfs += T
@@ -273,6 +275,11 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 			pump_location = get_turf(U)
 			break
 
+	playsound(C, sound(pick('white/valtos/sounds/lifeweb/hall_attack.ogg',\
+					'white/valtos/sounds/lifeweb/hall_attack2.ogg',\
+					'white/valtos/sounds/lifeweb/hall_attack3.ogg',\
+					'white/valtos/sounds/lifeweb/hall_attack4.ogg')))
+
 	if(pump_location)
 		feedback_details += "Vent Coords: [pump_location.x],[pump_location.y],[pump_location.z]"
 		xeno = new(pump_location, target)
@@ -299,6 +306,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 				xeno.update_icon("alienh_leap",'icons/mob/alienleap.dmi', -32, -32)
 				xeno.throw_at(target, 7, 1, spin = FALSE, diagonals_first = TRUE)
 				stage = XENO_ATTACK_STAGE_LEAP_AT_PUMP
+				playsound(target, sound('white/valtos/sounds/lifeweb/hall_pain.ogg'))
 
 /datum/hallucination/xeno_attack/Destroy()
 	. = ..()
@@ -784,6 +792,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 
 /obj/effect/hallucination/fake_door_lock
 	layer = CLOSED_DOOR_LAYER + 1 //for Bump priority
+	plane = GAME_PLANE
 	var/image/bolt_light
 	var/obj/machinery/door/airlock/airlock
 
@@ -944,7 +953,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 			else
 				target.playsound_local(source, 'sound/effects/explosion2.ogg', 50, 1)
 		if("far explosion")
-			target.playsound_local(source, 'sound/effects/explosionfar.ogg', 50, 1)
+			target.playsound_local(source, pick(FAR_EXPLOSION_SOUNDS), 50, 1)
 		if("glass")
 			target.playsound_local(source, pick('sound/effects/glassbr1.ogg','sound/effects/glassbr2.ogg','sound/effects/glassbr3.ogg'), 50, 1)
 		if("alarm")
@@ -1055,7 +1064,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 				target,
 				/mob/.proc/playsound_local,
 				target,
-				'sound/effects/explosion_distant.ogg',
+				'white/valtos/sounds/nuclearexplosion.ogg',
 				50,
 				FALSE,
 				/* frequency = */ null,
@@ -1234,7 +1243,6 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 			slots_free += ui_storage2
 	if(slots_free.len)
 		halitem.screen_loc = pick(slots_free)
-		halitem.layer = ABOVE_HUD_LAYER
 		halitem.plane = ABOVE_HUD_PLANE
 		switch(rand(1,6))
 			if(1) //revolver
@@ -1443,7 +1451,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 	set waitfor = FALSE
 	..()
 	target.set_fire_stacks(max(target.fire_stacks, 0.1)) //Placebo flammability
-	fire_overlay = image('icons/mob/OnFire.dmi', target, "Standing", ABOVE_MOB_LAYER)
+	fire_overlay = image('icons/mob/onfire.dmi', target, "human_burning", ABOVE_MOB_LAYER)
 	if(target?.client)
 		target.client.images += fire_overlay
 	to_chat(target, span_userdanger("ГОРЮ!"))

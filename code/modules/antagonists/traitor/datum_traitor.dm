@@ -8,7 +8,6 @@
 	antagpanel_category = "Traitor"
 	job_rank = ROLE_TRAITOR
 	antag_moodlet = /datum/mood_event/focused
-	antag_hud_type = ANTAG_HUD_TRAITOR
 	antag_hud_name = "traitor"
 	hijack_speed = 0.5				//10 seconds per hijack stage by default
 	var/special_role = ROLE_TRAITOR
@@ -144,6 +143,11 @@
 			maroon_objective.owner = owner
 			maroon_objective.find_target()
 			add_objective(maroon_objective)
+		else if(prob(30))
+			var/datum/objective/sabotage/sabotage_objective = new
+			sabotage_objective.owner = owner
+			sabotage_objective.find_target()
+			add_objective(sabotage_objective)
 		else
 			var/datum/objective/assassinate/kill_objective = new
 			kill_objective.owner = owner
@@ -209,7 +213,6 @@
 /datum/antagonist/traitor/apply_innate_effects(mob/living/mob_override)
 	. = ..()
 	var/mob/living/M = mob_override || owner.current
-	add_antag_hud(antag_hud_type, antag_hud_name, M)
 	handle_clown_mutation(M, mob_override ? null : "Благодаря упорным тренировкам мне удалось побороть мою клоунскую натуру и это дало мне возможность пользоваться оружием без вреда себе.")
 	var/mob/living/silicon/ai/A = M
 	if(istype(A) && traitor_kind == TRAITOR_AI)
@@ -219,7 +222,6 @@
 /datum/antagonist/traitor/remove_innate_effects(mob/living/mob_override)
 	. = ..()
 	var/mob/living/M = mob_override || owner.current
-	remove_antag_hud(antag_hud_type, M)
 	handle_clown_mutation(M, removing = FALSE)
 	var/mob/living/silicon/ai/A = M
 	if(istype(A)  && traitor_kind == TRAITOR_AI)

@@ -1,5 +1,3 @@
-
-
 /datum/team/vampireclan
 	name = "Clan" // Teravanni,
 
@@ -70,9 +68,6 @@
 	// Objectives & Team
 	forge_bloodsucker_objectives()
 
-	// Add Antag HUD
-	update_bloodsucker_icons_added(owner.current, "bloodsucker")
-
 	// Run Life Function
 	LifeTick()
 	. = ..()
@@ -91,9 +86,6 @@
 	// Objectives
 	clear_bloodsucker_objectives()
 
-	// Clear Antag HUD
-	update_bloodsucker_icons_removed(owner.current)
-
 	. = ..()
 
 
@@ -104,7 +96,6 @@
 	owner.announce_objectives()
 	to_chat(owner, "<span class='boldannounce'>* You regenerate your health slowly, you're weak to fire, and you depend on blood to survive. Allow your stolen blood to run too low, and you will find yourself at \
 	risk of being discovered!</span><br>")
-	//to_chat(owner, "<span class='boldannounce'>As an immortal, your power is linked to your age. The older you grow, the more abilities you will have access to.<span>")
 	to_chat(owner, "<span class='boldannounce'>* Other Bloodsuckers are not necessarily your friends, but your survival may depend on cooperation. Betray them at your own discretion and peril.</span><br>")
 	to_chat(owner, "<span class='boldannounce'><i>* Use \",b\" to speak your ancient Bloodsucker language.</span><br>")
 	to_chat(owner, "<span class='announce'>Bloodsucker Tip: Rest in a <i>Coffin</i> to claim it, and that area, as your lair.</span><br>")
@@ -677,22 +668,10 @@
 
 		// HUD! //
 
-/datum/antagonist/bloodsucker/proc/update_bloodsucker_icons_added(datum/mind/m)
-	var/datum/atom_hud/antag/vamphud = GLOB.huds[ANTAG_HUD_BLOODSUCKER]
-	vamphud.join_hud(owner.current)
-	set_antag_hud(owner.current, "bloodsucker") // "bloodsucker"
-	owner.current.hud_list[ANTAG_HUD].icon = image('white/valtos/icons/bloodsucker/fulphud.dmi', owner.current, "bloodsucker")	// FULP ADDITION! Check prepare_huds in mob.dm to see why.
-
-/datum/antagonist/bloodsucker/proc/update_bloodsucker_icons_removed(datum/mind/m)
-	var/datum/atom_hud/antag/vamphud = GLOB.huds[ANTAG_HUD_BLOODSUCKER]
-	vamphud.leave_hud(owner.current)
-	set_antag_hud(owner.current, null)
-
-
 /datum/atom_hud/antag/bloodsucker  // from hud.dm in /datums/   Also see data_huds.dm + antag_hud.dm
 
 
-/datum/atom_hud/antag/bloodsucker/add_to_single_hud(mob/M, atom/A)
+/datum/atom_hud/antag/bloodsucker/add_atom_to_single_mob_hud(mob/M, atom/A)
 	if (!check_valid_hud_user(M,A)) 	// FULP: This checks if the Mob is a Vassal, and if the Atom is his master OR on his team.
 		return
 	..()
@@ -742,10 +721,6 @@
 
 
 		// BLOOD COUNTER & RANK MARKER ! //
-
-#define ui_sunlight_display "WEST:6,CENTER-0:0"  // 6 pixels to the right, zero tiles & 5 pixels DOWN.
-#define ui_blood_display "WEST:6,CENTER-1:0"  	  // 1 tile down
-#define ui_vamprank_display "WEST:6,CENTER-2:-5"   // 2 tiles down
 
 /datum/hud
 	var/atom/movable/screen/bloodsucker/blood_counter/blood_display

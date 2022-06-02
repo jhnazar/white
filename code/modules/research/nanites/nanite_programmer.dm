@@ -1,6 +1,6 @@
 /obj/machinery/nanite_programmer
-	name = "nanite programmer"
-	desc = "A device that can edit nanite program disks to adjust their functionality."
+	name = "программатор нанитов"
+	desc = "Устройство для изменения настроек нанитных программ хранимых на дисках."
 	var/obj/item/disk/nanite_program/disk
 	var/datum/nanite_program/program
 	icon = 'icons/obj/machines/research.dmi'
@@ -16,17 +16,16 @@
 
 /obj/machinery/nanite_programmer/update_overlays()
 	. = ..()
-	SSvis_overlays.remove_vis_overlay(src, managed_vis_overlays)
 	if((machine_stat & (NOPOWER|MAINT|BROKEN)) || panel_open)
 		return
-	SSvis_overlays.add_vis_overlay(src, icon, "nanite_programmer_on", layer, plane)
-	SSvis_overlays.add_vis_overlay(src, icon, "nanite_programmer_on", EMISSIVE_LAYER, EMISSIVE_PLANE)
+	. += mutable_appearance(icon, "nanite_programmer_on", layer, plane)
+	. += mutable_appearance(icon, "nanite_programmer_on", 0, EMISSIVE_PLANE)
 
 /obj/machinery/nanite_programmer/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/disk/nanite_program))
 		var/obj/item/disk/nanite_program/N = I
 		if(user.transferItemToLoc(N, src))
-			to_chat(user, span_notice("You insert [N] into [src]"))
+			to_chat(user, span_notice("Помещаю [N] в [src]"))
 			playsound(src, 'sound/machines/terminal_insert_disc.ogg', 50, FALSE)
 			if(disk)
 				eject(user)
@@ -57,7 +56,7 @@
 
 /obj/machinery/nanite_programmer/AltClick(mob/user)
 	if(disk && user.canUseTopic(src, !issilicon(user)))
-		to_chat(user, span_notice("You take out [disk] from [src]."))
+		to_chat(user, span_notice("Извлекаю [disk] из [src]."))
 		eject(user)
 	return
 

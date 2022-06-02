@@ -32,30 +32,13 @@
 	if(!cached_map)
 		return
 
-	discover_port_offset()
+	var/offset = discover_offset(/obj/docking_port/mobile)
+
+	port_x_offset = offset[1]
+	port_y_offset = offset[2]
 
 	if(!cache)
 		cached_map = null
-
-/datum/map_template/shuttle/proc/discover_port_offset()
-	var/key
-	var/list/models = cached_map.grid_models
-	for(key in models)
-		if(findtext(models[key], "[/obj/docking_port/mobile]")) // Yay compile time checks
-			break // This works by assuming there will ever only be one mobile dock in a template at most
-
-	for(var/i in cached_map.gridSets)
-		var/datum/grid_set/gset = i
-		var/ycrd = gset.ycrd
-		for(var/line in gset.gridLines)
-			var/xcrd = gset.xcrd
-			for(var/j in 1 to length(line) step cached_map.key_len)
-				if(key == copytext(line, j, j + cached_map.key_len))
-					port_x_offset = xcrd
-					port_y_offset = ycrd
-					return
-				++xcrd
-			--ycrd
 
 /datum/map_template/shuttle/load(turf/T, centered, register=TRUE)
 	. = ..()
@@ -198,7 +181,7 @@
 /datum/map_template/shuttle/emergency/asteroid
 	suffix = "asteroid"
 	name = "Эвакуационный Шатл Астероидной Станции"
-	description = "Респектабельный шатл среднего размера, который впервые заступил на службу доставляя экипаж Нанотрансена на их внутренные объекты в поясе астероидов и обратно."
+	description = "Респектабельный шатл среднего размера, который впервые заступил на службу доставляя экипаж NanoTrasen на их внутренные объекты в поясе астероидов и обратно."
 	credit_cost = CARGO_CRATE_VALUE * 6
 
 /datum/map_template/shuttle/emergency/bar
@@ -282,19 +265,19 @@
 
 /datum/map_template/shuttle/emergency/birdboat
 	suffix = "birdboat"
-	name = "Эвакуационный Шатл Станции БёрдБоат"
+	name = "эвакуационный шатл станции \"birdboat\""
 	description = "Не смотря на то что этот шатл немного маловат - он полностью укомплектован, чего не скажешь о типе станции, на которой он был заказан."
 	credit_cost = CARGO_CRATE_VALUE * 2
 
 /datum/map_template/shuttle/emergency/box
 	suffix = "box"
-	name = "Эвакуационный Шатл Станции Ящик"
+	name = "эвакуационный шатл станции \"Box\""
 	credit_cost = CARGO_CRATE_VALUE * 4
 	description = "Проверенный временем золотой стандарт для экстренной эксфильтрации, оборудованный всем, что может пригодиться экипажу для безопасного полета домой."
 
 /datum/map_template/shuttle/emergency/donut
 	suffix = "donut"
-	name = "Аварйный Шатл Станции Пончиков"
+	name = "эвакуационный шатл станции \"donut\""
 	description = "Прекрасно налезет на любую грубую шутку с формой станции, шатл содержит несколько камер для заключенных и небольшое медицинское крыло."
 	admin_notes = "Has airlocks on both sides of the shuttle and will probably intersect near the front on some stations that build past departures."
 	credit_cost = CARGO_CRATE_VALUE * 5
@@ -303,9 +286,9 @@
 	suffix = "clown"
 	name = "Snappop(tm)!"
 	description = "Привет дети и взрослые! \
-	Вы устали от СКУЧНЫХ и НУДНЫХ поездок на шатле после того как вы эвакуировались из-за, наверняка, УТОМИТЕЛЬНЫХ причин. В таком случае закажи Snappop(tm) уже сегодня! \
+	Устали от СКУЧНЫХ и НУДНЫХ поездок на шатле после того как эвакуировались из-за, наверняка, УТОМИТЕЛЬНЫХ причин. В таком случае закажи Snappop(tm) уже сегодня! \
 	У нас куча веселых занятий для всех, доступ во все кабины и никакого скучного брига безопасности! Бу! Играйте в переодевание со своими друзьями! \
-	Соберите все простыни раньше вашего соседа! Узнайте, наблюдает ли за вами ИИ  с помощью нашего ожидающего патента изобретения \"Пикающий ТОМ: Многоинструментальный ИИ Детектор\" или, если коротко, ПИИИТОР. \
+	Соберите все простыни раньше соседа! Узнайте, наблюдает ли за вами ИИ  с помощью нашего ожидающего патента изобретения \"Пикающий ТОМ: Многоинструментальный ИИ Детектор\" или, если коротко, ПИИИТОР. \
 	Веселой поездки!"
 	admin_notes = "Brig is replaced by anchored greentext book surrounded by lavaland chasms, stationside door has been removed to prevent accidental dropping. No brig."
 	credit_cost = CARGO_CRATE_VALUE * 16
@@ -357,7 +340,7 @@
 	description = "Looks like this shuttle may have wandered into the darkness between the stars on route to the station. Let's not think too hard about where all the bodies came from."
 	admin_notes = "Contains real cult ruins, mob eyeballs, and inactive constructs. Cult mobs will automatically be sentienced by fun balloon. \
 	Cloning pods in 'medbay' area are showcases and nonfunctional."
-	credit_cost = 667 ///The joke is the number so no defines
+	credit_cost = 6667 ///The joke is the number so no defines
 
 /datum/map_template/shuttle/emergency/narnar/prerequisites_met()
 	return SSshuttle.shuttle_purchase_requirements_met[SHUTTLE_UNLOCK_NARNAR]

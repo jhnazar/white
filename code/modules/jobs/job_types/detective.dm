@@ -14,8 +14,8 @@
 
 	outfit = /datum/outfit/job/detective
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY)
+	skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_EXPERT)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_EXPERT)
 
 	paycheck = PAYCHECK_MEDIUM
 	paycheck_department = ACCOUNT_SEC
@@ -42,7 +42,7 @@
 	name = "Detective"
 	jobtype = /datum/job/detective
 
-	belt = /obj/item/pda/detective
+	belt = /obj/item/modular_computer/tablet/pda/detective
 	ears = /obj/item/radio/headset/headset_sec/alt
 	uniform = /obj/item/clothing/under/rank/security/detective
 	neck = /obj/item/clothing/neck/tie/detective
@@ -53,7 +53,6 @@
 	l_pocket = /obj/item/toy/crayon/white
 	r_pocket = /obj/item/lighter
 	backpack_contents = list(/obj/item/storage/box/evidence=1,\
-		/obj/item/modular_computer/tablet/preset/cheap=1,\
 		/obj/item/detective_scanner=1,\
 		/obj/item/melee/classic_baton=1)
 	mask = /obj/item/clothing/mask/cigarette

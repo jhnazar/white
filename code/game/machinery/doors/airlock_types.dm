@@ -236,9 +236,6 @@
 	DA.update_name()
 	qdel(src)
 
-/obj/machinery/door/airlock/plasma/BlockSuperconductivity() //we don't stop the heat~
-	return 0
-
 /obj/machinery/door/airlock/plasma/attackby(obj/item/C, mob/user, params)
 	if(C.get_temperature() > 300)//If the temperature of the object is over 300, then ignite
 		message_admins("Plasma airlock ignited by [ADMIN_LOOKUPFLW(user)] in [ADMIN_VERBOSEJMP(src)]")
@@ -411,6 +408,19 @@
 	normal_integrity = 500
 	security_level = 1
 	damage_deflection = 30
+
+
+/obj/machinery/door/airlock/highsecurity/gold
+	name = "Золотохранилище"
+	icon = 'icons/obj/doors/airlocks/highsec/highsec.dmi'
+	overlays_file = 'icons/obj/doors/airlocks/highsec/overlays.dmi'
+	assemblytype = /obj/structure/door_assembly/door_assembly_highsecurity
+	explosion_block = 2
+	normal_integrity = 500
+	security_level = 1
+	damage_deflection = 30
+	color = "#d7e60e"
+
 
 //////////////////////////////////
 /*

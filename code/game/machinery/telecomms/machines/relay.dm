@@ -7,12 +7,12 @@
 */
 
 /obj/machinery/telecomms/relay
-	name = "telecommunication relay"
+	name = "Телекоммуникационный ретранслятор"
 	icon_state = "relay"
-	desc = "A mighty piece of hardware used to send massive amounts of data far away."
+	desc = "Мощное аппаратное обеспечение, используемое для передачи огромных объемов данных на огромное расстояние."
+	telecomms_type = /obj/machinery/telecomms/relay
 	density = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 30
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.01
 	netspeed = 5
 	long_range_link = 1
 	circuit = /obj/item/circuitboard/machine/telecomms/relay
@@ -21,9 +21,16 @@
 
 /obj/machinery/telecomms/relay/receive_information(datum/signal/subspace/signal, obj/machinery/telecomms/machine_from)
 	// Add our level and send it back
-	var/turf/T = get_turf(src)
-	if(can_send(signal) && T)
-		signal.levels |= T.z
+	var/turf/relay_turf = get_turf(src)
+	if(can_send(signal) && relay_turf)
+		// Relays send signals to all ZTRAIT_STATION z-levels
+		if(SSmapping.level_trait(relay_turf.z, ZTRAIT_STATION))
+			for(var/z in SSmapping.levels_by_trait(ZTRAIT_STATION))
+				signal.levels |= z
+		else
+			signal.levels |= relay_turf.z
+
+	use_power(idle_power_usage)
 
 // Checks to see if it can send/receive.
 

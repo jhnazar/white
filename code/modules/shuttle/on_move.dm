@@ -68,13 +68,15 @@ All ShuttleMove procs go here
 		CRASH("A turf queued to move via shuttle somehow had no skipover in baseturfs. [src]([type]):[loc]")
 	var/depth = baseturfs.len - shuttle_boundary + 1
 	newT.CopyOnTop(src, 1, depth, TRUE)
-	newT.blocks_air = TRUE
-	newT.air_update_turf(TRUE, FALSE)
-	blocks_air = TRUE
-	air_update_turf(TRUE, TRUE)
-	if(isopenturf(newT))
-		var/turf/open/new_open = newT
-		new_open.copy_air_with_tile(src)
+
+	if(isopenturf(src))
+		var/turf/open/after_src_terf = src
+		update_air_ref(isspaceturf(src) ? 0 : (after_src_terf.planetary_atmos ? 1 : 2))
+	else
+		update_air_ref(-1)
+
+	newT.air_update_turf(TRUE)
+	air_update_turf(TRUE)
 	SEND_SIGNAL(src, COMSIG_TURF_ON_SHUTTLE_MOVE, newT)
 
 	return TRUE
@@ -96,9 +98,9 @@ All ShuttleMove procs go here
 
 /turf/proc/lateShuttleMove(turf/oldT)
 	blocks_air = initial(blocks_air)
-	air_update_turf(TRUE, blocks_air)
+	air_update_turf(blocks_air)
 	oldT.blocks_air = initial(oldT.blocks_air)
-	oldT.air_update_turf(TRUE, oldT.blocks_air)
+	oldT.air_update_turf(oldT.blocks_air)
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +128,7 @@ All ShuttleMove procs go here
 
 	var/turf/newT = get_turf(src)
 	if (newT.z != oldT.z)
-		onTransitZ(oldT.z, newT.z)
+		on_changed_z_level(oldT, newT)
 
 	if(light)
 		update_light()
@@ -167,7 +169,7 @@ All ShuttleMove procs go here
 
 	contents -= oldT
 	underlying_old_area.contents += oldT
-	oldT.change_area(src, underlying_old_area)
+	oldT.transfer_area_lighting(src, underlying_old_area)
 	//The old turf has now been given back to the area that turf originaly belonged to
 
 	var/area/old_dest_area = newT.loc
@@ -175,7 +177,7 @@ All ShuttleMove procs go here
 
 	old_dest_area.contents -= newT
 	contents += newT
-	newT.change_area(old_dest_area, src)
+	newT.transfer_area_lighting(old_dest_area, src)
 	return TRUE
 
 // Called on areas after everything has been moved

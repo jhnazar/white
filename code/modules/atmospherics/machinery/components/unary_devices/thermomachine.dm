@@ -10,7 +10,6 @@
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 100, BOMB = 0, BIO = 100, RAD = 100, FIRE = 80, ACID = 30)
 	layer = OBJ_LAYER
 	circuit = /obj/item/circuitboard/machine/thermomachine
-	idle_power_usage = 1000
 
 	pipe_flags = PIPING_ONE_PER_TURF
 
@@ -55,6 +54,7 @@
 	return..()
 
 /obj/machinery/atmospherics/components/unary/thermomachine/RefreshParts()
+	. = ..()
 	var/calculated_bin_rating
 	for(var/obj/item/stock_parts/matter_bin/bin in component_parts)
 		calculated_bin_rating += bin.rating
@@ -94,7 +94,7 @@
 	. += "<hr><span class='notice'>Термостат настроен на температуру [target_temperature]K ([(T0C-target_temperature)*-1]C).</span>"
 	if(in_range(user, src) || isobserver(user))
 		. += "<hr><span class='notice'>Дисплей: Эффективность <b>[(heat_capacity/5000)*100]%</b>.</span>"
-		. += "\n<span class='notice'>Вариация температур <b>[min_temperature]K - [max_temperature]K ([(T0C-min_temperature)*-1]C - [(T0C-max_temperature)*-1]C)</b>.</span>"
+		. += span_notice("\nВариация температур <b>[min_temperature]K - [max_temperature]K ([(T0C-min_temperature)*-1]C - [(T0C-max_temperature)*-1]C)</b>.")
 
 /obj/machinery/atmospherics/components/unary/thermomachine/AltClick(mob/living/user)
 	if(!can_interact(user))
@@ -124,10 +124,10 @@
 
 	var/temperature_delta = abs(old_temperature - air_contents.return_temperature())
 	if(temperature_delta > 1)
+		active_power_usage = (heat_capacity * temperature_delta) ** 1.05 / 5 + idle_power_usage
 		update_parents()
-		use_power(idle_power_usage * 2)
 	else
-		use_power(idle_power_usage)
+		active_power_usage = idle_power_usage
 	return 1
 
 /obj/machinery/atmospherics/components/unary/thermomachine/attackby(obj/item/I, mob/user, params)

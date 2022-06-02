@@ -119,7 +119,7 @@
 
 /obj/item/gun/energy/plasmacutter
 	name = "плазморез"
-	desc = "Горный инструмент, способный выбрасывать концентрированные плазменные вспышки. Вы можете использовать его, чтобы отрезать конечности от ксеносов! Или, знаете, копать руду."
+	desc = "Горный инструмент, способный выбрасывать концентрированные плазменные вспышки. Можно использовать его, чтобы отрезать конечности от ксеносов! Или, знаете, копать руду."
 	icon_state = "plasmacutter"
 	inhand_icon_state = "plasmacutter"
 	ammo_type = list(/obj/item/ammo_casing/energy/plasma)
@@ -194,9 +194,28 @@
 	force = 15
 	ammo_type = list(/obj/item/ammo_casing/energy/plasma/adv)
 
+/obj/item/gun/energy/plasmacutter/adv/mega
+	name = "мега продвинутый плазморез"
+	icon_state = "adv_plasmacutter_m"
+	inhand_icon_state = "plasmacutter_mega"
+	desc = "Инструмент добычи, способный стрелять концентрированными всплесками плазмы. Можно использовать его, чтобы отрезать конечности ксеносов! Этот был улучшен с плазменным магмитом."
+	ammo_type = list(/obj/item/ammo_casing/energy/plasma/adv/mega)
+
+/obj/item/gun/energy/plasmacutter/emp_act(severity)
+	if(!cell.charge)
+		return
+	cell.use(cell.charge/3)
+	if(isliving(loc))
+		var/mob/living/user = loc
+		user.visible_message("<span class='danger'>Концетрированная плазма разряжается из [src] в [user], поджигая [user.ru_ego()]!</span>")
+		to_chat(user, "<span class='userdanger'>[src] дает сбой, извергая на меня горящую, концетрированную плазму!</span>")
+		user.adjust_fire_stacks(4)
+		user.ignite_mob()
+		user.emote("agony")
+
 /obj/item/gun/energy/wormhole_projector
-	name = "блюспейс проектор червоточин"
-	desc = "Проектор, который излучает квантовые лучи высокой плотности с синей связью. Требуется ядро блюспейс аномалии для функционирования."
+	name = "портальная пушка"
+	desc = "Проектор, который излучает квантовые блюспейс порталы. Требуется ядро блюспейс аномалии для функционирования."
 	ammo_type = list(/obj/item/ammo_casing/energy/wormhole, /obj/item/ammo_casing/energy/wormhole/orange)
 	w_class = WEIGHT_CLASS_NORMAL
 	inhand_icon_state = null
@@ -232,7 +251,7 @@
 		var/obj/item/ammo_casing/energy/wormhole/W = ammo_type[i]
 		if(istype(W))
 			W.gun = WEAKREF(src)
-			var/obj/projectile/beam/wormhole/WH = W.BB
+			var/obj/projectile/beam/wormhole/WH = W.loaded_projectile
 			if(istype(WH))
 				WH.gun = WEAKREF(src)
 
@@ -357,7 +376,7 @@
 	return
 
 /obj/item/gun/energy/gravity_gun
-	name = "одноточечный гравитационный манипулятор"
+	name = "Гравитационная пушка"
 	desc = "Экспериментальное многорежимное устройство, которое запускает заряд энергии нулевой точки, вызывая локальные искажения в гравитации. Требуется ядро гравитационной аномалии для функционирования."
 	w_class = WEIGHT_CLASS_BULKY
 	ammo_type = list(/obj/item/ammo_casing/energy/gravity/repulse, /obj/item/ammo_casing/energy/gravity/attract, /obj/item/ammo_casing/energy/gravity/chaos)

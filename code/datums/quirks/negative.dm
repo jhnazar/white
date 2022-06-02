@@ -166,7 +166,7 @@
 		heirloom_type = pick(holder_species.family_heirlooms)
 	else
 		// Our quirk holder's job
-		var/datum/job/holder_job = human_holder.mind?.assigned_role
+		var/datum/job/holder_job = human_holder.last_mind?.assigned_role
 		if(holder_job && LAZYLEN(holder_job.family_heirlooms))
 			heirloom_type = pick(holder_job.family_heirlooms)
 
@@ -207,7 +207,7 @@
 
 	var/obj/family_heirloom = heirloom?.resolve()
 
-	if(family_heirloom && (family_heirloom in quirk_holder.GetAllContents()))
+	if(family_heirloom && (family_heirloom in quirk_holder.get_all_contents()))
 		SEND_SIGNAL(quirk_holder, COMSIG_CLEAR_MOOD_EVENT, "family_heirloom_missing")
 		SEND_SIGNAL(quirk_holder, COMSIG_ADD_MOOD_EVENT, "family_heirloom", /datum/mood_event/family_heirloom)
 	else
@@ -315,7 +315,7 @@
 
 	var/lums = holder_turf.get_lumcount()
 
-	if(lums > 0.2)
+	if(lums > LIGHTING_TILE_IS_DARK)
 		SEND_SIGNAL(quirk_holder, COMSIG_CLEAR_MOOD_EVENT, "nyctophobia")
 		return
 
@@ -613,7 +613,7 @@
 	reagent_instance = new reagent_type()
 
 	for(var/addiction in reagent_instance.addiction_types)
-		human_holder.mind.add_addiction_points(addiction, 1000)
+		human_holder.last_mind?.add_addiction_points(addiction, 1000)
 
 	var/current_turf = get_turf(quirk_holder)
 
@@ -664,14 +664,14 @@
 		var/deleted = QDELETED(reagent_instance)
 		var/missing_addiction = FALSE
 		for(var/addiction_type in reagent_instance.addiction_types)
-			if(!LAZYACCESS(human_holder.mind.active_addictions, addiction_type))
+			if(!LAZYACCESS(human_holder.last_mind?.active_addictions, addiction_type))
 				missing_addiction = TRUE
 		if(deleted || missing_addiction)
 			if(deleted)
 				reagent_instance = new reagent_type()
 			to_chat(quirk_holder, span_danger("You thought you kicked it, but you feel like you're falling back onto bad habits.."))
 			for(var/addiction in reagent_instance.addiction_types)
-				human_holder.mind.add_addiction_points(addiction, 1000) ///Max that shit out
+				human_holder.last_mind?.add_addiction_points(addiction, 1000) ///Max that shit out
 
 /datum/quirk/item_quirk/junkie/smoker
 	name = "Smoker"
@@ -775,7 +775,7 @@
 		carbon_quirk_holder.reagents.add_reagent(/datum/reagent/toxin/histamine, 3 * delta_time)
 		if(DT_PROB(10, delta_time))
 			carbon_quirk_holder.vomit()
-			carbon_quirk_holder.adjustOrganLoss(pick(ORGAN_SLOT_BRAIN,ORGAN_SLOT_APPENDIX,ORGAN_SLOT_LUNGS,ORGAN_SLOT_HEART,ORGAN_SLOT_KIDNEYS,ORGAN_SLOT_GUTS,ORGAN_SLOT_LIVER,ORGAN_SLOT_STOMACH),10)
+			carbon_quirk_holder.adjustOrganLoss(pick(ORGAN_SLOT_BRAIN,ORGAN_SLOT_APPENDIX,ORGAN_SLOT_LUNGS,ORGAN_SLOT_HEART,ORGAN_SLOT_LIVER,ORGAN_SLOT_STOMACH),10)
 
 /datum/quirk/bad_touch
 	name = "Bad Touch"

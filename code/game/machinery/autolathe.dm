@@ -7,9 +7,7 @@
 	desc = "Производит изделия из металла и стекла."
 	icon_state = "autolathe"
 	density = TRUE
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 10
-	active_power_usage = 10000
+	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.5
 	circuit = /obj/item/circuitboard/machine/autolathe
 	layer = BELOW_OBJ_LAYER
 
@@ -191,7 +189,7 @@
 			for(var/MAT in being_built.materials)
 				total_amount += being_built.materials[MAT]
 
-			var/power = max(2000, (total_amount)*multiplier/5) //Change this to use all materials
+			var/power = max(active_power_usage, (total_amount)*multiplier/5) //Change this to use all materials
 
 			var/datum/component/material_container/materials = GetComponent(/datum/component/material_container)
 
@@ -207,7 +205,7 @@
 						if(materials.materials[i] > 0)
 							list_to_show += i
 
-					used_material = input("Выбирайте мудро [used_material]", "Материал") as null|anything in sortList(list_to_show, /proc/cmp_typepaths_asc)
+					used_material = input("Выбирайте мудро [used_material]", "Материал") as null|anything in sort_list(list_to_show, /proc/cmp_typepaths_asc)
 					if(!used_material)
 						return //Didn't pick any material, so you can't build shit either.
 					custom_materials[used_material] += amount_needed
@@ -217,7 +215,7 @@
 			if(materials.has_materials(materials_used))
 				busy = TRUE
 				to_chat(usr, "<span class=\"notice\">Удалось распечатать [multiplier] предметов в [src]</span>")
-				use_power(power)
+				use_power(active_power_usage * 0.25)
 				icon_state = "autolathe_n"
 				var/time = is_stack ? 32 : (32 * coeff * multiplier) ** 0.8
 				addtimer(CALLBACK(src, .proc/make_item, power, materials_used, custom_materials, multiplier, coeff, is_stack, usr), time)
@@ -314,6 +312,7 @@
 	busy = FALSE
 
 /obj/machinery/autolathe/RefreshParts()
+	. = ..()
 	var/T = 0
 	for(var/obj/item/stock_parts/matter_bin/MB in component_parts)
 		T += MB.rating*75000

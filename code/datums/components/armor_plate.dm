@@ -73,10 +73,10 @@
 	if(ismecha(O))
 		var/obj/vehicle/sealed/mecha/R = O
 		R.update_icon()
-		to_chat(user, span_info("Вы усилили показатели защиты [R]."))
+		to_chat(user, span_info("Закрепляю дополнительные бронепластины на [R]."))
 	else
 		SEND_SIGNAL(O, COMSIG_ARMOR_PLATED, amount, maxamount)
-		to_chat(user, span_info("Вы усилили показатели защиты [O]."))
+		to_chat(user, span_info("Закрепляю дополнительные бронепластины на [O]."))
 
 
 /datum/component/armor_plate/proc/dropplates(datum/source, force)
@@ -96,3 +96,7 @@
 		if(!LAZYLEN(mech.occupants))
 			overlay_string += "-open"
 		overlays += overlay_string
+
+/datum/component/armor_plate/plasteel
+	upgrade_item = /obj/item/stack/sheet/armor_plate/plasteel
+	added_armor = list(MELEE = 10, WOUND = 5)

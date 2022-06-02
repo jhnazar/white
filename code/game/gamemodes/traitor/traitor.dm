@@ -9,7 +9,7 @@
 	antag_flag = ROLE_TRAITOR
 	false_report_weight = 20 //Reports of traitors are pretty common.
 	restricted_jobs = list("Cyborg")//They are part of the AI if he is traitor so are they, they use to get double chances
-	protected_jobs = list("Prisoner", "Russian Officer", "Trader", "Hacker","Veteran", "Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Field Medic")
+	protected_jobs = list("Prisoner", "Russian Officer", "Trader", "Hacker","Veteran", "Security Officer", "Warden", "Detective", "Head of Security", "Captain", "Field Medic", "Exploration Crew")
 	required_players = 0
 	required_enemies = 1
 	recommended_enemies = 4
@@ -96,5 +96,5 @@
 /datum/game_mode/traitor/generate_report()
 	return "Хотя более конкретные угрозы являются обычным явлением, вы всегда должны проявлять \
 	бдительность в отношении агентов Синдиката на борту вашей станции. Связь Синдиката подразумевает, \
-	что многие сотрудники Нанотрейзен являются агентами Синдиката со скрытыми воспоминаниями, которые \
+	что многие сотрудники NanoTrasen являются агентами Синдиката со скрытыми воспоминаниями, которые \
 	могут быть активированы в любой момент, поэтому возможно, что эти агенты могут даже не знать своего положения."

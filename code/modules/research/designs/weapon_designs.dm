@@ -250,42 +250,16 @@
 	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
 
 /datum/design/wormhole_projector
-	name = "Bluespace Wormhole Projector"
-	desc = "A projector that emits high density quantum-coupled bluespace beams. Requires a bluespace anomaly core to function."
+	name = "Портальная пушка"
+	desc = "Проектор, который излучает квантовые блюспейс порталы. Требуется ядро блюспейс аномалии для функционирования."
 	id = "wormholeprojector"
-	build_type = PROTOLATHE
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
 	materials = list(/datum/material/silver = 2000, /datum/material/iron = 5000, /datum/material/diamond = 2000, /datum/material/bluespace = 3000)
 	build_path = /obj/item/gun/energy/wormhole_projector
-	category = list("Вооружение")
+	category = list("Вооружение", "Научное снаряжение")
+	sub_category = list("Экипировка")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
-
-//WT550 Mags
-
-/datum/design/mag_oldsmg
-	name = "WT-550 Auto Gun Magazine (4.6x30mm)"
-	desc = "A 20 round magazine for the out of date security WT-550 Auto Rifle"
-	id = "mag_oldsmg"
-	build_type = PROTOLATHE
-	materials = list(/datum/material/iron = 4000)
-	build_path = /obj/item/ammo_box/magazine/wt550m9
-	category = list("Аммуниция")
-	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
-
-/datum/design/mag_oldsmg/ap_mag
-	name = "WT-550 Auto Gun Armour Piercing Magazine (4.6x30mm AP)"
-	desc = "A 20 round armour piercing magazine for the out of date security WT-550 Auto Rifle"
-	id = "mag_oldsmg_ap"
-	materials = list(/datum/material/iron = 6000, /datum/material/silver = 600)
-	build_path = /obj/item/ammo_box/magazine/wt550m9/wtap
-	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
-
-/datum/design/mag_oldsmg/ic_mag
-	name = "WT-550 Auto Gun Incendiary Magazine (4.6x30mm IC)"
-	desc = "A 20 round armour piercing magazine for the out of date security WT-550 Auto Rifle"
-	id = "mag_oldsmg_ic"
-	materials = list(/datum/material/iron = 6000, /datum/material/silver = 600, /datum/material/glass = 1000)
-	build_path = /obj/item/ammo_box/magazine/wt550m9/wtic
-	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
 
 /datum/design/stunshell
 	name = "Stun Shell"
@@ -298,13 +272,15 @@
 	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
 
 /datum/design/techshell
-	name = "Unloaded Technological Shotshell"
-	desc = "A high-tech shotgun shell which can be loaded with materials to produce unique effects."
+	name = "12 Калибр: Пустой высокотехнологичный патрон"
+	desc = "Высокотехнологичная пуля, в которую можно загружать материалы для создания уникальных эффектов."
 	id = "techshotshell"
-	build_type = PROTOLATHE
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
 	materials = list(/datum/material/iron = 1000, /datum/material/glass = 200)
 	build_path = /obj/item/ammo_casing/shotgun/techshell
-	category = list("Аммуниция")
+	category = list("Аммуниция", "Научное снаряжение")
+	sub_category = list("Ружейные патроны 12 калибра")
 	departmental_flags = DEPARTMENTAL_FLAG_SECURITY | DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/suppressor
@@ -318,13 +294,15 @@
 	departmental_flags = DEPARTMENTAL_FLAG_SECURITY
 
 /datum/design/gravitygun
-	name = "One-point Gravitational Manipulator"
-	desc = "A multi-mode device that blasts one-point bluespace-gravitational bolts that locally distort gravity. Requires a gravitational anomaly core to function."
+	name = "Гравитационная пушка"
+	desc = "Экспериментальное многорежимное устройство, которое запускает заряд энергии нулевой точки, вызывая локальные искажения в гравитации. Требуется ядро гравитационной аномалии для функционирования."
 	id = "gravitygun"
-	build_type = PROTOLATHE
+	build_type = PROTOLATHE | MECHFAB
+	construction_time = 40
 	materials = list(/datum/material/silver = 8000, /datum/material/uranium = 8000, /datum/material/glass = 12000, /datum/material/iron = 12000, /datum/material/diamond = 3000, /datum/material/bluespace = 3000)
 	build_path = /obj/item/gun/energy/gravity_gun
-	category = list("Вооружение")
+	category = list("Вооружение", "Научное снаряжение")
+	sub_category = list("Экипировка")
 	departmental_flags = DEPARTMENTAL_FLAG_SCIENCE
 
 /datum/design/largecrossbow

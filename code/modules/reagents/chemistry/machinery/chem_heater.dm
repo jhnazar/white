@@ -14,8 +14,7 @@
 	density = TRUE
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "mixer0b"
-	use_power = IDLE_POWER_USE
-	idle_power_usage = 40
+	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.4
 	resistance_flags = FIRE_PROOF | ACID_PROOF
 	circuit = /obj/item/circuitboard/machine/chem_heater
 
@@ -83,6 +82,7 @@
 	return TRUE
 
 /obj/machinery/chem_heater/RefreshParts()
+	. = ..()
 	heater_coefficient = 0.1
 	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
 		heater_coefficient *= M.rating
@@ -147,11 +147,16 @@
 			beaker.reagents.adjust_thermal_energy((target_temperature - beaker.reagents.chem_temp) * heater_coefficient * delta_time * SPECIFIC_HEAT_DEFAULT * beaker.reagents.total_volume)
 			beaker.reagents.handle_reactions()
 
+			use_power(active_power_usage * delta_time)
+
 /obj/machinery/chem_heater/attackby(obj/item/I, mob/user, params)
 	if(default_deconstruction_screwdriver(user, "mixer0b", "mixer0b", I))
 		return
 
 	if(default_deconstruction_crowbar(I))
+		return
+
+	if(default_unfasten_wrench(user, I))
 		return
 
 	if(istype(I, /obj/item/reagent_containers) && !(I.item_flags & ABSTRACT) && I.is_open_container())
@@ -322,8 +327,8 @@
 По большей части, чем горячее ваша реакция, тем быстрее она отреагирует, когда температура превысит минимальную. Но будьте осторожны, не нагревайте его слишком сильно! «Если ваша реакция медленная, ваша температура слишком низкая»!
 Когда будете готовы, установите температуру 375 К и нагрейте стакан до этой величины."}
 			if(TUT_IS_ACTIVE) //heat 375K
-				data["tutorialMessage"] = {"Отлично! Вы должны увидеть, как ваша реакция медленно прогрессирует.
-Обратите внимание на шкалу pH справа; Суммарный pH должен медленно сдвигаться влево на шкале. Степень чистоты вашего раствора в конечном итоге зависит от того, насколько хорошо вы поддерживаете свою реакцию в оптимальном диапазоне pH. Циферблат будет мигать, если какая-либо из текущих реакций выходит за рамки оптимальных. «Если вы получаете отстой, подтолкните свой pH»!
+				data["tutorialMessage"] = {"Отлично! Требуется увидеть, как ваша реакция медленно прогрессирует.
+Обратите внимание на шкалу pH справа; Суммарный pH должен медленно сдвигаться влево на шкале. Степень чистоты раствора в конечном итоге зависит от того, насколько хорошо вы поддерживаете свою реакцию в оптимальном диапазоне pH. Циферблат будет мигать, если какая-либо из текущих реакций выходит за рамки оптимальных. «Если вы получаете отстой, подтолкните свой pH»!
 Через мгновение мы увеличим температуру, чтобы наша скорость была быстрее. Вам решать, чтобы поддерживать уровень pH в установленных пределах, поэтому следите за шкалой и будьте готовы добавить базовый буфер, используя кнопку инъекции слева от индикатора объема.
 Чтобы продолжить, установите целевую температуру на 390 К."}
 			if(TUT_IS_REACTING) //Heat 390K
@@ -432,7 +437,7 @@
 		if(volume < 0)
 			var/datum/reagent/basic_reagent = beaker.reagents.get_reagent(/datum/reagent/reaction_agent/basic_buffer)
 			if(!basic_reagent)
-				say("Невозможно найти основной буфер в пробирке! Пожалуйста, вставьте стакан с основным буфером.")
+				say("Невозможно найти щелочной буфер в пробирке! Пожалуйста, вставьте стакан с щелочным буфером.")
 				return
 			var/datum/reagent/basic_reagent_heater = reagents.get_reagent(/datum/reagent/reaction_agent/basic_buffer)
 			var/cur_vol = 0

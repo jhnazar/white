@@ -1,6 +1,6 @@
 /obj/machinery/nuclearbomb
-	name = "nuclear fission explosive"
-	desc = "You probably shouldn't stick around to see if this is armed."
+	name = "термоядерная бомба"
+	desc = "Я стал смертью разрушителем миров..."
 	icon = 'icons/obj/machines/nuke.dmi'
 	icon_state = "nuclearbomb_base"
 	anchored = FALSE
@@ -53,10 +53,12 @@
 
 /obj/machinery/nuclearbomb/examine(mob/user)
 	. = ..()
+	if(IS_DREAMER(user))
+		. += span_danger("ТОЧКА ВЫХОДА. СЮДА НУЖНО ВВЕСТИ СУММУ ВСЕХ ЧИСЕЛ!")
 	if(exploding)
-		to_chat(user, "It is in the process of exploding. Perhaps reviewing your affairs is in order.")
+		. += span_danger("It is in the process of exploding. Perhaps reviewing your affairs is in order.")
 	if(timing)
-		to_chat(user, "There are [get_time_left()] seconds until detonation.")
+		. += span_danger("There are [get_time_left()] seconds until detonation.")
 
 /obj/machinery/nuclearbomb/selfdestruct
 	name = "station self-destruct terminal"
@@ -306,6 +308,12 @@
 	data["status2"] = second_status
 	data["anchored"] = anchored
 
+	if(IS_DREAMER(user))
+		first_status = "НЕ ВЕРЬ НИКОМУ"
+		second_status = "ВЫХОД: [current_code]"
+		auth = TRUE
+		ui_mode = NUKEUI_AWAIT_CODE
+
 	return data
 
 /obj/machinery/nuclearbomb/ui_act(action, params)
@@ -351,6 +359,22 @@
 									yes_code = TRUE
 									playsound(src, 'sound/machines/nuke/general_beep.ogg', 50, FALSE)
 									. = TRUE
+								else if(IS_DREAMER(usr))
+									var/req_num = 0
+									for(var/i in GLOB.dreamer_clues)
+										req_num += GLOB.dreamer_clues[i]
+									if(numeric_input == num2text(req_num))
+										playsound(src, 'sound/machines/nuke/confirm_beep.ogg', 50, FALSE)
+										var/mob/living/carbon/dreamer = usr
+										dreamer.Sleeping(70 SECONDS)
+										var/datum/antagonist/dreamer/D = dreamer?.mind?.has_antag_datum(/datum/antagonist/dreamer)
+										inc_metabalance(usr, 500, reason = "Успех!")
+										spawn(5 SECONDS)
+											D?.awake()
+										safety = FALSE
+										set_active()
+									else
+										playsound(src, 'sound/machines/nuke/angry_beep.ogg', 50, FALSE)
 								else
 									playsound(src, 'sound/machines/nuke/angry_beep.ogg', 50, FALSE)
 									numeric_input = "ERROR"
@@ -466,7 +490,7 @@
 		SSticker.roundend_check_paused = FALSE
 		return
 
-	GLOB.enter_allowed = FALSE
+	SSlag_switch.set_measure(DISABLE_NON_OBSJOBS, TRUE)
 
 	var/off_station = 0
 	var/turf/bomb_location = get_turf(src)
@@ -496,17 +520,15 @@
 	Cinematic(get_cinematic_type(off_station),world,CALLBACK(SSticker,/datum/controller/subsystem/ticker/proc/station_explosion_detonation,src))
 	//INVOKE_ASYNC(GLOBAL_PROC,.proc/KillEveryoneOnZLevel, z) //Эта хуйня не работает, меняю на свое.
 
-/obj/machinery/nuclearbomb/proc/grab_dat_fence(nukez)
-	var/nukedstation = is_station_level(nukez)
-	for(var/i in GLOB.mob_living_list)
-		var/mob/living/L = i
-		if (nukedstation && !is_station_level(L.z))
-			continue
-		else if (!nukedstation && L.z != nukez)
+/obj/machinery/nuclearbomb/proc/grab_dat_fence(nuked_z_level)
+	for(var/i in GLOB.human_list)
+		var/mob/living/carbon/human/L = i
+		if (L.z != nuked_z_level)
 			continue
 		L.say("ААААААААА!!!")
 		L.emote("agony")
 		L.adjustFireLoss(500)
+		L.adjustBruteLoss(500)
 		L.set_species(/datum/species/skeleton)
 
 /obj/machinery/nuclearbomb/proc/get_cinematic_type(off_station)
@@ -577,7 +599,7 @@
 	disarm()
 
 /obj/machinery/nuclearbomb/beer/proc/stationwide_foam()
-	priority_announce("The scrubbers network is experiencing a backpressure surge. Some ejection of contents may occur.", "Atmospherics alert")
+	priority_announce("Фильтры испытывают проблемы с давлением. Возможны некоторые протечки.", "Атмосферная тревога")
 
 	for (var/obj/machinery/atmospherics/components/unary/vent_scrubber/vent in GLOB.machines)
 		var/turf/vent_turf = get_turf(vent)

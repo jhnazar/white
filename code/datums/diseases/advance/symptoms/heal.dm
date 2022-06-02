@@ -339,7 +339,7 @@
 	. = 0
 	var/mob/living/M = A.affected_mob
 	if(M.fire_stacks < 0)
-		M.set_fire_stacks(min(M.fire_stacks + 1 * absorption_coeff, 0))
+		M.adjust_fire_stacks(min(absorption_coeff, -M.fire_stacks))
 		. += power
 	if(M.reagents.has_reagent(/datum/reagent/water/holywater, needs_metabolizing = FALSE))
 		M.reagents.remove_reagent(/datum/reagent/water/holywater, 0.5 * absorption_coeff)
@@ -405,7 +405,7 @@
 	if(M.loc)
 		environment = M.loc.return_air()
 	if(environment)
-		if(environment.get_moles(/datum/gas/plasma) > GLOB.meta_gas_info[/datum/gas/plasma][META_GAS_MOLES_VISIBLE]) //if there's enough plasma in the air to see
+		if(environment.get_moles(GAS_PLASMA) > GLOB.gas_data.visibility[GAS_PLASMA]) //if there's enough plasma in the air to see
 			. += power * 0.5
 	if(M.reagents.has_reagent(/datum/reagent/toxin/plasma, needs_metabolizing = TRUE))
 		. +=  power * 0.75

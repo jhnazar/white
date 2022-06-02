@@ -53,6 +53,8 @@
 		return FALSE
 	. = TRUE
 
+	LAZYINITLIST(checkers)
+
 	current_range = range
 
 	var/list/checkers_local = checkers
@@ -118,6 +120,7 @@
 	return
 
 /obj/effect/abstract/proximity_checker/Destroy()
+	LAZYREMOVE(monitor.checkers, src)
 	monitor = null
 	return ..()
 

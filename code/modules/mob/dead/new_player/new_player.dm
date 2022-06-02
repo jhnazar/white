@@ -49,6 +49,35 @@
 	if(client.interviewee)
 		return FALSE
 
+	if(href_list["violence"] && GLOB.violence_mode_activated)
+		if(href_list["violence"] == "joinmefucker")
+			var/datum/violence_player/VP = GLOB.violence_players?[ckey]
+			if(VP?.role_name)
+				usr << browse(null, "window=violence")
+				AttemptLateSpawn(VP.role_name)
+			else
+				usr << browse(null, "window=violence")
+				var/suggested_team = pick(list("Combantant: Red", "Combantant: Blue"))
+				if(LAZYLEN(GLOB.violence_blue_team) > LAZYLEN(GLOB.violence_red_team))
+					suggested_team = "Combantant: Red"
+				if(LAZYLEN(GLOB.violence_red_team) > LAZYLEN(GLOB.violence_blue_team))
+					suggested_team = "Combantant: Blue"
+				VP.role_name = suggested_team
+				AttemptLateSpawn(suggested_team)
+			return
+		if(GLOB.violence_gear_datums[href_list["violence"]])
+			var/datum/violence_gear/VG = GLOB.violence_gear_datums[href_list["violence"]]
+			var/datum/violence_player/VP = GLOB.violence_players[ckey]
+			if(VP.money >= VG.cost)
+				VP.money -= VG.cost
+				VP.loadout_items += VG
+				SEND_SOUND(usr, pick(list('white/valtos/sounds/coin1.ogg', 'white/valtos/sounds/coin2.ogg', 'white/valtos/sounds/coin3.ogg')))
+				to_chat(usr, span_notice("Куплено <b>[VG.name]</b> за [VG.cost]₽!"))
+			else
+				to_chat(usr, span_boldwarning("Недостаточно средств."))
+			violence_choices()
+		return
+
 	if(href_list["late_join"]) //This still exists for queue messages in chat
 		if(!SSticker?.IsRoundInProgress())
 			to_chat(usr, span_boldwarning("Раунд ещё не начался или уже завершился..."))
@@ -60,7 +89,7 @@
 			to_chat(usr, span_danger("Раунд ещё не начался или уже завершился..."))
 			return
 
-		if(!GLOB.enter_allowed)
+		if(SSlag_switch.measures[DISABLE_NON_OBSJOBS])
 			to_chat(usr, span_notice("Нельзя!"))
 			return
 
@@ -95,9 +124,10 @@
 		ready = PLAYER_NOT_READY
 		return FALSE
 
-	var/this_is_like_playing_right = "Да"
-	if(!force_observe)
-		this_is_like_playing_right = tgui_alert(usr,"Действительно хочешь следить? У меня не будет возможности зайти в этот раунд (исключая частые ивенты и спаунеры)!","Странный господин",list("Да","Нет"))
+	var/less_input_message
+	if(SSlag_switch.measures[DISABLE_DEAD_KEYLOOP])
+		less_input_message = " - Заметка: Призраки на данный момент ограничены."
+	var/this_is_like_playing_right = tgui_alert(usr, "Действительно хочешь следить? У меня не будет возможности зайти в этот раунд (исключая частые ивенты и спаунеры)![less_input_message]","Странный господин",list("Да","Нет"))
 
 	if(QDELETED(src) || !src.client || this_is_like_playing_right != "Да")
 		ready = PLAYER_NOT_READY
@@ -108,7 +138,6 @@
 	spawning = TRUE
 
 	client.kill_lobby()
-	SStitle.update_lobby()
 
 	observer.started_as_observer = TRUE
 	close_spawn_windows()
@@ -131,6 +160,9 @@
 	deadchat_broadcast(" становится призраком.", "<b>[observer.real_name]</b>", follow_target = observer, turf_target = get_turf(observer), message_type = DEADCHAT_DEATHRATTLE)
 	QDEL_NULL(mind)
 	qdel(src)
+
+	SStitle.update_lobby()
+
 	return TRUE
 
 /proc/get_job_unavailable_error_message(retval, jobtitle)
@@ -149,6 +181,8 @@
 			return "Твой аккаунт слишком молодой для [jobtitle]."
 		if(JOB_UNAVAILABLE_SLOTFULL)
 			return "[jobtitle] уже достаточно на станции."
+		if(JOB_UNAVAILABLE_LOCKED)
+			return "Нельзя менять команду."
 	return "Error: Unknown job availability."
 
 /mob/dead/new_player/proc/IsJobUnavailable(rank, latejoin = FALSE)
@@ -156,7 +190,7 @@
 	if(!job)
 		return JOB_UNAVAILABLE_GENERIC
 	if((job.current_positions >= job.total_positions) && job.total_positions != -1)
-		if(job.title == "Assistant")
+		if(job.title == "Assistant" && !GLOB.violence_mode_activated)
 			if(isnum(client.player_age) && client.player_age <= 14) //Newbies can always be assistants
 				return JOB_AVAILABLE
 			for(var/datum/job/J in SSjob.occupations)
@@ -176,16 +210,16 @@
 		return JOB_UNAVAILABLE_GENERIC
 	if(job.metalocked && !(job.type in client.prefs.jobs_buyed))
 		return JOB_UNAVAILABLE_UNBUYED
+	if(GLOB.violence_mode_activated)
+		var/datum/violence_player/VP = GLOB.violence_players?[ckey]
+		if(VP?.role_name != rank)
+			return JOB_UNAVAILABLE_LOCKED
 	return JOB_AVAILABLE
 
 /mob/dead/new_player/proc/AttemptLateSpawn(rank)
 	var/error = IsJobUnavailable(rank)
 	if(error != JOB_AVAILABLE)
 		tgui_alert(usr, get_job_unavailable_error_message(error, rank))
-		return FALSE
-
-	if(SSticker.late_join_disabled)
-		tgui_alert(usr, "Нельзя!")
 		return FALSE
 
 	var/arrivals_docked = TRUE
@@ -223,7 +257,7 @@
 
 	if(job && !job.override_latejoin_spawn(character))
 		SSjob.SendToLateJoin(character)
-		if(!arrivals_docked)
+		if(!arrivals_docked && !GLOB.violence_mode_activated)
 			var/atom/movable/screen/splash/Spl = new(character.client, TRUE)
 			Spl.Fade(TRUE)
 			character.playsound_local(get_turf(character), 'sound/ai/announcer/hello_crew.ogg', 25)
@@ -274,7 +308,9 @@
 	if(humanc && SSaspects.current_aspect)
 		to_chat(humanc, "\n<span class='notice'><B>[gvorno(TRUE)]:</B> [SSaspects.current_aspect.desc]</span><BR> ")
 
-	log_manifest(character.mind.key,character.mind,character,latejoin = TRUE)
+	SStitle.update_lobby()
+
+	log_manifest(character.mind.key, character.mind, character, latejoin = TRUE)
 
 /mob/dead/new_player/proc/AddEmploymentContract(mob/living/carbon/human/employee)
 	//TODO:  figure out a way to exclude wizards/nukeops/demons from this.
@@ -285,7 +321,10 @@
 
 
 /mob/dead/new_player/proc/LateChoices()
-	var/list/dat = list("<div class='notice'>Длительность раунда: [DisplayTimeText(world.time - SSticker.round_start_time)]</div>")
+	var/list/dat = list()
+	if(SSlag_switch.measures[DISABLE_NON_OBSJOBS])
+		dat += "<div class='notice red' style='font-size: 125%'>Разрешено только следить на данный момент.</div><br>"
+	dat += "<div class='notice'>Длительность раунда: [DisplayTimeText(world.time - SSticker.round_start_time)]</div>"
 	if(SSshuttle.emergency)
 		switch(SSshuttle.emergency.mode)
 			if(SHUTTLE_ESCAPE)
@@ -324,7 +363,12 @@
 			dat += "</td><td valign='top'>"
 	dat += "</td></tr></table></center>"
 	dat += "</div></div>"
-	var/datum/browser/popup = new(src, "latechoices", "Выбери профессию", 750, 750)
+	var/ww = 750
+	var/hh = 750
+	if(GLOB.violence_mode_activated)
+		ww = 265
+		hh = 300
+	var/datum/browser/popup = new(src, "latechoices", "Выбери профессию", ww, hh)
 	popup.add_stylesheet("playeroptions", 'html/browser/playeroptions.css')
 	popup.set_content(jointext(dat, ""))
 	popup.open(FALSE) // 0 is passed to open so that it doesn't use the onclose() proc
@@ -443,14 +487,12 @@
 	// First we detain them by removing all the verbs they have on client
 	for (var/v in client.verbs)
 		var/procpath/verb_path = v
-		if (!(verb_path in GLOB.stat_panel_verbs))
-			remove_verb(client, verb_path)
+		remove_verb(client, verb_path)
 
 	// Then remove those on their mob as well
 	for (var/v in verbs)
 		var/procpath/verb_path = v
-		if (!(verb_path in GLOB.stat_panel_verbs))
-			remove_verb(src, verb_path)
+		remove_verb(src, verb_path)
 
 	// Then we create the interview form and show it to the client
 	var/datum/interview/I = GLOB.interviews.interview_for_client(client)

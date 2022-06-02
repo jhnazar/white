@@ -111,7 +111,7 @@
 
 	user_interact_cooldowns[user.real_name] = world.time + COOLDOWN_INTERACT
 
-	for(var/obj/item/pinpointer/wayfinding/WP in user.GetAllContents())
+	for(var/obj/item/pinpointer/wayfinding/WP in user.get_all_contents())
 		set_expression("veryhappy", 2 SECONDS)
 		say(span_robot("You already have a pinpointer!"))
 		return
@@ -245,8 +245,8 @@
 
 //Pinpointer itself
 /obj/item/pinpointer/wayfinding //Help players new to a station find their way around
-	name = "wayfinding pinpointer"
-	desc = "A handheld tracking device that points to useful places."
+	name = "Путеуказатель"
+	desc = "Компьютерная консоль которая поможет вам найти дорогу."
 	icon_state = "pinpointer_way"
 	var/owner = null
 	var/list/beacons = list()
@@ -270,7 +270,7 @@
 		to_chat(user, span_notice("Your pinpointer fails to detect a signal."))
 		return
 
-	var/A = input(user, "", "Pinpoint") as null|anything in sortList(beacons)
+	var/A = input(user, "", "Pinpoint") as null|anything in sort_list(beacons)
 	if(!A || QDELETED(src) || !user || !user.is_holding(src) || user.incapacitated())
 		return
 

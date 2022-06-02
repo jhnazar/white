@@ -12,17 +12,20 @@
 	update_icon()
 	AddElement(/datum/element/ridable, /datum/component/riding/vehicle/janicart)
 
+	GLOB.janitor_devices += src
+
 	if(floorbuffer)
 		AddElement(/datum/element/cleaning)
 
 /obj/vehicle/ridden/janicart/Destroy()
+	GLOB.janitor_devices -= src
 	if(mybag)
 		QDEL_NULL(mybag)
 	return ..()
 
 /obj/item/janiupgrade
-	name = "floor buffer upgrade"
-	desc = "An upgrade for mobile janicarts."
+	name = "модернизация полоукладчика"
+	desc = "Модернизация для ремонта пола на ДжениКаре."
 	icon = 'icons/obj/vehicles.dmi'
 	icon_state = "upgrade"
 

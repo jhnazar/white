@@ -3,6 +3,16 @@
 	max_integrity = 150
 	anchored = TRUE
 
+/obj/structure/flora/play_attack_sound(damage_amount, damage_type = BRUTE, damage_flag = 0)
+	switch(damage_type)
+		if(BRUTE)
+			if(damage_amount)
+				playsound(src.loc, 'sound/weapons/slash.ogg', 80, TRUE)
+			else
+				playsound(loc, 'sound/weapons/tap.ogg', 50, TRUE)
+		if(BURN)
+			playsound(loc, 'sound/items/welder.ogg', 80, TRUE)
+
 //trees
 /obj/structure/flora/tree
 	name = "дерево"
@@ -10,6 +20,7 @@
 	density = TRUE
 	pixel_x = -16
 	layer = FLY_LAYER
+	plane = ABOVE_GAME_PLANE
 	var/log_amount = 10
 
 /obj/structure/flora/tree/attackby(obj/item/W, mob/user, params)
@@ -126,7 +137,7 @@
 /obj/structure/flora/tree/jungle
 	name = "дерево"
 	icon_state = "tree"
-	desc = "Это серьезно мешает обзору джунглей."
+	desc = "Серьезно мешает обзору джунглей."
 	icon = 'icons/obj/flora/jungletrees.dmi'
 	pixel_x = -48
 	pixel_y = -20
@@ -145,6 +156,7 @@
 	name = "трава"
 	desc = "Кусочек заросшей травы."
 	icon = 'icons/obj/flora/snowflora.dmi'
+	max_integrity = 5
 	gender = PLURAL	//"this is grass" not "this is a grass"
 
 /obj/structure/flora/grass/brown
@@ -305,7 +317,8 @@
 	icon = 'icons/obj/flora/plants.dmi'
 	icon_state = "plant-01"
 	desc = "Немного природы в горшке."
-	layer = BELOW_MOB_LAYER
+	layer = ABOVE_MOB_LAYER
+	plane = GAME_PLANE_UPPER
 	w_class = WEIGHT_CLASS_HUGE
 	force = 10
 	throwforce = 13
@@ -496,6 +509,7 @@
 	pixel_x = -16
 	pixel_y = -12
 	layer = ABOVE_ALL_MOB_LAYER
+	plane = ABOVE_GAME_PLANE
 
 /obj/structure/flora/rock/pile/largejungle
 	name = "камни"

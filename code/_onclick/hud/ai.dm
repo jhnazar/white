@@ -32,9 +32,7 @@
 /atom/movable/screen/ai/camera_track/Click()
 	if(..())
 		return
-	var/mob/living/silicon/ai/AI = usr
-	var/target_name = input(AI, "Choose who you want to track", "Tracking") as null|anything in AI.trackable_mobs()
-	AI.ai_camera_track(target_name)
+	GLOB.AI_track_menu.show(usr)
 
 /atom/movable/screen/ai/camera_light
 	name = "Toggle Camera Light"
@@ -45,6 +43,17 @@
 		return
 	var/mob/living/silicon/ai/AI = usr
 	AI.toggle_camera_light()
+
+/atom/movable/screen/ai/modpc
+	name = "Messenger"
+	icon_state = "pda_send"
+	var/mob/living/silicon/ai/robot
+
+/atom/movable/screen/ai/modpc/Click()
+	. = ..()
+	if(.)
+		return
+	robot.modularInterface?.interact(robot)
 
 /atom/movable/screen/ai/crew_monitor
 	name = "Crew Monitoring Console"
@@ -105,26 +114,6 @@
 		return
 	var/mob/living/silicon/ai/AI = usr
 	AI.checklaws()
-
-/atom/movable/screen/ai/pda_msg_send
-	name = "PDA - Send Message"
-	icon_state = "pda_send"
-
-/atom/movable/screen/ai/pda_msg_send/Click()
-	if(..())
-		return
-	var/mob/living/silicon/ai/AI = usr
-	AI.cmd_send_pdamesg(usr)
-
-/atom/movable/screen/ai/pda_msg_show
-	name = "PDA - Show Message Log"
-	icon_state = "pda_receive"
-
-/atom/movable/screen/ai/pda_msg_show/Click()
-	if(..())
-		return
-	var/mob/living/silicon/ai/AI = usr
-	AI.cmd_show_message_log(usr)
 
 /atom/movable/screen/ai/image_take
 	name = "Take Image"
@@ -188,6 +177,7 @@
 /datum/hud/ai/New(mob/owner)
 	..()
 	var/atom/movable/screen/using
+	var/mob/living/silicon/ai/myai = mymob
 
 // Language menu
 	using = new /atom/movable/screen/language_menu
@@ -255,17 +245,14 @@
 	using.hud = src
 	static_inventory += using
 
-//PDA message
-	using = new /atom/movable/screen/ai/pda_msg_send()
-	using.screen_loc = ui_ai_pda_send
+// Modular Interface
+	using = new /atom/movable/screen/ai/modpc()
+	using.screen_loc = ui_ai_mod_int
 	using.hud = src
 	static_inventory += using
-
-//PDA log
-	using = new /atom/movable/screen/ai/pda_msg_show()
-	using.screen_loc = ui_ai_pda_log
-	using.hud = src
-	static_inventory += using
+	myai.interfaceButton = using
+	var/atom/movable/screen/ai/modpc/tabletbutton = using
+	tabletbutton.robot = myai
 
 //Take image
 	using = new /atom/movable/screen/ai/image_take()
@@ -296,6 +283,3 @@
 	using.screen_loc = ui_ai_add_multicam
 	using.hud = src
 	static_inventory += using
-
-	if(owner)
-		add_multiz_buttons(owner)

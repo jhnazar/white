@@ -169,7 +169,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 	if(matches.len==0)
 		return
-	var/hsbitem = input(usr, "Choose an object to delete.", "Delete:") as null|anything in sortList(matches)
+	var/hsbitem = input(usr, "Choose an object to delete.", "Delete:") as null|anything in sort_list(matches)
 	if(hsbitem)
 		hsbitem = matches[hsbitem]
 		var/counter = 0
@@ -217,10 +217,12 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		id.update_icon()
 
 		if(worn)
-			if(istype(worn, /obj/item/pda))
-				var/obj/item/pda/PDA = worn
-				PDA.id = id
-				id.forceMove(PDA)
+			if(istype(worn, /obj/item/modular_computer/tablet/pda))
+				var/obj/item/modular_computer/tablet/pda/PDA = worn
+				var/obj/item/computer_hardware/card_slot/card = PDA.all_components[MC_CARD]
+
+				if(card)
+					card.try_insert(id)
 			else if(istype(worn, /obj/item/storage/wallet))
 				var/obj/item/storage/wallet/W = worn
 				W.front_id = id
@@ -266,7 +268,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	if(M.ckey)
 		if(tgui_alert(usr,"This mob is being controlled by [M.key]. Are you sure you wish to give someone else control of it? [M.key] will be made a ghost.",,list("Yes","No")) != "Yes")
 			return
-	var/client/newkey = input(src, "Pick the player to put in control.", "New player") as null|anything in sortList(GLOB.clients)
+	var/client/newkey = input(src, "Pick the player to put in control.", "New player") as null|anything in sort_list(GLOB.clients)
 	var/mob/oldmob = newkey.mob
 	var/delmob = FALSE
 	if((isobserver(oldmob) || tgui_alert(usr,"Do you want to delete [newkey]'s old mob?","Delete?",list("Yes","No")) != "No"))
@@ -291,7 +293,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	var/list/dat = list()
 
 	if(SSticker.current_state == GAME_STATE_STARTUP)
-		to_chat(usr, "Game still loading, please hold!", confidential = TRUE)
+		to_chat(usr, "Game still loading, please hold!")
 		return
 
 	message_admins(span_adminnotice("[key_name_admin(usr)] used the Test Atmos Monitor debug command."))
@@ -337,7 +339,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	var/list/station_areas_blacklist = typecacheof(list(/area/holodeck/rec_center, /area/shuttle, /area/engineering/supermatter, /area/science/test_area, /area/space, /area/solar, /area/mine, /area/ruin, /area/asteroid))
 
 	if(SSticker.current_state == GAME_STATE_STARTUP)
-		to_chat(usr, "Game still loading, please hold!", confidential = TRUE)
+		to_chat(usr, "Game still loading, please hold!")
 		return
 
 	var/log_message
@@ -504,16 +506,15 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 /client/proc/robust_dress_shop()
 
-	var/list/baseoutfits = list("Naked","Custom","As Job...", "As Plasmaman...", "Для Турниров...")
+	var/list/baseoutfits = list("Naked", "Custom", "As Job...", "As Plasmaman...", "Для Турниров...")
 	var/list/outfits = list()
 	var/list/paths = subtypesof(/datum/outfit) - typesof(/datum/outfit/job) - typesof(/datum/outfit/plasmaman) - typesof(/datum/outfit) - typesof(/datum/outfit/whiterobust)
 
 	for(var/path in paths)
 		var/datum/outfit/O = path //not much to initalize here but whatever
-		if(initial(O.can_be_admin_equipped))
-			outfits[initial(O.name)] = path
+		outfits[initial(O.name)] = path
 
-	var/dresscode = input("Select outfit", "Robust quick dress shop") as null|anything in baseoutfits + sortList(outfits)
+	var/dresscode = input("Select outfit", "Robust quick dress shop") as null|anything in baseoutfits + sort_list(outfits)
 	if (isnull(dresscode))
 		return
 
@@ -525,10 +526,9 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/list/job_outfits = list()
 		for(var/path in job_paths)
 			var/datum/outfit/O = path
-			if(initial(O.can_be_admin_equipped))
-				job_outfits[initial(O.name)] = path
+			job_outfits[initial(O.name)] = path
 
-		dresscode = input("Select job equipment", "Robust quick dress shop") as null|anything in sortList(job_outfits)
+		dresscode = input("Select job equipment", "Robust quick dress shop") as null|anything in sort_list(job_outfits)
 		dresscode = job_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -538,10 +538,9 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/list/plasmaman_outfits = list()
 		for(var/path in plasmaman_paths)
 			var/datum/outfit/O = path
-			if(initial(O.can_be_admin_equipped))
-				plasmaman_outfits[initial(O.name)] = path
+			plasmaman_outfits[initial(O.name)] = path
 
-		dresscode = input("Select plasmeme equipment", "Robust quick dress shop") as null|anything in sortList(plasmaman_outfits)
+		dresscode = input("Select plasmeme equipment", "Robust quick dress shop") as null|anything in sort_list(plasmaman_outfits)
 		dresscode = plasmaman_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -551,10 +550,9 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/list/white_outfits = list()
 		for(var/path in white_paths)
 			var/datum/outfit/O = path
-			if(initial(O.can_be_admin_equipped))
-				white_outfits[initial(O.name)] = path
+			white_outfits[initial(O.name)] = path
 
-		dresscode = input("ДАВАЙ УРААА ДАВАЙ ДАВАЙ ДАВААААЙ", "ВЫБИРАЕЕЕМ") as null|anything in sortList(white_outfits)
+		dresscode = input("ДАВАЙ УРААА ДАВАЙ ДАВАЙ ДАВААААЙ", "ВЫБИРАЕЕЕМ") as null|anything in sort_list(white_outfits)
 		dresscode = white_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -563,7 +561,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/list/custom_names = list()
 		for(var/datum/outfit/D in GLOB.custom_outfits)
 			custom_names[D.name] = D
-		var/selected_name = input("Select outfit", "Robust quick dress shop") as null|anything in sortList(custom_names)
+		var/selected_name = input("Select outfit", "Robust quick dress shop") as null|anything in sort_list(custom_names)
 		dresscode = custom_names[selected_name]
 		if(isnull(dresscode))
 			return
@@ -614,7 +612,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		if(Rad.anchored)
 			if(!Rad.loaded_tank)
 				var/obj/item/tank/internals/plasma/Plasma = new/obj/item/tank/internals/plasma(Rad)
-				Plasma.air_contents.set_moles(/datum/gas/plasma, 70)
+				Plasma.air_contents.set_moles(GAS_PLASMA, 70)
 				Rad.drainratio = 0
 				Rad.loaded_tank = Plasma
 				Plasma.forceMove(Rad)
@@ -633,19 +631,19 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 	switch(tgui_input_list(usr, "Which list?",, list("Players","Admins","Mobs","Living Mobs","Dead Mobs","Clients","Joined Clients")))
 		if("Players")
-			to_chat(usr, jointext(GLOB.player_list,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.player_list,","))
 		if("Admins")
-			to_chat(usr, jointext(GLOB.admins,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.admins,","))
 		if("Mobs")
-			to_chat(usr, jointext(GLOB.mob_list,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.mob_list,","))
 		if("Living Mobs")
-			to_chat(usr, jointext(GLOB.alive_mob_list,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.alive_mob_list,","))
 		if("Dead Mobs")
-			to_chat(usr, jointext(GLOB.dead_mob_list,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.dead_mob_list,","))
 		if("Clients")
-			to_chat(usr, jointext(GLOB.clients,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.clients,","))
 		if("Joined Clients")
-			to_chat(usr, jointext(GLOB.joined_player_list,","), confidential = TRUE)
+			to_chat(usr, jointext(GLOB.joined_player_list,","))
 
 /client/proc/cmd_display_del_log()
 	set category = "Дбг"
@@ -727,7 +725,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 		names[name] = ruin_landmark
 
-	var/ruinname = input("Select ruin", "Jump to Ruin") as null|anything in sortList(names)
+	var/ruinname = input("Select ruin", "Jump to Ruin") as null|anything in sort_list(names)
 
 
 	var/obj/effect/landmark/ruin/landmark = names[ruinname]
@@ -735,8 +733,8 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	if(istype(landmark))
 		var/datum/map_template/ruin/template = landmark.ruin_template
 		usr.forceMove(get_turf(landmark))
-		to_chat(usr, span_name("[template.name]") , confidential = TRUE)
-		to_chat(usr, span_italics("[template.description]") , confidential = TRUE)
+		to_chat(usr, span_name("[template.name]"))
+		to_chat(usr, span_italics("[template.description]"))
 
 /client/proc/place_ruin()
 	set category = "Дбг"
@@ -754,6 +752,9 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	names += "---- Dynamic Ruins ----"
 	for(var/name in SSmapping.space_ruins_templates)
 		names[name] = list(SSmapping.space_ruins_templates[name], ZTRAIT_DYNAMIC_LEVEL, list(/area/space))
+	names += "---- Near Ruins ----"
+	for(var/name in SSmapping.space_ruins_templates)
+		names[name] = list(SSmapping.space_ruins_templates[name], ZTRAIT_NEAR_SPACE_LEVEL, list(/area/space))
 	names += "---- Lava Ruins ----"
 	for(var/name in SSmapping.lava_ruins_templates)
 		names[name] = list(SSmapping.lava_ruins_templates[name], ZTRAIT_LAVA_RUINS, list(/area/lavaland/surface/outdoors/unexplored))
@@ -764,7 +765,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	for(var/name in SSmapping.ice_ruins_underground_templates)
 		names[name] = list(SSmapping.ice_ruins_underground_templates[name], ZTRAIT_ICE_RUINS_UNDERGROUND, list(/area/icemoon/underground/unexplored))
 
-	var/ruinname = input("Select ruin", "Spawn Ruin") as null|anything in sortList(names)
+	var/ruinname = input("Select ruin", "Spawn Ruin") as null|anything in sort_list(names)
 	var/data = names[ruinname]
 	if (!data)
 		return
@@ -783,10 +784,10 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/obj/effect/landmark/ruin/landmark = GLOB.ruin_landmarks[GLOB.ruin_landmarks.len]
 		log_admin("[key_name(src)] randomly spawned ruin [ruinname] at [COORD(landmark)].")
 		usr.forceMove(get_turf(landmark))
-		to_chat(src, span_name("[template.name]") , confidential = TRUE)
-		to_chat(src, span_italics("[template.description]") , confidential = TRUE)
+		to_chat(src, span_name("[template.name]"))
+		to_chat(src, span_italics("[template.description]"))
 	else
-		to_chat(src, span_warning("Failed to place [template.name].") , confidential = TRUE)
+		to_chat(src, span_warning("Failed to place [template.name]."))
 
 /client/proc/generate_ruin()
 	set category = "Дбг"
@@ -967,9 +968,8 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 /proc/cmp_timer_data(list/a, list/b)
 	return b["count"] - a["count"]
 
-#ifdef TESTING
 /client/proc/check_missing_sprites()
-	set category = "Debug"
+	set category = "Дбг"
 	set name = "Debug Worn Item Sprites"
 	set desc = "We're cancelling the Spritemageddon. (This will create a LOT of runtimes! Don't use on a live server!)"
 	var/actual_file_name
@@ -980,55 +980,69 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		//Is there an explicit worn_icon to pick against the worn_icon_state? Easy street expected behavior.
 		if(sprite.worn_icon)
 			if(!(sprite.icon_state in icon_states(sprite.worn_icon)))
-				to_chat(src, span_warning("ERROR sprites for [sprite.type]. Slot Flags are [sprite.slot_flags].") , confidential = TRUE)
+				to_chat(src, span_warning("ERROR sprites for [sprite.type]. Slot Flags are [sprite.slot_flags]."))
 		else if(sprite.worn_icon_state)
 			if(sprite.slot_flags & ITEM_SLOT_MASK)
 				actual_file_name = 'icons/mob/clothing/mask.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Mask slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Mask slot."))
 			if(sprite.slot_flags & ITEM_SLOT_NECK)
 				actual_file_name = 'icons/mob/clothing/neck.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Neck slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Neck slot."))
 			if(sprite.slot_flags & ITEM_SLOT_BACK)
 				actual_file_name = 'icons/mob/clothing/back.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Back slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Back slot."))
 			if(sprite.slot_flags & ITEM_SLOT_HEAD)
 				actual_file_name = 'icons/mob/clothing/head.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Head slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Head slot."))
 			if(sprite.slot_flags & ITEM_SLOT_BELT)
 				actual_file_name = 'icons/mob/clothing/belt.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Belt slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Belt slot."))
 			if(sprite.slot_flags & ITEM_SLOT_SUITSTORE)
 				actual_file_name = 'icons/mob/clothing/belt_mirror.dmi'
 				if(!(sprite.worn_icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Suit Storage slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Suit Storage slot."))
 		else if(sprite.icon_state)
 			if(sprite.slot_flags & ITEM_SLOT_MASK)
 				actual_file_name = 'icons/mob/clothing/mask.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Mask slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Mask slot."))
 			if(sprite.slot_flags & ITEM_SLOT_NECK)
 				actual_file_name = 'icons/mob/clothing/neck.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Neck slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Neck slot."))
 			if(sprite.slot_flags & ITEM_SLOT_BACK)
 				actual_file_name = 'icons/mob/clothing/back.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Back slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Back slot."))
 			if(sprite.slot_flags & ITEM_SLOT_HEAD)
 				actual_file_name = 'icons/mob/clothing/head.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Head slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Head slot."))
 			if(sprite.slot_flags & ITEM_SLOT_BELT)
 				actual_file_name = 'icons/mob/clothing/belt.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Belt slot.") , confidential = TRUE)
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Belt slot."))
 			if(sprite.slot_flags & ITEM_SLOT_SUITSTORE)
 				actual_file_name = 'icons/mob/clothing/belt_mirror.dmi'
 				if(!(sprite.icon_state in icon_states(actual_file_name)))
-					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Suit Storage slot.") , confidential = TRUE)
-#endif
+					to_chat(src, span_warning("ERROR sprites for [sprite.type]. Suit Storage slot."))
+
+/client/proc/check_missing_states()
+	set category = "Дбг"
+	set name = "Debug Icon States"
+	var/bugged_shit = "<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head>"
+	for(var/test_obj in subtypesof(/obj/item))
+		var/obj/item/sprite = new test_obj
+		if(sprite?.icon && isicon(sprite?.icon))
+			if(!(sprite.icon_state in icon_states(sprite.icon)))
+				bugged_shit += "icon: [sprite.slot_flags] [sprite.type]: [sprite.icon_state]\n"
+		if(sprite?.worn_icon && isicon(sprite?.worn_icon))
+			if(!(sprite.worn_icon_state in icon_states(sprite.worn_icon)))
+				bugged_shit += "worn icon: [sprite.slot_flags] [sprite.type]: [sprite.worn_icon_state]\n"
+
+	usr << browse(bugged_shit, "window=fuckingshitfuck;size=700x700")

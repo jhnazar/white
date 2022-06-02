@@ -1,8 +1,3 @@
-#define VASSAL_SCAN_MIN_DISTANCE 5
-#define VASSAL_SCAN_MAX_DISTANCE 500
-#define VASSAL_SCAN_PING_TIME 20 //2s update time.
-
-
 /datum/antagonist/bloodsucker/proc/attempt_turn_vassal(mob/living/carbon/C)
 	return SSticker.mode.make_vassal(C,owner)
 
@@ -54,9 +49,6 @@
 	objectives += vassal_objective
 	objectives_given += vassal_objective
 
-	// Add Antag HUD
-	update_vassal_icons_added(owner.current, "vassal")
-
 	. = ..()
 
 /datum/antagonist/vassal/on_removal()
@@ -84,16 +76,12 @@
 		qdel(O)
 	objectives_given = list()
 
-
-	// Clear Antag HUD
-	update_vassal_icons_removed(owner.current)
-
 	. = ..()
 
 /datum/antagonist/vassal/greet()
 	to_chat(owner, span_userdanger("You are now the mortal servant of [master.owner.current], a bloodsucking vampire!"))
 	to_chat(owner, "<span class='boldannounce'>The power of [master.owner.current.ru_ego()] immortal blood compells you to obey [master.owner.current.ru_na()] in all things, even offering your own life to prolong theirs.<br>\
-			You are not required to obey any other Bloodsucker, for only [master.owner.current] is your master. The laws of Nanotransen do not apply to you now; only your vampiric master's word must be obeyed.<span>")
+			You are not required to obey any other Bloodsucker, for only [master.owner.current] is your master. The laws of Nanotransen do not apply to you now; only your vampiric master's word must be obeyed.</span>")
 	// Effects...
 	owner.current.playsound_local(null, 'sound/magic/mutate.ogg', 100, FALSE, pressure_affected = FALSE)
 	//owner.store_memory("You became the mortal servant of [master.owner.current], a bloodsucking vampire!")
@@ -139,20 +127,6 @@
 
 	//scan_target = null
 	//if(owner?.mind)
-
-
-/datum/antagonist/vassal/proc/update_vassal_icons_added(mob/living/vassal, icontype="vassal")
-	var/datum/atom_hud/antag/bloodsucker/hud = GLOB.huds[ANTAG_HUD_BLOODSUCKER]// ANTAG_HUD_DEVIL
-	hud.join_hud(vassal)
-	set_antag_hud(vassal, icontype) // Located in icons/mob/hud.dmi
-	owner.current.hud_list[ANTAG_HUD].icon = image('white/valtos/icons/bloodsucker/fulphud.dmi', owner.current, "bloodsucker")	// FULP ADDITION! Check prepare_huds in mob.dm to see why.
-
-/datum/antagonist/vassal/proc/update_vassal_icons_removed(mob/living/vassal)
-	var/datum/atom_hud/antag/hud = GLOB.huds[ANTAG_HUD_BLOODSUCKER]//ANTAG_HUD_BLOODSUCKER]
-	hud.leave_hud(vassal)
-	set_antag_hud(vassal, null)
-
-
 
 //Displayed at the start of roundend_category section, default to roundend_category header
 /datum/antagonist/vassal/roundend_report_header()

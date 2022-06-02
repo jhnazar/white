@@ -297,7 +297,7 @@
 /datum/plant_gene/trait/cell_charge/on_consume(obj/item/food/grown/G, mob/living/carbon/target)
 	if(!G.reagents.total_volume)
 		var/batteries_recharged = 0
-		for(var/obj/item/stock_parts/cell/C in target.GetAllContents())
+		for(var/obj/item/stock_parts/cell/C in target.get_all_contents())
 			var/newcharge = min(G.seed.potency*0.01*C.maxcharge, C.maxcharge)
 			if(C.charge < newcharge)
 				C.charge = newcharge
@@ -649,10 +649,10 @@
 /datum/plant_gene/trait/oxygenerator/on_grow(obj/machinery/hydroponics/our_tray)
 	var/turf/open/T = get_turf(our_tray)
 	if(T.air)
-		var/co2 = T.air.get_moles(/datum/gas/carbon_dioxide)
+		var/co2 = T.air.get_moles(GAS_CO2)
 		var/amt = max(co2, 9)
-		T.air.adjust_moles(/datum/gas/carbon_dioxide, -amt)
-		T.air.adjust_moles(/datum/gas/oxygen, amt * 2)
+		T.air.adjust_moles(GAS_CO2, -amt)
+		T.air.adjust_moles(GAS_O2, amt * 2)
 
 /datum/plant_gene/trait/cogenerator
 	name = "Генерация углекислого газа"
@@ -660,7 +660,7 @@
 /datum/plant_gene/trait/cogenerator/on_grow(obj/machinery/hydroponics/our_tray)
 	var/turf/open/T = get_turf(our_tray)
 	if(T.air)
-		var/oxy = T.air.get_moles(/datum/gas/oxygen)
+		var/oxy = T.air.get_moles(GAS_O2)
 		var/amt = max(oxy, 9)
-		T.air.adjust_moles(/datum/gas/carbon_dioxide, amt * 2)
-		T.air.adjust_moles(/datum/gas/oxygen, -amt)
+		T.air.adjust_moles(GAS_CO2, amt * 2)
+		T.air.adjust_moles(GAS_O2, -amt)

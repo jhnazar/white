@@ -7,7 +7,7 @@
 	extended_desc = "A remote controller used for giving basic commands to non-sentient robots."
 	transfer_access = null
 	requires_ntnet = TRUE
-	size = 12
+	size = 6
 	tgui_id = "NtosRoboControl"
 	program_icon = "robot"
 	///Number of simple robots on-station.
@@ -16,6 +16,8 @@
 	var/mob/current_user
 	///Access granted by the used to summon robots.
 	var/list/current_access = list()
+	///Whether or not this is the cartridge program version.
+	var/cart_mode = FALSE
 
 /datum/computer_file/program/robocontrol/ui_data(mob/user)
 	var/list/data = get_header_data()
@@ -27,10 +29,8 @@
 	var/obj/item/computer_hardware/card_slot/card_slot = computer ? computer.all_components[MC_CARD] : null
 	data["have_id_slot"] = !!card_slot
 	if(computer)
-		var/obj/item/card/id/id_card = card_slot ? card_slot.stored_card : null
-		data["has_id"] = !!id_card
-		data["id_owner"] = id_card ? id_card.registered_name : "No Card Inserted."
-		data["access_on_card"] = id_card ? id_card.access : null
+		var/obj/item/card/id/id_card = card_slot ? card_slot.stored_card : ""
+		data["id_owner"] = id_card
 
 	botcount = 0
 	current_user = user
@@ -88,5 +88,5 @@
 				GLOB.data_core.manifest_modify(id_card.registered_name, id_card.assignment)
 				card_slot.try_eject(current_user)
 			else
-				playsound(get_turf(ui_host()) , 'sound/machines/buzz-sigh.ogg', 25, FALSE)
+				playsound(get_turf(ui_host()) , 'white/valtos/sounds/error1.ogg', 25, FALSE)
 	return

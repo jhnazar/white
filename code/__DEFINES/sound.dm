@@ -13,7 +13,9 @@
 #define CHANNEL_TTS_ANNOUNCER 1013
 #define CHANNEL_BATTLETENSION 1012
 #define CHANNEL_RUINATION_OST 1011
-#define CHANNEL_TTS_AVAILABLE 1010
+#define CHANNEL_VIOLENCE_MODE 1010
+#define CHANNEL_HEV 1009
+#define CHANNEL_TTS_AVAILABLE 1008
 #define CHANNEL_BOOMBOX_AVAILABLE 800
 #define CHANNEL_WIND_AVAILABLE 780
 #define CHANNEL_HIGHEST_AVAILABLE 770
@@ -40,18 +42,15 @@
 
 //Ambience types
 
-#define GENERIC list('sound/ambience/white/ambi2.ogg',\
+#define GENERIC list('sound/ambience/white/ambi1.ogg',\
+					'sound/ambience/white/ambi2.ogg',\
 					'sound/ambience/white/ambi3.ogg',\
 					'sound/ambience/white/ambi4.ogg',\
 					'sound/ambience/white/ambi5.ogg',\
 					'sound/ambience/white/ambi6.ogg',\
 					'sound/ambience/white/ambi7.ogg',\
 					'sound/ambience/white/ambi8.ogg',\
-					'sound/ambience/white/ambi9.ogg',\
-					'sound/ambience/white/ambi10.ogg',\
-					'sound/ambience/white/ambi12.ogg',\
-					'sound/ambience/white/ambi13.ogg',\
-					'white/valtos/sounds/prison/amb8.ogg')
+					'sound/ambience/white/ambi9.ogg')
 
 #define HOLY list('sound/ambience/white/ambichurch1.ogg')
 
@@ -62,7 +61,6 @@
 #define RUINS list('sound/ambience/white/ambidanger1.ogg',\
 				'sound/ambience/white/ambidanger2.ogg',\
 				'sound/ambience/white/ambi1.ogg',\
-				'sound/ambience/white/ambi11.ogg',\
 				'sound/ambience/white/ambi3.ogg')
 
 #define ENGINEERING list('sound/ambience/white/ambieng1.ogg',\
@@ -70,7 +68,6 @@
 
 #define MINING list('sound/ambience/white/ambidanger1.ogg',\
 					'sound/ambience/white/ambidanger2.ogg',\
-					'sound/ambience/white/ambi12.ogg',\
 					'white/valtos/sounds/prison/amb6.ogg')
 
 #define MEDICAL list('sound/ambience/white/ambimed1.ogg',\
@@ -88,18 +85,14 @@
 						'sound/ambience/white/ambimaint2.ogg')
 
 #define AWAY_MISSION list('sound/ambience/white/ambidanger2.ogg',\
-						'sound/ambience/white/ambidanger3.ogg',\
-						'sound/ambience/white/ambi12.ogg')
+						'sound/ambience/white/ambidanger3.ogg')
+
+#define YOHEI list('sound/ambience/white/ambiyohei.ogg')
 
 #define REEBE list('sound/ambience/ambireebe1.ogg',\
 				'sound/ambience/ambireebe2.ogg',\
 				'sound/ambience/ambireebe3.ogg')
 
-#define CITY_SOUNDS list('white/rebolution228/sounds/ambience/daytime_1.ogg',\
-						'white/rebolution228/sounds/ambience/daytime_2.ogg',\
-						'white/rebolution228/sounds/ambience/daytime_3.ogg',\
-						'white/rebolution228/sounds/ambience/daytime_4.ogg',\
-						'white/rebolution228/sounds/ambience/daytime_5.ogg')
 
 #define CREEPY_SOUNDS list('sound/effects/ghost.ogg',\
 						'sound/effects/ghost2.ogg',\
@@ -154,8 +147,63 @@
 						'sound/ambience/ambigen15.ogg')
 
 #define TURBOLIFT list('white/jhnazar/sound/effects/lift/elevatormusic.ogg',\
-					'white/jhnazar/sound/effects/turbolift/elevatormusic1.ogg',\
-					'white/jhnazar/sound/effects/turbolift/elevatormusic2.ogg')
+						'white/jhnazar/sound/effects/turbolift/elevatormusic1.ogg',\
+						'white/jhnazar/sound/effects/turbolift/elevatormusic2.ogg')
+
+#define FAR_EXPLOSION_SOUNDS list('white/valtos/sounds/farexplosion/1.ogg',\
+						'white/valtos/sounds/farexplosion/2.ogg',\
+						'white/valtos/sounds/farexplosion/3.ogg',\
+						'white/valtos/sounds/farexplosion/4.ogg',\
+						'white/valtos/sounds/farexplosion/5.ogg',\
+						'white/valtos/sounds/farexplosion/6.ogg',\
+						'white/valtos/sounds/farexplosion/7.ogg',\
+						'white/valtos/sounds/farexplosion/8.ogg',\
+						'white/valtos/sounds/farexplosion/9.ogg',\
+						'sound/effects/explosionfar.ogg')
+
+#define WATER_FLOW_MINI list('white/valtos/sounds/voda1.ogg',\
+						'white/valtos/sounds/voda2.ogg',\
+						'white/valtos/sounds/voda3.ogg',\
+						'white/valtos/sounds/voda4.ogg',\
+						'white/valtos/sounds/voda5.ogg')
+
+#define RANDOM_DEEPH_SOUNDS list('white/valtos/sounds/lifeweb/deeph1.ogg',\
+						'white/valtos/sounds/lifeweb/deeph2.ogg',\
+						'white/valtos/sounds/lifeweb/deeph3.ogg',\
+						'white/valtos/sounds/lifeweb/deeph4.ogg',\
+						'white/valtos/sounds/lifeweb/deeph5.ogg',\
+						'white/valtos/sounds/lifeweb/deeph6.ogg')
+
+#define RANDOM_DREAM_SOUNDS list('white/valtos/sounds/lifeweb/dream1.ogg',\
+						'white/valtos/sounds/lifeweb/dream2.ogg',\
+						'white/valtos/sounds/lifeweb/dream3.ogg',\
+						'white/valtos/sounds/lifeweb/dream4.ogg',\
+						'white/valtos/sounds/lifeweb/dream5.ogg')
+
+// how dumb i am
+#define RANDOM_DREAMER_SOUNDS list('white/valtos/sounds/lifeweb/hall1.ogg',\
+						'white/valtos/sounds/lifeweb/hall2.ogg',\
+						'white/valtos/sounds/lifeweb/hall3.ogg',\
+						'white/valtos/sounds/lifeweb/hall4.ogg',\
+						'white/valtos/sounds/lifeweb/hall5.ogg',\
+						'white/valtos/sounds/lifeweb/hall6.ogg',\
+						'white/valtos/sounds/lifeweb/hall7.ogg',\
+						'white/valtos/sounds/lifeweb/hall8.ogg',\
+						'white/valtos/sounds/lifeweb/hall9.ogg',\
+						'white/valtos/sounds/lifeweb/hall10.ogg',\
+						'white/valtos/sounds/lifeweb/hall11.ogg',\
+						'white/valtos/sounds/lifeweb/hall12.ogg',\
+						'white/valtos/sounds/lifeweb/hall13.ogg',\
+						'white/valtos/sounds/lifeweb/hall14.ogg',\
+						'white/valtos/sounds/lifeweb/hall15.ogg',\
+						'white/valtos/sounds/lifeweb/hall16.ogg',\
+						'white/valtos/sounds/lifeweb/hall17.ogg',\
+						'white/valtos/sounds/lifeweb/hall18.ogg',\
+						'white/valtos/sounds/lifeweb/hall19.ogg',\
+						'white/valtos/sounds/lifeweb/hall20.ogg',\
+						'white/valtos/sounds/lifeweb/hall21.ogg',\
+						'white/valtos/sounds/lifeweb/hall22.ogg')
+
 
 #define INTERACTION_SOUND_RANGE_MODIFIER -3
 #define EQUIP_SOUND_VOLUME 30
@@ -226,6 +274,7 @@
 
 
 ///Announcer audio keys
+#define ANNOUNCER_COMMANDREPORT "announcer_commandreport"
 #define ANNOUNCER_AIMALF "announcer_aimalf"
 #define ANNOUNCER_ALIENS "announcer_aliens"
 #define ANNOUNCER_ANIMES "announcer_animes"
@@ -246,6 +295,7 @@
 
 /// Global list of all of our announcer keys.
 GLOBAL_LIST_INIT(announcer_keys, list(
+	ANNOUNCER_COMMANDREPORT,
 	ANNOUNCER_AIMALF,
 	ANNOUNCER_ALIENS,
 	ANNOUNCER_ANIMES,
@@ -264,3 +314,35 @@ GLOBAL_LIST_INIT(announcer_keys, list(
 	ANNOUNCER_SPANOMALIES,
 	ANNOUNCER_WAR,
 ))
+
+/// List of all of our sound keys.
+#define SFX_BODYFALL "bodyfall"
+#define SFX_BULLET_MISS "bullet_miss"
+#define SFX_CAN_OPEN "can_open"
+#define SFX_CLOWN_STEP "clown_step"
+#define SFX_DESECRATION "desecration"
+#define SFX_EXPLOSION "explosion"
+#define SFX_EXPLOSION_CREAKING "explosion_creaking"
+#define SFX_HISS "hiss"
+#define SFX_HONKBOT_E "honkbot_e"
+#define SFX_HULL_CREAKING "hull_creaking"
+#define SFX_HYPERTORUS_CALM "hypertorus_calm"
+#define SFX_HYPERTORUS_MELTING "hypertorus_melting"
+#define SFX_IM_HERE "im_here"
+#define SFX_LAW "law"
+#define SFX_PAGE_TURN "page_turn"
+#define SFX_PUNCH "punch"
+#define SFX_REVOLVER_SPIN "revolver_spin"
+#define SFX_RICOCHET "ricochet"
+#define SFX_RUSTLE "rustle"
+#define SFX_SHATTER "shatter"
+#define SFX_SM_CALM "sm_calm"
+#define SFX_SM_DELAM "sm_delam"
+#define SFX_SPARKS "sparks"
+#define SFX_SUIT_STEP "suit_step"
+#define SFX_SWING_HIT "swing_hit"
+#define SFX_TERMINAL_TYPE "terminal_type"
+#define SFX_WARPSPEED "warpspeed"
+#define SFX_CRUNCHY_BUSH_WHACK "crunchy_bush_whack"
+#define SFX_TREE_CHOP "tree_chop"
+#define SFX_ROCK_TAP "rock_tap"

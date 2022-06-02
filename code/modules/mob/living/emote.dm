@@ -4,11 +4,36 @@
 	mob_type_allowed_typecache = /mob/living
 	mob_type_blacklist_typecache = list(/mob/living/simple_animal/slime, /mob/living/brain)
 
+/// The time it takes for the blush visual to be removed
+#define BLUSH_DURATION 5.2 SECONDS
+
 /datum/emote/living/blush
 	key = "blush"
 	ru_name = "краснеть"
 	key_third_person = "blushes"
 	message = "краснеет."
+	/// Timer for the blush visual to wear off
+	var/blush_timer = TIMER_ID_NULL
+
+/datum/emote/living/blush/run_emote(mob/user, params, type_override, intentional)
+	. = ..()
+	if(. && isliving(user))
+		var/mob/living/living_user = user
+		ADD_TRAIT(living_user, TRAIT_BLUSHING, "[type]")
+		living_user.update_body()
+
+		// Use a timer to remove the blush effect after the BLUSH_DURATION has passed
+		var/list/key_emotes = GLOB.emote_list["blush"]
+		for(var/datum/emote/living/blush/living_emote in key_emotes)
+			// The existing timer restarts if it's already running
+			blush_timer = addtimer(CALLBACK(living_emote, .proc/end_blush, living_user), BLUSH_DURATION, TIMER_UNIQUE | TIMER_OVERRIDE)
+
+/datum/emote/living/blush/proc/end_blush(mob/living/living_user)
+	if(!QDELETED(living_user))
+		REMOVE_TRAIT(living_user, TRAIT_BLUSHING, "[type]")
+		living_user.update_body()
+
+#undef BLUSH_DURATION
 
 /datum/emote/living/bow
 	key = "bow"
@@ -215,6 +240,8 @@
 	stat_allowed = HARD_CRIT
 
 /datum/emote/living/gasp/get_sound(mob/living/user)
+	if(ismonkey(user))
+		return
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(!H.mind || !H.mind.miming)
@@ -324,22 +351,30 @@
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(!H.mind || !H.mind.miming)
-			if(user.gender == FEMALE)
-				return pick('white/valtos/sounds/emotes/laugh_female_1.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_2.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_3.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_4.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_5.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_6.ogg',\
-							'white/valtos/sounds/emotes/laugh_female_7.ogg')
+			if(ismoth(H) || isflyperson(H))
+				return 'white/tapko4eb/sounds/emotes/mothlaugh.ogg' // bed rustle
+			if(isfelinid(H))
+				return pick('white/tapko4eb/sounds/emotes/nyaha.ogg',\
+							'white/tapko4eb/sounds/emotes/nyahaha1.ogg',\
+							'white/tapko4eb/sounds/emotes/nyahaha2.ogg',\
+							'white/tapko4eb/sounds/emotes/nyahehe.ogg')
 			else
-				return pick('white/valtos/sounds/emotes/laugh_male_1.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_2.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_3.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_4.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_5.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_6.ogg',\
-							'white/valtos/sounds/emotes/laugh_male_7.ogg')
+				if(user.gender == FEMALE)
+					return pick('white/valtos/sounds/emotes/laugh_female_1.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_2.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_3.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_4.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_5.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_6.ogg',\
+								'white/valtos/sounds/emotes/laugh_female_7.ogg')
+				else
+					return pick('white/valtos/sounds/emotes/laugh_male_1.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_2.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_3.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_4.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_5.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_6.ogg',\
+								'white/valtos/sounds/emotes/laugh_male_7.ogg')
 
 /datum/emote/living/look
 	key = "look"
@@ -721,7 +756,7 @@
 			if(P.can_run_emote(user, status_check = FALSE , intentional = TRUE))
 				keys += P.key
 
-	keys = sortList(keys)
+	keys = sort_list(keys)
 
 	for(var/emote in keys)
 		if(LAZYLEN(message) > 1)

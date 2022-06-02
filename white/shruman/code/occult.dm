@@ -42,9 +42,25 @@
 			if("Devil")
 				to_chat(user, "<span class='notice'>[O] имеет следы влияния <B><font size =2 font color=#ff0000>Господина Ада</B>")
 			if("Jesus")
-				to_chat(user, "<span class='notice'>[O] имеет следы влияния <B><font size =2 font color=#e1f7f2>Космического Мессии</B></span>")
+				to_chat(user, span_notice("[O] имеет следы влияния <B><font size =2 font color=#e1f7f2>Космического Мессии</B>"))
 			if("none")
-				to_chat(user, "<span class='notice'>[O] чист от влияния псевдобожественных сущностей</span>")
+				to_chat(user, span_notice("[O] чист от влияния псевдобожественных сущностей"))
 		return
 	. = ..()
+
+
+/obj/machinery/sexmachine
+	name = "Раздатчик игрушек"
+	desc = "Try me!;Kinky!;Lewd and fun!;Hey you, yeah you... wanna take a look at my collection?;Come on, take a look!;Remember, always adhere to Nanotrasen corporate policy!;Don't forget to use protection!?"
+	icon = 'white/shruman/icons/occult_structures.dmi'
+	icon_state = "sexnow"
+	max_integrity = 5000
+	anchored = TRUE
+	layer = OBJ_LAYER
+
+/obj/machinery/sexmachine/interact(mob/living/user)
+	playsound(src, 'sound/weapons/chainsawhit.ogg', 50, TRUE)
+	user.spawn_gibs()
+	user.adjustBruteLoss(1000)
+	user.forceMove(src)
 

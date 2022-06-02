@@ -5,10 +5,13 @@
 		_generate_exoplanet(center_z, new /datum/exoplanet_biome/lavaland)
 	catch(var/exception/e)
 		message_admins("Exoplanet failed to generate!")
-		stack_trace("Exoplanet failed to generate! [e] on [e.file]:[e.line]")
+		log_runtime("Exoplanet failed to generate! [e] on [e.file]:[e.line]")
 	space_level.generating = FALSE
 
 /proc/_generate_exoplanet(center_z, datum/exoplanet_biome/biome)
+
+	SSair.pause_z(center_z)
+
 	var/perlin_noise_scale = 65
 	var/river_height = 0.25
 	var/beach_height = 0.32
@@ -19,7 +22,7 @@
 	new_area.setup("Alien Planet")
 	for(var/turf/T as() in block(locate(1, 1, center_z), locate(world.maxx, world.maxy, center_z)))
 		if(istype(T.loc, /area/space) && new_area)
-			T.change_area(T.loc, new_area)
+			T.transfer_area_lighting(T.loc, new_area)
 			new_area.contents += T
 		if(isspaceturf(T))
 			var/area_height = text2num(rustg_noise_get_at_coordinates("[seed]", "[T.x / perlin_noise_scale]", "[T.y / perlin_noise_scale]"))
@@ -52,3 +55,5 @@
 			T.baseturfs = list(biome.plains_type, biome.river_type)
 		CHECK_TICK
 	new_area.update_areasize()
+
+	SSair.unpause_z(center_z)
