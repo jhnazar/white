@@ -470,7 +470,7 @@
 		to_chat(src, span_notice("[M] пожимает мне руку!"))
 		
 	else 
-		if(usr.grab_state == GRAB_AGGRESSIVE && (ismoth(src) || is_admin(src)))
+		if(usr.grab_state == GRAB_AGGRESSIVE && usr != ismonkey(usr) && ismoth(src) || is_admin(src))
 			sjim_to_death++
 			if(!do_mob(usr, src, time_to_sjim))
 				return
@@ -493,10 +493,10 @@
 						span_userdanger("О НЕТ! Я ВЗРЫВ~") , span_hear("Слышу взрыв!") , null, usr)
 					to_chat(usr, span_danger("[skloname(name, VINITELNI, gender)] ВЗРЫВАЕТСЯ! ПИЗДЕЦ!"))
 					src.gib()
-			if(sjim_to_death < 5)
+			if(sjim_to_death < 4)
 				src.AddElement(/datum/element/squish, 5 SECONDS, reverse = TRUE)
 				src.apply_damage(10, damagetype = OXY, forced = TRUE)
-			addtimer(CALLBACK(src, .proc/unsjim), rand(30 SECONDS, 60 SECONDS))
+			addtimer(CALLBACK(src, .proc/unsjim), rand(30 SECONDS, 60 SECONDS)) // Выдаёт рантайм после гиба. Пока хз как фиксить
 			src.emote("pishat")	
 
 		else
