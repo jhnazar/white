@@ -470,38 +470,35 @@
 		to_chat(src, span_notice("[M] пожимает мне руку!"))
 		
 	else 
-		if(M.grab_state == GRAB_AGGRESSIVE && ismoth(src))
+		if(usr.grab_state == GRAB_AGGRESSIVE && (ismoth(src) || is_admin(src)))
 			sjim_to_death++
-			if(!do_mob(M, src, time_to_sjim))
+			if(!do_mob(usr, src, time_to_sjim))
 				return
 			switch(sjim_to_death)
 				if(1 to 3)
-					time_to_sjim = 1 SECONDS
-					log_combat (M, src, "sjimaet", addition = "sjim grab")
-					visible_message(span_danger("<b>[M]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
-						span_userdanger("<b>[M]</b> сжимает меня!") , span_hear("Слышу пищание!") , null, M)
-					to_chat(M, span_danger("Сжимаю [skloname(name, VINITELNI, gender)]!"))	
+					time_to_sjim = 2 SECONDS
+					log_combat (usr, src, "sjimaet", addition = "sjim grab")
+					visible_message(span_danger("<b>[usr]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_userdanger("<b>[usr]</b> сжимает меня!") , span_hear("Слышу пищание!") , null, usr)
+					to_chat(usr, span_danger("Сжимаю [skloname(name, VINITELNI, gender)]!"))	
 				if(4)
-					time_to_sjim = 5 SECONDS
-					log_combat (M, src, "sjimaet critichno", addition = "crit sjim grab")
-					visible_message(span_danger("<b>[M]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
-						span_userdanger("В СЛЕДУЮЩИЙ РАЗ Я ВЗОРВУСЬ!"), span_hear("Слышу пищание!") , null, M)
-					to_chat(M, span_danger("Чувствую что [skloname(name, VINITELNI, gender)] в следующий раз взорвётся!"))
+					time_to_sjim = 10 SECONDS
+					log_combat (usr, src, "sjimaet critichno", addition = "crit sjim grab")
+					visible_message(span_danger("<b>[usr]</b> сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_colossus("В СЛЕДУЮЩИЙ РАЗ Я ВЗОРВУСЬ!"), span_hear("Слышу пищание!") , null, usr)
+					to_chat(usr, span_danger("Чувствую что [skloname(name, VINITELNI, gender)] в следующий раз взорвётся!"))
 				if(5 to INFINITY)
-					log_combat (M, src, "sjimaet smertelno", addition = "death sjim grab")
-					visible_message(span_danger("<b>[M]</b> смертельно сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
-						span_userdanger("О НЕТ! Я ВЗРЫВ~") , span_hear("Слышу взрыв!") , null, M)
-					to_chat(M, span_danger("[skloname(name, VINITELNI, gender)] ВЗРЫВАЕТСЯ! ПИЗДЕЦ!"))
+					log_combat (usr, src, "sjimaet smertelno", addition = "death sjim grab")
+					visible_message(span_danger("<b>[usr]</b> смертельно сжимает <b>[skloname(name, VINITELNI, gender)]</b>!") , \
+						span_userdanger("О НЕТ! Я ВЗРЫВ~") , span_hear("Слышу взрыв!") , null, usr)
+					to_chat(usr, span_danger("[skloname(name, VINITELNI, gender)] ВЗРЫВАЕТСЯ! ПИЗДЕЦ!"))
 					src.gib()
 			if(sjim_to_death < 5)
-				src.AddElement(/datum/element/squish, 3 SECONDS)
+				src.AddElement(/datum/element/squish, 5 SECONDS, reverse = TRUE)
 				src.apply_damage(10, damagetype = OXY, forced = TRUE)
-				var/time_to_unsjim = world.time + 10 SECONDS // 1 MINUTES
-				if(world.time >= time_to_unsjim)
-					src.sjim_to_death--
-					to_chat(src, "Становится легче после сжима")
+			addtimer(CALLBACK(src, .proc/unsjim), rand(30 SECONDS, 60 SECONDS))
 			src.emote("pishat")	
-					
+
 		else
 			SEND_SIGNAL(src, COMSIG_CARBON_HUGGED, M)
 			SEND_SIGNAL(M, COMSIG_CARBON_HUG, M, src)
@@ -565,6 +562,10 @@
 		animate(src, pixel_x = pixel_x + SHAKE_ANIMATION_OFFSET * direction, time = 1, easing = QUAD_EASING | EASE_OUT, flags = ANIMATION_PARALLEL)
 		animate(pixel_x = pixel_x - (SHAKE_ANIMATION_OFFSET * 2 * direction), time = 1)
 		animate(pixel_x = pixel_x + SHAKE_ANIMATION_OFFSET * direction, time = 1, easing = QUAD_EASING | EASE_IN)
+
+/mob/living/carbon/proc/unsjim()
+	sjim_to_death--
+	to_chat(src, span_warning("Становится легче после сжимания..."))
 
 /// Check ourselves to see if we've got any shrapnel, return true if we do. This is a much simpler version of what humans do, we only indicate we're checking ourselves if there's actually shrapnel
 /mob/living/carbon/proc/check_self_for_injuries()
