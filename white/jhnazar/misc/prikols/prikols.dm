@@ -46,6 +46,7 @@
 		if(!H.mind || !H.mind.miming)
 			if(user.gender == FEMALE)
 				return pick('white/qwaszx000/loly/pisk.ogg',\
-							'white/jhnazar/misc/prikols/sjim1.ogg')
+							'white/jhnazar/misc/prikols/sjim1.ogg',\
+							'white/jhnazar/misc/prikols/sjim2.ogg')
 			else
 				return 'white/jhnazar/misc/prikols/loly_male.ogg'
