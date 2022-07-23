@@ -50,8 +50,8 @@ export const TextInputModal = (_, context) => {
       <Window.Content
         onKeyDown={(event) => {
           const keyCode = window.event ? event.which : event.keyCode;
-          if (keyCode === KEY_ENTER && inputIsValid.isValid) {
-            act('choose', { choice: input });
+          if (keyCode === KEY_ENTER) {
+            act('submit', { entry: input });
           }
           if (keyCode === KEY_ESCAPE) {
             act('cancel');

@@ -2,7 +2,7 @@
 	name = "отвёртка"
 	desc = "Ею можно откручивать и закручивать различные штуки."
 	gender = FEMALE
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/tools.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "screwdriver_map"
@@ -42,7 +42,7 @@
 	user.visible_message(span_suicide("[user] is stabbing [src] into [user.ru_ego()] [pick("temple", "heart")]! It looks like [user.p_theyre()] trying to commit suicide!"))
 	return(BRUTELOSS)
 
-/obj/item/screwdriver/Initialize()
+/obj/item/screwdriver/Initialize(mapload)
 	. = ..()
 	AddElement(/datum/element/eyestab)
 	if(random_color) //random colors!
@@ -98,7 +98,7 @@
 	belt_icon_state = null
 	inhand_icon_state = "drill"
 	worn_icon_state = "drill"
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/tools.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	custom_materials = list(/datum/material/iron=150,/datum/material/silver=50,/datum/material/titanium=25) //done for balance reasons, making them high value for research, but harder to get
@@ -117,7 +117,7 @@
 /obj/item/screwdriver/power/get_belt_overlay()
 	return mutable_appearance('white/valtos/icons/belt_overlays.dmi', icon_state)
 
-/obj/item/screwdriver/power/Initialize()
+/obj/item/screwdriver/power/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/transforming, \
 		force_on = force, \

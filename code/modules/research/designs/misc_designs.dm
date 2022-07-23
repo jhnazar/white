@@ -180,7 +180,7 @@
 	construction_time = 40
 	materials = list(/datum/material/iron = 500, /datum/material/glass = 500)
 	build_path = /obj/item/clothing/glasses/meson
-	category = list("Снаряжение", "Инженерное снаряжение")
+	category = list("Снаряжение", "Инженерное снаряжение", "Карго снаряжение")
 	sub_category = list("Диагностика и мониторинг")
 	departmental_flags = DEPARTMENTAL_FLAG_CARGO | DEPARTMENTAL_FLAG_ENGINEERING
 
@@ -216,7 +216,7 @@
 	construction_time = 40
 	materials = list(/datum/material/iron = 600, /datum/material/glass = 600, /datum/material/plasma = 350, /datum/material/uranium = 1000)
 	build_path = /obj/item/clothing/glasses/meson/night
-	category = list("Снаряжение", "Инженерное снаряжение")
+	category = list("Снаряжение", "Инженерное снаряжение", "Карго снаряжение")
 	sub_category = list("Диагностика и мониторинг")
 	departmental_flags = DEPARTMENTAL_FLAG_ENGINEERING | DEPARTMENTAL_FLAG_CARGO
 
@@ -378,7 +378,7 @@
 	construction_time = 40
 	materials = list(/datum/material/iron=1000, /datum/material/plasma=500, /datum/material/titanium=2000)
 	build_path = /obj/item/stack/rods/lava
-	category = list("initial", "Запчасти оборудования", "Строительство")
+	category = list("initial", "Запчасти оборудования", "Строительство", "Карго оборудование")
 	sub_category = list("Напольные конструкции")
 	departmental_flags = DEPARTMENTAL_FLAG_CARGO | DEPARTMENTAL_FLAG_SCIENCE | DEPARTMENTAL_FLAG_ENGINEERING
 
@@ -449,7 +449,7 @@
 	construction_time = 40
 	materials = list(/datum/material/iron = 1500, /datum/material/silver = 150, /datum/material/glass = 3000)
 	build_path = /obj/item/lightreplacer
-	category = list("Снаряжение", "Рабочие инструменты ", "Рабочие инструменты  ")
+	category = list("Снаряжение", "Рабочие инструменты ", "Рабочие инструменты  ", "Рабочие инструменты   ")
 	sub_category = list("Монтажные комплексы")
 	departmental_flags = DEPARTMENTAL_FLAG_SERVICE | DEPARTMENTAL_FLAG_ENGINEERING
 
@@ -818,3 +818,15 @@
 	build_path = /obj/item/plate/oven_tray
 	category = list("initial","Снаряжение")
 	departmental_flags = DEPARTMENTAL_FLAG_SERVICE
+
+/////////////////////////////////////////
+/////////Fishing Equipment///////////////
+/////////////////////////////////////////
+
+/datum/design/fishing_rod_tech
+	name = "Advanced Fishing Rod"
+	id = "fishing_rod_tech"
+	build_type = PROTOLATHE | AWAY_LATHE
+	materials = list(/datum/material/uranium = 1000, /datum/material/plastic = 2000)
+	build_path = /obj/item/fishing_rod/tech
+	category = list("Снаряжение")

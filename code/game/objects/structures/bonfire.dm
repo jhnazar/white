@@ -30,11 +30,11 @@
 /obj/structure/bonfire/dense
 	density = TRUE
 
-/obj/structure/bonfire/prelit/Initialize()
+/obj/structure/bonfire/prelit/Initialize(mapload)
 	. = ..()
 	start_burning()
 
-/obj/structure/bonfire/Initialize()
+/obj/structure/bonfire/Initialize(mapload)
 	. = ..()
 	var/static/list/loc_connections = list(
 		COMSIG_ATOM_ENTERED = .proc/on_entered,
@@ -44,7 +44,7 @@
 /obj/structure/bonfire/attackby(obj/item/used_item, mob/living/user, params)
 	if(istype(used_item, /obj/item/stack/rods) && !can_buckle && !grill)
 		var/obj/item/stack/rods/rods = used_item
-		var/choice = input(user, "What would you like to construct?", "Bonfire") as null|anything in list("Stake","Grill")
+		var/choice = tgui_input_list(user, "What would you like to construct?", "Bonfire", list("Stake","Grill"))
 		if(!choice)
 			return
 		rods.use(1)

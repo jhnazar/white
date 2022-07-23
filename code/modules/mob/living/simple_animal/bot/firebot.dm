@@ -38,7 +38,7 @@
 	var/extinguish_fires = TRUE
 	var/stationary_mode = FALSE
 
-/mob/living/simple_animal/bot/firebot/Initialize()
+/mob/living/simple_animal/bot/firebot/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_SPACEWALK, INNATE_TRAIT)
 	update_icon()
@@ -134,7 +134,7 @@
 		if(user)
 			to_chat(user, span_danger("[capitalize(src.name)] жужжит и шипит."))
 		audible_message(span_danger("[capitalize(src.name)] громко жужжит!"))
-		playsound(src, "sparks", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+		playsound(src, "zap", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 		if(user)
 			old_target_fire = user
 		extinguish_fires = FALSE

@@ -46,7 +46,7 @@
 /obj/item/hockeypack/ui_action_click()
 	toggle_stick()
 
-/obj/item/hockeypack/Initialize()
+/obj/item/hockeypack/Initialize(mapload)
 	. = ..()
 	packstick = make_stick()
 
@@ -135,7 +135,7 @@
 	var/obj/item/hockeypack/pack
 	var/wielded = FALSE
 
-/obj/item/hockeystick/Initialize()
+/obj/item/hockeystick/Initialize(mapload)
 	. = ..()
 	RegisterSignal(src, COMSIG_TWOHANDED_WIELD, .proc/on_wield)
 	RegisterSignal(src, COMSIG_TWOHANDED_UNWIELD, .proc/on_unwield)
@@ -169,7 +169,6 @@
 	return ..()
 
 /obj/item/hockeystick/attack(mob/living/target, mob/living/user) //Sure it's the powerfist code, right down to the sound effect. Gonna be fun though.
-	. = ..()
 	if(!wielded)
 		return ..()
 
@@ -224,7 +223,7 @@
 
 /obj/item/storage/belt/hippie/hockey
 	name = "Генератор голошайб"
-	desc = "Пояс с возможностью создавать голошайбы, которые спобоны сбивать с ног. Имеет карман для двух шайб."
+	desc = "Пояс с возможностью создавать голошайбы, которые способны сбивать с ног. Имеет карман для двух шайб."
 	icon = 'white/deda565/hippiehockey.dmi'
 	icon_state = "hockey_belt"
 	worn_icon = 'white/deda565/hockeyworn.dmi'
@@ -335,7 +334,7 @@
 	if(slot == ITEM_SLOT_OCLOTHING)
 		ADD_TRAIT(src, TRAIT_NODROP, CLOTHING_TRAIT)
 		var/area/A = get_area(user)
-		priority_announce("ВНИМАНИЕ! На нашей станции стартовал полуфинал Канадского хоккейного турнира! Приглашенная звезда матча [user] открыла сезон в [A.name]!", "Экстренные новости!", sound('white/Feline/sounds/hokkey.ogg'))
+		priority_announce("ВНИМАНИЕ! На вашей станции стартовал полуфинал Канадского хоккейного турнира! Приглашенная звезда матча [user] открыла сезон в [A.name]!", "Экстренные новости!", sound('white/Feline/sounds/hokkey.ogg'), sender_override="Синдикат")
 
 /obj/item/clothing/shoes/hippie/hockey
 	name = "Канадские коньки"

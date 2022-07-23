@@ -34,7 +34,7 @@
 	canSmoothWith = list(SMOOTH_GROUP_SILVER_WALLS)
 	layer = CLOSED_TURF_LAYER
 
-/obj/effect/clockwork/overlay/wall/Initialize()
+/obj/effect/clockwork/overlay/wall/Initialize(mapload)
 	. = ..()
 	QUEUE_SMOOTH_NEIGHBORS(src)
 
@@ -43,7 +43,7 @@
 	return ..()
 
 /obj/effect/clockwork/overlay/floor
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "clockwork_floor"
 	layer = TURF_LAYER
 	plane = FLOOR_PLANE

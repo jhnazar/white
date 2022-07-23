@@ -15,11 +15,17 @@
 	var/can_be_tanked = TRUE
 	///Is this source self-replenishing?
 	var/refilling = FALSE
+	///Can this dispenser be opened using a wrench?
+	var/openable = FALSE
+	///Is this dispenser slowly leaking its reagent?
+	var/leaking = FALSE
 
 /obj/structure/reagent_dispensers/examine(mob/user)
 	. = ..()
 	if(can_be_tanked)
 		. += "<hr><span class='notice'>Можно использовать лист метала, чтобы заставить это работать с химическими трубами.</span>"
+	if(leaking)
+		. += span_warning("<hr>Заглушка откручена!")
 
 /obj/structure/reagent_dispensers/take_damage(damage_amount, damage_type = BRUTE, damage_flag = 0, sound_effect = 1, attack_dir)
 	. = ..()
@@ -41,10 +47,9 @@
 		new_tank.anchored = anchored
 		qdel(src)
 		return FALSE
-	else
-		return ..()
+	return ..()
 
-/obj/structure/reagent_dispensers/Initialize()
+/obj/structure/reagent_dispensers/Initialize(mapload)
 	create_reagents(tank_volume, DRAINABLE | AMOUNT_VISIBLE)
 	if(reagent_id)
 		reagents.add_reagent(reagent_id, tank_volume)
@@ -64,10 +69,30 @@
 	else
 		qdel(src)
 
+/obj/structure/reagent_dispensers/wrench_act(mob/living/user, obj/item/tool)
+	. = ..()
+	if(!openable)
+		return FALSE
+	leaking = !leaking
+	balloon_alert(user, "[leaking ? "открываю" : "закрываю"] заглушку [src]")
+	log_game("[key_name(user)] [leaking ? "opened" : "closed"] [src]")
+	if(leaking && reagents)
+		reagents.expose(get_turf(src), TOUCH, 10 / max(10, reagents.total_volume))
+		reagents.remove_any(min(10, reagents.total_volume))
+	return TOOL_ACT_TOOLTYPE_SUCCESS
+
+/obj/structure/reagent_dispensers/Moved(atom/OldLoc, Dir)
+	. = ..()
+	if(leaking && reagents)
+		reagents.expose(get_turf(src), TOUCH, 10 / max(10, reagents.total_volume))
+		reagents.remove_any(min(10, reagents.total_volume))
+
+
 /obj/structure/reagent_dispensers/watertank
 	name = "бак с водой"
 	desc = "С водой."
 	icon_state = "water"
+	openable = TRUE
 
 /obj/structure/reagent_dispensers/watertank/high
 	name = "огромный бак с водой"
@@ -81,21 +106,67 @@
 	icon_state = "foam"
 	reagent_id = /datum/reagent/firefighting_foam
 	tank_volume = 500
+	openable = TRUE
 
 /obj/structure/reagent_dispensers/fueltank
 	name = "топливный бак"
 	desc = "Заполнен сварочным топливом. Не пить."
 	icon_state = "fuel"
 	reagent_id = /datum/reagent/fuel
+	openable = TRUE
+	//an assembly attached to the tank
+	var/obj/item/assembly_holder/rig = null
+	//whether it accepts assemblies or not
+	var/accepts_rig = TRUE
+	//overlay of attached assemblies
+	var/mutable_appearance/assembliesoverlay
+	/// The last person to rig this fuel tank - Stored with the object. Only the last person matters for investigation
+	var/last_rigger = ""
 
 /obj/structure/reagent_dispensers/fueltank/Initialize(mapload)
 	. = ..()
 	if(SSevents.holidays?[APRIL_FOOLS])
 		icon_state = "fuel_fools"
 
+/obj/structure/reagent_dispensers/fueltank/Destroy()
+	QDEL_NULL(rig)
+	return ..()
+
+/obj/structure/reagent_dispensers/fueltank/Exited(atom/movable/gone, direction)
+	. = ..()
+	if(gone == rig)
+		rig = null
+
+/obj/structure/reagent_dispensers/fueltank/examine(mob/user)
+	. = ..()
+	if(get_dist(user, src) <= 2 && rig)
+		. += span_notice("Здесь что-то приделано. Хм...")
+
+/obj/structure/reagent_dispensers/fueltank/attack_hand(mob/user, list/modifiers)
+	. = ..()
+	if(.)
+		return
+	if(!rig)
+		return
+	user.balloon_alert_to_viewers("отсоединяю сборку...")
+	if(!do_after(user, 2 SECONDS, target = src))
+		return
+	user.balloon_alert_to_viewers("отсоединяю сборку")
+	log_message("[key_name(user)] detached [rig] from [src]", LOG_GAME)
+	if(!user.put_in_hands(rig))
+		rig.forceMove(get_turf(user))
+	rig = null
+	last_rigger = null
+	cut_overlays(assembliesoverlay)
+	UnregisterSignal(src, COMSIG_IGNITER_ACTIVATE)
+
 /obj/structure/reagent_dispensers/fueltank/boom()
 	explosion(src, heavy_impact_range = 1, light_impact_range = 5, flame_range = 5)
 	qdel(src)
+
+/obj/structure/reagent_dispensers/fueltank/proc/rig_boom()
+	log_bomber(last_rigger, "rigged fuel tank exploded", src)
+	boom()
 
 /obj/structure/reagent_dispensers/fueltank/blob_act(obj/structure/blob/B)
 	boom()
@@ -135,7 +206,30 @@
 		else
 			user.visible_message(span_danger("[user] делает глупую ошибку пытаясь заправить [user.ru_ego()] [I.name]!") , span_userdanger("Это было глупо."))
 			log_bomber(user, "detonated a", src, "via welding tool")
+			SSspd.check_action(user?.client, SPD_FUEL_TANK_EXPLOSION)
 			boom()
+		return
+	if(istype(I, /obj/item/assembly_holder) && accepts_rig)
+		if(rig)
+			user.balloon_alert("здесь уже есть что-то!")
+			return ..()
+		user.balloon_alert_to_viewers("присоединяю сборку...")
+		if(!do_after(user, 2 SECONDS, target = src))
+			return
+		user.balloon_alert_to_viewers("присоединяю сборку")
+		var/obj/item/assembly_holder/holder = I
+		if(locate(/obj/item/assembly/igniter) in holder.contents)
+			rig = holder
+			if(!user.transferItemToLoc(holder, src))
+				return
+			log_bomber(user, "rigged [name] with [holder.name] for explosion", src)
+			SSspd.check_action(user?.client, SPD_FUEL_TANK_EXPLOSION)
+			last_rigger = user
+			assembliesoverlay = holder
+			assembliesoverlay.pixel_x += 6
+			assembliesoverlay.pixel_y += 1
+			add_overlay(assembliesoverlay)
+			RegisterSignal(src, COMSIG_IGNITER_ACTIVATE, .proc/rig_boom)
 		return
 	return ..()
 
@@ -146,6 +240,7 @@
 		if(istype(W) && W.welding)
 			. = SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 			user.visible_message(span_danger("[user] начинает ТАКТИКУЛЬНО греть [src] с помощью [user.ru_ego()] [I.name]!"), span_userdanger("Прикол инбаунд."))
+			SSspd.check_action(user?.client, SPD_FUEL_TANK_EXPLOSION)
 			if(do_after(user, 10 SECONDS, src))
 				explosion(src, devastation_range = 1, heavy_impact_range = 3, light_impact_range = 7, flame_range = 7)
 				qdel(src)
@@ -194,7 +289,7 @@
 	dir = EAST
 	pixel_x = -30
 
-/obj/structure/reagent_dispensers/peppertank/Initialize()
+/obj/structure/reagent_dispensers/peppertank/Initialize(mapload)
 	. = ..()
 	if(prob(1))
 		desc = "ВРЕМЯ ПЕРЦА, СУКА!"
@@ -236,6 +331,7 @@
 	desc = "Пиво это жидкий хлеб, оно полезное..."
 	icon_state = "beer"
 	reagent_id = /datum/reagent/consumable/ethanol/beer
+	openable = TRUE
 
 /obj/structure/reagent_dispensers/beerkeg/attack_animal(mob/living/simple_animal/M)
 	if(isdog(M))
@@ -281,6 +377,7 @@
 	icon_state = "vat"
 	anchored = TRUE
 	reagent_id = /datum/reagent/consumable/cooking_oil
+	openable = TRUE
 
 /obj/structure/reagent_dispensers/servingdish
 	name = "посудина с чем-то"

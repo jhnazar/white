@@ -3,7 +3,7 @@
 
 	var/sound/cursound
 	var/active = FALSE
-	var/playing_range = 24
+	var/playing_range = 21
 	var/list/listener_comps = list()
 
 	var/environmental = TRUE
@@ -15,7 +15,7 @@
 
 	var/prefs_toggle_flag = SOUND_JUKEBOX
 
-/datum/component/soundplayer/Initialize()
+/datum/component/soundplayer/Initialize(mapload)
 	if(!ismovable(parent))
 		return COMPONENT_INCOMPATIBLE
 	playing_channel = SSsounds.random_available_channel()
@@ -163,7 +163,7 @@
 		S.environment = myplayer.env_id
 		S.y = 1
 		SEND_SOUND(M, S)
-	S.status = SOUND_UPDATE
+	S.status = SOUND_UPDATE | SOUND_STREAM
 	S.channel = myplayer.playing_channel
 
 	var/turf/listener_turf = get_turf(M)
@@ -184,7 +184,7 @@
 
 	if(dist <= myplayer.playing_range && (listener_turf.z in allowed_z_levels))
 		if(myplayer.environmental && player_turf && listener_turf)
-			S.volume = myplayer.playing_volume - max(dist * round(myplayer.playing_range/8), 0)
+			S.volume = round(myplayer.playing_volume - ((myplayer.playing_volume / myplayer.playing_range) * dist))
 		else
 			S.volume = myplayer.playing_volume
 		S.falloff = myplayer.playing_falloff

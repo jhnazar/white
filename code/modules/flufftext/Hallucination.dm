@@ -357,7 +357,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 		return INITIALIZE_HINT_QDEL
 	feedback_details += "Source: [wall.x],[wall.y],[wall.z]"
 
-	fakebroken = image('icons/turf/floors.dmi', wall, "plating", layer = TURF_LAYER)
+	fakebroken = image(DEFAULT_FLOORS_ICON, wall, "plating", layer = TURF_LAYER)
 	landing = get_turf(target)
 	var/turf/landing_image_turf = get_step(landing, SOUTHWEST) //the icon is 3x3
 	fakerune = image('icons/effects/96x96.dmi', landing_image_turf, "landing", layer = ABOVE_OPEN_TURF_LAYER)
@@ -596,7 +596,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 					image_file = 'icons/mob/inhands/equipment/security_righthand.dmi'
 				else
 					image_file = 'icons/mob/inhands/equipment/security_lefthand.dmi'
-				target.playsound_local(H, "sparks",75,1,-1)
+				target.playsound_local(H, "zap",75,1,-1)
 				A = image(image_file,H,"baton", layer=ABOVE_MOB_LAYER)
 			if("ttv")
 				if(side == "right")
@@ -1372,7 +1372,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 /obj/effect/hallucination/danger/anomaly
 	name = "flux wave anomaly"
 
-/obj/effect/hallucination/danger/anomaly/Initialize()
+/obj/effect/hallucination/danger/anomaly/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 	var/static/list/loc_connections = list(
@@ -1541,7 +1541,7 @@ GLOBAL_LIST_INIT(hallucination_list, list(
 		target.client.images |= shock_image
 		target.client.images |= electrocution_skeleton_anim
 	addtimer(CALLBACK(src, .proc/reset_shock_animation), 40)
-	target.playsound_local(get_turf(src), "sparks", 100, 1)
+	target.playsound_local(get_turf(src), "zap", 100, 1)
 	target.staminaloss += 50
 	target.Stun(40)
 	target.jitteriness += 1000

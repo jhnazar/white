@@ -96,7 +96,6 @@ GLOBAL_LIST_INIT(sandbag_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/diamond
 	name = "алмаз"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-diamond"
 	inhand_icon_state = "sheet-diamond"
 	singular_name = "алмаз"
@@ -125,8 +124,7 @@ GLOBAL_LIST_INIT(diamond_recipes, list ( \
  * Uranium
  */
 /obj/item/stack/sheet/mineral/uranium
-	name = "Уран"
-	icon = 'white/valtos/icons/items.dmi'
+	name = "уран"
 	icon_state = "sheet-uranium"
 	inhand_icon_state = "sheet-uranium"
 	singular_name = "урановый лист"
@@ -157,7 +155,6 @@ GLOBAL_LIST_INIT(uranium_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/plasma
 	name = "твердая плазма"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-plasma"
 	inhand_icon_state = "sheet-plasma"
 	singular_name = "лист плазмы"
@@ -209,7 +206,6 @@ GLOBAL_LIST_INIT(plasma_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/gold
 	name = "золото"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-gold"
 	inhand_icon_state = "sheet-gold"
 	singular_name = "золотой слиток"
@@ -242,7 +238,6 @@ GLOBAL_LIST_INIT(gold_recipes, list ( \
  */
 /obj/item/stack/sheet/mineral/silver
 	name = "серебро"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-silver"
 	inhand_icon_state = "sheet-silver"
 	singular_name = "серебрянный слиток"
@@ -376,10 +371,10 @@ GLOBAL_LIST_INIT(plastitanium_recipes, list ( \
 	material_type = /datum/material/snow
 
 GLOBAL_LIST_INIT(snow_recipes, list ( \
-	new/datum/stack_recipe("Стена из Снега", /turf/closed/wall/mineral/snow, 5, one_per_turf = 1, on_floor = 1), \
-	new/datum/stack_recipe("Снеговик", /obj/structure/statue/snow/snowman, 5, one_per_turf = 1, on_floor = 1), \
-	new/datum/stack_recipe("Баррикада", /obj/structure/deployable_barricade/snow, 2, one_per_turf = 1, on_floor = 1), \
-	new/datum/stack_recipe("Снежок", /obj/item/toy/snowball, 1), \
+	new/datum/stack_recipe("стена из снега", /turf/closed/wall/mineral/snow, 5, one_per_turf = 1, on_floor = 1), \
+	new/datum/stack_recipe("снеговик", /obj/structure/statue/snow/snowman, 5, one_per_turf = 1, on_floor = 1), \
+	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/snow, 5, one_per_turf = 1, on_floor = 1), \
+	new/datum/stack_recipe("снежок", /obj/item/toy/snowball, 1), \
 	new/datum/stack_recipe("снежный пол", /obj/item/stack/tile/mineral/snow, 1, 4, 20), \
 	))
 

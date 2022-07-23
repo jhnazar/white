@@ -20,7 +20,6 @@
 	/// The client that owns this view packet
 	var/client/chief = null
 
-
 /datum/view_data/New(client/owner, view_string)
 	default = view_string
 	chief = owner
@@ -137,7 +136,5 @@
 	//Ready for this one?
 	setTo(radius)
 
-/proc/getScreenSize(widescreen)
-	if(widescreen)
-		return CONFIG_GET(string/default_view)
-	return CONFIG_GET(string/default_view_square)
+/client/proc/getScreenSize()
+	return "[prefs.widescreenwidth]x15"

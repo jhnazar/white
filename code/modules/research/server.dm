@@ -1,6 +1,6 @@
 /obj/machinery/rnd/server
 	name = "Сервер РнД"
-	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки компьютерного ботана, оно производит очки исследований."
+	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки зрения компьютерного ботана, оно производит очки исследований."
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "RD-server-on"
 	var/heat_health = 100
@@ -18,10 +18,11 @@
 	var/temp_penalty_coefficient = 0.5	//1 = -1 points per degree above high tolerance. 0.5 = -0.5 points per degree above high tolerance.
 	req_access = list(ACCESS_RD) //ONLY THE R&D CAN CHANGE SERVER SETTINGS.
 
-/obj/machinery/rnd/server/Initialize()
+/obj/machinery/rnd/server/Initialize(mapload)
 	. = ..()
 	name += " [num2hex(rand(1,65535), -1)]" //gives us a random four-digit hex number as part of the name. Y'know, for fluff.
 	SSresearch.servers |= src
+	AddElement(/datum/element/traitor_desc, "Эти серверы настолько отсталые, что сгодятся лишь для варки яиц в них. Никто даже не заметит, если я переведу их на систему пассивного охлаждения и саботирую <b>научный отдел</b>. Также, за это мне достанутся 5 телекристаллов.", SABOTAGE_RESEARCH)
 
 /obj/machinery/rnd/server/Destroy()
 	SSresearch.servers -= src
@@ -187,6 +188,6 @@
 /obj/machinery/computer/rdservercontrol/emag_act(mob/user)
 	if(obj_flags & EMAGGED)
 		return
-	playsound(src, "sparks", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+	playsound(src, "zap", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 	obj_flags |= EMAGGED
 	to_chat(user, span_notice("You disable the security protocols."))

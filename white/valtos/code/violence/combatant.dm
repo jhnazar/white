@@ -4,11 +4,11 @@
 
 /datum/team/violence/red
 	name = "Боевики: Красные"
-	member_name = "Боевик красных"
+	member_name = "Боевики красных"
 
 /datum/team/violence/blue
 	name = "Боевики: Синие"
-	member_name = "Боевик синих"
+	member_name = "Боевики синих"
 
 /datum/antagonist/combatant
 	name = "Боевик белых"
@@ -103,6 +103,7 @@
 	belt = null
 	ears = /obj/item/radio/headset
 	box = null
+	implants = list(/obj/item/implant/explosive/disintegrate)
 	var/team = "white"
 
 /datum/outfit/job/combantant/red

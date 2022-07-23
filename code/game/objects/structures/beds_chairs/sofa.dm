@@ -7,9 +7,10 @@
 	var/mutable_appearance/armrest
 
 /obj/structure/chair/sofa/Initialize(mapload)
+	. = ..()
 	armrest = mutable_appearance(icon, "[icon_state]_armrest", ABOVE_MOB_LAYER)
 	armrest.plane = GAME_PLANE_UPPER
-	return ..()
+	AddElement(/datum/element/soft_landing)
 
 /obj/structure/chair/sofa/electrify_self(obj/item/assembly/shock_kit/input_shock_kit, mob/user, list/overlays_from_child_procs)
 	if(!overlays_from_child_procs)
@@ -64,22 +65,22 @@
 	desc = "Идеальная конструкция, на которой удобно сидеть и чертовски неудобно спать."
 	icon_state = "bench_middle"
 	greyscale_config = /datum/greyscale_config/bench_middle
-	greyscale_colors = "#e3ab4b"
+	greyscale_colors = "#00B7EF"
 
 /obj/structure/chair/sofa/bench/left
 	icon_state = "bench_left"
 	greyscale_config = /datum/greyscale_config/bench_left
-	greyscale_colors = "#e3ab4b"
+	greyscale_colors = "#00B7EF"
 
 /obj/structure/chair/sofa/bench/right
 	icon_state = "bench_right"
 	greyscale_config = /datum/greyscale_config/bench_right
-	greyscale_colors = "#e3ab4b"
+	greyscale_colors = "#00B7EF"
 
 /obj/structure/chair/sofa/bench/corner
 	icon_state = "bench_corner"
 	greyscale_config = /datum/greyscale_config/bench_corner
-	greyscale_colors = "#e3ab4b"
+	greyscale_colors = "#00B7EF"
 
 // Bamboo benches
 /obj/structure/chair/sofa/bamboo

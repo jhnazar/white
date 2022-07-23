@@ -163,7 +163,7 @@ SUBSYSTEM_DEF(vote)
 
 /datum/controller/subsystem/vote/proc/initiate_vote(vote_type, initiator_key)
 	//Server is still intializing.
-	if(!Master.current_runlevel)
+	if(!MC_RUNNING(init_stage))
 		to_chat(usr, span_warning("Cannot start vote, server is not done initializing."))
 		return FALSE
 	var/lower_admin = FALSE
@@ -202,11 +202,11 @@ SUBSYSTEM_DEF(vote)
 				for(var/valid_map in maps)
 					choices.Add(valid_map)
 			if("что-то")
-				question = stripped_input(usr,"Что же мы спросим?")
+				question = stripped_input(usr, "Что же мы спросим?")
 				if(!question)
 					return FALSE
 				for(var/i=1,i<=10,i++)
-					var/option = capitalize(stripped_input(usr,"Пиши вариант ответа или жми отмену для начала"))
+					var/option = capitalize(stripped_input(usr, "Пиши вариант ответа или жми отмену для начала"))
 					if(!option || mode || !usr.client)
 						break
 					choices.Add(option)

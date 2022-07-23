@@ -46,30 +46,34 @@
 	if(.)
 		user.SpinAnimation(7,1)
 
-/datum/emote/flip/check_cooldown(mob/user, intentional)
+/datum/emote/flip/check_cooldown(mob/living/carbon/user, intentional)
 	. = ..()
 	if(.)
 		return
 	if(!can_run_emote(user, intentional=intentional))
 		return
-	if(isliving(user))
-		var/mob/living/flippy_mcgee = user
+	if(iscarbon(user) && intentional)
 		if(prob(90) && !(HAS_TRAIT(user, TRAIT_FREERUNNING)))
-			flippy_mcgee.Knockdown(5 SECONDS)
-			flippy_mcgee.visible_message(
-				span_notice("[flippy_mcgee] пытается сделать кувырок и падает на голову, во чудила!") ,
-				span_notice("Пытаюсь сделать изящный кувырок, но спотыкаюсь и падаю!")
-			)
+			user.Knockdown(5 SECONDS)
+			user.visible_message(
+				span_notice("[user] пытается сделать кувырок и падает на голову, во чудила!") ,
+				span_notice("Пытаюсь сделать изящный кувырок, но спотыкаюсь и падаю!"))
 			if(prob(75))
-				flippy_mcgee.adjustBruteLoss(5)
-				if(prob(50))
-					var/obj/item/bodypart/neckflip = flippy_mcgee.get_bodypart(BODY_ZONE_HEAD)
-					neckflip.force_wound_upwards(/datum/wound/blunt/critical)
+				user.adjustBruteLoss(5)
 		else
-			flippy_mcgee.visible_message(
-				span_notice("[flippy_mcgee] пытается удержать баланс после прыжка.") ,
-				span_notice("Ух...")
-			)
+			user.visible_message(
+				span_notice("[user] пытается удержать баланс после прыжка.") ,
+				span_notice("Ух..."))
+
+		var/current_confusion = user.get_confusion()
+		if(current_confusion > BEYBLADE_PUKE_THRESHOLD)
+			user.vomit(BEYBLADE_PUKE_NUTRIENT_LOSS, distance = 0)
+			return
+		if(prob(BEYBLADE_DIZZINESS_PROBABILITY))
+			to_chat(user, span_warning("Что-то мне плохо."))
+			user.Dizzy(BEYBLADE_DIZZINESS_VALUE)
+			if(current_confusion < BEYBLADE_CONFUSION_LIMIT)
+				user.add_confusion(BEYBLADE_CONFUSION_INCREMENT)
 
 /datum/emote/spin
 	key = "spin"
@@ -97,7 +101,7 @@
 		user.vomit(BEYBLADE_PUKE_NUTRIENT_LOSS, distance = 0)
 		return
 	if(prob(BEYBLADE_DIZZINESS_PROBABILITY))
-		to_chat(user, span_warning("You feel woozy from spinning."))
+		to_chat(user, span_warning("Что-то мне плохо."))
 		user.Dizzy(BEYBLADE_DIZZINESS_VALUE)
 		if(current_confusion < BEYBLADE_CONFUSION_LIMIT)
 			user.add_confusion(BEYBLADE_CONFUSION_INCREMENT)

@@ -28,6 +28,7 @@
 /obj/machinery/power/generator/Destroy()
 	kill_circs()
 	SSair.atmos_machinery -= src
+	GLOB.is_engine_sabotaged = TRUE
 	return ..()
 
 /obj/machinery/power/generator/update_icon()
@@ -104,12 +105,13 @@
 	switch(lastgenlev)
 		if(1000000 to 3000000)
 			if(prob(50))
-				tesla_zap(src, 3, lastgenlev * 0.01)
+				tesla_zap(src, 3, lastgenlev * 0.1)
 		if(3000001 to 5000000)
 			if(prob(75))
-				tesla_zap(src, 7, lastgenlev * 0.1)
+				tesla_zap(src, 7, lastgenlev * 1)
 		if(5000001 to INFINITY)
 			if(prob(5))
+				GLOB.is_engine_sabotaged = TRUE
 				explosion(src, devastation_range = 3, heavy_impact_range = 6, light_impact_range = 12)
 				return PROCESS_KILL
 	..()
@@ -126,7 +128,7 @@
 
 		t += "<div class='statusDisplay'>"
 
-		t += "Выход: [DisplayPower(lastgenlev)]"
+		t += "Выход: [display_power(lastgenlev)]"
 
 		t += "<BR>"
 

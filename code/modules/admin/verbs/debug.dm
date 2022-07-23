@@ -96,7 +96,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	for(var/mob/C in GLOB.mob_list)
 		if(C.key)
 			available.Add(C)
-	var/mob/choice = tgui_input_list(usr, "Choose a player to play the pAI", "Spawn pAI", sortNames(available))
+	var/mob/choice = tgui_input_list(usr, "Choose a player to play the pAI", "Spawn pAI", sort_names(available))
 	if(!choice)
 		return
 	if(!isobserver(choice))
@@ -106,7 +106,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	var/obj/item/paicard/card = new(T)
 	var/mob/living/silicon/pai/pai = new(card)
 
-	var/chosen_name = input(choice, "Enter your pAI name:", "pAI Name", "Personal AI") as text|null
+	var/chosen_name = tgui_input_text(choice, "Enter your pAI name:", "pAI Name", "Personal AI")
 
 	if (isnull(chosen_name))
 		return
@@ -169,7 +169,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 	if(matches.len==0)
 		return
-	var/hsbitem = input(usr, "Choose an object to delete.", "Delete:") as null|anything in sort_list(matches)
+	var/hsbitem = tgui_input_list(usr, "Choose an object to delete.", "Delete:", sort_list(matches))
 	if(hsbitem)
 		hsbitem = matches[hsbitem]
 		var/counter = 0
@@ -268,7 +268,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	if(M.ckey)
 		if(tgui_alert(usr,"This mob is being controlled by [M.key]. Are you sure you wish to give someone else control of it? [M.key] will be made a ghost.",,list("Yes","No")) != "Yes")
 			return
-	var/client/newkey = input(src, "Pick the player to put in control.", "New player") as null|anything in sort_list(GLOB.clients)
+	var/client/newkey = tgui_input_list(src, "Pick the player to put in control.", "New player", sort_list(GLOB.clients))
 	var/mob/oldmob = newkey.mob
 	var/delmob = FALSE
 	if((isobserver(oldmob) || tgui_alert(usr,"Do you want to delete [newkey]'s old mob?","Delete?",list("Yes","No")) != "No"))
@@ -514,7 +514,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/datum/outfit/O = path //not much to initalize here but whatever
 		outfits[initial(O.name)] = path
 
-	var/dresscode = input("Select outfit", "Robust quick dress shop") as null|anything in baseoutfits + sort_list(outfits)
+	var/dresscode = tgui_input_list(usr, "Select outfit", "Robust quick dress shop", baseoutfits + sort_list(outfits))
 	if (isnull(dresscode))
 		return
 
@@ -528,7 +528,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 			var/datum/outfit/O = path
 			job_outfits[initial(O.name)] = path
 
-		dresscode = input("Select job equipment", "Robust quick dress shop") as null|anything in sort_list(job_outfits)
+		dresscode = tgui_input_list(usr, "Select job equipment", "Robust quick dress shop", sort_list(job_outfits))
 		dresscode = job_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -540,7 +540,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 			var/datum/outfit/O = path
 			plasmaman_outfits[initial(O.name)] = path
 
-		dresscode = input("Select plasmeme equipment", "Robust quick dress shop") as null|anything in sort_list(plasmaman_outfits)
+		dresscode = tgui_input_list(usr, "Select plasmeme equipment", "Robust quick dress shop", sort_list(plasmaman_outfits))
 		dresscode = plasmaman_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -552,7 +552,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 			var/datum/outfit/O = path
 			white_outfits[initial(O.name)] = path
 
-		dresscode = input("ДАВАЙ УРААА ДАВАЙ ДАВАЙ ДАВААААЙ", "ВЫБИРАЕЕЕМ") as null|anything in sort_list(white_outfits)
+		dresscode = tgui_input_list(usr, "ДАВАЙ УРААА ДАВАЙ ДАВАЙ ДАВААААЙ", "ВЫБИРАЕЕЕМ", sort_list(white_outfits))
 		dresscode = white_outfits[dresscode]
 		if(isnull(dresscode))
 			return
@@ -561,7 +561,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		var/list/custom_names = list()
 		for(var/datum/outfit/D in GLOB.custom_outfits)
 			custom_names[D.name] = D
-		var/selected_name = input("Select outfit", "Robust quick dress shop") as null|anything in sort_list(custom_names)
+		var/selected_name = tgui_input_list(usr, "Select outfit", "Robust quick dress shop", sort_list(custom_names))
 		dresscode = custom_names[selected_name]
 		if(isnull(dresscode))
 			return
@@ -725,7 +725,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 
 		names[name] = ruin_landmark
 
-	var/ruinname = input("Select ruin", "Jump to Ruin") as null|anything in sort_list(names)
+	var/ruinname = tgui_input_list(usr, "Select ruin", "Jump to Ruin", sort_list(names))
 
 
 	var/obj/effect/landmark/ruin/landmark = names[ruinname]
@@ -765,7 +765,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 	for(var/name in SSmapping.ice_ruins_underground_templates)
 		names[name] = list(SSmapping.ice_ruins_underground_templates[name], ZTRAIT_ICE_RUINS_UNDERGROUND, list(/area/icemoon/underground/unexplored))
 
-	var/ruinname = input("Select ruin", "Spawn Ruin") as null|anything in sort_list(names)
+	var/ruinname = tgui_input_list(usr, "Select ruin", "Spawn Ruin", sort_list(names))
 	var/data = names[ruinname]
 	if (!data)
 		return
@@ -893,7 +893,7 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 		"Total Time"	=	/proc/cmp_profile_time_dsc,
 		"Call Count"	=	/proc/cmp_profile_count_dsc
 	)
-	var/sort = input(src, "Sort type?", "Sort Type", "Avg time") as null|anything in sortlist
+	var/sort = tgui_input_list(src, "Sort type?", "Sort Type", sortlist, "Avg time")
 	if (!sort)
 		return
 	sort = sortlist[sort]
@@ -1046,3 +1046,63 @@ But you can call procs that are of type /mob/living/carbon/human/proc/ for that 
 				bugged_shit += "worn icon: [sprite.slot_flags] [sprite.type]: [sprite.worn_icon_state]\n"
 
 	usr << browse(bugged_shit, "window=fuckingshitfuck;size=700x700")
+
+GLOBAL_VAR_INIT(is_theme_applied, FALSE)
+
+/client/proc/change_server_theme()
+	set category = "Дбг"
+	set name = "Change Server Theme"
+	set desc = "Oh god why..."
+	if(!holder)
+		return
+
+	if(!check_rights(R_PERMISSIONS))
+		return
+
+	if(GLOB.is_theme_applied)
+		qdel(src)
+		return
+
+	var/list/themes = list("onyx", "lfwb")
+
+	var/which_theme = tgui_input_list(usr, "Выберем тему", "Ммм? ОПЕРАЦИЯ НЕОБРАТИМА!", sort_list(themes))
+	if(!(which_theme in themes))
+		return
+
+	switch(which_theme)
+		if("onyx")
+			for(var/turf/open/T in world)
+				if(T.icon == DEFAULT_FLOORS_ICON)
+					T.icon = ONYX_FLOORS_ICON
+			for(var/turf/closed/T in world)
+				if(T.icon == DEFAULT_WALL_ICON)
+					T.icon = ONYX_WALL_ICON
+				else if (T.icon == DEFAULT_RWALL_ICON)
+					T.icon = ONYX_RWALL_ICON
+		if("lfwb")
+			for(var/turf/open/T in world)
+				if(T.icon == DEFAULT_FLOORS_ICON)
+					T.icon = LFWB_FLOORS_ICON
+			for(var/turf/closed/T in world)
+				if(T.icon == DEFAULT_WALL_ICON)
+					T.icon = LFWB_WALL_ICON
+					T.canSmoothWith = list(SMOOTH_GROUP_WALLS)
+				else if (T.icon == DEFAULT_RWALL_ICON)
+					T.icon = LFWB_RWALL_ICON
+				else if (T.icon == DEFAULT_PLASTITANUM_ICON)
+					T.icon = LFWB_PLASTITANUM_ICON
+				else if (T.icon == DEFAULT_RIVETED_ICON)
+					T.icon = LFWB_RIVETED_ICON
+			for(var/obj/structure/window/fulltile/W in world)
+				W.canSmoothWith = list(SMOOTH_GROUP_WINDOW_FULLTILE)
+			for(var/obj/structure/window/reinforced/fulltile/W in world)
+				if(W.icon == DEFAULT_RWINDOW_ICON)
+					W.icon = LFWB_RWINDOW_ICON
+					W.canSmoothWith = list(SMOOTH_GROUP_WINDOW_FULLTILE)
+			for(var/i in 1 to 3)
+				smooth_zlevel(i)
+
+	GLOB.is_theme_applied = TRUE
+
+	message_admins(span_adminnotice("[key_name_admin(src)] меняет тему игры на [which_theme]."))
+	log_admin("[key_name(src)] меняет тему игры на [which_theme].")

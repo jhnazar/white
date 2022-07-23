@@ -168,8 +168,6 @@ All the important duct code:
 	lose_neighbours()
 	reset_connects(0)
 	update_icon()
-	if(ispath(drop_on_wrench))
-		new drop_on_wrench(drop_location())
 	if(!QDELETED(src))
 		qdel(src)
 
@@ -278,6 +276,8 @@ All the important duct code:
 		"[user] [anchored ? null : "un"]fastens \the [src].", \
 		span_notice("You [anchored ? null : "un"]fasten \the [src]."), \
 		span_hear("You hear ratcheting."))
+		if(ispath(drop_on_wrench))
+			new drop_on_wrench(drop_location())
 	return TRUE
 
 ///collection of all the sanity checks to prevent us from stacking ducts that shouldn't be stacked
@@ -346,10 +346,10 @@ All the important duct code:
 	. += span_notice("It's current color and layer are [duct_color] and [duct_layer]. Use in-hand to change.")
 
 /obj/item/stack/ducts/attack_self(mob/user)
-	var/new_layer = input("Select a layer", "Layer") as null|anything in layers
+	var/new_layer = tgui_input_list(usr, "Select a layer", "Layer", layers)
 	if(new_layer)
 		duct_layer = new_layer
-	var/new_color = input("Select a color", "Color") as null|anything in GLOB.pipe_paint_colors
+	var/new_color = tgui_input_list(usr, "Select a color", "Color", GLOB.pipe_paint_colors)
 	if(new_color)
 		duct_color = new_color
 		add_atom_colour(GLOB.pipe_paint_colors[new_color], FIXED_COLOUR_PRIORITY)

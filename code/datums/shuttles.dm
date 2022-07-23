@@ -157,6 +157,11 @@
 	port_id = "partyhard"
 	can_be_bought = FALSE
 
+/datum/map_template/shuttle/yohei
+	port_id = "yohei"
+	suffix = "harvester"
+	can_be_bought = FALSE
+
 // Shuttles start here:
 
 /datum/map_template/shuttle/emergency/backup
@@ -171,7 +176,7 @@
 	admin_notes = "No brig, no medical facilities, no shuttle console."
 	credit_cost = CARGO_CRATE_VALUE * 5
 
-/datum/map_template/shuttle/emergency/airless/post_load()
+/datum/map_template/shuttle/emergency/construction/post_load()
 	. = ..()
 	//enable buying engines from cargo
 	var/datum/supply_pack/P = SSshuttle.supply_packs[/datum/supply_pack/engineering/shuttle_engine]

@@ -13,7 +13,7 @@
 /obj/item/multitool
 	name = "мультитул"
 	desc = "Используется для прозвона проводов и подачи импульсов на них. Не рекомендуется врачами."
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/device.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "multitool"
@@ -55,7 +55,7 @@
 	var/mob/camera/ai_eye/remote/ai_detector/eye
 	var/datum/action/item_action/toggle_multitool/toggle_action
 
-/obj/item/multitool/ai_detect/Initialize()
+/obj/item/multitool/ai_detect/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 	eye = new /mob/camera/ai_eye/remote/ai_detector()

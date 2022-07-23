@@ -63,7 +63,7 @@ GLOBAL_VAR_INIT(observer_default_invisibility, INVISIBILITY_OBSERVER)
 	var/datum/spawners_menu/spawners_menu
 	var/datum/minigames_menu/minigames_menu
 
-/mob/dead/observer/Initialize()
+/mob/dead/observer/Initialize(mapload)
 	set_invisibility(GLOB.observer_default_invisibility)
 
 	add_verb(src, list(
@@ -384,8 +384,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	if(mind.current.key && mind.current.key[1] != "@")	//makes sure we don't accidentally kick any clients
 		to_chat(usr, span_warning("Кто-то уже копается в моём теле... Оно отвергает меня."))
 		return
-	client.view_size.setDefault(getScreenSize(client.prefs.widescreenpref))//Let's reset so people can't become allseeing gods
-	client.view = "[client.prefs.widescreenwidth]x15"
+	client.view_size.setDefault(client.getScreenSize())//Let's reset so people can't become allseeing gods
 	SStgui.on_transfer(src, mind.current) // Transfer NanoUIs.
 	if(mind.current.stat == DEAD && SSlag_switch.measures[DISABLE_DEAD_KEYLOOP])
 		to_chat(src, span_warning("Чтобы покинуть тело используй кнопку Призрак."))
@@ -447,7 +446,7 @@ GLOBAL_LIST_INIT(ghost_forms, sort_list(list("ghost","ghostking","ghostian2","sk
 							"ghost_mellow","ghost_rainbow","ghost_camo","ghost_fire", "catghost")))
 
 /mob/dead/observer/proc/pick_form()
-	var/new_form = input(src, "Choose your ghostly form:","Thanks for supporting BYOND",null) as null|anything in GLOB.ghost_forms
+	var/new_form = tgui_input_list(src, "Choose your ghostly form:", "Thanks for supporting BYOND", GLOB.ghost_forms)
 	if(new_form)
 		client.prefs.ghost_form = new_form
 		client.prefs.save_preferences()
@@ -456,7 +455,7 @@ GLOBAL_LIST_INIT(ghost_forms, sort_list(list("ghost","ghostking","ghostian2","sk
 GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOST_ORBIT_SQUARE,GHOST_ORBIT_HEXAGON,GHOST_ORBIT_PENTAGON))
 
 /mob/dead/observer/proc/pick_ghost_orbit()
-	var/new_orbit = input(src, "Choose your ghostly orbit:","Thanks for supporting BYOND",null) as null|anything in GLOB.ghost_orbits
+	var/new_orbit = tgui_input_list(src, "Choose your ghostly orbit:", "Thanks for supporting BYOND", GLOB.ghost_orbits)
 	if(new_orbit)
 		client.prefs.ghost_orbit = new_orbit
 		client.prefs.save_preferences()
@@ -607,7 +606,7 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 	var/list/possible_destinations = SSpoints_of_interest.get_mob_pois()
 	var/target = null
 
-	target = input("Please, select a player!", "Jump to Mob", null, null) as null|anything in possible_destinations
+	target = tgui_input_list(usr, "Please, select a player!", "Jump to Mob", possible_destinations)
 
 	if (!target || !isobserver(usr))
 		return
@@ -641,7 +640,7 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 		var/list/views = list()
 		for(var/i in 7 to max_view)
 			views |= i
-		var/new_view = input("Choose your new view", "Modify view range", 0) as null|anything in views
+		var/new_view = tgui_input_list(usr, "Choose your new view", "Modify view range", views, 0)
 		if(new_view)
 			client.view_size.setTo(clamp(new_view, 7, max_view) - 7)
 	else
@@ -758,7 +757,7 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 		if(!(L in GLOB.player_list) && !L.mind)
 			possessible += L
 
-	var/mob/living/target = input("Your new life begins today!", "Possess Mob", null, null) as null|anything in sortNames(possessible)
+	var/mob/living/target = tgui_input_list(usr, "Your new life begins today!", "Possess Mob", sort_names(possessible))
 
 	if(!target)
 		return FALSE
@@ -797,11 +796,10 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 		return
 	client.crew_manifest_delay = world.time + (1 SECONDS)
 
-	var/dat
-	dat += "<h4>Персонал</h4>"
-	dat += GLOB.data_core.get_manifest_html()
+	if(!GLOB.crew_manifest_tgui)
+		GLOB.crew_manifest_tgui = new /datum/crew_manifest(src)
 
-	src << browse(dat, "window=manifest;size=387x420;can_close=1")
+	GLOB.crew_manifest_tgui.ui_interact(src)
 
 //this is called when a ghost is drag clicked to something.
 /mob/dead/observer/MouseDrop(atom/over)
@@ -977,7 +975,7 @@ GLOBAL_LIST_INIT(ghost_orbits, list(GHOST_ORBIT_CIRCLE,GHOST_ORBIT_TRIANGLE,GHOS
 	var/list/possible_destinations = SSpoints_of_interest.get_mob_pois()
 	var/target = null
 
-	target = input("Please, select a player!", "Jump to Mob", null, null) as null|anything in possible_destinations
+	target = tgui_input_list(usr, "Please, select a player!", "Jump to Mob", possible_destinations)
 
 	if (!target || !isobserver(usr))
 		return

@@ -198,6 +198,22 @@
 	priority = 100 //it's an indicator you're dying, so it's very high priority
 	colour = "red"
 
+/obj/item/organ/heart/vampheart
+	beating = 0
+	///If a heartbeat is being faked.
+	var/fakingit = FALSE
+
+/obj/item/organ/heart/vampheart/Restart()
+	beating = FALSE
+	return FALSE
+
+/obj/item/organ/heart/vampheart/Stop()
+	fakingit = FALSE
+	return ..()
+
+/obj/item/organ/heart/vampheart/proc/FakeStart()
+	fakingit = TRUE // We're pretending to beat, to fool people.
+
 /obj/item/organ/heart/cybernetic
 	name = "базовое кибернетическое сердце"
 	desc = "Базовое электронное устройство, имитирующее функции органического человеческого сердца."
@@ -291,7 +307,7 @@
 	///Color of the heart, is set by the species on gain
 	var/ethereal_color = "#9c3030"
 
-/obj/item/organ/heart/ethereal/Initialize()
+/obj/item/organ/heart/ethereal/Initialize(mapload)
 	. = ..()
 	add_atom_colour(ethereal_color, FIXED_COLOUR_PRIORITY)
 
@@ -371,8 +387,17 @@
 
 ///Actually spawns the crystal which puts the ethereal in it.
 /obj/item/organ/heart/ethereal/proc/crystalize(mob/living/ethereal)
+
+	var/location = ethereal.loc
+
 	if(!COOLDOWN_FINISHED(src, crystalize_cooldown) || ethereal.stat != DEAD)
 		return //Should probably not happen, but lets be safe.
+
+	if(ismob(location) || isitem(location) || HAS_TRAIT_FROM(src, TRAIT_HUSK, CHANGELING_DRAIN)) //Stops crystallization if they are eaten by a dragon, turned into a legion, consumed by his grace, etc.
+		to_chat(ethereal, span_warning("You were unable to finish your crystallization, for obvious reasons."))
+		stop_crystalization_process(ethereal, FALSE)
+		return
+
 	COOLDOWN_START(src, crystalize_cooldown, INFINITY) //Prevent cheeky double-healing until we get out, this is against stupid admemery
 	current_crystal = new(get_turf(ethereal), src)
 	stop_crystalization_process(ethereal, TRUE)

@@ -3,8 +3,8 @@
 	ru_title = "Шахтёр"
 	department_head = list("Head of Personnel")
 	faction = "Station"
-	total_positions = 3
-	spawn_positions = 3
+	total_positions = 2
+	spawn_positions = 2
 	supervisors = "завхозу и главе персонала"
 	selection_color = "#dcba97"
 
@@ -19,7 +19,8 @@
 	display_order = JOB_DISPLAY_ORDER_SHAFT_MINER
 	bounty_types = CIV_JOB_MINE
 
-	rpg_title = "Искатель приключений"
+	rpg_title = "Adventurer"
+	rpg_title_ru = "Искатель приключений"
 
 /datum/outfit/job/miner
 	name = "Shaft Miner"
@@ -52,7 +53,7 @@
 	suit = /obj/item/clothing/suit/hooded/explorer
 	mask = /obj/item/clothing/mask/gas/explorer
 	glasses = /obj/item/clothing/glasses/meson
-	suit_store = /obj/item/tank/internals/oxygen
+	suit_store = /obj/item/tank/internals/tactical
 	internals_slot = ITEM_SLOT_SUITSTORE
 	backpack_contents = list(
 		/obj/item/flashlight/seclite=1,\

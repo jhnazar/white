@@ -19,7 +19,7 @@
 	var/item_recycle_sound = 'sound/items/welder.ogg'
 	var/frabbs = 0
 
-/obj/machinery/recycler/Initialize()
+/obj/machinery/recycler/Initialize(mapload)
 	var/list/allowed_materials = list(
 		/datum/material/iron,
 		/datum/material/glass,
@@ -94,7 +94,7 @@
 	if(safety_mode)
 		safety_mode = FALSE
 		update_appearance()
-	playsound(src, "sparks", 75, TRUE, SILENCED_SOUND_EXTRARANGE)
+	playsound(src, "zap", 75, TRUE, SILENCED_SOUND_EXTRARANGE)
 	to_chat(user, span_notice("You use the cryptographic sequencer on [src]."))
 
 /obj/machinery/recycler/update_icon_state()

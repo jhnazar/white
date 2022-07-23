@@ -48,7 +48,7 @@
 	if(.)
 		on_shield_block(owner, hitby, attack_text, damage, attack_type)
 
-/obj/item/shield/proc/defense_check(turf/aloc, turf/bloc, mobdir)
+/obj/item/proc/defense_check(turf/aloc, turf/bloc, mobdir)
 	. = FALSE
 	switch(mobdir)
 		if (1)
@@ -206,7 +206,7 @@
 	inhand_icon_state = "flashshield"
 	var/obj/item/assembly/flash/handheld/embedded_flash
 
-/obj/item/shield/riot/flash/Initialize()
+/obj/item/shield/riot/flash/Initialize(mapload)
 	. = ..()
 	embedded_flash = new(src)
 
@@ -291,7 +291,7 @@
 	/// Whether clumsy people can transform this without side effects.
 	var/can_clumsy_use = FALSE
 
-/obj/item/shield/energy/Initialize()
+/obj/item/shield/energy/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/transforming, \
 		force_on = active_force, \
@@ -336,7 +336,7 @@
 	/// Whether the shield is extended and protecting the user..
 	var/extended = FALSE
 
-/obj/item/shield/riot/tele/Initialize()
+/obj/item/shield/riot/tele/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/transforming, \
 		force_on = 8, \

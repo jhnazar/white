@@ -13,13 +13,13 @@
 	var/buckle_prevents_pull = FALSE
 
 //Interaction
-/atom/movable/attack_hand(mob/living/user)
+/atom/movable/attack_hand(mob/living/user, list/modifiers)
 	. = ..()
 	if(.)
 		return
 	if(can_buckle && has_buckled_mobs())
 		if(buckled_mobs.len > 1)
-			var/unbuckled = input(user, "Кого высаживаем?","А?") as null|mob in sortNames(buckled_mobs)
+			var/unbuckled = tgui_input_list(user, "Кого высаживаем?", "А?", sort_names(buckled_mobs))
 			if(user_unbuckle_mob(unbuckled,user))
 				return TRUE
 		else
@@ -45,7 +45,7 @@
 		return
 	if(Adjacent(user) && can_buckle && has_buckled_mobs())
 		if(buckled_mobs.len > 1)
-			var/unbuckled = input(user, "Who do you wish to unbuckle?","Unbuckle Who?") as null|mob in sortNames(buckled_mobs)
+			var/unbuckled = tgui_input_list(user, "Who do you wish to unbuckle?", "Unbuckle Who?", sort_names(buckled_mobs))
 			return user_unbuckle_mob(unbuckled,user)
 		else
 			return user_unbuckle_mob(buckled_mobs[1], user)
@@ -204,6 +204,15 @@
 
 	// No bucking you to yourself.
 	if(target == src)
+		return FALSE
+
+	// Check if the target to buckle isn't INSIDE OF A WALL
+	if(!isopenturf(loc) || !isopenturf(target.loc))
+		return FALSE
+
+	// Check if the target to buckle isn't A SOLID OBJECT (not including vehicles)
+	var/turf/ground = get_turf(src)
+	if(ground.is_blocked_turf(exclude_mobs = TRUE, source_atom = src))
 		return FALSE
 
 	// Check if this atom can have things buckled to it.

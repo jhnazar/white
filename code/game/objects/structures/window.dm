@@ -546,6 +546,9 @@
 	explosion_block = 2
 	glass_type = /obj/item/stack/sheet/plasmarglass
 
+/obj/structure/window/plasma/reinforced/BlockThermalConductivity()
+	return TRUE
+
 //entirely copypasted code
 //take this out when construction is made a component or otherwise modularized in some way
 /obj/structure/window/plasma/reinforced/attackby(obj/item/I, mob/living/user, params)
@@ -682,7 +685,7 @@
 	state = WINDOW_OUT_OF_FRAME
 
 /obj/structure/window/reinforced/fulltile
-	icon = 'white/valtos/icons/window_rglass.dmi'
+	icon = DEFAULT_RWINDOW_ICON
 	icon_state = "window_rglass-0"
 	base_icon_state = "window_rglass"
 	dir = FULLTILE_WINDOW_DIR
@@ -803,7 +806,7 @@
 	var/static/mutable_appearance/torn = mutable_appearance('icons/obj/smooth_structures/paperframes.dmi',icon_state = "torn", layer = ABOVE_OBJ_LAYER - 0.1)
 	var/static/mutable_appearance/paper = mutable_appearance('icons/obj/smooth_structures/paperframes.dmi',icon_state = "paper", layer = ABOVE_OBJ_LAYER - 0.1)
 
-/obj/structure/window/paperframe/Initialize()
+/obj/structure/window/paperframe/Initialize(mapload)
 	. = ..()
 	update_icon()
 

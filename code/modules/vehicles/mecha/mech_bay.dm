@@ -1,7 +1,7 @@
 /turf/open/floor/mech_bay_recharge_floor               //        Whos idea it was
 	name = "платформа зарядки мехов" // Recharging turfs
 	desc = "Парковка меха на этой станции перезарядит его внутреннюю батарею."
-	icon = 'icons/turf/floors.dmi'                          //		  That are set in stone to check the west turf for recharge port
+	icon = DEFAULT_FLOORS_ICON                          //		  That are set in stone to check the west turf for recharge port
 	icon_state = "recharge_floor"                           //        Some people just want to watch the world burn i guess
 
 /turf/open/floor/mech_bay_recharge_floor/break_tile()
@@ -25,7 +25,7 @@
 	var/on = FALSE
 	var/turf/recharging_turf = null
 
-/obj/machinery/mech_bay_recharge_port/Initialize()
+/obj/machinery/mech_bay_recharge_port/Initialize(mapload)
 	. = ..()
 	recharging_turf = get_step(loc, dir)
 
@@ -144,7 +144,7 @@
 		return
 	. += "recharge_comp_on"
 
-/obj/machinery/computer/mech_bay_power_console/Initialize()
+/obj/machinery/computer/mech_bay_power_console/Initialize(mapload)
 	. = ..()
 	reconnect()
 

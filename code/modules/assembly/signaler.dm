@@ -46,7 +46,7 @@
 	playsound(user, 'sound/machines/triple_beep.ogg', ASSEMBLY_BEEP_VOLUME, TRUE)
 	qdel(src)
 
-/obj/item/assembly/signaler/Initialize()
+/obj/item/assembly/signaler/Initialize(mapload)
 	. = ..()
 	set_frequency(frequency)
 
@@ -93,7 +93,7 @@
 	switch(action)
 		if("signal")
 			if(TIMER_COOLDOWN_CHECK(src, COOLDOWN_SIGNALLER_SEND))
-				to_chat(usr, span_warning("[src] все еще перезаряжается..."))
+				to_chat(usr, span_warning("[name] все еще перезаряжается..."))
 				return
 			TIMER_COOLDOWN_START(src, COOLDOWN_SIGNALLER_SEND, 1 SECONDS)
 			INVOKE_ASYNC(src, .proc/signal)

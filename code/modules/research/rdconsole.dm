@@ -45,7 +45,7 @@ Nothing else in the console has ID requirements.
 		return reagent.name
 	return ID
 
-/obj/machinery/computer/rdconsole/Initialize()
+/obj/machinery/computer/rdconsole/Initialize(mapload)
 	. = ..()
 	stored_research = SSresearch.science_tech
 	stored_research.consoles_accessing[src] = TRUE
@@ -134,7 +134,7 @@ Nothing else in the console has ID requirements.
 /obj/machinery/computer/rdconsole/emag_act(mob/user)
 	if(!(obj_flags & EMAGGED))
 		to_chat(user, span_notice("Отключаю протоколы безопасности и [locked? "разблокирую консоль":"блокирую консоль"]."))
-		playsound(src, "sparks", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+		playsound(src, "zap", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 		obj_flags |= EMAGGED
 		locked = FALSE
 	return ..()
@@ -329,16 +329,16 @@ Nothing else in the console has ID requirements.
 				var/autolathe_friendly = TRUE
 				if(design.reagents_list.len)
 					autolathe_friendly = FALSE
-					design.category -= "Imported"
+					design.category -= "Импорт"
 				else
 					for(var/material in design.materials)
 						if( !(material in list(/datum/material/iron, /datum/material/glass)))
 							autolathe_friendly = FALSE
-							design.category -= "Imported"
+							design.category -= "Импорт"
 
 				if(design.build_type & (AUTOLATHE|PROTOLATHE)) // Specifically excludes circuit imprinter and mechfab
 					design.build_type = autolathe_friendly ? (design.build_type | AUTOLATHE) : design.build_type
-					design.category |= "Imported"
+					design.category |= "Импорт"
 				d_disk.blueprints[slot] = design
 			return TRUE
 		if ("uploadDesignSlot")

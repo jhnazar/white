@@ -3,7 +3,7 @@
 #define TTS_PATH "/home/ubuntu/tenebrae/prod/server_white/white/hule/tts"
 
 GLOBAL_VAR_INIT(tts, FALSE)
-GLOBAL_LIST_INIT(tts_settings, list("aidar"))//1-lang, 2-livingonly
+GLOBAL_LIST_INIT(tts_settings, list("xenia"))//1-lang, 2-livingonly
 
 PROCESSING_SUBSYSTEM_DEF(tts)
 	name = "Text To Speech"
@@ -14,7 +14,7 @@ PROCESSING_SUBSYSTEM_DEF(tts)
 ////////////////////////////////////////////////
 
 /proc/tts_args(var/name, var/msg, var/lang)
-	world.shelleo("python3 [TTS_PATH]/t.py \"[msg]\" [lang] \"[TTS_PATH]/lines/[name].wav\"")
+	world.Export("http://127.0.0.1:2386/?text=[url_encode(msg)]&speaker=[lang]&ckey=[name]")
 
 /////////////////////////////////////
 
@@ -26,21 +26,12 @@ PROCESSING_SUBSYSTEM_DEF(tts)
 		var/mob/etot = src
 		namae = etot.ckey
 
-	tts_args(namae, msg, lang)
-	var/datum/component/tts/TTS = GetComponent(/datum/component/tts)
-	if(fexists("[TTS_PATH]/lines/[namae].wav"))
-		for(var/mob/M in range(13))
-			var/turf/T = get_turf(src)
-			M.playsound_local(T, "[TTS_PATH]/lines/[namae].wav", 100, channel = TTS.assigned_channel, frequency = freq)
-
-/proc/to_tts(target, message)
-	spawn(0)
-		tts_args("announcer", message,  "ru")
-		if(fexists("[TTS_PATH]/lines/announcer.wav"))
-			var/mob/M = target
-			var/turf/T = get_turf(target)
-			M.playsound_local(T, "[TTS_PATH]/lines/announcer.wav", 70, channel = CHANNEL_TTS_ANNOUNCER, frequency = 1)
-	return
+	spawn(-1)
+		tts_args(namae, msg, lang)
+		var/datum/component/tts/TTS = GetComponent(/datum/component/tts)
+		spawn(2)
+			if(fexists("[TTS_PATH]/lines/[namae].wav"))
+				playsound(src, "[TTS_PATH]/lines/[namae].wav", 100, channel = TTS.assigned_channel, vary = TRUE, frequency = freq)
 
 ////////////////////////////////////////
 
@@ -53,7 +44,7 @@ PROCESSING_SUBSYSTEM_DEF(tts)
 
 	var/list/menu = list("Cancel", "Toggle TTS", "Change Lang")
 
-	var/selected = input("Main Menu", "ANIME VOICEOVER", "Cancel") as null|anything in menu
+	var/selected = tgui_input_list(usr, "Main Menu", "ANIME VOICEOVER", menu, "Cancel")
 
 	switch(selected)
 		if("Cancel")
@@ -68,9 +59,9 @@ PROCESSING_SUBSYSTEM_DEF(tts)
 				message_admins("[key] toggled anime voiceover off.")
 
 		if("Change Lang")
-			var/list/langlist = list("Cancel", "aidar", "baya", "kseniya", "natasha", "ruslan", "lj", "thorsten", "tux", "gilles", "dilyara")
+			var/list/langlist = list("Cancel", "aidar", "baya", "kseniya", "xenia", "eugene")
 
-			var/selectedlang = input("Main Menu", "ANIME VOICEOVER", null) as null|anything in langlist
+			var/selectedlang = tgui_input_list(usr, "Main Menu", "ANIME VOICEOVER", langlist)
 			if(selectedlang == "Cancel")
 				return
 

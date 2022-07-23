@@ -191,7 +191,7 @@
 
 	eject_disk(user)
 
-/obj/machinery/computer/scan_consolenew/Initialize()
+/obj/machinery/computer/scan_consolenew/Initialize(mapload)
 	. = ..()
 
 	// Connect with a nearby DNA Scanner on init
@@ -618,7 +618,7 @@
 			var/datum/mutation/human/target_mutation = get_mut_by_ref(bref, search_flags)
 
 			// Prompt for modifier string
-			var/new_sequence_input = input(usr, "Enter replacement sequence (or nothing to cancel)", "Replace inherent gene","")
+			var/new_sequence_input = tgui_input_text(usr, "Enter replacement sequence (or nothing to cancel)", "Replace inherent gene","")
 			// Drop out if the string is the wrong length
 			if(length(new_sequence_input) != 32)
 				return

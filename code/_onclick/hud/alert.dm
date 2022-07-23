@@ -430,7 +430,7 @@
 		return
 
 	var/mob/living/living_owner = owner
-	var/last_whisper = input("Последние слова есть хоть?", "Последние слова") as null | text
+	var/last_whisper = tgui_input_text(living_owner, "Последние слова есть хоть?", "Последние слова")
 	if(!owner)
 		return
 	if (isnull(last_whisper) || !CAN_SUCCUMB(living_owner))
@@ -481,7 +481,7 @@
 	var/angle = 0
 	var/mob/living/simple_animal/hostile/construct/Cviewer = null
 
-/atom/movable/screen/alert/bloodsense/Initialize()
+/atom/movable/screen/alert/bloodsense/Initialize(mapload)
 	. = ..()
 	narnar = new('icons/hud/screen_alert.dmi', "mini_nar")
 	START_PROCESSING(SSprocessing, src)
@@ -585,7 +585,7 @@
 	icon_state = "clockinfo"
 	alerttooltipstyle = "clockcult"
 
-/atom/movable/screen/alert/clockwork/clocksense/Initialize()
+/atom/movable/screen/alert/clockwork/clocksense/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSprocessing, src)
 
@@ -597,7 +597,7 @@
 	var/datum/antagonist/servant_of_ratvar/servant_antagonist = is_servant_of_ratvar(owner)
 	if(!(servant_antagonist?.team))
 		return
-	desc = "Энергия - <b>[DisplayPower(GLOB.clockcult_power)]</b>.<br>"
+	desc = "Энергия - <b>[display_power(GLOB.clockcult_power)]</b>.<br>"
 	desc += "Жизнеспособность - <b>[GLOB.clockcult_vitality]</b>.<br>"
 	if(GLOB.ratvar_arrival_tick)
 		if(GLOB.ratvar_arrival_tick - world.time > 6000)

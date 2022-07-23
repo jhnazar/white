@@ -68,21 +68,21 @@
 
 // Path of Ash's blade
 /obj/item/melee/sickly_blade/ash
-	name = "\improper ashen blade"
-	desc = "Molten and unwrought, a hunk of metal warped to cinders and slag. \
-		Unmade, it aspires to be more than it is, and shears soot-filled wounds with a blunt edge."
+	name = "пепельный клинок"
+	desc = "Расплавленный и незавершённый кусок металла, на котором виднеются пепел и шлак. \
+		Незаконченный, он желает стать чем-то большим, срезая ломти мяса своим тупым лезвием и наполняя их пеплом."
 	icon_state = "ash_blade"
 	inhand_icon_state = "ash_blade"
-	after_use_message = "The Nightwater hears your call..."
+	after_use_message = "Ночной Страж услышал ваш зов..."
 
 // Path of Flesh's blade
 /obj/item/melee/sickly_blade/flesh
-	name = "\improper bloody blade"
-	desc = "A crescent blade born from a fleshwarped creature. \
-		Keenly aware, it seeks to spread to others the suffering it has endured from its dreadful origins."
+	name = "кровавый клинок"
+	desc = "Плотоядное существо в виде серповидного клинка. \
+		Будьте осторожны, ведь оно готово поделиться своими страданиями с каждой своей жертвой."
 	icon_state = "flesh_blade"
 	inhand_icon_state = "flesh_blade"
-	after_use_message = "The Marshal hears your call..."
+	after_use_message = "Маршал услышал ваш зов..."
 
 // Path of Void's blade
 /obj/item/melee/sickly_blade/void
@@ -96,8 +96,8 @@
 // Path of the Blade's... blade
 // Opting for /dark (darkened blade) instead of /blade to avoid "sickly_blade/blade".
 /obj/item/melee/sickly_blade/dark
-	name = "\improper darkened blade"
-	desc = "A blade made of brilliant silver that shines gloriously. Unknown rage is bottled within."
+	name = "затемнённый клинок"
+	desc = "Величественно сияющий серповидный клинок, изготовленный из блестящего серебра. Слепая ярость сочится изнутри."
 	icon_state = "dark_blade"
 	inhand_icon_state = "dark_blade"
-	after_use_message = "The Colonel hears your call..."
+	after_use_message = "Полковник услышал ваш зов..."

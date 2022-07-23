@@ -27,7 +27,7 @@
 	var/can_remove_cell = TRUE
 
 	var/turned_on = FALSE
-	var/activate_sound = "sparks"
+	var/activate_sound = "zap"
 
 	var/attack_cooldown_check = 0 SECONDS
 	var/attack_cooldown = 2.5 SECONDS
@@ -52,7 +52,7 @@
 		user.visible_message(span_suicide("[user] is shoving the [name] down their throat! It looks like [user.p_theyre()] trying to commit suicide!"))
 		. = (OXYLOSS)
 
-/obj/item/melee/baton/Initialize()
+/obj/item/melee/baton/Initialize(mapload)
 	. = ..()
 	if(preload_cell_type)
 		if(!ispath(preload_cell_type,/obj/item/stock_parts/cell))
@@ -243,8 +243,6 @@
 	addtimer(CALLBACK(src, .proc/apply_stun_effect_end, L), apply_stun_delay)
 
 	if(user)
-//		L.lastattacker = user.real_name
-//		L.lastattackerckey = user.ckey
 		L.visible_message(span_danger("<b>[user]</b> оглушает <b>[skloname(L.name, VINITELNI, L.gender)]</b> <b>электрошоковой дубинкой</b>!") , \
 								span_userdanger("<b>[user]</b> оглушает меня <b>электрошоковой дубинкой</b>!"))
 		log_combat(user, L, "stunned")
@@ -299,7 +297,7 @@
 	convertible = FALSE
 	var/obj/item/assembly/igniter/sparkler = 0
 
-/obj/item/melee/baton/cattleprod/Initialize()
+/obj/item/melee/baton/cattleprod/Initialize(mapload)
 	. = ..()
 	sparkler = new (src)
 

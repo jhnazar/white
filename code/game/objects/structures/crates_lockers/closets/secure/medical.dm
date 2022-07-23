@@ -39,6 +39,7 @@
 	..()
 	new /obj/item/radio/headset/headset_med(src)
 	new /obj/item/defibrillator/loaded(src)
+	new /obj/item/breathing_bag(src)
 	new /obj/item/clothing/gloves/color/latex/nitrile(src)
 	new /obj/item/storage/belt/medical(src)
 	new /obj/item/clothing/glasses/hud/health(src)
@@ -73,6 +74,7 @@
 
 /obj/structure/closet/secure_closet/chief_medical/PopulateContents()
 	..()
+	new /obj/item/key/forklift/medbay(src)
 	new /obj/item/clothing/neck/cloak/cmo(src)
 	new /obj/item/clothing/suit/bio_suit/cmo(src)
 	new /obj/item/clothing/head/bio_hood/cmo(src)

@@ -394,6 +394,7 @@
 /datum/config_entry/keyed_list/antag_rep
 	key_mode = KEY_MODE_TEXT
 	value_mode = VALUE_MODE_NUM
+	splitter = "/"
 
 /datum/config_entry/number/monkeycap
 	config_entry_value = 64
@@ -423,3 +424,13 @@
 	config_entry_value = TRUE  //похуй ебал конфиги
 
 /datum/config_entry/flag/native_fov
+
+/datum/config_entry/number/max_client_view_x
+	default = 31
+	min_val = 15
+	max_val = 50 // Byond (the) limits
+
+/datum/config_entry/number/max_client_view_y
+	default = 15
+	min_val = 15
+	max_val = 50 // Byond (the) limits

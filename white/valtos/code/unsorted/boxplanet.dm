@@ -56,7 +56,7 @@
 	var/max_spawn = 1
 	var/cooldown = 0
 
-/obj/structure/flora/tree/boxplanet/kartoshmel/Initialize()
+/obj/structure/flora/tree/boxplanet/kartoshmel/Initialize(mapload)
 	mob_type = rand(1, 5)
 	. = ..()
 
@@ -148,7 +148,7 @@
 	light_range = 5
 	var/cooldown = 0
 
-/obj/structure/flora/tree/boxplanet/svetosvin/Initialize()
+/obj/structure/flora/tree/boxplanet/svetosvin/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 
@@ -176,7 +176,7 @@
 		if(prob(100 - (planted_things.len * 10)))
 			var/list/possible_turfs = list()
 			for(var/turf/T in RANGE_TURFS(7, src))
-				if(istype(T, /turf/open/floor/grass/gensgrass/dirty/stone/raw) || istype(T, /turf/open/floor/plating/asteroid/boxplanet/caves))
+				if(istype(T, /turf/open/floor/grass/gensgrass/dirty) || istype(T, /turf/open/floor/plating/asteroid/boxplanet/caves))
 					possible_turfs += T
 			planted_things += new generating_type(pick(possible_turfs))
 			if(prob(20))
@@ -184,7 +184,7 @@
 			list_clear_nulls(planted_things)
 			return
 
-/obj/effect/flora_spawner/Initialize()
+/obj/effect/flora_spawner/Initialize(mapload)
 	. = ..()
 	generating_type = pick(/obj/structure/flora/tree/boxplanet/kartoshmel, /obj/structure/flora/tree/boxplanet/glikodil, /obj/structure/flora/tree/boxplanet/svetosvin)
 	START_PROCESSING(SSobj, src)
@@ -224,7 +224,7 @@
 	initial_gas_mix = ICEMOON_DEFAULT_ATMOS
 	dug = TRUE
 
-/turf/open/floor/plating/asteroid/boxplanet/caves/Initialize()
+/turf/open/floor/plating/asteroid/boxplanet/caves/Initialize(mapload)
 	. = ..()
 	icon_state = "caves[rand(1,6)]"
 

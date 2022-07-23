@@ -88,7 +88,7 @@ Possible to do for anyone motivated enough:
 	desc = "Напольное устройство для проецирования голографических изображений. Этот откажется автоматически принимать входящие звонки."
 	secure = TRUE
 
-/obj/machinery/holopad/secure/Initialize()
+/obj/machinery/holopad/secure/Initialize(mapload)
 	. = ..()
 	var/obj/item/circuitboard/machine/holopad/board = circuit
 	board.secure = TRUE
@@ -147,7 +147,7 @@ Possible to do for anyone motivated enough:
 	if(!replay_mode && (disk?.record))
 		replay_start()
 
-/obj/machinery/holopad/Initialize()
+/obj/machinery/holopad/Initialize(mapload)
 	. = ..()
 	if(on_network)
 		holopads += src
@@ -288,7 +288,7 @@ Possible to do for anyone motivated enough:
 					if(A)
 						LAZYADD(callnames[A], I)
 				callnames -= get_area(src)
-				var/result = tgui_input_list(usr, "Куда звоним?", "Голозвонок", sortNames(callnames))
+				var/result = tgui_input_list(usr, "Куда звоним?", "Голозвонок", sort_names(callnames))
 				if(QDELETED(usr) || !result || outgoing_call)
 					return
 				if(usr.loc == loc)

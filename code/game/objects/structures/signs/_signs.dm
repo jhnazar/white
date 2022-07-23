@@ -41,7 +41,7 @@
 	///This determines if you can select this sign type when using a pen on a sign backing. False by default, set to true per sign type to override.
 	var/is_editable = TRUE
 
-/obj/item/sign/Initialize() //Signs not attached to walls are always rotated so they look like they're laying horizontal.
+/obj/item/sign/Initialize(mapload) //Signs not attached to walls are always rotated so they look like they're laying horizontal.
 	. = ..()
 	var/matrix/M = matrix()
 	M.Turn(90)
@@ -133,7 +133,7 @@
 			populate_editable_sign_types()
 			if(!length(GLOB.editable_sign_types))
 				CRASH("GLOB.editable_sign_types failed to populate")
-		var/choice = input(user, "Select a sign type.", "Sign Customization") as null|anything in GLOB.editable_sign_types
+		var/choice = tgui_input_list(user, "Select a sign type.", "Sign Customization", GLOB.editable_sign_types)
 		if(!choice)
 			return
 		if(!Adjacent(user)) //Make sure user is adjacent still.
@@ -163,7 +163,7 @@
 			populate_editable_sign_types()
 			if(!length(GLOB.editable_sign_types))
 				CRASH("GLOB.editable_sign_types failed to populate")
-		var/choice = input(user, "Select a sign type.", "Sign Customization") as null|anything in GLOB.editable_sign_types
+		var/choice = tgui_input_list(user, "Select a sign type.", "Sign Customization", GLOB.editable_sign_types)
 		if(!choice)
 			return
 		if(!Adjacent(user)) //Make sure user is adjacent still.

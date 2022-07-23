@@ -603,7 +603,7 @@
 			display_vending_names_paths = list()
 			for(var/path in vending_names_paths)
 				display_vending_names_paths[vending_names_paths[path]] = path
-		var/choice =  input(user,"Choose a new brand","Select an Item") as null|anything in sort_list(display_vending_names_paths)
+		var/choice =  tgui_input_list(user, "Choose a new brand", "Select an Item", sort_list(display_vending_names_paths))
 		set_type(display_vending_names_paths[choice])
 	else
 		return ..()
@@ -995,7 +995,7 @@
 
 /obj/item/circuitboard/machine/rdserver
 	name = "Сервер РнД"
-	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки компьютерного ботана, оно производит очки исследований."
+	desc = "Компьютерная система, работающая на развитой нейронной сети, которая обрабатывает произвольную информацию для получения данных, пригодных для разработки новых технологий. С точки зрения компьютерного ботана, оно производит очки исследований."
 	icon_state = "science"
 	build_path = /obj/machinery/rnd/server
 	req_components = list(
@@ -1339,7 +1339,7 @@
 		/obj/item/stack/cable_coil = 5)
 
 /obj/item/circuitboard/machine/techfab/department/cargo
-	name = "\improper Departmental Techfab (Оборудование) - Cargo"
+	name = "Снабженский протолат"
 	icon_state = "supply"
 	build_path = /obj/machinery/rnd/production/techfab/department/cargo
 
@@ -1401,7 +1401,7 @@
 #define PATH_POWERCOIL /obj/machinery/power/tesla_coil/power
 #define PATH_RPCOIL /obj/machinery/power/tesla_coil/research
 
-/obj/item/circuitboard/machine/tesla_coil/Initialize()
+/obj/item/circuitboard/machine/tesla_coil/Initialize(mapload)
 	. = ..()
 	if(build_path)
 		build_path = PATH_POWERCOIL

@@ -1,7 +1,7 @@
 /obj/item/wrench
 	name = "гаечный ключ"
 	desc = "Ключ общего назначения. Его можно найти в твоей руке."
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/tools.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "wrench"
@@ -90,7 +90,7 @@
 	tool_behaviour = null
 	toolspeed = null
 
-/obj/item/wrench/combat/Initialize()
+/obj/item/wrench/combat/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/transforming, \
 		force_on = 6, \

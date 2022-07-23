@@ -267,7 +267,7 @@
 		if(tgui_alert(usr, "Are you sure? An admin has already delayed the round end for the following reason: [SSticker.admin_delay_notice]", "Confirmation", list("Yes", "No")) != "Yes")
 			return FALSE
 
-	var/result = input(usr, "Select reboot method", "World Reboot", options[1]) as null|anything in options
+	var/result = tgui_input_list(usr, "Select reboot method", "World Reboot", options, options[1])
 	if(result)
 		SSblackbox.record_feedback("tally", "admin_verb", 1, "Reboot World") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 		var/init_by = "Востребовано [usr.client.holder.fakekey ? "скрытой педалью" : usr.key]."
@@ -832,3 +832,35 @@
 	dat += "Disable footsteps: <a href='?_src_=holder;[HrefToken()];change_lag_switch=[DISABLE_FOOTSTEPS]'><b>[SSlag_switch.measures[DISABLE_FOOTSTEPS] ? "On" : "Off"]</b></a> - <span style='font-size:80%'>trait applies to character</span><br />"
 	dat += "</body></html>"
 	usr << browse(dat.Join(), "window=lag_switch_panel;size=420x480")
+
+/datum/admins/proc/change_hub_message()
+	set category = "Срв"
+	set name = "Change HUB Message"
+
+	var/new_hub_message = tgui_input_text(usr, "ВВЕДИТЕ ПЕНИ", "МЯУ", GLOB.custom_status_text, 168, TRUE, FALSE)
+
+	if(!new_hub_message || new_hub_message == GLOB.custom_status_text)
+		return
+
+	GLOB.custom_status_text = new_hub_message
+
+	log_admin("[key_name(usr)] changes HUB message to [new_hub_message]")
+	message_admins(span_adminnotice("[key_name_admin(usr)] changes HUB message to [new_hub_message]"))
+	SSblackbox.record_feedback("tally", "admin_verb", 1, "Change HUB message") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
+
+/datum/admins/proc/get_spd_list()
+	set category = "Адм"
+	set name = "Get SPD List"
+
+	if(!check_rights())
+		return
+
+	var/data = ""
+	for(var/flag in SSspd.checked_flags)
+		data += "[uppertext(flag)]: [english_list(SSspd.checked_flags[flag])]</br>"
+
+	var/datum/browser/popup = new(usr, "spdlist", "Система Первичного Детектирования", 400, 650)
+	popup.set_content(data)
+	popup.open()
+
+/datum/admins/proc/kill_system32()

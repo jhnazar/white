@@ -331,9 +331,11 @@
 /obj/examine(mob/user)
 	. = ..()
 	if(obj_flags & UNIQUE_RENAME)
-		. += "<hr><span class='smallnotice'>Можно переименовать это используя ручку или что-то подобное.</span>"
+		. += "<hr>"
+		. += span_smallnotice("Можно переименовать это используя ручку или что-то подобное.")
 	if(unique_reskin && !current_skin)
-		. += "<hr><span class='smallnotice'>ПКМ по предмету, чтобы изменить облик.</span>"
+		. += "<hr>"
+		. += span_smallnotice("ПКМ по предмету, чтобы изменить облик.")
 
 /obj/AltClick(mob/user)
 	. = ..()

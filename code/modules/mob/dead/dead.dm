@@ -8,7 +8,7 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 	throwforce = 0
 
 
-/mob/dead/Initialize()
+/mob/dead/Initialize(mapload)
 	SHOULD_CALL_PARENT(FALSE)
 	if(flags_1 & INITIALIZED_1)
 		stack_trace("Warning: [src]([type]) initialized multiple times!")
@@ -50,7 +50,7 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 	else
 		. += "Таймер: СКОРО"
 
-	var/tp = SSticker.totalPlayers + GLOB.whitelist.len
+	var/tp = LAZYLEN(GLOB.clients) + GLOB.whitelist.len
 
 	. += "Игроки: [tp]"
 	. += "Готовы: [SSticker.totalPlayersReady]"
@@ -71,7 +71,7 @@ INITIALIZE_IMMEDIATE(/mob/dead)
 		if(1)
 			pick = csa[1]
 		else
-			pick = input(src, "Pick a server to jump to", "Server Hop") as null|anything in csa
+			pick = tgui_input_list(src, "Pick a server to jump to", "Server Hop", csa)
 
 	if(!pick)
 		return

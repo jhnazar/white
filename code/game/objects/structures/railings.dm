@@ -16,12 +16,18 @@
 	///Initial direction of the railing.
 	var/ini_dir
 
+/obj/structure/railing/right
+	icon_state = "railing_R"
+
+/obj/structure/railing/left
+	icon_state = "railing_L"
+
 /obj/structure/railing/corner //aesthetic corner sharp edges hurt oof ouch
 	icon_state = "railing_corner"
 	density = FALSE
 	climbable = FALSE
 
-/obj/structure/railing/Initialize()
+/obj/structure/railing/Initialize(mapload)
 	. = ..()
 	ini_dir = dir
 	if(climbable)
@@ -74,7 +80,7 @@
 	to_chat(user, span_notice("Начинаю [anchored ? "откреплять перила":"прикреплять перила"]..."))
 	if(I.use_tool(src, user, volume = 75, extra_checks = CALLBACK(src, .proc/check_anchored, anchored)))
 		set_anchored(!anchored)
-		to_chat(user, span_notice("Заканчиваю[anchored ? "прикреплять перила к полу":"откреплять перила от пола"]."))
+		to_chat(user, span_notice("[anchored ? "Прикручиваю перила к полу":"Откручиваю перила от пола"]."))
 	return TRUE
 
 /obj/structure/railing/CanPass(atom/movable/mover, border_dir)

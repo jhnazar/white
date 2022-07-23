@@ -133,6 +133,14 @@
 	syndie = FALSE
 	independent = FALSE
 
+	///goes through all radio channels we should be listening for and readds them to the global list
+/obj/item/radio/proc/readd_listening_radio_channels()
+	for(var/channel_name in channels)
+		add_radio(src, GLOB.radiochannels[channel_name])
+
+	add_radio(src, FREQ_COMMON)
+
+
 /obj/item/radio/proc/make_syndie() // Turns normal radios into Syndicate radios!
 	qdel(keyslot)
 	keyslot = new /obj/item/encryptionkey/syndicate
@@ -178,8 +186,7 @@
 		should_be_listening = listening
 
 	if(listening && on)
-		recalculateChannels()
-		add_radio(src, frequency)
+		readd_listening_radio_channels()
 	else if(!listening)
 		remove_radio_all(src)
 
@@ -503,7 +510,7 @@
 	syndie = TRUE
 	keyslot = new /obj/item/encryptionkey/syndicate
 
-/obj/item/radio/borg/syndicate/Initialize()
+/obj/item/radio/borg/syndicate/Initialize(mapload)
 	. = ..()
 	set_frequency(FREQ_SYNDICATE)
 
@@ -544,6 +551,22 @@
 /obj/item/radio/off	// Station bounced radios, their only difference is spawning with the speakers off, this was made to help the lag.
 	dog_fashion = /datum/dog_fashion/back
 
-/obj/item/radio/off/Initialize()
+/obj/item/radio/off/Initialize(mapload)
 	. = ..()
 	set_listening(FALSE)
+
+/obj/item/radio/ancient
+	name = "старое радио"
+	icon_state = "radio"
+	worn_icon_state = "radio"
+
+/obj/item/radio/ancient/Initialize(mapload)
+	. = ..()
+	var/datum/component/soundplayer/SP = AddComponent(/datum/component/soundplayer)
+	SP.prefs_toggle_flag = null
+	SP.set_sound(sound('white/valtos/sounds/radiop.ogg'))
+	SP.set_channel(open_sound_channel_for_boombox())
+	SP.playing_volume = 50
+	SP.playing_range = 14
+	SP.playing_falloff = 1
+	SP.active = TRUE

@@ -5,6 +5,7 @@
 	fire_delay = 2
 	actions_types = list(/datum/action/item_action/toggle_firemode)
 	semi_auto = TRUE
+	var/auto_fire = TRUE
 	fire_sound = 'sound/weapons/gun/smg/shot.ogg'
 	fire_sound_volume = 90
 	vary_fire_sound = FALSE
@@ -13,12 +14,14 @@
 	var/select = 1 ///fire selector position. 1 = semi, 2 = burst. anything past that can vary between guns.
 	var/selector_switch_icon = FALSE ///if it has an icon for a selector switch indicating current firemode.
 
-/obj/item/gun/ballistic/automatic/Initialize()
+/obj/item/gun/ballistic/automatic/Initialize(mapload)
 	. = ..()
-	make_auto()
+	if(auto_fire)
+		make_auto() //Один хер эту штуку оверрайдит прок выдачи другой задержки стрельбы
+
 
 /obj/item/gun/ballistic/automatic/proc/make_auto()
-	AddComponent(/datum/component/automatic_fire, fire_delay)
+	AddComponent(/datum/component/automatic_fire, (fire_delay * 0.15) SECONDS)
 
 /obj/item/gun/ballistic/automatic/update_overlays()
 	. = ..()
@@ -41,7 +44,7 @@
 	if(!select)
 		burst_size = 1
 		fire_delay = 0
-		to_chat(user, span_notice("Переключаюсь на полу-автоматический режим."))
+		to_chat(user, span_notice("Переключаюсь на  [auto_fire ? "автоматический" : "полуавтоматический"] режим."))
 	else
 		burst_size = initial(burst_size)
 		fire_delay = initial(fire_delay)
@@ -66,9 +69,10 @@
 	bolt_type = BOLT_TYPE_LOCKING
 	show_bolt_icon = FALSE
 
-/obj/item/gun/ballistic/automatic/proto/Initialize()
+/obj/item/gun/ballistic/automatic/proto/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/automatic_fire, 0.2 SECONDS)
+
 
 /obj/item/gun/ballistic/automatic/proto/unrestricted
 	pin = /obj/item/firing_pin
@@ -98,7 +102,7 @@
 /obj/item/gun/ballistic/automatic/c20r/unrestricted
 	pin = /obj/item/firing_pin
 
-/obj/item/gun/ballistic/automatic/c20r/Initialize()
+/obj/item/gun/ballistic/automatic/c20r/Initialize(mapload)
 	. = ..()
 	update_icon()
 
@@ -120,7 +124,7 @@
 	mag_display_ammo = TRUE
 	empty_indicator = TRUE
 
-/obj/item/gun/ballistic/automatic/wt550/Initialize()
+/obj/item/gun/ballistic/automatic/wt550/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/automatic_fire, 0.3 SECONDS)
 
@@ -151,13 +155,14 @@
 
 /obj/item/gun/ballistic/automatic/m90
 	name = "карабин M-90gl"
-	desc = "Автоматический карабин 5.56 калибра, известный как 'M-90gl'. Возможен режим стрельбы по три пули. Имеет встроенный гранатомёт."
+	desc = "Автоматический карабин 5.56 калибра, известный как 'M-90gl'. Имеет встроенный гранатомёт.\"Стрелять на ПКМ\"."
 	icon_state = "m90"
 	w_class = WEIGHT_CLASS_BULKY
 	inhand_icon_state = "m90"
 	selector_switch_icon = TRUE
 	mag_type = /obj/item/ammo_box/magazine/m556
 	can_suppress = FALSE
+	auto_fire =  TRUE
 	var/obj/item/gun/ballistic/revolver/grenadelauncher/underbarrel
 	burst_size = 3
 	fire_delay = 2
@@ -167,7 +172,7 @@
 	empty_indicator = TRUE
 	fire_sound = 'sound/weapons/gun/smg/shot_alt.ogg'
 
-/obj/item/gun/ballistic/automatic/m90/Initialize()
+/obj/item/gun/ballistic/automatic/m90/Initialize(mapload)
 	. = ..()
 	underbarrel = new /obj/item/gun/ballistic/revolver/grenadelauncher(src)
 	update_icon()
@@ -175,7 +180,7 @@
 /obj/item/gun/ballistic/automatic/m90/unrestricted
 	pin = /obj/item/firing_pin
 
-/obj/item/gun/ballistic/automatic/m90/unrestricted/Initialize()
+/obj/item/gun/ballistic/automatic/m90/unrestricted/Initialize(mapload)
 	. = ..()
 	underbarrel = new /obj/item/gun/ballistic/revolver/grenadelauncher/unrestricted(src)
 	update_icon()
@@ -185,6 +190,10 @@
 		underbarrel.afterattack(target, user, flag, params)
 	else
 		return ..()
+
+/obj/item/gun/ballistic/automatic/m90/afterattack_secondary(atom/target, mob/living/user, flag, params)
+	underbarrel.afterattack(target, user, flag, params)
+	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 
 /obj/item/gun/ballistic/automatic/m90/attackby(obj/item/A, mob/user, params)
 	if(istype(A, /obj/item/ammo_casing))
@@ -198,31 +207,11 @@
 	. = ..()
 	switch(select)
 		if(0)
-			. += "[initial(icon_state)]_semi"
-		if(1)
 			. += "[initial(icon_state)]_burst"
-		if(2)
+		if(1)
 			. += "[initial(icon_state)]_gren"
 
-/obj/item/gun/ballistic/automatic/m90/burst_select()
-	var/mob/living/carbon/human/user = usr
-	switch(select)
-		if(0)
-			select = 1
-			burst_size = initial(burst_size)
-			fire_delay = initial(fire_delay)
-			to_chat(user, span_notice("Выбираю режим [burst_size] пули за выстрел."))
-		if(1)
-			select = 2
-			to_chat(user, span_notice("Выбран гранатомёт."))
-		if(2)
-			select = 0
-			burst_size = 1
-			fire_delay = 0
-			to_chat(user, span_notice("Выбран полуавтоматический режим."))
-	playsound(user, 'sound/weapons/empty.ogg', 100, TRUE)
-	update_icon()
-	return
+
 
 /obj/item/gun/ballistic/automatic/tommygun
 	name = "\improper пистолет-пулемёт Томпсона"
@@ -241,7 +230,7 @@
 	empty_indicator = TRUE
 	show_bolt_icon = FALSE
 
-/obj/item/gun/ballistic/automatic/tommygun/Initialize()
+/obj/item/gun/ballistic/automatic/tommygun/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/automatic_fire, 0.1 SECONDS)
 
@@ -286,7 +275,7 @@
 /obj/item/gun/ballistic/automatic/l6_saw/unrestricted
 	pin = /obj/item/firing_pin
 
-/obj/item/gun/ballistic/automatic/l6_saw/Initialize()
+/obj/item/gun/ballistic/automatic/l6_saw/Initialize(mapload)
 	. = ..()
 	AddElement(/datum/element/update_icon_updates_onmob)
 	AddComponent(/datum/component/automatic_fire, 0.2 SECONDS)
@@ -349,6 +338,7 @@
 	w_class = WEIGHT_CLASS_BULKY
 	inhand_icon_state = "sniper"
 	worn_icon_state = null
+	auto_fire = FALSE
 	fire_sound = 'sound/weapons/gun/sniper/shot.ogg'
 	fire_sound_volume = 90
 	vary_fire_sound = FALSE
@@ -388,6 +378,7 @@
 	worn_icon_state = null
 	weapon_weight = WEAPON_HEAVY
 	mag_type = /obj/item/ammo_box/magazine/m10mm/rifle
+	auto_fire = FALSE
 	fire_delay = 30
 	burst_size = 1
 	can_unsuppress = TRUE
@@ -436,7 +427,7 @@
 	tac_reloads = TRUE
 	actions_types = list()
 
-/obj/item/gun/ballistic/automatic/evgenii/Initialize()
+/obj/item/gun/ballistic/automatic/evgenii/Initialize(mapload)
 	. = ..()
 	AddElement(/datum/element/update_icon_updates_onmob)
 	AddComponent(/datum/component/automatic_fire, 0.1 SECONDS)

@@ -23,10 +23,10 @@
 								"Хирургические инструменты",	// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Прочее"
 								"Медицинское снаряжение",		// "Диагностика и мониторинг","Экипировка", "Прочее", "Датчики и Сигнальные устройства"
 								"Фармацевтика",					// "Химическая посуда", "Инъекции", "Хим-фабрика", "Прочее"
-								"Кибернетика",					// "Базовые кибернетические органы", "Протезирование", "Стандартные кибернетические органы", "Продвинутые кибернетические органы", "Сенсорика"
+								"Кибернетика",					// "Базовые кибернетические органы", "Базовые протезы", "Продвинутые протезы", "Стандартные кибернетические органы", "Продвинутые кибернетические органы", "Сенсорика"
 								"Импланты",						// "Кибер Импланты", "Микро Импланты", "Дополненая реальность"
 								"Медицинское оборудование",		// "Програмное обеспечение", "Терморегуляция", "Химпроизводство", "Автохирургия", "Реанимация и хирургия", "Биоманипулирование", "Прочее"
-								"Вооружение",					//
+								"Гранаты",						//
 								"Прочее"						//
 								)
 
@@ -36,7 +36,7 @@
 	icon_state = "medical"
 	build_path = /obj/machinery/mecha_part_fabricator/med
 
-/obj/machinery/mecha_part_fabricator/med/Initialize()
+/obj/machinery/mecha_part_fabricator/med/Initialize(mapload)
 	. = ..()
 	add_overlay("med")
 
@@ -77,7 +77,7 @@
 	icon_state = "engineering"
 	build_path = /obj/machinery/mecha_part_fabricator/engi
 
-/obj/machinery/mecha_part_fabricator/engi/Initialize()
+/obj/machinery/mecha_part_fabricator/engi/Initialize(mapload)
 	. = ..()
 	add_overlay("engi")
 
@@ -118,11 +118,46 @@
 	icon_state = "science"
 	build_path = /obj/machinery/mecha_part_fabricator/sci
 
-/obj/machinery/mecha_part_fabricator/sci/Initialize()
+/obj/machinery/mecha_part_fabricator/sci/Initialize(mapload)
 	. = ..()
 	add_overlay("sci")
 
 /obj/machinery/mecha_part_fabricator/sci/update_icon_state()
+	if(powered())
+		icon_state = initial(icon_state)
+	else
+		icon_state = "[initial(icon_state)]-off"
+
+//	Карго фабрикатор
+
+/obj/machinery/mecha_part_fabricator/cargo
+	icon = 'white/Feline/icons/techfab.dmi'
+	icon_state = "fab-idle"
+	name = "карго фабрикатор"
+	desc = "Используется для создания карго оборудования."
+	circuit = /obj/item/circuitboard/machine/mechfab/cargo
+	drop_zone = FALSE
+	part_sets = list(											// Подклассы:
+								"Рабочие инструменты   ",		// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
+								"Карго снаряжение",				// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
+								"Карго оборудование",			//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
+								"Энергетические разработки",	//
+								"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
+								"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
+								"Прочее"						//
+								)
+
+/obj/item/circuitboard/machine/mechfab/cargo
+	name = "плата карго фабрикатора"
+	desc = "Продвинутая версия протолата с удобным визуальным интерфейсом."
+	icon_state = "supply"
+	build_path = /obj/machinery/mecha_part_fabricator/cargo
+
+/obj/machinery/mecha_part_fabricator/cargo/Initialize()
+	. = ..()
+	add_overlay("cargo")
+
+/obj/machinery/mecha_part_fabricator/cargo/update_icon_state()
 	if(powered())
 		icon_state = initial(icon_state)
 	else
@@ -151,7 +186,7 @@
 	construction_time = 60
 	materials = list(/datum/material/iron = 900, /datum/material/glass = 450)
 	build_path = /obj/item/cable_coil_box
-	category = list("Рабочие инструменты ","Рабочие инструменты  ")
+	category = list("Рабочие инструменты ","Рабочие инструменты  ", "Рабочие инструменты   ")
 	sub_category = list("Прочее")
 
 //	Пакеты с деталями
@@ -170,7 +205,7 @@
 /datum/component/storage/concrete/rped/x10
 	max_items = 10
 
-/obj/item/storage/part_replacer/stock_parts_box_x10/Initialize()
+/obj/item/storage/part_replacer/stock_parts_box_x10/Initialize(mapload)
 	. = ..()
 	if(contents.len)
 		var/obj/item/I = contents[1]

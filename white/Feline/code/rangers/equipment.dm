@@ -30,44 +30,45 @@
 	attack_hand_interact = TRUE
 
 //Загрузка кармана
-/obj/item/tank/internals/tactical/Initialize()
+/obj/item/tank/internals/tactical/Initialize(mapload)
 	. = ..()
 	if(ispath(pocket_storage_component_path))
 		LoadComponent(pocket_storage_component_path)
 
 //Тип хранимого
-/datum/component/storage/concrete/pockets/tactical/Initialize()
+/datum/component/storage/concrete/pockets/tactical/Initialize(mapload)
 	. = ..()
 	set_holdable(list(/obj/item/gun/ballistic,
-					  /obj/item/gun/energy)
+					  /obj/item/gun/energy,
+					  /obj/item/kinetic_crusher)
 					  )
 
 //Спавн оружия в чехле, так можно задать пресеты, по умолчанию /obj/item/tank/internals/tactical/ должен быть пуст, а пресеты устанавливаются через наследников
-/obj/item/tank/internals/tactical/Initialize()			//Эскадрон Смерти, Шатл Рейнджеров, Лазутчик Синдиката (корабль), Syndicate Operative - Full Kit (Лонер)
+/obj/item/tank/internals/tactical/Initialize(mapload)			//Эскадрон Смерти, Шатл Рейнджеров, Лазутчик Синдиката (корабль), Syndicate Operative - Full Kit (Лонер)
 	. = ..()
 	update_appearance()
 
-/obj/item/tank/internals/tactical/wt550/Initialize()
+/obj/item/tank/internals/tactical/wt550/Initialize(mapload)
 	. = ..()
 	new /obj/item/gun/ballistic/automatic/wt550(src)
 	update_appearance()
 
-/obj/item/tank/internals/tactical/pulse/Initialize()
+/obj/item/tank/internals/tactical/pulse/Initialize(mapload)
 	. = ..()
 	new /obj/item/gun/energy/pulse(src)
 	update_appearance()
 
-/obj/item/tank/internals/tactical/e_gun/Initialize()	//ERT Commander, ERT Medic, ERT Engineer,
+/obj/item/tank/internals/tactical/e_gun/Initialize(mapload)	//ERT Commander, ERT Medic, ERT Engineer,
 	. = ..()
 	new /obj/item/gun/energy/e_gun(src)
 	update_appearance()
 
-/obj/item/tank/internals/tactical/e_gun_taser/Initialize()	//ERT Security, Охранник Инвизиторов
+/obj/item/tank/internals/tactical/e_gun_taser/Initialize(mapload)	//ERT Security, Охранник Инвизиторов
 	. = ..()
 	new /obj/item/gun/energy/e_gun/stun(src)
 	update_appearance()
 
-/obj/item/tank/internals/tactical/nail_gun/Initialize()	//VIP Инженер
+/obj/item/tank/internals/tactical/nail_gun/Initialize(mapload)	//VIP Инженер
 	. = ..()
 	new /obj/item/gun/ballistic/automatic/pistol/nail_gun(src)
 	update_appearance()
@@ -83,6 +84,7 @@
 				user.visible_message(span_notice("[user] достаёт [I] из [src]."), span_notice("Достаю [I] из [src]."))
 				user.put_in_hands(I)
 				update_appearance()
+				user.update_inv_s_store()
 			else
 				to_chat(user, span_warning("Крепления расстегнуты, [capitalize(src.name)] пуст."))
 				..()
@@ -98,6 +100,8 @@
 		var/obj/item/I = contents[1]
 		worn_icon_state = "full"
 		playsound(I, 'sound/items/equip/toolbelt_equip.ogg', 25, TRUE)
+		if(istype(I,/obj/item/kinetic_crusher))
+			icon_state = "crusher"
 		if(istype(I,/obj/item/gun))
 			icon_state = "box"
 		if(istype(I,/obj/item/gun/ballistic/automatic/pistol))
@@ -148,6 +152,7 @@
 			icon_state = "pulse"
 		if(istype(I,/obj/item/gun/energy/pulse/pistol))
 			icon_state = "pistol"
+//		user.update_inv_s_store()
 	return ..()
 
 

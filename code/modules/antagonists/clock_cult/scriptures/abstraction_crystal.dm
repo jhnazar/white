@@ -57,7 +57,7 @@ GLOBAL_LIST_INIT(abstraction_crystals, list())
 	var/mob/living/owner
 	var/last_check_health = 0
 
-/mob/living/carbon/human/abstraction_hologram/Initialize()
+/mob/living/carbon/human/abstraction_hologram/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_IGNOREDAMAGESLOWDOWN, ABSTRACTION_HOLOGRAM_TRAIT)
 	ADD_TRAIT(src, TRAIT_NODISMEMBER, ABSTRACTION_HOLOGRAM_TRAIT)
@@ -120,7 +120,7 @@ GLOBAL_LIST_INIT(abstraction_crystals, list())
 	var/processing = FALSE
 	var/dusting_hologram = FALSE	//Prevents us from crashing the game by dusting a hologram being dusted
 
-/obj/structure/destructible/clockwork/abstraction_crystal/Initialize()
+/obj/structure/destructible/clockwork/abstraction_crystal/Initialize(mapload)
 	. = ..()
 	tracked_items = list()
 
@@ -138,7 +138,7 @@ GLOBAL_LIST_INIT(abstraction_crystals, list())
 		return
 	var/list/valid_crystals = GLOB.abstraction_crystals.Copy()
 	valid_crystals.Remove(key_word)
-	var/selected = input(user, "Где мы будем себя проявлять?", "Проявление") as null|anything in valid_crystals
+	var/selected = tgui_input_list(user, "Где мы будем себя проявлять?", "Проявление", valid_crystals)
 	if(!selected || !(selected in valid_crystals))
 		return
 	var/obj/structure/destructible/clockwork/abstraction_crystal/AC = GLOB.abstraction_crystals[selected]

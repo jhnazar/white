@@ -46,6 +46,11 @@
 	desc = "Свободно связанный галстук, идеальный аксессуар для переутомленного детектива."
 	icon_state = "detective"
 
+/obj/item/clothing/neck/maid
+	name = "maid neck cover"
+	desc = "A neckpiece for a maid costume, it smells faintly of disappointment."
+	icon_state = "maid_neck"
+
 /obj/item/clothing/neck/stethoscope
 	name = "стетоскоп"
 	desc = "Устаревший медицинский аппарат для прослушивания звуков человеческого тела. Это также заставляет вас выглядеть так, как будто вы знаете, что делаете."
@@ -211,68 +216,45 @@
 	icon_state = "bling"
 
 /obj/item/clothing/neck/necklace/dope/merchant
-	desc = "Don't ask how it works, the proof is in the holochips!"
+	desc = "Не спрашивай меня как это работает, важно то, что эта штука делает голочипы!"
 	/// scales the amount received in case an admin wants to emulate taxes/fees.
-	var/profit_scaling = 1
+	var/profit_scaling = 0.9
 	/// toggles between sell (TRUE) and get price post-fees (FALSE)
 	var/selling = FALSE
+	var/sell_mom = FALSE
 
 /obj/item/clothing/neck/necklace/dope/merchant/attack_self(mob/user)
 	. = ..()
 	selling = !selling
-	to_chat(user, span_notice("[capitalize(src.name)] has been set to [selling ? "'Sell'" : "'Get Price'"] mode."))
+	to_chat(user, span_notice("[capitalize(src.name)] теперь в режиме [selling ? "'ПРОДАВАТЬ'" : "'УЗНАТЬ ЦЕНУ'"]."))
 
 /obj/item/clothing/neck/necklace/dope/merchant/afterattack(obj/item/I, mob/user, proximity)
 	. = ..()
 	if(!proximity)
 		return
-	var/datum/export_report/ex = export_item_and_contents(I, dry_run=TRUE)
+
+	if(ismob(I) && !sell_mom)
+		return
+
+	var/datum/export_report/ex = export_item_and_contents(I, dry_run=TRUE, delete_unsold = FALSE)
 	var/price = 0
 	for(var/x in ex.total_amount)
 		price += ex.total_value[x]
 
 	if(price)
 		var/true_price = round(price*profit_scaling)
-		to_chat(user, span_notice("[selling ? "Sold" : "Getting the price of"] [I], value: <b>[true_price]</b> credits[I.contents.len ? " (exportable contents included)" : ""].[profit_scaling < 1 && selling ? "<b>[round(price-true_price)]</b> credit\s taken as processing fee\s." : ""]"))
+		to_chat(user, span_notice("[selling ? "Продаём" : "Оцениваем"] [I], стоимость: <b>[true_price]</b> кредитов[I.contents.len ? " (содержимое включено)" : ""].[profit_scaling < 1 && selling ? "<b>[round(price-true_price)]</b> кредитов было взято как процент." : ""]"))
 		if(selling)
 			new /obj/item/holochip(get_turf(user),true_price)
 			for(var/i in ex.exported_atoms_ref)
+				if(ismob(i) && !sell_mom)
+					continue
 				var/atom/movable/AM = i
 				if(QDELETED(AM))
 					continue
 				qdel(AM)
 	else
-		to_chat(user, span_warning("There is no export value for [I] or any items within it."))
-
-
-/obj/item/clothing/neck/neckerchief
-	icon = 'icons/obj/clothing/masks.dmi' //In order to reuse the bandana sprite
-	w_class = WEIGHT_CLASS_TINY
-	var/sourceBandanaType
-
-/obj/item/clothing/neck/neckerchief/worn_overlays(isinhands)
-	. = ..()
-	if(!isinhands)
-		var/mutable_appearance/realOverlay = mutable_appearance('icons/mob/clothing/mask.dmi', icon_state)
-		realOverlay.pixel_y = -3
-		. += realOverlay
-
-/obj/item/clothing/neck/neckerchief/AltClick(mob/user)
-	. = ..()
-	if(iscarbon(user))
-		var/mob/living/carbon/C = user
-		if(C.get_item_by_slot(ITEM_SLOT_NECK) == src)
-			to_chat(user, span_warning("Не могу развязать [src] пока оно на мне!"))
-			return
-		if(user.is_holding(src))
-			var/obj/item/clothing/mask/bandana/newBand = new sourceBandanaType(user)
-			var/currentHandIndex = user.get_held_index_of_item(src)
-			var/oldName = src.name
-			qdel(src)
-			user.put_in_hand(newBand, currentHandIndex)
-			user.visible_message(span_notice("Развязываю [oldName] обратно к [newBand.name].") , span_notice("[user] развязывает [oldName] обратно к [newBand.name]."))
-		else
-			to_chat(user, span_warning("Надо бы держать в руках [src], чтобы развязать!"))
+		to_chat(user, span_warning("[capitalize(I.name)] ничего не стоит."))
 
 /obj/item/clothing/neck/beads
 	name = "пластиковые бусы"
@@ -283,6 +265,11 @@
 	custom_price = PAYCHECK_ASSISTANT * 0.2
 	custom_materials = (list(/datum/material/plastic = 500))
 
-/obj/item/clothing/neck/beads/Initialize()
+/obj/item/clothing/neck/beads/Initialize(mapload)
 	. = ..()
 	color = color = pick("#ff0077","#d400ff","#2600ff","#00ccff","#00ff2a","#e5ff00","#ffae00","#ff0000", "#ffffff")
+
+/obj/item/clothing/neck/tie/disco
+	name = "horrific necktie"
+	icon_state = "eldritch_tie"
+	desc = "The necktie is adorned with a garish pattern. It's disturbingly vivid. Somehow you feel as if it would be wrong to ever take it off. It's your friend now. You will betray it if you change it for some boring scarf."

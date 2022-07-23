@@ -18,7 +18,7 @@
 /obj/machinery/vendor/proc/RedeemVoucherRanger(obj/item/rangers_voucher/voucher, mob/redeemer)
 	var/items = list("Набор экипировки рейнджера-медика", "Набор экипировки рейнджера-инженера", "Набор экипировки рейнджера-боевика")
 
-	var/selection = input(redeemer, "Выберите специализацию", "Ваучер будет погашен") as null|anything in sort_list(items)
+	var/selection = tgui_input_list(redeemer, "Выберите специализацию", "Ваучер будет погашен", sort_list(items))
 	if(!selection || !Adjacent(redeemer) || QDELETED(voucher) || voucher.loc != redeemer)
 		return
 	var/drop_location = drop_location()
@@ -190,7 +190,7 @@
 
 	var/datum/effect_system/spark_spread/sparks
 
-/obj/item/melee/sabre/proton_cutter/Initialize()	// 	Искры
+/obj/item/melee/sabre/proton_cutter/Initialize(mapload)	// 	Искры
 	. = ..()
 	sparks = new
 	sparks.set_up(5, 0, src)
@@ -373,7 +373,7 @@
 
 	if(loc == user)
 		if(user.get_item_by_slot(ITEM_SLOT_BELT) == src)
-			if(!user.canUseTopic(src, BE_CLOSE, NO_DEXTERITY, FALSE, TRUE))
+			if(!user.canUseTopic(src, BE_CLOSE, NO_DEXTERITY, FALSE, TRUE, FLOOR_OKAY))
 				return
 			for(var/i in contents)
 				if(istype(i, /obj/item/melee/sabre/proton_cutter))

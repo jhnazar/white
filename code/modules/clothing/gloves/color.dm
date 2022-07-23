@@ -56,7 +56,7 @@
 	resistance_flags = ACID_PROOF
 	var/charges_remaining = 10
 
-/obj/item/clothing/gloves/color/yellow/sprayon/Initialize()
+/obj/item/clothing/gloves/color/yellow/sprayon/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, INNATE_TRAIT)
 
@@ -84,7 +84,7 @@
 	resistance_flags = NONE
 	cut_type = /obj/item/clothing/gloves/cut
 
-/obj/item/clothing/gloves/color/fyellow/Initialize()
+/obj/item/clothing/gloves/color/fyellow/Initialize(mapload)
 	. = ..()
 	siemens_coefficient = pick(0,0.5,0.5,0.5,0.5,0.75,1.5)
 
@@ -92,7 +92,7 @@
 	desc = "Эти потрёпанные временем перчатки <i>возможно</i> защитят пользователя от поражения электрическим током. Только один способ проверить, так ли это..."
 	name = "старенькие резиновые перчатки"
 
-/obj/item/clothing/gloves/color/fyellow/old/Initialize()
+/obj/item/clothing/gloves/color/fyellow/old/Initialize(mapload)
 	. = ..()
 	siemens_coefficient = pick(0,0,0,0.5,0.5,0.5,0.75)
 
@@ -237,7 +237,7 @@
 	inhand_icon_state = "wgloves"
 	custom_price = PAYCHECK_MINIMAL
 
-/obj/item/clothing/gloves/color/white/Initialize()
+/obj/item/clothing/gloves/color/white/Initialize(mapload)
 	. = ..()
 	desc = "Выглядят довольно причудливо. [prob(30) ? "Смотря на них, у меня появляется такое чувство, будто я что-то забыл. [prob(50)?"Что-то очень, очень важное...":""]" : "" ]"
 
@@ -257,3 +257,15 @@
 		/obj/item/clothing/gloves/color/brown = 1,
 		/obj/item/clothing/gloves/color/white = 1,
 		/obj/item/clothing/gloves/color/rainbow = 1)
+
+/obj/item/clothing/gloves/kim
+	name = "aerostatic gloves"
+	desc = "Breathable red gloves for expert handling of a pen and notebook."
+	icon_state = "aerostatic_gloves"
+	inhand_icon_state = "aerostatic_gloves"
+
+/obj/item/clothing/gloves/maid
+	name = "maid arm covers"
+	desc = "Cylindrical looking tubes that go over your arm, weird."
+	icon_state = "maid_arms"
+	worn_icon_state = "maid_arms"

@@ -18,7 +18,7 @@
 	user.ignite_mob()
 	return FIRELOSS
 
-/obj/item/assembly/igniter/Initialize()
+/obj/item/assembly/igniter/Initialize(mapload)
 	. = ..()
 	sparks = new
 	sparks.set_up(2, 0, src)
@@ -36,6 +36,10 @@
 	var/turf/location = get_turf(loc)
 	if(location)
 		location.hotspot_expose(heat, EXPOSED_VOLUME)
+	if(holder)
+		SEND_SIGNAL(holder.loc, COMSIG_IGNITER_ACTIVATE)
+	if(QDELETED(src))
+		return TRUE
 	sparks.start()
 	return TRUE
 

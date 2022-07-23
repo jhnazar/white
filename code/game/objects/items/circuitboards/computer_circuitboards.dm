@@ -303,7 +303,7 @@
 	var/challenge = FALSE
 	var/moved = FALSE
 
-/obj/item/circuitboard/computer/syndicate_shuttle/Initialize()
+/obj/item/circuitboard/computer/syndicate_shuttle/Initialize(mapload)
 	. = ..()
 	GLOB.syndicate_shuttle_boards += src
 
@@ -543,21 +543,22 @@
 		machine.obj_flags &= ~EMAGGED
 
 /obj/item/circuitboard/computer/cargo/express
-	name = "Express Supply Console (Консоль)"
+	name = "экспресс консоль снабжения"
+	desc = "Благодаря новой орбитальной пушке Нано Трейзен все входящие посылки доставляются практически мгновенно. Стандартная зона сброса - отдел карго. Допустима смена зоны сброса посредством маяка производимого в консоли. Возможна модификация консоли посредством установки диска с ПО блюспейс телепортатора."
 	build_path = /obj/machinery/computer/cargo/express
 
 /obj/item/circuitboard/computer/cargo/express/emag_act(mob/living/user)
 	if(!(obj_flags & EMAGGED))
 		contraband = TRUE
 		obj_flags |= EMAGGED
-		to_chat(user, span_notice("You change the routing protocols, allowing the Drop Pod to land anywhere on the station."))
+		to_chat(user, span_notice("Изменяю протоколы маршрутизации, позволяя десантной капсуле приземляться в любом месте станции."))
 
 /obj/item/circuitboard/computer/cargo/express/multitool_act(mob/living/user)
 	if (!(obj_flags & EMAGGED))
 		contraband = !contraband
-		to_chat(user, span_notice("Receiver spectrum set to [contraband ? "Broad" : "Standard"]."))
+		to_chat(user, span_notice("Диапазон товаров установлен на [contraband ? "Расширенный" : "Стандартный"]."))
 	else
-		to_chat(user, span_notice("You reset the destination-routing protocols and receiver spectrum to factory defaults."))
+		to_chat(user, span_notice("Сбрасываю протоколы маршрутизации назначения и спектр приемника до заводских настроек по умолчанию."))
 		contraband = FALSE
 		obj_flags &= ~EMAGGED
 
@@ -611,3 +612,33 @@
 	desc = "Терминал управления шатлом из комплекта Сделай сам - шатлостроение."
 	icon_state = "generic"
 	build_path = /obj/machinery/computer/shuttle_flight/custom_shuttle
+
+/obj/item/circuitboard/computer/service_orders
+	name = "Service Order"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/department_orders/service
+
+/obj/item/circuitboard/computer/engineering_orders
+	name = "Engineering Order"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/department_orders/engineering
+
+/obj/item/circuitboard/computer/science_orders
+	name = "Science Order"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/department_orders/science
+
+/obj/item/circuitboard/computer/security_orders
+	name = "Security Order"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/department_orders/security
+
+/obj/item/circuitboard/computer/medical_orders
+	name = "Medical Order"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/department_orders/medical
+
+/obj/item/circuitboard/computer/bounty
+	name = "Консоль заказов"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
+	build_path = /obj/machinery/computer/bounty

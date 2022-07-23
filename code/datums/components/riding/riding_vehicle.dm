@@ -80,6 +80,7 @@
 		return COMPONENT_DRIVER_BLOCK_MOVE
 
 	handle_ride(user, direction)
+	return ..()
 
 /// This handles the actual movement for vehicles once [/datum/component/riding/vehicle/proc/driver_move] has given us the green light
 /datum/component/riding/vehicle/proc/handle_ride(mob/user, direction)
@@ -194,6 +195,43 @@
 	. = ..()
 	set_riding_offsets(RIDING_OFFSET_ALL, list(TEXT_NORTH = list(0, 4), TEXT_SOUTH = list(0, 7), TEXT_EAST = list(-12, 7), TEXT_WEST = list( 12, 7)))
 
+/datum/component/riding/vehicle/forklift
+	keytype = /obj/item/key/forklift
+
+/datum/component/riding/vehicle/forklift/handle_specials()
+	. = ..()
+	set_vehicle_dir_layer(SOUTH, OBJ_LAYER)
+	set_vehicle_dir_layer(NORTH, MOB_LAYER)
+	set_vehicle_dir_layer(EAST, MOB_LAYER)
+	set_vehicle_dir_layer(WEST, MOB_LAYER)
+
+/datum/component/riding/vehicle/forklift/engineering
+	keytype = /obj/item/key/forklift/engineering
+
+/datum/component/riding/vehicle/forklift/engineering/handle_specials()
+	. = ..()
+	set_vehicle_dir_offsets(NORTH, -16, -16)
+	set_vehicle_dir_offsets(SOUTH, -16, -16)
+	set_vehicle_dir_offsets(EAST, -16, -16)
+	set_vehicle_dir_offsets(WEST, -16, -16)
+	for(var/i in GLOB.cardinals)
+		set_vehicle_dir_layer(i, BELOW_MOB_LAYER)
+
+/datum/component/riding/vehicle/forklift/medical
+	keytype = /obj/item/key/forklift/medbay
+
+/datum/component/riding/vehicle/forklift/security
+	keytype = /obj/item/key/forklift/security
+
+/datum/component/riding/vehicle/forklift/cargo
+	keytype = /obj/item/key/forklift/cargo
+
+/datum/component/riding/vehicle/forklift/service
+	keytype = /obj/item/key/forklift/service
+
+/datum/component/riding/vehicle/forklift/science
+	keytype = /obj/item/key/forklift/science
+
 /datum/component/riding/vehicle/scooter
 	ride_check_flags = RIDER_NEEDS_LEGS | RIDER_NEEDS_ARMS | UNBUCKLE_DISABLED_RIDER
 
@@ -265,6 +303,9 @@
 	set_vehicle_dir_offsets(SOUTH, -16, -16)
 	set_vehicle_dir_offsets(EAST, -18, 0)
 	set_vehicle_dir_offsets(WEST, -18, 0)
+	set_vehicle_dir_layer(SOUTH, VEHICLE_LAYER)
+	set_vehicle_dir_layer(EAST, VEHICLE_LAYER)
+	set_vehicle_dir_layer(WEST, VEHICLE_LAYER)
 
 /datum/component/riding/vehicle/speedwagon
 	vehicle_move_delay = 0

@@ -278,7 +278,7 @@
 	var/area/shuttle/transit/assigned_area
 	var/obj/docking_port/mobile/owner
 
-/obj/docking_port/stationary/transit/Initialize()
+/obj/docking_port/stationary/transit/Initialize(mapload)
 	. = ..()
 	SSshuttle.transit += src
 
@@ -356,8 +356,6 @@
 	var/list/movement_force = list("KNOCKDOWN" = 3, "THROW" = 0)
 
 	var/list/ripples = list()
-	/// The shuttle projector we create with ripples and should be deleted with ripples
-	var/obj/effect/abstract/shuttle_projector/inbound_shuttle_projector
 
 	var/engine_coeff = 1
 	var/current_engines = 0
@@ -610,22 +608,12 @@
 	jumpToNullSpace()
 
 /obj/docking_port/mobile/proc/create_ripples(obj/docking_port/stationary/S1, animate_time)
-	// Don't create ripples for transit docks
-	if(istype(S1, /obj/docking_port/stationary/transit))
-		return
-
-	if(inbound_shuttle_projector)
-		CRASH("create_ripples() called multiple times!")
-
 	var/list/turfs = ripple_area(S1)
 	for(var/t in turfs)
-		ripples += new /obj/effect/abstract/ripple(t, src, animate_time)
-
-	inbound_shuttle_projector = new /obj/effect/abstract/shuttle_projector(null, src, S1, TRUE, animate_time)
+		ripples += new /obj/effect/abstract/ripple(t, animate_time)
 
 /obj/docking_port/mobile/proc/remove_ripples()
 	QDEL_LIST(ripples)
-	QDEL_NULL(inbound_shuttle_projector)
 
 /obj/docking_port/mobile/proc/ripple_area(obj/docking_port/stationary/S1)
 	var/list/L0 = return_ordered_turfs(x, y, z, dir)
@@ -875,17 +863,16 @@
 				return S
 	return null
 
-/obj/docking_port/mobile/proc/hyperspace_sound(phase, list/areas)
-	var/selected_sound
-	switch(phase)
-		if(HYPERSPACE_WARMUP)
-			selected_sound = "hyperspace_begin"
-		if(HYPERSPACE_LAUNCH)
-			selected_sound = "hyperspace_progress"
-		if(HYPERSPACE_END)
-			selected_sound = "hyperspace_end"
-		else
-			CRASH("Invalid hyperspace sound phase: [phase]")
+/obj/docking_port/mobile/proc/hyperspace_sound(phase, list/areas, forced_sound)
+	var/sound/selected_sound = forced_sound
+	if(!selected_sound)
+		switch(phase)
+			if(HYPERSPACE_WARMUP)
+				selected_sound = 'sound/runtime/hyperspace/hyperspace_begin_distance.ogg'
+			if(HYPERSPACE_LAUNCH)
+				selected_sound = 'sound/runtime/hyperspace/hyperspace_progress_distance.ogg'
+			if(HYPERSPACE_END)
+				selected_sound = 'sound/runtime/hyperspace/hyperspace_end_distance.ogg'
 	// This previously was played from each door at max volume, and was one of the worst things I had ever seen.
 	// Now it's instead played from the nearest engine if close, or the first engine in the list if far since it doesn't really matter.
 	// Or a door if for some reason the shuttle has no engine, fuck oh hi daniel fuck it
@@ -900,7 +887,7 @@
 			continue
 		engines += real_engine
 
-	if(engines[1])
+	if(engines.len > 0)
 		distant_source = engines[1]
 	else
 		for(var/A in areas)
@@ -912,7 +899,7 @@
 		for(var/mob/M in SSmobs.clients_by_zlevel[z])
 			var/dist_far = get_dist(M, distant_source)
 			if(dist_far <= long_range && dist_far > range)
-				M.playsound_local(distant_source, "sound/runtime/hyperspace/[selected_sound]_distance.ogg", 100)
+				M.playsound_local(distant_source, selected_sound, 100)
 			else if(dist_far <= range)
 				var/source
 				if(engines.len == 0)
@@ -924,7 +911,7 @@
 						if(dist_near < closest_dist)
 							source = O
 							closest_dist = dist_near
-				M.playsound_local(source, "sound/runtime/hyperspace/[selected_sound].ogg", 100)
+				M.playsound_local(source, selected_sound, 100)
 
 // Losing all initial engines should get you 2
 // Adding another set of engines at 0.5 time

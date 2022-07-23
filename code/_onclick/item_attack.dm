@@ -191,9 +191,6 @@
 	else if(hitsound)
 		playsound(loc, hitsound, get_clamped_volume(), TRUE, extrarange = stealthy_audio ? SILENCED_SOUND_EXTRARANGE : -1, falloff_distance = 0)
 
-	//M.lastattacker = user.real_name
-	//M.lastattackerckey = user.ckey
-
 	if(force && M == user && user.client)
 		user.client.give_award(/datum/award/achievement/misc/selfouch, user)
 
@@ -235,6 +232,7 @@
 		if(take_damage(I.force, I.damtype, MELEE, 1))
 			no_damage = FALSE
 		//only witnesses close by and the victim see a hit message.
+		SSspd.check_action(user?.client, SPD_HUMAN_HARM)
 		log_combat(user, src, "attacked", I)
 		user.visible_message(span_danger("<b>[user]</b> бьёт <b>[src]</b> используя <b>[I]</b>[no_damage ? ", не оставляя даже царапины" : ""]!"), \
 			span_danger("Бью <b>[src]</b> используя <b>[I]</b>[no_damage ? ", не оставляя даже царапины" : ""]!"), null, COMBAT_MESSAGE_RANGE)

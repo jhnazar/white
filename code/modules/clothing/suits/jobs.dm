@@ -66,7 +66,7 @@
 	cold_protection = CHEST|GROIN|LEGS|ARMS
 	heat_protection = CHEST|GROIN|LEGS|ARMS
 
-/obj/item/clothing/suit/det_suit/Initialize()
+/obj/item/clothing/suit/det_suit/Initialize(mapload)
 	. = ..()
 	allowed = GLOB.detective_vest_allowed
 
@@ -81,6 +81,18 @@
 	desc = "Серый пиджак частного детектива."
 	icon_state = "detsuit"
 	inhand_icon_state = "detsuit"
+
+/obj/item/clothing/suit/det_suit/kim
+	name = "aerostatic bomber jacket"
+	desc = "A jacket once worn by the revolutionary air brigades during the Antecentennial Revolution. There are quite a few pockets on the inside, mostly for storing notebooks and compasses."
+	icon_state = "aerostatic_bomber_jacket"
+	inhand_icon_state = "aerostatic_bomber_jacket"
+
+/obj/item/clothing/suit/det_suit/disco
+	name = "disco ass blazer"
+	desc = "Looks like someone skinned this blazer off some long extinct disco-animal. It has an enigmatic white rectangle on the back and the right sleeve."
+	icon_state = "jamrock_blazer"
+	inhand_icon_state = "jamrock_blazer"
 
 //Engineering
 /obj/item/clothing/suit/hazardvest

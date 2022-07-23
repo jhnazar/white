@@ -17,6 +17,7 @@
 	comp_light_luminosity = 2.3 //Same as the PDA
 	looping_sound = FALSE
 	custom_materials = list(/datum/material/iron=300, /datum/material/glass=100, /datum/material/plastic=100)
+	interaction_flags_atom = INTERACT_ATOM_ALLOW_USER_LOCATION
 
 	var/has_variants = TRUE
 	var/finish_color = null
@@ -188,7 +189,7 @@
 	borgo = null
 	return ..()
 
-/obj/item/modular_computer/tablet/integrated/turn_on(mob/user)
+/obj/item/modular_computer/tablet/integrated/turn_on(mob/user, open_ui = FALSE)
 	if(borgo?.stat != DEAD)
 		return ..()
 	return FALSE
@@ -278,6 +279,7 @@
 	greyscale_colors = "#999875#a92323"
 
 	bypass_state = TRUE
+	allow_chunky = TRUE
 
 	///All applications this tablet has pre-installed
 	var/list/default_applications = list()
@@ -311,7 +313,7 @@
 	install_component(new /obj/item/computer_hardware/sensorpackage)
 
 	if(!isnull(default_applications))
-		var/obj/item/computer_hardware/hard_drive/small/hard_drive = find_hardware_by_name("твердотельный накопитель")
+		var/obj/item/computer_hardware/hard_drive/small/hard_drive = find_hardware_by_type(/obj/item/computer_hardware/hard_drive/small)
 		for(var/datum/computer_file/program/default_programs as anything in default_applications)
 			hard_drive.store_file(new default_programs)
 

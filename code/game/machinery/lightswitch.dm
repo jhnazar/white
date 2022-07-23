@@ -27,7 +27,7 @@
 	dir = EAST
 	pixel_x = -26
 
-/obj/machinery/light_switch/Initialize()
+/obj/machinery/light_switch/Initialize(mapload)
 	. = ..()
 	if(istext(area))
 		area = text2path(area)
@@ -39,7 +39,7 @@
 	if(!name)
 		name = "переключатель света ([area.name])"
 
-	if(area.lightswitch)
+	if(area.lightswitch && !istype(area, /area/shuttle))
 		area.lightswitch = FALSE
 		area.power_change()
 

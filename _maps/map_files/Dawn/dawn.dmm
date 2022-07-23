@@ -625,7 +625,7 @@
 /obj/effect/turf_decal/tile/brown{
 	dir = 1
 	},
-/obj/machinery/rnd/production/techfab/department/cargo,
+/obj/machinery/mecha_part_fabricator/cargo,
 /turf/open/floor/plasteel,
 /area/cargo/storage)
 "bN" = (
@@ -1058,7 +1058,7 @@
 "cT" = (
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/structure/cable,
 /turf/open/floor/plating,
@@ -3190,7 +3190,7 @@
 	areastring = "/area/hallway/primary/central";
 	dir = 4;
 	name = "Central Hall APC";
-	pixel_x = 24
+	pixel_x = 25
 	},
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
@@ -3409,7 +3409,7 @@
 /obj/structure/cable,
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/machinery/light{
 	dir = 4
@@ -4166,8 +4166,7 @@
 	cell_type = /obj/item/stock_parts/cell/high;
 	dir = 8;
 	name = "Arrivals Hallway APC";
-	pixel_x = -25;
-	pixel_y = 0
+	pixel_x = -25
 	},
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
@@ -4185,7 +4184,7 @@
 	areastring = "/area/service/janitor";
 	dir = 4;
 	name = "Custodial Closet APC";
-	pixel_x = 24
+	pixel_x = 25
 	},
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
@@ -6093,7 +6092,6 @@
 /area/service/bar)
 "qp" = (
 /obj/structure/cable,
-/obj/structure/cable,
 /turf/open/floor/plasteel,
 /area/maintenance/aft)
 "qq" = (
@@ -6190,7 +6188,7 @@
 "qF" = (
 /obj/machinery/power/apc{
 	dir = 4;
-	pixel_x = 24
+	pixel_x = 25
 	},
 /obj/structure/cable,
 /turf/open/floor/plating,
@@ -6543,7 +6541,7 @@
 	},
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/structure/cable,
 /turf/open/floor/plasteel,
@@ -7395,7 +7393,7 @@
 	areastring = "/area/cargo/qm";
 	dir = 1;
 	name = "Quartermaster APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/structure/cable,
 /obj/effect/turf_decal/tile/brown{
@@ -8266,7 +8264,6 @@
 /turf/closed/wall/r_wall,
 /area/ai_monitored/turret_protected/aisat)
 "wF" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/ai_monitored/turret_protected/aisat)
 "wG" = (
@@ -8663,7 +8660,7 @@
 	areastring = "/area/ai_monitored/command/nuke_storage";
 	dir = 1;
 	name = "Vault APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /turf/open/floor/circuit,
 /area/ai_monitored/command/nuke_storage)
@@ -10249,7 +10246,6 @@
 /turf/open/floor/plasteel/white,
 /area/command/heads_quarters/cmo)
 "Dv" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/ai_monitored/security/armory)
 "DD" = (
@@ -10973,7 +10969,6 @@
 /turf/open/floor/plasteel,
 /area/engineering/atmos)
 "Is" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/medical/chemistry)
 "Iv" = (
@@ -11102,7 +11097,7 @@
 	areastring = "/area/command/heads_quarters/hop";
 	dir = 1;
 	name = "Head of Personnel APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /turf/open/floor/plasteel,
 /area/command/heads_quarters/hop)
@@ -12027,7 +12022,6 @@
 /turf/open/floor/plasteel,
 /area/maintenance/aft)
 "Rq" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/maintenance/aft)
 "Rs" = (
@@ -13293,8 +13287,9 @@
 /obj/machinery/light,
 /obj/machinery/power/apc{
 	dir = 4;
-	pixel_y = -24;
-	pixel_x = 24
+	pixel_y = -25;
+	pixel_x = 25
+
 	},
 /obj/structure/cable,
 /obj/effect/turf_decal/trimline/blue/filled/line{

@@ -42,7 +42,7 @@
 	foodtypes = GRAIN
 	burns_in_oven = TRUE
 
-/obj/item/food/pizzabread/Initialize()
+/obj/item/food/pizzabread/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/customizable_reagent_holder, /obj/item/food/pizza/margherita, CUSTOM_INGREDIENT_ICON_SCATTER, max_ingredients = 12)
 
@@ -59,6 +59,8 @@
 /obj/item/food/doughslice/MakeBakeable()
 	AddComponent(/datum/component/bakeable, /obj/item/food/bun, rand(20 SECONDS, 25 SECONDS), TRUE, TRUE)
 
+/obj/item/food/doughslice/MakeProcessable()
+	AddElement(/datum/element/processable, TOOL_KNIFE, /obj/item/food/bait/doughball, 5, 30)
 /obj/item/food/bun
 	name = "булочка"
 	desc = "A base for any self-respecting burger."
@@ -70,7 +72,7 @@
 	foodtypes = GRAIN
 	burns_in_oven = TRUE
 
-/obj/item/food/bun/Initialize()
+/obj/item/food/bun/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/customizable_reagent_holder, /obj/item/food/burger/empty, CUSTOM_INGREDIENT_ICON_STACKPLUSTOP)
 

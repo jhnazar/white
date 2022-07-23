@@ -78,6 +78,13 @@
 				else
 					message_admins("[key_name_admin(usr)] tried to create changelings. Unfortunately, there were no candidates available.")
 					log_admin("[key_name(usr)] failed to create changelings.")
+			if("bloodsuckers")
+				if(src.makeSuckers())
+					message_admins("[key_name(usr)] created bloodsuckers.")
+					log_admin("[key_name(usr)] created bloodsuckers.")
+				else
+					message_admins("[key_name_admin(usr)] tried to create bloodsuckers. Unfortunately, there were no candidates available.")
+					log_admin("[key_name(usr)] failed to create bloodsuckers.")
 			if("revs")
 				if(src.makeRevs())
 					message_admins("[key_name(usr)] started a revolution.")
@@ -92,6 +99,13 @@
 				else
 					message_admins("[key_name_admin(usr)] tried to start a cult. Unfortunately, there were no candidates available.")
 					log_admin("[key_name(usr)] failed to start a cult.")
+			if("clockcult")
+				if(src.makeClockCult())
+					message_admins("[key_name(usr)] started a clockcult.")
+					log_admin("[key_name(usr)] started a clockcult.")
+				else
+					message_admins("[key_name_admin(usr)] tried to start a clockcult. Unfortunately, there were no candidates available.")
+					log_admin("[key_name(usr)] failed to start a clockcult.")
 			if("wizard")
 				message_admins("[key_name(usr)] is creating a wizard...")
 				if(src.makeWizard())
@@ -163,6 +177,23 @@
 				else
 					message_admins("[key_name_admin(usr)] tried to create a nanotrasen emergency response drone. Unfortunately, there were no candidates available.")
 					log_admin("[key_name(usr)] failed to create a nanotrasen emergency response drone.")
+			if("dreamer")
+				if(!check_rights(R_PERMISSIONS))
+					message_admins("[key_name(usr)] tries to suck his own dick.")
+					return
+				if(src.makeDreamer())
+					message_admins("[key_name(usr)] created a dreamer.")
+					log_admin("[key_name(usr)] created a dreamer.")
+				else
+					message_admins("[key_name_admin(usr)] tried to create a dreamer.")
+					log_admin("[key_name(usr)] failed to create a dreamer.")
+			if("cops")
+				if(src.makeCops())
+					message_admins("[key_name(usr)] called in a cop team.")
+					log_admin("[key_name(usr)] called in a cop team.")
+				else
+					message_admins("[key_name(usr)] tried to call in a cop team.")
+					log_admin("[key_name(usr)] failed to call in a cop team.")
 
 	else if(href_list["forceevent"])
 		if(!check_rights(R_FUN))
@@ -339,7 +370,7 @@
 		if(!check_rights(R_SERVER))
 			return
 		if(!SSticker.delay_end)
-			SSticker.admin_delay_notice = input(usr, "Enter a reason for delaying the round end", "Round Delay Reason") as null|text
+			SSticker.admin_delay_notice = tgui_input_text(usr, "Enter a reason for delaying the round end", "Round Delay Reason")
 			if(isnull(SSticker.admin_delay_notice))
 				return
 		else
@@ -641,7 +672,7 @@
 		for (var/rule in subtypesof(/datum/dynamic_ruleset/roundstart))
 			var/datum/dynamic_ruleset/roundstart/newrule = new rule()
 			roundstart_rules[newrule.name] = newrule
-		var/added_rule = input(usr,"What ruleset do you want to force? This will bypass threat level and population restrictions.", "Rigging Roundstart", null) as null|anything in sort_list(roundstart_rules)
+		var/added_rule = tgui_input_list(usr,"What ruleset do you want to force? This will bypass threat level and population restrictions.", "Rigging Roundstart", sort_list(roundstart_rules))
 		if (added_rule)
 			GLOB.dynamic_forced_roundstart_ruleset += roundstart_rules[added_rule]
 			log_admin("[key_name(usr)] set [added_rule] to be a forced roundstart ruleset.")
@@ -738,7 +769,13 @@
 				SSticker.save_mode(href_list["c_mode2"])
 			HandleCMode()
 			return
+		if(SSticker.gamemode_hotswap_disabled)
+			alert("A gamemode has already loaded maps and cannot be changed!")
+			HandleCMode()
+			return
 		GLOB.master_mode = href_list["c_mode2"]
+		//Disable presetup so their gamemode gets loaded.
+		SSticker.pre_setup_completed = FALSE
 		log_admin("[key_name(usr)] set the mode as [GLOB.master_mode].")
 		message_admins(span_adminnotice("[key_name_admin(usr)] set the mode as [GLOB.master_mode]."))
 		to_chat(world, span_adminnotice("<b>Режим: [GLOB.master_mode]</b>"))
@@ -1886,7 +1923,7 @@
 			return
 		var/datum/station_goal/G = new picked()
 		if(picked == /datum/station_goal)
-			var/newname = input("Enter goal name:") as text|null
+			var/newname = tgui_input_text(usr, "Enter goal name:")
 			if(!newname)
 				return
 			G.name = newname
@@ -2079,7 +2116,7 @@
 		if(answer == "yes")
 			log_query_debug("[usr.key] | Reported a server hang")
 			if(tgui_alert(usr, "Had you just press any admin buttons?", "Query server hang report", list("Yes", "No")) == "Yes")
-				var/response = input(usr,"What were you just doing?","Query server hang report") as null|text
+				var/response = tgui_input_text(usr,"What were you just doing?","Query server hang report")
 				if(response)
 					log_query_debug("[usr.key] | [response]")
 		else if(answer == "no")

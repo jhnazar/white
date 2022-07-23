@@ -25,7 +25,7 @@
 	range = initial(range)
 	range *= E
 
-/obj/machinery/launchpad/Initialize()
+/obj/machinery/launchpad/Initialize(mapload)
 	. = ..()
 	prepare_huds()
 	for(var/datum/atom_hud/data/diagnostic/diag_hud in GLOB.huds)
@@ -81,7 +81,7 @@
 	ghost.forceMove(target)
 
 /obj/machinery/launchpad/proc/isAvailable()
-	if(active_power_usage && machine_stat & NOPOWER)
+	if(machine_stat & NOPOWER)
 		return FALSE
 	if(panel_open)
 		return FALSE
@@ -212,6 +212,7 @@
 	icon_teleport = "blpad-beam"
 	anchored = FALSE
 	use_power = NO_POWER_USE
+	active_power_usage = 0
 	teleport_speed = 20
 	range = 8
 	stationary = FALSE
@@ -262,7 +263,7 @@
 /obj/item/storage/briefcase/launchpad
 	var/obj/machinery/launchpad/briefcase/pad
 
-/obj/item/storage/briefcase/launchpad/Initialize()
+/obj/item/storage/briefcase/launchpad/Initialize(mapload)
 	pad = new(null, src) //spawns pad in nullspace to hide it from briefcase contents
 	. = ..()
 

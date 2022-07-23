@@ -31,7 +31,7 @@
 /obj/machinery/deepcore
 	icon = 'white/valtos/icons/deepcore.dmi'
 /obj/machinery/deepcore/drill
-	name = "Deep Core Bluespace Drill"
+	name = "бур глубокого погружения"
 	desc = "Мощная машина, которая способна извлекать руду из недр планеты."
 	icon = 'white/valtos/icons/drill.dmi'
 	icon_state = "deep_core_drill"
@@ -197,7 +197,8 @@
 		return TRUE
 
 /obj/item/circuitboard/machine/deepcore/drill
-	name = "Deep Core Bluespace Drill (Machine Board)"
+	name = "бур глубокого погружения"
+	desc = "Мощная машина, которая способна извлекать руду из недр планеты."
 	icon_state = "supply"
 	build_path = /obj/machinery/deepcore/drill
 	req_components = list(
@@ -206,7 +207,8 @@
 		/obj/item/stock_parts/scanning_module = 1)
 
 /obj/item/circuitboard/machine/deepcore/hopper
-	name = "Bluespace Material Hopper (Machine Board)"
+	name = "блюспейс рудоприемник"
+	desc = "Машина, предназначенная для приема руды от любых подключенных к ней буров глубокого погружения посредством блюспейс телепортации."
 	icon_state = "supply"
 	build_path = /obj/machinery/deepcore/hopper
 	req_components = list(
@@ -292,7 +294,7 @@
 			L += I
 		else
 			viens_by_type[I.resource] = list(I)
-	var/A = input(user, "Type to locate", "DCM") in sort_list(viens_by_type)
+	var/A = tgui_input_list(user, "Type to locate", "DCM", sort_list(viens_by_type))
 	if(!A || QDELETED(src) || !user || !user.is_holding(src) || user.incapacitated())
 		return
 	//Searches for nearest ore vein as usual
@@ -315,7 +317,7 @@
 	var/resource
 	var/material_rate = 0
 
-/obj/effect/landmark/ore_vein/Initialize()
+/obj/effect/landmark/ore_vein/Initialize(mapload)
 	. = ..()
 	for(var/obj/effect/landmark/ore_vein/vein in get_turf(src))
 		if(vein!=src)
@@ -323,32 +325,6 @@
 			qdel(src)
 			return
 	GLOB.ore_vein_landmarks += src
-/*
-	if(resource)
-		return
-	qdel(src)
-	switch(rand(9))
-		if(0)
-			new /obj/effect/landmark/ore_vein/iron(get_turf(src))
-		if(1)
-			new /obj/effect/landmark/ore_vein/glass(get_turf(src))
-		if(2)
-			new /obj/effect/landmark/ore_vein/plasma(get_turf(src))
-		if(3)
-			new /obj/effect/landmark/ore_vein/silver(get_turf(src))
-		if(4)
-			new /obj/effect/landmark/ore_vein/gold(get_turf(src))
-		if(5)
-			new /obj/effect/landmark/ore_vein/diamond(get_turf(src))
-		if(6)
-			new /obj/effect/landmark/ore_vein/uranium(get_turf(src))
-		if(7)
-			new /obj/effect/landmark/ore_vein/titanium(get_turf(src))
-		if(8)
-			new /obj/effect/landmark/ore_vein/bluespace_crystal(get_turf(src))
-		if(0)
-			new /obj/effect/landmark/ore_vein/bananium(get_turf(src))
-*/
 
 /obj/effect/landmark/ore_vein/Destroy()
 	if(GLOB.ore_vein_landmarks.Find(src))
@@ -395,14 +371,15 @@
 	material_rate = 50
 
 /obj/machinery/deepcore/hopper
-	name = "Bluespace Material Hopper"
-	desc = "A machine designed to recieve the output of any connected bluespace drills."
+	name = "блюспейс рудоприемник"
+	desc = "Машина, предназначенная для приема руды от любых подключенных к ней буров глубокого погружения посредством блюспейс телепортации."
 	icon_state = "hopper_off"
 	density = TRUE
 	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 2
 	active_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 10
 	anchored = FALSE
 	circuit = /obj/item/circuitboard/machine/deepcore/hopper
+	processing_flags = START_PROCESSING_MANUALLY
 
 	var/active = FALSE
 	var/mult = 1
@@ -476,6 +453,7 @@
 		active = FALSE
 		update_use_power(IDLE_POWER_USE)
 		to_chat(user, span_notice("You deactiveate [src.name]"))
+		STOP_PROCESSING(SSmachines, src)
 	else
 		if(!powered(power_channel))
 			to_chat(user, span_warning("Unable to activate [src.name]! Insufficient power."))
@@ -483,6 +461,7 @@
 		active = TRUE
 		update_use_power(ACTIVE_POWER_USE)
 		to_chat(user, span_notice("You activeate [src.name]"))
+		START_PROCESSING(SSmachines, src)
 	update_icon_state()
 
 /obj/machinery/deepcore/hopper/multitool_act(mob/living/user, obj/item/multitool/I)
@@ -497,11 +476,9 @@
 	if(!anchored)
 		active = FALSE
 		update_icon_state()
-	/*
-	if(active)
-		if(DT_PROB(10, delta_time))
-			do_sparks(rand(3,4), FALSE, src)
-	*/
+		return PROCESS_KILL
+	else if(active)
+		eject_materials(TRUE)
 
 /obj/machinery/deepcore/hopper/update_icon_state()
 	if(powered(power_channel) && anchored)

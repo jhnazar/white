@@ -6,6 +6,7 @@
 	inhand_icon_state = "gun"
 	mag_type = /obj/item/ammo_box/magazine/toy/smg
 	fire_sound = 'sound/items/syringeproj.ogg'
+	auto_fire = TRUE
 	force = 0
 	throwforce = 0
 	burst_size = 3
@@ -22,13 +23,14 @@
 	name = "игрушечный пистолет"
 	desc = "Маленький игрушечный пистолет, стреляющий пеной. Для лиц старше 8 лет."
 	mag_type = /obj/item/ammo_box/magazine/toy/pistol
+	auto_fire = TRUE
 	fire_sound = 'sound/items/syringeproj.ogg'
 	gun_flags = TOY_FIREARM_OVERLAY
 
 /obj/item/gun/ballistic/automatic/pistol/toy/riot
 	mag_type = /obj/item/ammo_box/magazine/toy/pistol/riot
 
-/obj/item/gun/ballistic/automatic/pistol/riot/Initialize()
+/obj/item/gun/ballistic/automatic/pistol/riot/Initialize(mapload)
 	magazine = new /obj/item/ammo_box/magazine/toy/pistol/riot(src)
 	return ..()
 

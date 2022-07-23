@@ -41,7 +41,7 @@ GLOBAL_LIST_EMPTY(dead_players_during_shift)
 		dna.species.spec_death(gibbed, src)
 
 	if(client && lastattackermob?.client)
-		if(!HAS_TRAIT(src, TRAIT_YOHEI) && HAS_TRAIT(lastattackermob, TRAIT_YOHEI))
+		if(HAS_TRAIT(lastattackermob, TRAIT_YOHEI) && !HAS_TRAIT(src, TRAIT_YOHEI) && !lastattackermob.mind.has_antag_datum(/datum/antagonist))
 			if(GLOB.yohei_main_controller)
 				var/obj/lab_monitor/yohei/LM = GLOB.yohei_main_controller
 				if(!LM.is_this_target(src))
@@ -52,9 +52,6 @@ GLOBAL_LIST_EMPTY(dead_players_during_shift)
 		log_message("has died (BRUTE: [src.getBruteLoss()], BURN: [src.getFireLoss()], TOX: [src.getToxLoss()], OXY: [src.getOxyLoss()], CLONE: [src.getCloneLoss()])", LOG_ATTACK)
 	if(is_devil(src))
 		INVOKE_ASYNC(is_devil(src), /datum/antagonist/devil.proc/beginResurrectionCheck, src)
-
-/client/proc/show_tgui_notice(header, msg)
-	tgui_alert_async(src, header, msg, list("Понимаю"))
 
 /mob/living/carbon/human/proc/makeSkeleton()
 	ADD_TRAIT(src, TRAIT_DISFIGURED, TRAIT_GENERIC)

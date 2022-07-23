@@ -16,8 +16,8 @@
 
 	outfit = /datum/outfit/job/captain
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_EXPERT)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_EXPERT)
+	skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_EXPERT, /datum/skill/parry = SKILL_EXP_JOURNEYMAN)
 
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_SEC
@@ -32,7 +32,8 @@
 		/obj/item/reagent_containers/food/drinks/bottle/champagne = 10
 	)
 
-	rpg_title = "Звездный герцог"
+	rpg_title = "Star Duke"
+	rpg_title_ru = "Звездный герцог"
 
 /datum/job/captain/announce(mob/living/carbon/human/H, announce_captaincy = TRUE)
 	..()

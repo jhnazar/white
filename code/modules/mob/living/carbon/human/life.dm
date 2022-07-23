@@ -39,6 +39,10 @@
 			//heart attack stuff
 			handle_heart(delta_time, times_fired)
 			handle_liver(delta_time, times_fired)
+			if(!client && !ai_controller)
+				PermaSleeping()
+			else if(IsPermaSleeping())
+				SetSleeping(rand(10, 30))
 			if(dancing_period)
 				dancing_period--
 			if(prob(2))
@@ -57,13 +61,6 @@
 
 	//Update our name based on whether our face is obscured/disfigured
 	name = get_visible_name()
-
-	if(!stat && mind && client)
-		var/ourtext = get_input_text()
-		if(ourtext && ourtext[1] != "*")
-			create_typing_indicator()
-		else
-			remove_typing_indicator()
 
 	if(stat != DEAD)
 		return TRUE

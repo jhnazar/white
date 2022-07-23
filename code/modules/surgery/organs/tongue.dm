@@ -30,7 +30,8 @@
 		/datum/language/shadowtongue,
 		/datum/language/terrum,
 		/datum/language/nekomimetic,
-		/datum/language/arab
+		/datum/language/arab,
+		/datum/language/vampiric
 	))
 
 /obj/item/organ/tongue/Initialize(mapload)
@@ -358,7 +359,7 @@
 		/datum/language/calcic
 	))
 
-/obj/item/organ/tongue/bone/Initialize()
+/obj/item/organ/tongue/bone/Initialize(mapload)
 	. = ..()
 	phomeme_type = pick(phomeme_types)
 	languages_possible = languages_possible_skeleton

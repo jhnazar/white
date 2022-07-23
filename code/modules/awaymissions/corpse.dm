@@ -43,27 +43,28 @@
 
 //ATTACK GHOST IGNORING PARENT RETURN VALUE
 /obj/effect/mob_spawn/attack_ghost(mob/user)
-	if(!SSticker.HasRoundStarted() || !loc || !ghost_usable)
-		return
+	if(!SSticker.HasRoundStarted() || !loc || !ghost_usable || GLOB.violence_mode_activated)
+		return FALSE
 	if(!radial_based)
 		var/ghost_role = tgui_alert(usr, "Точно хочешь занять этот спаунер? (внимание, текущее тело будет покинуто)",,list("Да","Нет"))
 		if(ghost_role != "Да" || !loc || QDELETED(user))
-			return
+			return FALSE
 	if(!(GLOB.ghost_role_flags & GHOSTROLE_SPAWNER) && !(flags_1 & ADMIN_SPAWNED_1))
 		to_chat(user, span_warning("Администраторы временно отключили гост-роли"))
-		return
+		return FALSE
 	if(!uses)
 		to_chat(user, span_warning("Заряды кончились!"))
-		return
+		return FALSE
 	if(is_banned_from(user.key, banType))
 		to_chat(user, span_warning("А хуй тебе!"))
-		return
+		return FALSE
 	if(!allow_spawn(user))
-		return
+		return FALSE
 	if(QDELETED(src) || QDELETED(user))
-		return
+		return FALSE
 	log_game("[key_name(user)] became [mob_name]")
 	create(user)
+	return TRUE
 
 /obj/effect/mob_spawn/Initialize(mapload)
 	. = ..()
@@ -185,7 +186,7 @@
 	var/facial_hairstyle
 	var/skin_tone
 
-/obj/effect/mob_spawn/human/Initialize()
+/obj/effect/mob_spawn/human/Initialize(mapload)
 	if(ispath(outfit))
 		outfit = new outfit()
 	if(!outfit)

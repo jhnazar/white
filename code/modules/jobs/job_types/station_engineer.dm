@@ -3,8 +3,8 @@
 	ru_title = "Инженер"
 	department_head = list("Chief Engineer")
 	faction = "Station"
-	total_positions = 5
-	spawn_positions = 5
+	total_positions = 4
+	spawn_positions = 4
 	supervisors = "старшему инженеру"
 	selection_color = "#fff5cc"
 	exp_requirements = 900
@@ -26,7 +26,8 @@
 		/obj/item/holosign_creator/engineering = 8,
 	)
 
-	rpg_title = "Кристалломант"
+	rpg_title = "Crystallomancer"
+	rpg_title_ru = "Кристалломант"
 
 /datum/outfit/job/engineer
 	name = "Station Engineer"

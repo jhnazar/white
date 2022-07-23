@@ -5,9 +5,10 @@
 SUBSYSTEM_DEF(init_profiler)
 	name = "Init Profiler"
 	init_order = INIT_ORDER_INIT_PROFILER
+	init_stage = INITSTAGE_MAX
 	flags = SS_NO_FIRE
 
-/datum/controller/subsystem/init_profiler/Initialize()
+/datum/controller/subsystem/init_profiler/Initialize(mapload)
 	if(CONFIG_GET(flag/auto_profile))
 		write_init_profile()
 	return ..()

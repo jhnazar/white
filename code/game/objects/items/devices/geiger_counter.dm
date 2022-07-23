@@ -7,7 +7,7 @@
 /obj/item/geiger_counter //DISCLAIMER: I know nothing about how real-life Geiger counters work. This will not be realistic. ~Xhuis
 	name = "счётчик гейгера"
 	desc = "Портативное устройство, используемое для регистрации и измерения импульсов излучения."
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/device.dmi'
 	icon_state = "geiger_off"
 	inhand_icon_state = "multitool"
 	worn_icon_state = "geiger_counter"
@@ -28,7 +28,7 @@
 	var/fail_to_receive = 0
 	var/current_warning = 1
 
-/obj/item/geiger_counter/Initialize()
+/obj/item/geiger_counter/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 

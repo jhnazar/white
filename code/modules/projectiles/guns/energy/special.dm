@@ -118,7 +118,7 @@
 
 
 /obj/item/gun/energy/plasmacutter
-	name = "плазморез"
+	name = "плазменный резак"
 	desc = "Горный инструмент, способный выбрасывать концентрированные плазменные вспышки. Можно использовать его, чтобы отрезать конечности от ксеносов! Или, знаете, копать руду."
 	icon_state = "plasmacutter"
 	inhand_icon_state = "plasmacutter"
@@ -183,19 +183,21 @@
 
 /obj/item/gun/energy/plasmacutter/use_tool(atom/target, mob/living/user, delay, amount=1, volume=0, datum/callback/extra_checks)
 	if(amount)
+		target.add_overlay(GLOB.welding_sparks)
 		. = ..()
+		target.cut_overlay(GLOB.welding_sparks)
 	else
 		. = ..(amount=1)
 
 /obj/item/gun/energy/plasmacutter/adv
-	name = "продвинутый плазморез"
+	name = "продвинутый плазменный резак"
 	icon_state = "adv_plasmacutter"
 	inhand_icon_state = "adv_plasmacutter"
 	force = 15
 	ammo_type = list(/obj/item/ammo_casing/energy/plasma/adv)
 
 /obj/item/gun/energy/plasmacutter/adv/mega
-	name = "мега продвинутый плазморез"
+	name = "экспериментальный плазменный резак"
 	icon_state = "adv_plasmacutter_m"
 	inhand_icon_state = "plasmacutter_mega"
 	desc = "Инструмент добычи, способный стрелять концентрированными всплесками плазмы. Можно использовать его, чтобы отрезать конечности ксеносов! Этот был улучшен с плазменным магмитом."
@@ -408,6 +410,6 @@
 	shaded_charge = TRUE
 	weapon_weight = WEAPON_HEAVY
 
-/obj/item/gun/energy/tesla_cannon/Initialize()
+/obj/item/gun/energy/tesla_cannon/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/automatic_fire, 0.1 SECONDS)

@@ -81,33 +81,48 @@
 	icon_state = "power_display"
 	screen_loc = ui_lingchemdisplay
 
+/atom/movable/screen/bloodsucker
+	icon = 'icons/mob/actions/actions_bloodsucker.dmi'
+	invisibility = INVISIBILITY_ABSTRACT
+
+/atom/movable/screen/bloodsucker/proc/clear()
+	invisibility = INVISIBILITY_ABSTRACT
+
+/atom/movable/screen/bloodsucker/proc/update_counter()
+	invisibility = 0
+
+/atom/movable/screen/bloodsucker/blood_counter
+	name = "Blood Consumed"
+	icon_state = "blood_display"
+	screen_loc = ui_blood_display
+
+/atom/movable/screen/bloodsucker/rank_counter
+	name = "Bloodsucker Rank"
+	icon_state = "rank"
+	screen_loc = ui_vamprank_display
+
+/atom/movable/screen/bloodsucker/sunlight_counter
+	name = "Solar Flare Timer"
+	icon_state = "sunlight_night"
+	screen_loc = ui_sunlight_display
+
 /datum/hud/human/New(mob/living/carbon/human/owner)
 	..()
-
-	var/widescreen_layout = FALSE
-	if(owner.client?.prefs?.widescreenpref)
-		widescreen_layout = TRUE
 
 	var/atom/movable/screen/using
 	var/atom/movable/screen/inventory/inv_box
 
 	using = new/atom/movable/screen/language_menu
 	using.icon = ui_style
-	if(!widescreen_layout)
-		using.screen_loc = UI_BOXLANG
 	using.hud = src
 	static_inventory += using
 
 	using = new/atom/movable/screen/skills
 	using.icon = ui_style
-	if(!widescreen_layout)
-		using.screen_loc = UI_BOXLANG
 	static_inventory += using
 
 	using = new /atom/movable/screen/area_creator
 	using.icon = ui_style
-	if(!widescreen_layout)
-		using.screen_loc = UI_BOXAREA
 	using.hud = src
 	static_inventory += using
 
@@ -349,6 +364,14 @@
 	devilsouldisplay = new /atom/movable/screen/devil/soul_counter
 	devilsouldisplay.hud = src
 	infodisplay += devilsouldisplay
+
+	//bloodsuckers
+	blood_display = new /atom/movable/screen/bloodsucker/blood_counter
+	infodisplay += blood_display
+	vamprank_display = new /atom/movable/screen/bloodsucker/rank_counter
+	infodisplay += vamprank_display
+	sunlight_display = new /atom/movable/screen/bloodsucker/sunlight_counter
+	infodisplay += sunlight_display
 
 	zone_select =  new /atom/movable/screen/zone_sel()
 	zone_select.icon = ui_style

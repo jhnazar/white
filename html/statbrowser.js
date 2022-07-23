@@ -747,6 +747,9 @@ function set_theme(which) {
 	if (which == "light") {
 		document.body.className = "";
 		set_style_sheet("browserOutput_white");
+	} else if (which == "cyber") {
+		document.body.className = "cyber";
+		set_style_sheet("browserOutput");
 	} else if (which == "dark") {
 		document.body.className = "dark";
 		set_style_sheet("browserOutput");
@@ -839,7 +842,7 @@ if (!current_tab) {
 }
 
 window.onload = function () {
-	Byond.command("Update-Verbs");
+	Byond.sendMessage("Update-Verbs");
 };
 
 Byond.subscribeTo('update_spells', function (payload) {

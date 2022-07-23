@@ -35,6 +35,10 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	var/atom/movable/screen/ling/chems/lingchemdisplay
 	var/atom/movable/screen/ling/sting/lingstingdisplay
 
+	var/atom/movable/screen/bloodsucker/blood_counter/blood_display
+	var/atom/movable/screen/bloodsucker/rank_counter/vamprank_display
+	var/atom/movable/screen/bloodsucker/sunlight_counter/sunlight_display
+
 	var/atom/movable/screen/ammo_counter
 
 	var/atom/movable/screen/blobpwrdisplay
@@ -241,7 +245,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	screenmob.update_action_buttons(1)
 	reorganize_alerts(screenmob)
 	screenmob.reload_fullscreen()
-	update_parallax_pref(screenmob, HAS_TRAIT(screenmob, TRAIT_HACKER))
+	update_parallax_pref(screenmob)
 
 	// ensure observers get an accurate and up-to-date view
 	if (!viewmob)

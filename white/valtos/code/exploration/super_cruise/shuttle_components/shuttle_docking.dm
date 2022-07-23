@@ -108,6 +108,7 @@
 			user.client.images -= eyeobj.user_image
 
 		user.client.view_size.unsupress()
+		user.client.attempt_auto_fit_viewport()
 
 	eyeobj.eye_user = null
 	user.remote_control = null
@@ -187,7 +188,7 @@
 		var/image/newI = image('icons/effects/alphacolors.dmi', the_eye.loc, "blue")
 		newI.loc = I.loc //It is highly unlikely that any landing spot including a null tile will get this far, but better safe than sorry.
 		newI.layer = ABOVE_OPEN_TURF_LAYER
-		newI.plane = 0
+		newI.plane = ABOVE_GAME_PLANE
 		newI.mouse_opacity = 0
 		the_eye.placed_images += newI
 
@@ -372,7 +373,7 @@
 			L["(L.len)[S.name]"] = S
 
 	playsound(console, 'sound/machines/terminal_prompt.ogg', 25, FALSE)
-	var/selected = input("Куда?", "Зоны", null) as null|anything in L
+	var/selected = tgui_input_list(usr, "Куда?", "Зоны", L)
 	if(QDELETED(src) || QDELETED(target) || !isliving(target))
 		return
 	playsound(src, "terminal_type", 25, 0)

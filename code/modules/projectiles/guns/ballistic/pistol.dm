@@ -8,6 +8,7 @@
 	burst_size = 1
 	fire_delay = 0
 	actions_types = list()
+	auto_fire = FALSE
 	bolt_type = BOLT_TYPE_LOCKING
 	fire_sound = 'sound/weapons/gun/pistol/shot.ogg'
 	dry_fire_sound = 'sound/weapons/gun/pistol/dry_fire.ogg'
@@ -78,6 +79,7 @@
 	mag_type = /obj/item/ammo_box/magazine/m9mm_aps
 	can_suppress = TRUE
 	burst_size = 3
+	auto_fire = TRUE
 	fire_delay = 1
 	spread = 10
 	actions_types = list(/datum/action/item_action/toggle_firemode)

@@ -456,7 +456,7 @@
 				else
 					icon_states_string += ", [json_encode(an_icon_state)](\ref[an_icon_state])"
 			stack_trace("[item] does not have a valid icon state, icon=[icon_file], icon_state=[json_encode(icon_state)](\ref[icon_state]), icon_states=[icon_states_string]")
-			I = icon('icons/turf/floors.dmi', "", SOUTH)
+			I = icon(DEFAULT_FLOORS_ICON, "", SOUTH)
 
 		var/imgid = replacetext(replacetext("[item]", "/obj/item/", ""), "/", "-")
 
@@ -557,19 +557,6 @@
 		"robeless.png" = 'icons/UI_Icons/contracts/robeless.png',
 	)
 
-/datum/asset/spritesheet/fish
-	name = "fish"
-
-/datum/asset/spritesheet/fish/create_spritesheets()
-	for (var/path in subtypesof(/datum/aquarium_behaviour/fish))
-		var/datum/aquarium_behaviour/fish/fish_type = path
-		var/fish_icon = initial(fish_type.icon)
-		var/fish_icon_state = initial(fish_type.icon_state)
-		var/id = sanitize_css_class_name("[fish_icon][fish_icon_state]")
-		if(sprites[id]) //no dupes
-			continue
-		Insert(id, fish_icon, fish_icon_state)
-
 /datum/asset/simple/adventure
 	assets = list(
 		"default" = 'icons/UI_Icons/adventure/default.png',
@@ -598,11 +585,6 @@
 		"inventory-pocket.png" = 'icons/UI_Icons/inventory/pocket.png',
 		"inventory-collar.png" = 'icons/UI_Icons/inventory/collar.png',
 	)
-
-/// Removes all non-alphanumerics from the text, keep in mind this can lead to id conflicts
-/proc/sanitize_css_class_name(name)
-	var/static/regex/regex = new(@"[^a-zA-Z0-9]","g")
-	return replacetext(name, regex, "")
 
 /datum/asset/spritesheet/moods
 	name = "moods"

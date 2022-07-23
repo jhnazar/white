@@ -33,7 +33,7 @@
 /obj/item/clothing/head/welding/attack_self(mob/user)
 	weldingvisortoggle(user)
 
-/obj/item/clothing/head/welding/open/Initialize()
+/obj/item/clothing/head/welding/open/Initialize(mapload)
 	. = ..()
 	visor_toggling()
 
@@ -124,7 +124,7 @@
 	desc = "Идеально подходит для зимы в Сибири, да?"
 	icon_state = "ushankadown"
 	inhand_icon_state = "ushankadown"
-	flags_inv = HIDEEARS|HIDEHAIR
+	flags_inv = HIDEEARS
 	var/earflaps = TRUE
 	cold_protection = HEAD
 	min_cold_protection_temperature = FIRE_HELM_MIN_TEMP_PROTECT
@@ -261,7 +261,7 @@
 	hair_overlay.overlays += hair_blocker
 
 /obj/item/clothing/head/wig/attack_self(mob/user)
-	var/new_style = input(user, "Выберите прическу", "Wig Styling")  as null|anything in (GLOB.hairstyles_list - "Bald")
+	var/new_style = tgui_input_list(user, "Выберите прическу", "Wig Styling", (GLOB.hairstyles_list - "Bald"))
 	var/newcolor = adjustablecolor ? input(usr,"","Choose Color",color) as color|null : null
 	if(!user.canUseTopic(src, BE_CLOSE))
 		return

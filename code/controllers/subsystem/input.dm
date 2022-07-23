@@ -2,13 +2,14 @@ SUBSYSTEM_DEF(input)
 	name = "Input"
 	wait = 1 //SS_TICKER means this runs every tick
 	init_order = INIT_ORDER_INPUT
+	init_stage = INITSTAGE_EARLY
 	flags = SS_TICKER
 	priority = FIRE_PRIORITY_INPUT
 	runlevels = RUNLEVELS_DEFAULT | RUNLEVEL_LOBBY
 
 	var/list/macro_set
 
-/datum/controller/subsystem/input/Initialize()
+/datum/controller/subsystem/input/Initialize(mapload)
 	setup_default_macro_sets()
 
 	initialized = TRUE
@@ -22,9 +23,6 @@ SUBSYSTEM_DEF(input)
 	macro_set = list(
 	"Any" = "\"KeyDown \[\[*\]\]\"",
 	"Any+UP" = "\"KeyUp \[\[*\]\]\"",
-	"O" = "ooc",
-	"T" = ".сказать",
-	"M" = "Действия",
 	"Back" = "\".winset \\\"input.text=\\\"\\\"\\\"\"",
 	"Tab" = "\".winset \\\"input.focus=true?map.focus=true:input.focus=true\\\"\"",
 	"Escape" = "Reset-Held-Keys",

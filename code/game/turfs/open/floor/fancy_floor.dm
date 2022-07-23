@@ -129,7 +129,7 @@
 /turf/open/floor/grass/setup_broken_states()
 	return list("sand")
 
-/turf/open/floor/grass/Initialize()
+/turf/open/floor/grass/Initialize(mapload)
 	. = ..()
 	if(nospawn)
 		return
@@ -150,7 +150,7 @@
 /turf/open/floor/grass/fairy //like grass but fae-er
 	name = "сказочный пласт"
 	desc = "Что-то в этой траве заставляет меня резвиться. Или быть под кайфом."
-	icon_state = "fairygrass"
+	icon_state = "fairygrass0"
 	floor_tile = /obj/item/stack/tile/fairygrass
 	light_range = 2
 	light_power = 0.80
@@ -191,7 +191,7 @@
 /turf/open/floor/grass/snow/basalt //By your powers combined, I am captain planet
 	gender = NEUTER
 	name = "вулканическая поверхность"
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "basalt"
 	ore_type = /obj/item/stack/ore/glass/basalt
 	initial_gas_mix = OPENTURF_LOW_PRESSURE
@@ -216,7 +216,7 @@
 /turf/open/floor/grass/fakebasalt //Heart is not a real planeteer power
 	name = "эстетическая вулканическая поверхность"
 	desc = "Безопасно воссозданный газон для побега с адской планеты."
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "basalt"
 	floor_tile = /obj/item/stack/tile/basalt
 	ore_type = /obj/item/stack/ore/glass/basalt
@@ -257,7 +257,7 @@
 	. = ..()
 	. += "<hr><span class='notice'>Здесь есть <b>небольшая щель</b> с краю.</span>"
 
-/turf/open/floor/carpet/Initialize()
+/turf/open/floor/carpet/Initialize(mapload)
 	. = ..()
 	update_icon()
 
@@ -439,7 +439,7 @@
 	tiled_dirt = FALSE
 
 /turf/open/floor/fakepit/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
-	underlay_appearance.icon = 'icons/turf/floors.dmi'
+	underlay_appearance.icon = DEFAULT_FLOORS_ICON
 	underlay_appearance.icon_state = "basalt"
 	return TRUE
 
@@ -453,7 +453,7 @@
 /turf/open/floor/fakespace/setup_broken_states()
 	return list("damaged")
 
-/turf/open/floor/fakespace/Initialize()
+/turf/open/floor/fakespace/Initialize(mapload)
 	. = ..()
 	icon_state = SPACE_ICON_STATE
 

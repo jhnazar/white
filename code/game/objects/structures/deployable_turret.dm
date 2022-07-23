@@ -233,7 +233,7 @@
 	resistance_flags = FIRE_PROOF | UNACIDABLE | ACID_PROOF
 	var/obj/machinery/deployable_turret/turret
 
-/obj/item/gun_control/Initialize()
+/obj/item/gun_control/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, ABSTRACT_ITEM_TRAIT)
 	turret = loc
@@ -252,8 +252,6 @@
 	O.attacked_by(src, user)
 
 /obj/item/gun_control/attack(mob/living/M, mob/living/user)
-	//M.lastattacker = user.real_name
-	//M.lastattackerckey = user.ckey
 	M.attacked_by(src, user)
 	add_fingerprint(user)
 

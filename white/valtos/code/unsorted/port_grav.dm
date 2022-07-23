@@ -29,7 +29,7 @@
 			M.update_gravity(M.mob_has_gravity())
 			if(M.client)
 				shake_camera(M, 15, 1)
-				M.playsound_local(src.loc, null, 100, 1, 0.5, S = alert_sound)
+				M.playsound_local(src.loc, null, 100, 1, 0.5, sound_to_use = alert_sound)
 		visible_message(span_notice("Пол начинает притягивать меня к себе!"))
 		qdel(src)
 	else
@@ -38,7 +38,7 @@
 /datum/supply_pack/engineering/graviton_beacon
 	name = "Гравитоновые маяки"
 	desc = "Используются для создания гравитации в небольшой зоне."
-	cost = 125
+	cost = BUY_CRATE_VALUE
 	contains = list(/obj/item/graviton_beacon,
 					/obj/item/graviton_beacon,
 					/obj/item/graviton_beacon)

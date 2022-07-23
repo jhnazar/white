@@ -44,7 +44,7 @@
 							"Импорт"
 							)
 
-/obj/machinery/autolathe/Initialize()
+/obj/machinery/autolathe/Initialize(mapload)
 	AddComponent(/datum/component/material_container, SSmaterials.materials_by_category[MAT_CATEGORY_ITEM_MATERIAL], 0, MATCONTAINER_EXAMINE, _after_insert = CALLBACK(src, .proc/AfterMaterialInsert))
 	. = ..()
 
@@ -205,7 +205,7 @@
 						if(materials.materials[i] > 0)
 							list_to_show += i
 
-					used_material = input("Выбирайте мудро [used_material]", "Материал") as null|anything in sort_list(list_to_show, /proc/cmp_typepaths_asc)
+					used_material = tgui_input_list(usr, "Выбирайте мудро [used_material]", "Материал", sort_list(list_to_show, /proc/cmp_typepaths_asc))
 					if(!used_material)
 						return //Didn't pick any material, so you can't build shit either.
 					custom_materials[used_material] += amount_needed
@@ -214,6 +214,7 @@
 
 			if(materials.has_materials(materials_used))
 				busy = TRUE
+				playsound(get_turf(src), "production", 75, TRUE)
 				to_chat(usr, "<span class=\"notice\">Удалось распечатать [multiplier] предметов в [src]</span>")
 				use_power(active_power_usage * 0.25)
 				icon_state = "autolathe_n"
@@ -307,7 +308,7 @@
 					if(!istype(M, /datum/material/glass) && !istype(M, /datum/material/iron))
 						user.client.give_award(/datum/award/achievement/misc/getting_an_upgrade, user)
 
-
+	playsound(get_turf(src), "production", 75, TRUE)
 	icon_state = "autolathe"
 	busy = FALSE
 
@@ -391,7 +392,7 @@
 			else
 				stored_research.remove_design(D)
 
-/obj/machinery/autolathe/hacked/Initialize()
+/obj/machinery/autolathe/hacked/Initialize(mapload)
 	. = ..()
 	adjust_hacked(TRUE)
 

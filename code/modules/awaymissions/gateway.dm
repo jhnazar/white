@@ -96,17 +96,17 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 
 /datum/gateway_destination/gateway/home/incoming_pass_check(atom/movable/AM)
 	if(isliving(AM))
-		if(check_exile_implant(AM))
+		if(check_exile_implant(AM) || is_species(AM, /datum/species/lizard/ashwalker) || ismegafauna(AM) || iselite(AM))
 			return FALSE
 	else
 		for(var/mob/living/L in AM.contents)
-			if(check_exile_implant(L))
-				target_gateway.say("Rejecting [AM]: Exile implant detected in contained lifeform.")
+			if(check_exile_implant(L) || is_species(L, /datum/species/lizard/ashwalker))
+				target_gateway.say("Отвергаю [AM]: Обнаружен имплант изгнания или неавторизованная форма жизни.")
 				return FALSE
 	if(AM.has_buckled_mobs())
 		for(var/mob/living/L in AM.buckled_mobs)
-			if(check_exile_implant(L))
-				target_gateway.say("Rejecting [AM]: Exile implant detected in close proximity lifeform.")
+			if(check_exile_implant(L) || is_species(L, /datum/species/lizard/ashwalker))
+				target_gateway.say("Отвергаю [AM]: Обнаружен имплант изгнания или неавторизованная форма жизни.")
 				return FALSE
 	return TRUE
 
@@ -145,7 +145,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 
 /obj/machinery/gateway
 	name = "Врата"
-	desc = "Таинственные врата, построенные кем-то неизвестным. Позволяют путешествовать в отдаленные места на сверхсветовых скоростях."
+	desc = "Позволяют путешествовать в отдаленные места на сверхсветовых скоростях."
 	icon = 'icons/obj/machines/gateway.dmi'
 	icon_state = "portal_frame"
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
@@ -165,7 +165,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 	/// Type of instanced gateway destination, needs to be subtype of /datum/gateway_destination/gateway
 	var/destination_type = /datum/gateway_destination/gateway
 	/// Name of the generated destination
-	var/destination_name = "Unknown Gateway"
+	var/destination_name = "Неизвестные врата"
 	/// This is our own destination, pointing at this gateway
 	var/datum/gateway_destination/gateway/destination
 	/// This is current active destination
@@ -186,7 +186,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 		qdel(I)
 		return
 
-/obj/machinery/gateway/Initialize()
+/obj/machinery/gateway/Initialize(mapload)
 	generate_destination()
 	update_icon()
 	portal_visuals = new
@@ -247,9 +247,12 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 /* Station's primary gateway */
 /obj/machinery/gateway/centerstation
 	destination_type = /datum/gateway_destination/gateway/home
-	destination_name = "Home Gateway"
+	destination_name = "Станция"
 
-/obj/machinery/gateway/centerstation/Initialize()
+/obj/machinery/gateway/lavaland
+	destination_name = "Лаваленд"
+
+/obj/machinery/gateway/centerstation/Initialize(mapload)
 	. = ..()
 	if(!GLOB.the_gateway)
 		GLOB.the_gateway = src
@@ -287,6 +290,7 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 /obj/machinery/computer/gateway_control
 	name = "Интерфейс врат"
 	desc = "Удобный человеческому глазу интерфейс для врат, стоящих рядом."
+	req_access = list(ACCESS_HEADS)
 	var/obj/machinery/gateway/G
 
 /obj/machinery/computer/gateway_control/Initialize(mapload, obj/item/circuitboard/C)
@@ -332,6 +336,11 @@ GLOBAL_LIST_EMPTY(gateway_destinations)
 			return TRUE
 		if("find_new")
 			if(!GLOB.isGatewayLoaded)
+				if(isliving(usr))
+					var/mob/living/L = usr
+					if(!check_access(L.get_idcard()))
+						say("Нет доступа. Обратитесь к одной из глав.")
+						return
 				message_admins("[ADMIN_LOOKUPFLW(usr)] активирует врата.")
 				log_game("[key_name(usr)] активирует врата.")
 				priority_announce("Началась операция по поиску новых врат в отдалённых секторах. Это займёт некоторое время.", "Звёздные врата", sound('white/valtos/sounds/trevoga4.ogg'))

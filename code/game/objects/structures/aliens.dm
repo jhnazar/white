@@ -89,6 +89,9 @@
 	smoothing_groups = list(SMOOTH_GROUP_ALIEN_RESIN, SMOOTH_GROUP_ALIEN_WALLS)
 	canSmoothWith = list(SMOOTH_GROUP_ALIEN_WALLS)
 
+/obj/structure/alien/resin/wall/BlockThermalConductivity()
+	return TRUE
+
 /obj/structure/alien/resin/wall/creature
 	name = "студенистая стена"
 	desc = "Прочная субстанция, перегораживающая проход."
@@ -142,7 +145,7 @@
 	var/static/list/blacklisted_turfs
 
 
-/obj/structure/alien/weeds/Initialize()
+/obj/structure/alien/weeds/Initialize(mapload)
 	pixel_x = -4
 	pixel_y = -4 //so the sprites line up right in the map editor
 
@@ -215,7 +218,7 @@
 	var/node_range = NODERANGE
 
 
-/obj/structure/alien/weeds/node/Initialize()
+/obj/structure/alien/weeds/node/Initialize(mapload)
 	. = ..()
 	set_light(lon_range)
 	var/obj/structure/alien/weeds/W = locate(/obj/structure/alien/weeds) in loc

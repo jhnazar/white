@@ -57,9 +57,9 @@
 				to_chat(user, span_notice("Делаю глоток из [src]."))
 
 			for(var/datum/reagent/R in reagents.reagent_list)
-				if(R in M.known_reagent_sounds)
+				if(R.type in M.known_reagent_sounds)
 					continue
-				M.known_reagent_sounds += R
+				LAZYADD(M.known_reagent_sounds, R.type)
 				SEND_SOUND(M, R.special_sound)
 				break
 
@@ -171,7 +171,7 @@
 	custom_materials = list(/datum/material/glass=500)
 	fill_icon_thresholds = list(0, 1, 20, 40, 60, 80, 100)
 
-/obj/item/reagent_containers/glass/beaker/Initialize()
+/obj/item/reagent_containers/glass/beaker/Initialize(mapload)
 	. = ..()
 	update_icon()
 

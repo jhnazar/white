@@ -67,6 +67,8 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	new/datum/stack_recipe("части стойки", /obj/item/rack_parts), \
 	new/datum/stack_recipe("шкаф", /obj/structure/closet, 2, time = 15, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
+	new/datum/stack_recipe("Ступеньки", /obj/structure/stairs/unanchored, 5, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
+	null, \
 	new/datum/stack_recipe("каркас канистры", /obj/structure/canister_frame/machine/frame_tier_0, 5, time = 8, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
 	new/datum/stack_recipe("плитка для пола", /obj/item/stack/tile/plasteel, 1, 4, 20), \
@@ -114,19 +116,20 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	new/datum/stack_recipe("рамка для кнопки", /obj/item/wallframe/button, 1), \
 	null, \
 	new/datum/stack_recipe("железная дверь", /obj/structure/mineral_door/iron, 20, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("картотека", /obj/structure/filingcabinet, 2, time = 10 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("звонок", /obj/structure/desk_bell, 2, time = 3 SECONDS), \
 	new/datum/stack_recipe("каркас прожектора", /obj/structure/floodlight_frame, 5, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("ящик для голосования", /obj/structure/votebox, 15, time = 50), \
 	new/datum/stack_recipe("пестик", /obj/item/pestle, 1, time = 50), \
 	new/datum/stack_recipe("каркас гигиенобота", /obj/item/bot_assembly/hygienebot, 2, time = 5 SECONDS), \
 	new/datum/stack_recipe("каркас душа", /obj/structure/showerframe, 2, time= 2 SECONDS), \
-	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/metal, 2, time = 1 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/metal, 5, time = 1 SECONDS, one_per_turf = TRUE, on_floor = TRUE), \
 ))
 
 /obj/item/stack/sheet/iron
 	name = "железо"
 	desc = "Листы из железа."
 	singular_name = "лист железа"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-metal"
 	inhand_icon_state = "sheet-metal"
 	mats_per_unit = list(/datum/material/iron=MINERAL_MATERIAL_AMOUNT)
@@ -170,13 +173,18 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
  * Plasteel
  */
 GLOBAL_LIST_INIT(plasteel_recipes, list ( \
-	new/datum/stack_recipe("Ядро ИИ", /obj/structure/ai_core, 4, time = 50, one_per_turf = TRUE), \
-	new/datum/stack_recipe("Сборка бомб", /obj/machinery/syndicatebomb/empty, 10, time = 50), \
-	new/datum/stack_recipe("Баррикада", /obj/structure/deployable_barricade/plasteel, 2, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("ядро ИИ", /obj/structure/ai_core, 4, time = 50, one_per_turf = TRUE), \
+	new/datum/stack_recipe("сборка бомбы", /obj/machinery/syndicatebomb/empty, 10, time = 50), \
+	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/plasteel, 5, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
-	new /datum/stack_recipe_list("airlock assemblies", list( \
-		new/datum/stack_recipe("high security airlock assembly", /obj/structure/door_assembly/door_assembly_highsecurity, 4, time = 50, one_per_turf = 1, on_floor = 1), \
-		new/datum/stack_recipe("vault door assembly", /obj/structure/door_assembly/door_assembly_vault, 6, time = 50, one_per_turf = 1, on_floor = 1), \
+	new /datum/stack_recipe_list("Бронешлюзы", list( \
+		new/datum/stack_recipe("Каркас укрепленного шлюза", /obj/structure/door_assembly/door_assembly_highsecurity, 4, time = 50, one_per_turf = 1, on_floor = 1), \
+		new/datum/stack_recipe("Каркас двери хранилища", /obj/structure/door_assembly/door_assembly_vault, 6, time = 50, one_per_turf = 1, on_floor = 1), \
+	)),
+	null, \
+	new /datum/stack_recipe_list("Бронешторы", list( \
+		new/datum/stack_recipe("Бронежалюзи", /obj/machinery/door/poddoor/shutters/assembly, 10, time = 50, one_per_turf = 1, on_floor = 1), \
+		new/datum/stack_recipe("Бронеставни", /obj/machinery/door/poddoor/assembly, 15, time = 50, one_per_turf = 1, on_floor = 1), \
 	)), \
 ))
 
@@ -184,7 +192,6 @@ GLOBAL_LIST_INIT(plasteel_recipes, list ( \
 	name = "пласталь"
 	singular_name = "лист пластали"
 	desc = "Пласталь является сплавом железа и плазмы. Благодаря отличной прочности и недороговизне этот новомодный сплав завоевал сердца многих инженеров."
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-plasteel"
 	inhand_icon_state = "sheet-plasteel"
 	mats_per_unit = list(/datum/material/alloy/plasteel=MINERAL_MATERIAL_AMOUNT)
@@ -222,7 +229,7 @@ GLOBAL_LIST_INIT(wood_recipes, list ( \
 	new/datum/stack_recipe("деревянный стул", /obj/structure/chair/wood/, 3, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("крылатый стул", /obj/structure/chair/wood/wings, 3, time = 10, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("деревянная застава", /obj/structure/barricade/wooden, 5, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
-	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/wooden, 2, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("баррикада", /obj/structure/deployable_barricade/wooden, 5, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("деревянная дверь", /obj/structure/mineral_door/wood, 10, time = 20, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("гроб", /obj/structure/closet/crate/coffin, 5, time = 15, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("книжный шкаф", /obj/structure/bookcase, 4, time = 15, one_per_turf = TRUE, on_floor = TRUE), \
@@ -261,7 +268,6 @@ GLOBAL_LIST_INIT(wood_recipes, list ( \
 	singular_name = "деревянная доска"
 	icon_state = "sheet-wood"
 	inhand_icon_state = "sheet-wood"
-	icon = 'white/valtos/icons/items.dmi'
 	mats_per_unit = list(/datum/material/wood=MINERAL_MATERIAL_AMOUNT)
 	sheettype = "wood"
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 0)
@@ -330,6 +336,7 @@ GLOBAL_LIST_INIT(cloth_recipes, list ( \
 	new/datum/stack_recipe("белый комбинезон", /obj/item/clothing/under/color/white, 3), \
 	new/datum/stack_recipe("белые ботинки", /obj/item/clothing/shoes/sneakers/white, 2), \
 	new/datum/stack_recipe("белый шарф", /obj/item/clothing/neck/scarf, 1), \
+	new/datum/stack_recipe("белая бандана", /obj/item/clothing/mask/bandana/white, 2), \
 	null, \
 	new/datum/stack_recipe("рюкзак", /obj/item/storage/backpack, 4), \
 	new/datum/stack_recipe("вещмешок", /obj/item/storage/backpack/duffelbag, 6), \
@@ -541,8 +548,8 @@ GLOBAL_LIST_INIT(cardboard_recipes, list (																				 \
  */
 
 GLOBAL_LIST_INIT(bronze_recipes, list ( \
-	new/datum/stack_recipe("огромная шестерня", /obj/structure/girder/bronze, 2, time = 20, one_per_turf = TRUE, on_floor = TRUE), \
-	null,
+//	new/datum/stack_recipe("огромная шестерня", /obj/structure/girder/bronze, 2, time = 20, one_per_turf = TRUE, on_floor = TRUE),
+//	null,
 	new/datum/stack_recipe("направленное латунное окно", /obj/structure/window/bronze/unanchored, time = 0, on_floor = TRUE, window_checks = TRUE), \
 	new/datum/stack_recipe("полное латунное окно", /obj/structure/window/bronze/fulltile/unanchored, 2, time = 0, on_floor = TRUE, window_checks = TRUE), \
 	new/datum/stack_recipe("латунный шлюз", /obj/machinery/door/airlock/bronze, 4, time = 50, one_per_turf = TRUE, on_floor = TRUE), \
@@ -552,7 +559,7 @@ GLOBAL_LIST_INIT(bronze_recipes, list ( \
 	new/datum/stack_recipe("латунные ботинки", /obj/item/clothing/shoes/bronze), \
 	null,
 	new/datum/stack_recipe("латунный стул", /obj/structure/chair/bronze, 1, time = 0, one_per_turf = TRUE, on_floor = TRUE), \
-	new/datum/stack_recipe("огромная шестерня 2", /obj/structure/destructible/clockwork/wall_gear, 2, time = 20, one_per_turf = TRUE, on_floor = TRUE), \
+	new/datum/stack_recipe("огромная шестерня", /obj/structure/destructible/clockwork/wall_gear, 2, time = 20, one_per_turf = TRUE, on_floor = TRUE), \
 	new/datum/stack_recipe("латунная решётка", /obj/structure/grille/ratvar, 2, time=20, one_per_turf = TRUE, on_floor = TRUE), \
 	null, \
 	new/datum/stack_recipe("латунное окно", /obj/machinery/door/window/clockwork, 5, time=40, on_floor = TRUE, window_checks=TRUE), \
@@ -569,9 +576,9 @@ GLOBAL_LIST_INIT(bronze_recipes, list ( \
 	name = "латунь"
 	desc = "При внимательном рассмотрении становится понятно, что совершенно-непригодная-для-строительства латунь на самом деле куда более структурно устойчивая латунь."
 	singular_name = "лист латуни"
+	icon = 'icons/obj/stack_objects.dmi'
 	icon_state = "sheet-brass"
 	inhand_icon_state = "sheet-brass"
-	icon = 'white/valtos/icons/items.dmi'
 	mats_per_unit = list(/datum/material/bronze = MINERAL_MATERIAL_AMOUNT)
 	lefthand_file = 'icons/mob/inhands/misc/sheets_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/misc/sheets_righthand.dmi'
@@ -668,7 +675,6 @@ GLOBAL_LIST_INIT(plastic_recipes, list(
 	name = "пластик"
 	desc = "Сжимайте динозавров более миллиона лет, затем очистите, разделите и формируйте и Вуаля! Вот он пластик."
 	singular_name = "лист пластика"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-plastic"
 	inhand_icon_state = "sheet-plastic"
 	mats_per_unit = list(/datum/material/plastic=MINERAL_MATERIAL_AMOUNT)
@@ -716,7 +722,6 @@ new /datum/stack_recipe("paper frame door", /obj/structure/mineral_door/paperfra
 	name = "листы мяса"
 	desc = "Чье-то окровавленное мясо, спресованное в неплохой твердый лист."
 	singular_name = "лист мяса"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "sheet-meat"
 	material_flags = MATERIAL_COLOR
 	mats_per_unit = list(/datum/material/meat = MINERAL_MATERIAL_AMOUNT)

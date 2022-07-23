@@ -397,6 +397,8 @@
 #define COMSIG_MOUSEDROPPED_ONTO "mousedropped_onto"
 ///from base of mob/MouseWheelOn(): (/atom, delta_x, delta_y, params)
 #define COMSIG_MOUSE_SCROLL_ON "mousescroll_on"
+///from base of mob/MouseEnteredOn(): (/atom, location, control, params)
+#define COMSIG_MOUSE_ENTERED_ON "mouseentered_on"
 
 // /area signals
 
@@ -1085,6 +1087,15 @@
 ///sent to targets during the process_hit proc of projectiles
 #define COMSIG_PELLET_CLOUD_INIT "pellet_cloud_init"
 
+// /obj/vehicle/sealed/car/vim signals
+
+///from /datum/action/vehicle/sealed/noise/chime/Trigger(): ()
+#define COMSIG_VIM_CHIME_USED "vim_chime_used"
+///from /datum/action/vehicle/sealed/noise/buzz/Trigger(): ()
+#define COMSIG_VIM_BUZZ_USED "vim_buzz_used"
+///from /datum/action/vehicle/sealed/headlights/vim/Trigger(): (headlights_on)
+#define COMSIG_VIM_HEADLIGHTS_TOGGLED "vim_headlights_toggled"
+
 // /obj/vehicle/sealed/mecha signals
 
 ///sent from mecha action buttons to the mecha they're linked to
@@ -1398,6 +1409,22 @@
 #define COMSIG_AQUARIUM_SURFACE_CHANGED "aquarium_surface_changed"
 #define COMSIG_AQUARIUM_FLUID_CHANGED "aquarium_fluid_changed"
 
+// Fish signals
+#define COMSIG_FISH_STATUS_CHANGED "fish_status_changed"
+#define COMSIG_FISH_STIRRED "fish_stirred"
+
+/// Fishing challenge completed
+#define COMSIG_FISHING_CHALLENGE_COMPLETED "fishing_completed"
+/// Called when you try to use fishing rod on anything
+#define COMSIG_PRE_FISHING "pre_fishing"
+
+/// Sent by the target of the fishing rod cast
+#define COMSIG_FISHING_ROD_CAST "fishing_rod_cast"
+	#define FISHING_ROD_CAST_HANDLED (1 << 0)
+
+/// Sent when fishing line is snapped
+#define COMSIG_FISHING_LINE_SNAPPED "fishing_line_interrupted"
+
 ///from /obj/item/assembly/proc/pulsed()
 #define COMSIG_ASSEMBLY_PULSED "assembly_pulsed"
 
@@ -1663,3 +1690,10 @@
 	#define COMPONENT_NO_CELL  (1<<1)
 	#define COMPONENT_NO_CHARGE (1<<2)
 
+//called when an igniter activates
+#define COMSIG_IGNITER_ACTIVATE "igniter_activate"
+
+#define COMSIG_ATOM_FRIENDLY_WAVED "friendly_waved"
+
+/// generally called before temporary non-parallel animate()s on the atom (animation_duration)
+#define COMSIG_ATOM_TEMPORARY_ANIMATION_START "atom_temp_animate_start"

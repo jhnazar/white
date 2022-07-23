@@ -11,7 +11,7 @@
 	var/ison = FALSE
 	var/obj/item/stock_parts/cell/our_powercell = null
 
-/obj/item/kinetic_shield/Initialize()
+/obj/item/kinetic_shield/Initialize(mapload)
 	. = ..()
 	our_powercell = new /obj/item/stock_parts/cell/high(src)
 
@@ -56,7 +56,7 @@
 		if(ison)
 			RegisterSignal(user, COMSIG_ATOM_UPDATE_OVERLAYS, .proc/on_update_overlays)
 			RegisterSignal(user, COMSIG_HUMAN_CHECK_SHIELDS,  .proc/on_shields)
-			RegisterSignal(user, COMSIG_MOB_FIRED_GUN, 		  .proc/on_gun_fired)
+			RegisterSignal(user, COMSIG_GUN_FIRED, 		  	  .proc/on_gun_fired)
 			START_PROCESSING(SSobj, src)
 			for(var/obj/item/kinetic_shield/KS in user.contents)
 				if(KS != src && KS.ison == TRUE)

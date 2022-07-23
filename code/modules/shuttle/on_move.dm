@@ -19,15 +19,6 @@ All ShuttleMove procs go here
 	. = move_mode
 	if(!(. & MOVE_TURF))
 		return
-
-	shuttle_gib(shuttle)
-
-/**
- * Attempt to crush movabkes in a shuttle landing zone.
- *
- * * shuttle - The smashing shuttle
- */
-/turf/proc/shuttle_gib(obj/docking_port/mobile/shuttle)
 	var/shuttle_dir = SOUTH
 	var/shuttle_name = "Somethig-That-Is-Not-A-Shuttle" //потомушто валера долбоеб пихнул шаттлорипплы гибающие этим проком в свою ловилку астероидов
 	if(shuttle && istype(shuttle))
@@ -50,7 +41,7 @@ All ShuttleMove procs go here
 
 
 		else //non-living mobs shouldn't be affected by shuttles, which is why this is an else
-			if((istype(thing, /obj/singularity) || istype(thing, /obj/energy_ball)) || istype(thing, /obj/effect/abstract))
+			if((istype(thing, /obj/singularity) || istype(thing, /obj/energy_ball)))
 				continue
 			if(!thing.anchored)
 				step(thing, shuttle_dir)
@@ -61,9 +52,10 @@ All ShuttleMove procs go here
 /turf/proc/onShuttleMove(turf/newT, list/movement_force, move_dir)
 	if(newT == src) // In case of in place shuttle rotation shenanigans.
 		return
-	//Destination turf changes
-	//Baseturfs is definitely a list or this proc wouldnt be called
+	// Destination turf changes.
+	// Baseturfs is definitely a list or this proc wouldnt be called.
 	var/shuttle_boundary = baseturfs.Find(/turf/baseturf_skipover/shuttle)
+
 	if(!shuttle_boundary)
 		CRASH("A turf queued to move via shuttle somehow had no skipover in baseturfs. [src]([type]):[loc]")
 	var/depth = baseturfs.len - shuttle_boundary + 1
@@ -88,6 +80,7 @@ All ShuttleMove procs go here
 
 	SSexplosions.wipe_turf(src)
 	var/shuttle_boundary = baseturfs.Find(/turf/baseturf_skipover/shuttle)
+
 	if(shuttle_boundary)
 		oldT.ScrapeAway(baseturfs.len - shuttle_boundary + 1)
 
@@ -111,7 +104,7 @@ All ShuttleMove procs go here
 /atom/movable/proc/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	return move_mode
 
-// Called on atoms to move the atom to the new location
+/// Called on atoms to move the atom to the new location
 /atom/movable/proc/onShuttleMove(turf/newT, turf/oldT, list/movement_force, move_dir, obj/docking_port/stationary/old_dock, obj/docking_port/mobile/moving_dock)
 	if(newT == oldT) // In case of in place shuttle rotation shenanigans.
 		return
@@ -125,7 +118,6 @@ All ShuttleMove procs go here
 
 // Called on atoms after everything has been moved
 /atom/movable/proc/afterShuttleMove(turf/oldT, list/movement_force, shuttle_dir, shuttle_preferred_direction, move_dir, rotation)
-
 	var/turf/newT = get_turf(src)
 	if (newT.z != oldT.z)
 		on_changed_z_level(oldT, newT)
@@ -188,6 +180,10 @@ All ShuttleMove procs go here
 /area/proc/lateShuttleMove()
 	return
 
+/area/shuttle/lateShuttleMove()
+	create_area_lighting_objects()
+	return
+
 /************************************Turf move procs************************************/
 
 /************************************Area move procs************************************/
@@ -196,19 +192,19 @@ All ShuttleMove procs go here
 
 /obj/machinery/door/airlock/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	. = ..()
-	for(var/obj/machinery/door/airlock/A in range(1, src))  // includes src
-		A.shuttledocked = FALSE
-		A.air_tight = TRUE
-		INVOKE_ASYNC(A, /obj/machinery/door/.proc/close)
+	for(var/obj/machinery/door/airlock/other_airlock in range(2, src))  // includes src, extended because some escape pods have 1 plating turf exposed to space
+		other_airlock.shuttledocked = FALSE
+		other_airlock.air_tight = TRUE
+		INVOKE_ASYNC(other_airlock, /obj/machinery/door/.proc/close, FALSE, TRUE) // force crush
 
 /obj/machinery/door/airlock/afterShuttleMove(turf/oldT, list/movement_force, shuttle_dir, shuttle_preferred_direction, move_dir, rotation)
 	. = ..()
 	var/current_area = get_area(src)
-	for(var/obj/machinery/door/airlock/A in orange(1, src))  // does not include src
-		if(get_area(A) != current_area)  // does not include double-wide airlocks unless actually docked
+	for(var/obj/machinery/door/airlock/other_airlock in orange(2, src))  // does not include src, extended because some escape pods have 1 plating turf exposed to space
+		if(get_area(other_airlock) != current_area)  // does not include double-wide airlocks unless actually docked
 			// Cycle linking is only disabled if we are actually adjacent to another airlock
 			shuttledocked = TRUE
-			A.shuttledocked = TRUE
+			other_airlock.shuttledocked = TRUE
 
 /obj/machinery/camera/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	. = ..()
@@ -271,8 +267,8 @@ All ShuttleMove procs go here
 				A.addMember(src)
 		build_network()
 	else
-		// atmosinit() calls update_icon(), so we don't need to call it
-		update_icon()
+		// atmosinit() calls update_appearance(), so we don't need to call it
+		update_appearance()
 
 /obj/machinery/navbeacon/beforeShuttleMove(turf/newT, rotation, move_mode, obj/docking_port/mobile/moving_dock)
 	. = ..()

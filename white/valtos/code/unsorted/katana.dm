@@ -36,7 +36,7 @@
 /obj/item/melee/sabre/security/get_cell()
 	return cell
 
-/obj/item/melee/sabre/security/Initialize()
+/obj/item/melee/sabre/security/Initialize(mapload)
 	. = ..()
 	if(preload_cell_type)
 		if(!ispath(preload_cell_type,/obj/item/stock_parts/cell))
@@ -66,7 +66,7 @@
 			//we're below minimum, turn off
 			turned_on = FALSE
 			update_icon()
-			playsound(src, "sparks", 75, TRUE, -1)
+			playsound(src, "zap", 75, TRUE, -1)
 
 /obj/item/melee/sabre/security/update_icon_state()
 	if(turned_on)
@@ -121,7 +121,7 @@
 	if(cell && cell.charge > cell_hit_cost)
 		turned_on = !turned_on
 		to_chat(user, span_notice("<b>[capitalize(src.name)]</b> теперь [turned_on ? "включена" : "отключена"]."))
-		playsound(src, "sparks", 75, TRUE, -1)
+		playsound(src, "zap", 75, TRUE, -1)
 	else
 		turned_on = FALSE
 		if(!cell)
@@ -157,8 +157,6 @@
 	L.apply_damage(25, STAMINA, BODY_ZONE_CHEST)
 	playsound(src, 'sound/weapons/egloves.ogg', 50, TRUE, -1)
 	if(user)
-//		L.lastattacker = user.real_name
-//		L.lastattackerckey = user.ckey
 		L.visible_message(span_danger("<b>[user]</b> бьёт <b>[L]</b> при помощи <b>[src.name]</b>, высвобождая холодный поток энергии из <b>[src]</b>!") , \
 								span_userdanger("<b>[user]</b> бьёт меня при помощи <b>[src.name]</b>!"))
 		log_combat(user, L, "cryosliced")

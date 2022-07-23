@@ -25,8 +25,6 @@
 
 	COOLDOWN_DECLARE(activation_cooldown)
 
-	air_tight = TRUE
-
 	///Trick to get the glowing overlay visible from a distance
 	luminosity = 1
 	///X offset for the overlay lights, so that they line up with the thin border firelocks
@@ -52,13 +50,9 @@
 	///The merger_id and merger_typecache variables are used to make rows of firelocks activate at the same time.
 	var/merger_id = "firelocks"
 	var/static/list/merger_typecache
+
 	///Overlay object for the warning lights. This and some plane settings allows the lights to glow in the dark.
 	var/mutable_appearance/warn_lights
-
-	///looping sound datum for our fire alarm siren.
-	var/datum/looping_sound/firealarm/soundloop
-	///Keeps track of if we're playing the alarm sound loop (as only one firelock per group should be). Used during power changes.
-	var/is_playing_alarm = FALSE
 
 	var/knock_sound = 'sound/effects/glassknock.ogg'
 	var/bash_sound = 'sound/effects/glassbash.ogg'
@@ -66,7 +60,6 @@
 
 /obj/machinery/door/firedoor/Initialize(mapload)
 	. = ..()
-	soundloop = new(src, FALSE)
 	CalculateAffectingAreas()
 	my_area = get_area(src)
 	if(!merger_typecache)
@@ -83,7 +76,7 @@
 	RegisterSignal(src, COMSIG_MERGER_ADDING, .proc/merger_adding)
 	RegisterSignal(src, COMSIG_MERGER_REMOVING, .proc/merger_removing)
 	GetMergeGroup(merger_id, merger_typecache)
-	register_adjacent_turfs(src)
+	register_adjacent_turfs()
 
 	if(alarm_type) // Fucking subtypes fucking mappers fucking hhhhhhhh
 		start_activation_process(alarm_type)
@@ -98,7 +91,6 @@
 
 /obj/machinery/door/firedoor/Destroy()
 	remove_from_areas()
-	QDEL_NULL(soundloop)
 	return ..()
 
 /obj/machinery/door/firedoor/examine(mob/user)
@@ -160,27 +152,39 @@
 			var/turf/checked_turf = get_step(get_turf(firelock), dir)
 			if(!checked_turf)
 				continue
+			if(isclosedturf(checked_turf))
+				continue
 			process_results(checked_turf)
 
-/obj/machinery/door/firedoor/proc/register_adjacent_turfs(atom/loc)
+/obj/machinery/door/firedoor/proc/register_adjacent_turfs()
+	if(!loc)
+		return
+
+	var/turf/our_turf = get_turf(loc)
+	//RegisterSignal(our_turf, COMSIG_TURF_CALCULATED_ADJACENT_ATMOS, .proc/process_results)
 	for(var/dir in GLOB.cardinals)
-		var/turf/checked_turf = get_step(get_turf(loc), dir)
+		var/turf/checked_turf = get_step(our_turf, dir)
 
 		if(!checked_turf)
 			continue
+		if(isclosedturf(checked_turf))
+			continue
 		process_results(checked_turf)
 		RegisterSignal(checked_turf, COMSIG_TURF_EXPOSE, .proc/process_results)
-		RegisterSignal(checked_turf, COMSIG_TURF_CALCULATED_ADJACENT_ATMOS, .proc/process_results)
 
-/obj/machinery/door/firedoor/proc/unregister_adjacent_turfs(atom/loc)
+/obj/machinery/door/firedoor/proc/unregister_adjacent_turfs(atom/old_loc)
+	if(!loc)
+		return
+
+	var/turf/our_turf = get_turf(old_loc)
+	//UnregisterSignal(our_turf, COMSIG_TURF_CALCULATED_ADJACENT_ATMOS)
 	for(var/dir in GLOB.cardinals)
-		var/turf/checked_turf = get_step(get_turf(loc), dir)
+		var/turf/checked_turf = get_step(our_turf, dir)
 
 		if(!checked_turf)
 			continue
 
 		UnregisterSignal(checked_turf, COMSIG_TURF_EXPOSE)
-		UnregisterSignal(checked_turf, COMSIG_TURF_CALCULATED_ADJACENT_ATMOS)
 
 /obj/machinery/door/firedoor/proc/check_atmos(turf/checked_turf)
 	var/datum/gas_mixture/environment = checked_turf.return_air()
@@ -229,8 +233,6 @@
 /obj/machinery/door/firedoor/proc/start_activation_process(code = FIRELOCK_ALARM_TYPE_GENERIC)
 	if(active)
 		return //We're already active
-	soundloop.start()
-	is_playing_alarm = TRUE
 	var/datum/merger/merge_group = GetMergeGroup(merger_id, merger_typecache)
 	for(var/obj/machinery/door/firedoor/buddylock as anything in merge_group.members)
 		buddylock.activate(code)
@@ -241,8 +243,6 @@
  * in the merge group datum. sets our alarm type to null, signifying no alarm.
  */
 /obj/machinery/door/firedoor/proc/start_deactivation_process()
-	soundloop.stop()
-	is_playing_alarm = FALSE
 	var/datum/merger/merge_group = GetMergeGroup(merger_id, merger_typecache)
 	for(var/obj/machinery/door/firedoor/buddylock as anything in merge_group.members)
 		buddylock.reset()
@@ -294,8 +294,6 @@
 	alarm_type = null
 	active = FALSE
 	remove_as_source()
-	soundloop.stop()
-	is_playing_alarm = FALSE
 	update_icon() //Sets the door lights even if the door doesn't move.
 	correct_state()
 
@@ -310,9 +308,6 @@
 	ignore_alarms = TRUE
 	if(!length(issue_turfs)) // Generic alarms get out
 		alarm_type = null
-
-	soundloop.stop()
-	is_playing_alarm = FALSE
 	remove_as_source()
 	update_icon() //Sets the door lights even if the door doesn't move.
 	correct_state()
@@ -374,14 +369,9 @@
 	update_icon()
 
 	if(machine_stat & NOPOWER)
-		soundloop.stop()
 		return
 
 	correct_state()
-
-	if(is_playing_alarm)
-		soundloop.start()
-
 
 /obj/machinery/door/firedoor/attack_hand(mob/living/user, list/modifiers)
 	. = ..()
@@ -603,7 +593,7 @@
 /obj/machinery/door/firedoor/Moved(atom/oldloc)
 	. = ..()
 	unregister_adjacent_turfs(oldloc)
-	register_adjacent_turfs(src)
+	register_adjacent_turfs()
 
 /obj/machinery/door/firedoor/closed
 	icon_state = "door_closed"

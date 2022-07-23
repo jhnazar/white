@@ -19351,7 +19351,6 @@
 /turf/open/floor/plasteel,
 /area/hallway/primary/aft)
 "cAy" = (
-/obj/structure/lattice,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/general/visible{
 	dir = 4
 	},
@@ -38519,7 +38518,7 @@
 /turf/open/floor/plasteel,
 /area/command/heads_quarters/captain/private)
 "ewg" = (
-/obj/machinery/rnd/production/techfab/department/cargo,
+/obj/machinery/mecha_part_fabricator/cargo,
 /obj/effect/turf_decal/stripes/box,
 /obj/effect/turf_decal/tile/brown,
 /obj/effect/turf_decal/tile/brown{
@@ -59936,9 +59935,6 @@
 "kzp" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/effect/decal/cleanable/dirt,
-/obj/vehicle/ridden/forklift{
-	dir = 4
-	},
 /turf/open/floor/plating,
 /area/cargo/warehouse)
 "kzH" = (
@@ -88414,7 +88410,6 @@
 /turf/open/floor/plasteel,
 /area/hallway/primary/aft)
 "rSK" = (
-/obj/structure/lattice,
 /obj/structure/grille,
 /turf/closed/wall/r_wall,
 /area/space/nearstation)
@@ -101549,7 +101544,6 @@
 /turf/open/floor/plasteel/dark,
 /area/service/bar)
 "vsT" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/engineering/atmos/upper)
 "vtq" = (
@@ -110553,7 +110547,6 @@
 /turf/open/floor/plasteel,
 /area/security/checkpoint)
 "xSu" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/engineering/gravity_generator)
 "xSB" = (

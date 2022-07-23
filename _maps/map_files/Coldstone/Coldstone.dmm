@@ -3440,15 +3440,6 @@
 /obj/item/clothing/suit/hooded/wintercoat,
 /obj/item/clothing/suit/hooded/wintercoat,
 /obj/item/clothing/suit/hooded/wintercoat,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
-/obj/item/clothing/shoes/winterboots,
 /obj/structure/closet/supplypod,
 /turf/open/floor/grass/snow/safe,
 /area/partyhard/surface)
@@ -6575,7 +6566,7 @@
 /turf/open/floor/plating/snowed,
 /area/tcommsat/server)
 "td" = (
-/obj/machinery/rnd/production/techfab/department/cargo,
+/obj/machinery/mecha_part_fabricator/cargo,
 /turf/open/floor/plasteel/dark,
 /area/cargo/office)
 "te" = (
@@ -8986,6 +8977,19 @@
 	},
 /turf/open/floor/mineral/titanium/white,
 /area/hallway/secondary/entry)
+"Ep" = (
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/obj/item/clothing/shoes/winterboots,
+/turf/open/floor/grass/snow/safe,
+/area/partyhard/surface)
 "Er" = (
 /obj/structure/cable,
 /obj/structure/railing/corner{
@@ -9718,7 +9722,7 @@
 /obj/structure/cable,
 /obj/machinery/power/apc{
 	dir = 1;
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/machinery/light{
 	dir = 4
@@ -9900,7 +9904,9 @@
 /turf/open/floor/plasteel/dark,
 /area/medical/medbay)
 "Is" = (
-/obj/structure/bonfire/prelit,
+/obj/structure/bonfire/prelit{
+	density = 1
+	},
 /obj/effect/turf_decal/weather/snow/corner,
 /obj/effect/turf_decal/weather/snow/corner{
 	dir = 1
@@ -11057,6 +11063,19 @@
 /obj/structure/table/reinforced,
 /turf/open/floor/plasteel/dark,
 /area/medical/chemistry)
+"MY" = (
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/obj/item/clothing/gloves/color/black,
+/turf/open/floor/grass/snow/safe,
+/area/partyhard/surface)
 "MZ" = (
 /turf/closed/wall/rust,
 /area/science/server)
@@ -12235,7 +12254,7 @@
 	areastring = "/area/command/heads_quarters/ce";
 	dir = 4;
 	name = "CE Office APC";
-	pixel_x = 24
+	pixel_x = 25
 	},
 /turf/open/floor/plasteel/dark,
 /area/command/heads_quarters/ce)
@@ -12485,6 +12504,8 @@
 /obj/item/circuitboard/machine/mechfab,
 /obj/item/circuitboard/machine/mechfab/med,
 /obj/item/circuitboard/machine/mechfab/engi,
+/obj/item/circuitboard/machine/mechfab/sci,
+/obj/item/circuitboard/machine/mechfab/cargo,
 /obj/item/circuitboard/machine/techfab,
 /obj/item/circuitboard/machine/techfab,
 /obj/structure/closet/supplypod,
@@ -283232,7 +283253,7 @@ dp
 dp
 dp
 dp
-dp
+Ep
 dp
 dp
 RQ
@@ -283746,7 +283767,7 @@ dp
 dp
 dp
 dp
-dp
+MY
 dp
 dp
 dp
@@ -288101,7 +288122,7 @@ Vs
 Vs
 Vs
 Vs
-Vs
+dp
 Vs
 Vs
 Vs
@@ -288358,7 +288379,7 @@ Vs
 Vs
 Vs
 Vs
-Vs
+dp
 Vs
 Vs
 Vs
@@ -290927,7 +290948,7 @@ Vs
 Vs
 Vs
 Vs
-Vs
+dp
 Vs
 Vs
 Vs
@@ -291184,7 +291205,7 @@ Vs
 Vs
 dp
 Vs
-Vs
+dp
 Vs
 Vs
 Vs
@@ -292211,7 +292232,7 @@ Vs
 Vs
 Vs
 Vs
-Vs
+dp
 Vs
 Vs
 Vs
@@ -292468,7 +292489,7 @@ Vs
 Vs
 dp
 dp
-Vs
+dp
 Vs
 Vs
 Vs

@@ -21,6 +21,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 	RADIO_KEY_SYNDICATE = RADIO_CHANNEL_SYNDICATE,
 	RADIO_KEY_CENTCOM = RADIO_CHANNEL_CENTCOM,
 	RADIO_KEY_FACTION = RADIO_CHANNEL_FACTION,
+	RADIO_KEY_YOHEI = RADIO_CHANNEL_YOHEI,
 
 	// Admin
 	MODE_KEY_ADMIN = MODE_ADMIN,
@@ -67,6 +68,7 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	MODE_INTERCOM = HARD_CRIT,
 	MODE_ALIEN = HARD_CRIT,
+	MODE_CHANGELING = HARD_CRIT,
 	MODE_BINARY = HARD_CRIT, //extra stat check on human/binarycheck()
 	MODE_MONKEY = HARD_CRIT,
 	MODE_MAFIA = HARD_CRIT
@@ -140,13 +142,11 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 
 	switch(stat)
 		if(SOFT_CRIT)
-			if(message_mods[MODE_CHANGELING])
-				return
 			message_mods[WHISPER_MODE] = MODE_WHISPER
 		if(UNCONSCIOUS)
 			return
 		if(HARD_CRIT)
-			if(!message_mods[WHISPER_MODE] || message_mods[MODE_CHANGELING])
+			if(!message_mods[WHISPER_MODE])
 				return
 		if(DEAD)
 			say_dead(original_message)
@@ -166,7 +166,7 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	if(!language)
 		language = get_selected_language()
 	var/mob/living/carbon/human/H = src
-	if(!can_speak_vocal(message))
+	if(!can_speak_vocal(message) && !message_mods[MODE_CHANGELING])
 		if (HAS_TRAIT(src, TRAIT_SIGN_LANG) && H.mind.miming)
 			to_chat(src, span_warning("Не могу петь!"))
 			return
@@ -411,14 +411,14 @@ GLOBAL_LIST_INIT(message_modes_stat_limits, list(
 	if(fucking_anime_girl_noises_oh_nya)
 		message = ddlc_text(message)
 
+	if(hydration <= HYDRATION_LEVEL_DEHYDRATED)
+		message = thirstymessage(message)
+
 	if(cultslurring && slurring)
 		message = cultslur(message)
 
 	else if(slurring)
 		message = slur(message)
-
-	if(hydration <= HYDRATION_LEVEL_DEHYDRATED)
-		message = thirstymessage(message)
 
 	if(client?.prefs?.disabled_autocap)
 		message = message

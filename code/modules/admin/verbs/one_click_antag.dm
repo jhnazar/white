@@ -12,15 +12,19 @@
 	var/dat = {"
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=traitors'>Make Traitors</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=changelings'>Make Changelings</a><br>
+		<a href='?src=[REF(src)];[HrefToken()];makeAntag=bloodsuckers'>Make Bloodsuckers</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=revs'>Make Revs</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=cult'>Make Cult</a><br>
+		<a href='?src=[REF(src)];[HrefToken()];makeAntag=clockcult'>Make ClockCult</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=blob'>Make Blob</a><br>
+		<a href='?src=[REF(src)];[HrefToken()];makeAntag=dreamer'>Make Dreamer</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=wizard'>Make Wizard (Requires Ghosts)</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=nukeops'>Make Nuke Team (Requires Ghosts)</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=centcom'>Make CentCom Response Team (Requires Ghosts)</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=abductors'>Make Abductor Team (Requires Ghosts)</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=revenant'>Make Revenant (Requires Ghost)</a><br>
 		<a href='?src=[REF(src)];[HrefToken()];makeAntag=nerd'>Make N.E.R.D. (Requires Ghost)</a><br>
+		<a href='?src=[REF(src)];[HrefToken()];makeAntag=cops'>Make cops. (Requires Ghosts)</a><br>
 		"}
 
 	var/datum/browser/popup = new(usr, "oneclickantag", "Quick-Create Antagonist", 400, 400)
@@ -105,6 +109,36 @@
 
 	return FALSE
 
+/datum/admins/proc/makeSuckers()
+	var/datum/game_mode/bloodsucker/temp = new
+
+	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+		temp.restricted_jobs += temp.protected_jobs
+
+	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+		temp.restricted_jobs += "Assistant"
+
+	var/list/mob/living/carbon/human/candidates = list()
+	var/mob/living/carbon/human/H = null
+
+	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
+		if(isReadytoRumble(applicant, ROLE_BLOODSUCKER))
+			if(temp.age_check(applicant.client))
+				if(!(applicant.job in temp.restricted_jobs))
+					candidates += applicant
+
+	if(candidates.len)
+		var/numSuckers = min(candidates.len, 3)
+
+		for(var/i = 0, i<numSuckers, i++)
+			H = pick(candidates)
+			H.mind.make_bloodsucker()
+			candidates.Remove(H)
+
+		return TRUE
+
+	return FALSE
+
 /datum/admins/proc/makeRevs()
 
 	var/datum/game_mode/revolution/temp = new
@@ -174,6 +208,50 @@
 
 	return FALSE
 
+/datum/admins/proc/makeClockCult()
+	var/datum/game_mode/clockcult/temp = new
+	if(CONFIG_GET(flag/protect_roles_from_antagonist))
+		temp.restricted_jobs += temp.protected_jobs
+
+	if(CONFIG_GET(flag/protect_assistant_from_antagonist))
+		temp.restricted_jobs += "Assistant"
+
+	var/list/mob/living/carbon/human/candidates = list()
+	var/mob/living/carbon/human/H = null
+
+	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
+		if(isReadytoRumble(applicant, ROLE_SERVANT_OF_RATVAR))
+			if(temp.age_check(applicant.client))
+				if(!(applicant.job in temp.restricted_jobs))
+					candidates += applicant
+
+	if(candidates.len)
+		var/numCultists = min(candidates.len, 4)
+
+		LoadReebe()
+
+		var/list/spawns = GLOB.servant_spawns.Copy()
+
+		temp.main_cult = new
+		temp.main_cult.setup_objectives()
+
+		for(var/i = 0, i<numCultists, i++)
+			H = pick(candidates)
+			H.forceMove(pick_n_take(spawns))
+			H.set_species(/datum/species/human)
+			var/datum/antagonist/servant_of_ratvar/S = add_servant_of_ratvar(H, team = temp.main_cult)
+			S.equip_servant()
+			var/obj/item/clockwork/clockwork_slab/slab = new(get_turf(H))
+			H.put_in_hands(slab)
+			slab.pickup(H)
+			S.prefix = CLOCKCULT_PREFIX_MASTER
+			candidates.Remove(H)
+
+		generate_clockcult_scriptures()
+
+		return TRUE
+
+	return FALSE
 
 
 /datum/admins/proc/makeNukeTeam()
@@ -236,9 +314,17 @@
 	else
 		return FALSE
 
-
-
-
+/datum/admins/proc/makeDreamer()
+	var/list/mob/living/carbon/human/candidates = list()
+	var/mob/living/carbon/human/H = null
+	for(var/mob/living/carbon/human/applicant in GLOB.player_list)
+		if(isReadytoRumble(applicant, ROLE_TRAITOR))
+			candidates += applicant
+	if(candidates.len)
+		H = pick(candidates)
+		H.mind.make_Dreamer()
+		return TRUE
+	return FALSE
 
 /datum/admins/proc/makeAliens()
 	var/datum/round_event/ghost_role/alien_infestation/E = new(FALSE)
@@ -467,3 +553,38 @@
 		teamsize--
 
 	return TRUE
+
+/datum/admins/proc/makeCops()
+	var/list/mob/dead/observer/candidates = poll_ghost_candidates("Устроим полицейский беспредел?", "deathsquad", null)
+	var/list/mob/dead/observer/chosen = list()
+	var/mob/dead/observer/theghost = null
+
+	if(candidates.len)
+		var/numcops = 6
+		var/copscount = 0
+
+		for(var/i = 0, i<numcops,i++)
+			shuffle_inplace(candidates) //roll
+			for(var/mob/j in candidates)
+				if(!j || !j.client)
+					candidates.Remove(j)
+					continue
+
+				theghost = j
+				candidates.Remove(theghost)
+				chosen += theghost
+				copscount++
+				break
+		//Копы работают минимум вдвоем
+		if(copscount < 2)
+			return FALSE
+		var/obj/structure/closet/supplypod/bluespacepod/banka = new()
+		var/parking = find_safe_turf()
+		for(var/mob/c in chosen)
+			var/mob/living/carbon/human/new_character=makeBody(c)
+			new_character.mind.add_antag_datum(/datum/antagonist/ert/spacepol)
+			new_character.equipOutfit(/datum/outfit/spacepol)
+			new_character.forceMove(banka)
+		new /obj/effect/pod_landingzone(parking, banka)
+		priority_announce("Внимание, в вашем районе проходит облава.", sound('white/alexs410/sound/manhunt.ogg'), sender_override = "Главное управление Спецотряда")
+

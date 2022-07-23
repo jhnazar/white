@@ -120,9 +120,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/fullscreen = TRUE
 
 	///Should we automatically fit the viewport?
-	var/auto_fit_viewport = FALSE
-	///Should we be in the widescreen mode set by the config?
-	var/widescreenpref = TRUE
+	var/auto_fit_viewport = TRUE
 	///What size should pixels be displayed as? 0 is strech to fit
 	var/pixel_size = 0
 	///What scaling method should we use? Distort means nearest neighbor
@@ -143,7 +141,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	//Loadout stuff
 	var/list/gear = list()
 	var/list/purchased_gear = list()
-	var/list/equipped_gear = list()
+	var/list/list/equipped_gear_by_character = list()
 	var/list/jobs_buyed = list()
 	var/gear_tab = "Основное"
 	///This var stores the amount of points the owner will get for making it out alive.
@@ -172,7 +170,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	UI_style = GLOB.available_ui_styles[1]
 	if(istype(C))
-		if(!IsGuestKey(C.key))
+		if(!is_guest_key(C.key))
 			load_path(C.ckey)
 	var/loaded_preferences_successfully = load_preferences()
 	if(loaded_preferences_successfully)
@@ -180,7 +178,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			return
 	//we couldn't load character data so just randomize the character appearance + name
 	random_character()		//let's create a random character then - rather than a fat, bald and naked man.
-	key_bindings = deepCopyList(GLOB.hotkey_keybinding_list_by_key) // give them default keybinds and update their movement keys
+	key_bindings = deep_copy_list(GLOB.hotkey_keybinding_list_by_key) // give them default keybinds and update their movement keys
 	C?.set_macros()
 	real_name = pref_species.random_name(gender, 1, en_lang = en_names)
 	if(!loaded_preferences_successfully)
@@ -211,49 +209,53 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 /datum/preferences/proc/ShowChoices(mob/user)
 	if(!user || !user.client)
 		return
+	if(!MC_RUNNING())
+		to_chat(user, span_info("Сервер всё ещё инициализируется. Подождите..."))
+		return
 	if(slot_randomized)
 		load_character(default_slot) // Reloads the character slot. Prevents random features from overwriting the slot if saved.
 		slot_randomized = FALSE
 	update_preview_icon()
-	var/list/dat = list("<center>")
+	var/list/dat = list("<div id='prefsel'><div id='prefsel_menu'><div class='prefsel_menu_header'>Меню</div><ul>")
 
-	dat += "<a href='?_src_=prefs;preference=tab;tab=0' [current_tab == 0 ? "class='linkOn'" : ""]>Персонаж</a>"
-	dat += "<a href='?_src_=prefs;preference=tab;tab=1' [current_tab == 1 ? "class='linkOn'" : ""]>Магазин</a>"
-	dat += "<a href='?_src_=prefs;preference=tab;tab=2' [current_tab == 2 ? "class='linkOn'" : ""]>Игра</a>"
-	dat += "<a href='?_src_=prefs;preference=tab;tab=3' [current_tab == 3 ? "class='linkOn'" : ""]>OOC</a>"
-	dat += "<a href='?_src_=prefs;preference=tab;tab=4' [current_tab == 4 ? "class='linkOn'" : ""]>Хоткеи</a>"
+	dat += "<li><a href='?_src_=prefs;preference=tab;tab=0' [current_tab == 0 ? "class='linkOn'" : ""]>Персонаж</a></li>"
+	dat += "<li><a href='?_src_=prefs;preference=tab;tab=1' [current_tab == 1 ? "class='linkOn'" : ""]>Магазин</a></li>"
+	dat += "<li><a href='?_src_=prefs;preference=tab;tab=2' [current_tab == 2 ? "class='linkOn'" : ""]>Игра</a></li>"
+	dat += "<li><a href='?_src_=prefs;preference=tab;tab=3' [current_tab == 3 ? "class='linkOn'" : ""]>OOC</a></li>"
+	dat += "<li><a href='?_src_=prefs;preference=tab;tab=4' [current_tab == 4 ? "class='linkOn'" : ""]>Хоткеи</a></li>"
+	dat += "</ul>"
 
-	if(!path)
-		dat += "<div class='notice'>Создайте своего первого персонажа.</div>"
+	dat += "<div class='prefsel_menu_header'>Настройки</div><ul>"
 
-	dat += "</center>"
+	if(!is_guest_key(user.key))
+		dat += "<li><a href='?_src_=prefs;preference=load'>Отмена</a></li>"
+		dat += "<li><a href='?_src_=prefs;preference=save'>Сохранить</a></li>"
 
-	dat += "<HR>"
+	dat += "<li><a href='?_src_=prefs;preference=reset_all'>Сбросить</a></li></ul>"
+
+	if(current_tab != 0)
+		dat += "</div><div id='prefsel_main'>"
 
 	switch(current_tab)
 		if (0) // Character Settings#
+			dat += "<div class='prefsel_menu_header'>Персонаж</div><ul>"
+			dat += "<li><a href='?_src_=prefs;preference=job;task=menu'>Должности</a></li>"
+			if(CONFIG_GET(flag/roundstart_traits))
+				dat += "<li><a href='?_src_=prefs;preference=trait;task=menu'>Особенности</a></li>"
+			dat += "</ul><div class='prefsel_menu_header'>Персонажи</div><ul>"
 			if(path)
 				var/savefile/S = new /savefile(path)
 				if(S)
-					dat += "<div class='csetup_characters'>"
+					dat += "<li>"
 					var/name
 					for(var/i=1, i<=max_slots, i++)
 						S.cd = "/character[i]"
 						S["real_name"] >> name
 						if(!name)
 							name = "Персонаж [i]"
-						dat += "<a class='csetup_characters_character' href='?_src_=prefs;preference=changeslot;num=[i];' [i == default_slot ? "class='linkOn'" : ""]>[name]</a> "
-					dat += "</div>"
-			dat += "<div class='csetup_occupations'>"
-			dat += "<h2>Предпочтительные должности</h2>"
-			dat += "<a class='csetup_occupations_choose' href='?_src_=prefs;preference=job;task=menu'>Выбрать</a>"
-			if(CONFIG_GET(flag/roundstart_traits))
-				dat += "<h2>Особенности</h2>"
-				dat += "<a class='csetup_occupations_choose' href='?_src_=prefs;preference=trait;task=menu'>Настроить особенности</a></center>"
-				dat += "<center><b>Текущие особенности:</b> [all_quirks.len ? all_quirks.Join(", ") : "Нет"]</center></div>"
-			else
-				dat += "</div>"
-			dat += "<div class='csetup_main'>"
+						dat += "<a href='?_src_=prefs;preference=changeslot;num=[i];' [i == default_slot ? "class='linkOn'" : ""]>[name]</a> "
+					dat += "</li>"
+			dat += "</ul></div><div id='prefsel_main'><div class='csetup_main'>"
 			if(is_banned_from(user.ckey, "Appearance"))
 				dat += "<div class='csetup_banned'>Тебе нельзя. Ты всё ещё можешь настраивать персонажей, но в любом случае получишь случайную внешность и имя.</div>"
 			dat += "<div class='csetup_content'><div class='csetup_header'>Имя</div>"
@@ -413,20 +415,23 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			if(pref_species.mutant_bodyparts["ears"])
 				dat += SETUP_NODE_INPUT("Уши", "ears", features["ears"])
 
-			dat += "</div></div>"
+			dat += "</div></div></div>"
 
 		if(1)
 			var/list/type_blacklist = list()
-			if(equipped_gear && equipped_gear.len)
-				for(var/i = 1, i <= equipped_gear.len, i++)
-					var/datum/gear/G = GLOB.gear_datums[equipped_gear[i]]
-					if(G)
-						if(G.subtype_path in type_blacklist)
-							continue
-						type_blacklist += G.subtype_path
-					else
-						equipped_gear.Cut(i,i+1)
-
+			if(LAZYACCESS(equipped_gear_by_character, default_slot))
+				if(LAZYLEN(equipped_gear_by_character[default_slot]))
+					for(var/i = 1, i <= LAZYLEN(equipped_gear_by_character[default_slot]), i++)
+						var/datum/gear/G = GLOB.gear_datums[equipped_gear_by_character[default_slot][i]]
+						if(G)
+							if(G.subtype_path in type_blacklist)
+								continue
+							type_blacklist += G.subtype_path
+						else
+							equipped_gear_by_character[default_slot].Cut(i, i+1)
+			else
+				LAZYSETLEN(equipped_gear_by_character, 20)
+				LAZYADDASSOCLIST(equipped_gear_by_character, default_slot, null)
 			var/fcolor =  "#3366CC"
 			var/metabalance = user.client.get_metabalance()
 			dat += "<table align='center' width='100%' class='metamag'>"
@@ -461,7 +466,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				var/datum/loadout_category/LC = GLOB.loadout_categories[gear_tab]
 				for(var/gear_name in LC.gear)
 					var/datum/gear/G = LC.gear[gear_name]
-					var/ticked = (G.id in equipped_gear)
+					var/ticked = (G.id in equipped_gear_by_character[default_slot])
 
 					dat += "<tr style='vertical-align:middle;' class='metaitem"
 					if(G.id in purchased_gear)
@@ -494,7 +499,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						var/datum/gear/G = GLOB.gear_datums[gear_name]
 						if(!G || category != G.sort_category)
 							continue
-						var/ticked = (G.id in equipped_gear)
+						var/ticked = (G.id in equipped_gear_by_character[default_slot])
 						dat += "<a class='tooltip[ticked ? " linkOn" : ""]' style='padding: 10px 2px;' href='?_src_=prefs;preference=gear;toggle_gear=[G.id]'>[G.get_base64_icon_html()]<span class='tooltiptext'>[G.display_name]</span></a>"
 					dat += "</td></tr>"
 			dat += "</table>"
@@ -519,6 +524,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += SETUP_NODE_SWITCH("Эмоуты", "ghost_sight", (chat_toggles & CHAT_GHOSTSIGHT) ? "Все" : "Рядом")
 			dat += SETUP_NODE_SWITCH("Шёпот", "ghost_whispers", (chat_toggles & CHAT_GHOSTWHISPER) ? "Все" : "Рядом")
 			dat += SETUP_NODE_SWITCH("ПДА", "ghost_pda", (chat_toggles & CHAT_GHOSTPDA) ? "Все" : "Рядом")
+			dat += SETUP_NODE_SWITCH("Вход/Выход призраков", "hear_login_logout", (chat_toggles & CHAT_LOGIN_LOGOUT) ? "Слушать" : "Не слушать")
+			dat += SETUP_NODE_SWITCH("Мой выход", "broadcast_login_logout", broadcast_login_logout ? "Оповещать" : "Молчать")
 			dat += SETUP_NODE_INPUT("Форма", "ghostform", ghost_form)
 			dat += SETUP_NODE_INPUT("Орбита", "ghostorbit", ghost_orbit)
 			dat += SETUP_NODE_SWITCH("Передача тела", "ice_cream", ice_cream ? "Вкл" : "Выкл")
@@ -548,6 +555,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += "</div><div class='csetup_content'><div class='csetup_header'>Графика</div>"
 			dat += SETUP_NODE_SWITCH("Автокоррекция текста", "disabled_autocap", disabled_autocap ? "Выкл" : "Вкл")
 			dat += SETUP_NODE_SWITCH("Сообщения ID-карты", "income_pings", (chat_toggles & CHAT_BANKCARD) ? "Вкл" : "Выкл")
+			dat += SETUP_NODE_SWITCH("Избыточные сообщения", "chat_spam", (chat_toggles & CHAT_SPAM) ? "Вкл" : "Выкл")
 			dat += SETUP_NODE_INPUT("FPS", "clientfps", clientfps)
 
 			switch (parallax)
@@ -568,19 +576,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			dat += SETUP_NODE_SWITCH("Полный экран", "fullscreen", fullscreen ? "Вкл" : "Выкл")
 
 			if (CONFIG_GET(string/default_view) != CONFIG_GET(string/default_view_square))
-				dat += SETUP_NODE_SWITCH("Широкий экран", "widescreenpref", widescreenpref ? "Вкл ([CONFIG_GET(string/default_view)])" : "Выкл ([CONFIG_GET(string/default_view_square)])")
-				if(widescreenpref)
-					dat += SETUP_NODE_INPUT("Своя ширина экрана", "widescreenwidth", widescreenwidth)
-
-			dat += SETUP_NODE_SWITCH("Названия предметов", "tooltip_user", (w_toggles & TOOLTIP_USER_UP) ? "Вкл" : "Выкл")
-			dat += SETUP_NODE_SWITCH("Позиция на экране", "tooltip_pos", (w_toggles & TOOLTIP_USER_POS) ? "Внизу" : "Вверху")
-			dat += SETUP_NODE_SWITCH("Ретро-статусбар", "tooltip_retro", (w_toggles & TOOLTIP_USER_RETRO) ? "Вкл" : "Выкл")
-			dat += SETUP_NODE_SWITCH("Горизонтальная инверсия", "horiz_inv", (w_toggles & SCREEN_HORIZ_INV) ? "Вкл" : "Выкл")
-			dat += SETUP_NODE_SWITCH("Вертикальная инверсия", "verti_inv", (w_toggles & SCREEN_VERTI_INV) ? "Вкл" : "Выкл")
-			dat += SETUP_NODE_SWITCH("Невидимые разделители", "hide_split", (w_toggles & SCREEN_HIDE_SPLIT) ? "Вкл" : "Выкл")
+				dat += SETUP_NODE_INPUT("Ширина экрана", "widescreenwidth", widescreenwidth)
 
 			button_name = pixel_size
-			dat += SETUP_NODE_SWITCH("Пиксельное скалирование", "pixel_size", button_name ? "Pixel Perfect [button_name]x" : "Stretch to fit")
+			dat += SETUP_NODE_SWITCH("Пиксельное скалирование", "pixel_size", (button_name) ? "Один к [button_name]" : "Растянуть")
 
 			switch(scaling_method)
 				if(SCALING_METHOD_DISTORT)
@@ -591,6 +590,13 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					button_name = "Bilinear"
 
 			dat += SETUP_NODE_SWITCH("Метод скалирования", "scaling_method", button_name)
+
+			//dat += SETUP_NODE_SWITCH("Названия предметов", "tooltip_user", (w_toggles & TOOLTIP_USER_UP) ? "Вкл" : "Выкл")
+			dat += SETUP_NODE_SWITCH("Позиция на экране", "tooltip_pos", (w_toggles & TOOLTIP_USER_POS) ? "Внизу" : "Вверху")
+			dat += SETUP_NODE_SWITCH("Ретро-статусбар", "tooltip_retro", (w_toggles & TOOLTIP_USER_RETRO) ? "Вкл" : "Выкл")
+			dat += SETUP_NODE_SWITCH("Горизонтальная инверсия", "horiz_inv", (w_toggles & SCREEN_HORIZ_INV) ? "Вкл" : "Выкл")
+			dat += SETUP_NODE_SWITCH("Вертикальная инверсия", "verti_inv", (w_toggles & SCREEN_VERTI_INV) ? "Вкл" : "Выкл")
+			dat += SETUP_NODE_SWITCH("Невидимые разделители", "hide_split", (w_toggles & SCREEN_HIDE_SPLIT) ? "Вкл" : "Выкл")
 
 			if (CONFIG_GET(flag/maprotation))
 				var/p_map = preferred_map
@@ -611,6 +617,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					dat += SETUP_NODE_INPUT("Любимая карта", "preferred_map", p_map)
 
 			dat += "</div><div class='csetup_content'><div class='csetup_header'>Спецроли</div>"
+
+			if(user?.client?.get_metabalance() < 50)
+				dat += "<font color='#ff3333'><b>Отрицательная карма. Получение роли маловероятно.</b></font>"
 
 			if(is_banned_from(user.ckey, ROLE_SYNDICATE))
 				dat += "<font color='#ff7777'><b>Тебе нельзя быть антагами.</b></font>"
@@ -707,6 +716,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 			dat += "<div class='csetup_main'>"
 
+			dat += "<div class='csetup_content'><div class='csetup_header'>Однокнопочное</div>"
+			dat += "<center><a href ='?_src_=prefs;preference=keybindings_reset'>Сбросить хоткеи</a></center></div>"
+
 			for (var/category in kb_categories)
 				dat += "<div class='csetup_content'><div class='csetup_header'>[category]</div>"
 				for (var/i in kb_categories[category])
@@ -726,16 +738,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							dat += SETUP_GET_LINK("keybindings_capture", "[kb.name]", "keybinding", "Alt")
 						dat += SETUP_CLOSE_NODE
 				dat += "</div>"
-			dat += "<center><a href ='?_src_=prefs;preference=keybindings_reset'>Сбросить хоткеи</a></center>"
 			dat += "</div>"
-	dat += "<hr><center>"
-
-	if(!IsGuestKey(user.key))
-		dat += "<a href='?_src_=prefs;preference=load'>Отмена</a> "
-		dat += "<a href='?_src_=prefs;preference=save'>Сохранить</a> "
-
-	dat += "<a href='?_src_=prefs;preference=reset_all'>Сбросить</a>"
-	dat += "</center>"
+	dat += "</div>"
 
 	var/datum/asset/stuff = get_asset_datum(/datum/asset/simple/metacoins)
 	stuff.send(user)
@@ -1059,10 +1063,10 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			ban_details = i
 			break //we only want to get the most recent ban's details
 		if(ban_details?.len)
-			var/expires = "This is a permanent ban."
+			var/expires = " Это перманентный бан."
 			if(ban_details["expiration_time"])
-				expires = " The ban is for [DisplayTimeText(text2num(ban_details["duration"]) MINUTES)] and expires on [ban_details["expiration_time"]] (server time)."
-			to_chat(user, span_danger("You, or another user of this computer or connection ([ban_details["key"]]) is banned from playing [href_list["bancheck"]].<br>The ban reason is: [ban_details["reason"]]<br>This ban (BanID #[ban_details["id"]]) was applied by [ban_details["admin_key"]] on [ban_details["bantime"]] during round ID [ban_details["round_id"]].<br>[expires]"))
+				expires = " Блокировка на [DisplayTimeText(text2num(ban_details["duration"]) MINUTES)] и заканчивается [ban_details["expiration_time"]] (по серверному времени)."
+			to_chat(user, span_danger("Доступ запрещён к [href_list["bancheck"]], [ban_details["key"]].<br>Метка: [ban_details["reason"]]<br>Блокировка (ID #[ban_details["id"]]) была создана [ban_details["admin_key"]] в [ban_details["bantime"]] во время раунда [ban_details["round_id"]].<br>[expires]"))
 			return
 	if(href_list["preference"] == "job")
 		switch(href_list["task"])
@@ -1143,12 +1147,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				to_chat(user, span_warning("У меня не хватает метакэша для покупки [TG.display_name]!"))
 		if(href_list["toggle_gear"])
 			var/datum/gear/TG = GLOB.gear_datums[href_list["toggle_gear"]]
-			if(TG.id in equipped_gear)
-				equipped_gear -= TG.id
+			if(TG.id in equipped_gear_by_character[default_slot])
+				LAZYREMOVEASSOC(equipped_gear_by_character, default_slot, TG.id)
 			else
 				var/list/type_blacklist = list()
 				var/list/slot_blacklist = list()
-				for(var/gear_id in equipped_gear)
+				for(var/gear_id in equipped_gear_by_character[default_slot])
 					var/datum/gear/G = GLOB.gear_datums[gear_id]
 					if(istype(G))
 						if(!(G.subtype_path in type_blacklist))
@@ -1157,7 +1161,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							slot_blacklist += G.slot
 				if((TG.id in purchased_gear))
 					if(!(TG.subtype_path in type_blacklist) || !(TG.slot in slot_blacklist))
-						equipped_gear += TG.id
+						LAZYADDASSOCLIST(equipped_gear_by_character, default_slot, TG.id)
 					else
 						to_chat(user, span_warning("Нет места для [TG.display_name]. Что-то уже есть в этом слоте."))
 			save_preferences()
@@ -1165,7 +1169,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		else if(href_list["select_category"])
 			gear_tab = href_list["select_category"]
 		else if(href_list["clear_loadout"])
-			equipped_gear.Cut()
+			LAZYCLEARLIST(equipped_gear_by_character[default_slot])
 			save_preferences()
 
 		ShowChoices(user)
@@ -1218,12 +1222,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			switch(href_list["preference"])
 				if("ghostform")
 					if(unlock_content)
-						var/new_form = input(user, "Thanks for supporting BYOND - Choose your ghostly form:","Thanks for supporting BYOND",null) as null|anything in GLOB.ghost_forms
+						var/new_form = tgui_input_list(user, "Thanks for supporting BYOND - Choose your ghostly form:", "Thanks for supporting BYOND", GLOB.ghost_forms)
 						if(new_form)
 							ghost_form = new_form
 				if("ghostorbit")
 					if(unlock_content)
-						var/new_orbit = input(user, "Thanks for supporting BYOND - Choose your ghostly orbit:","Thanks for supporting BYOND", null) as null|anything in GLOB.ghost_orbits
+						var/new_orbit = tgui_input_list(user, "Thanks for supporting BYOND - Choose your ghostly orbit:", "Thanks for supporting BYOND", GLOB.ghost_orbits)
 						if(new_orbit)
 							ghost_orbit = new_orbit
 
@@ -1248,7 +1252,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							ghost_others = GHOST_OTHERS_SIMPLE
 
 				if("name")
-					var/new_name = input(user, "Choose your character's name:", "Character Preference")  as text|null
+					var/new_name = tgui_input_text(user, "Choose your character's name:", "Character Preference")
 					if(new_name)
 						if(pref_species.mutant_bodyparts["ipc_screen"])
 							new_name = reject_bad_name(new_name, TRUE)
@@ -1271,26 +1275,17 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 				if("ipc_screen")
 					var/new_ipc_screen
-					new_ipc_screen = input(user, "Choose your character's screen:", "Character Preference") as null|anything in GLOB.ipc_screens_list
+					new_ipc_screen = tgui_input_list(user, "Choose your character's screen:", "Character Preference", GLOB.ipc_screens_list)
 					if(new_ipc_screen)
 						features["ipc_screen"] = new_ipc_screen
 
 				if("ipc_antenna")
 					var/new_ipc_antenna
-					new_ipc_antenna = input(user, "Choose your character's antenna:", "Character Preference") as null|anything in GLOB.ipc_antennas_list
+					new_ipc_antenna = tgui_input_list(user, "Choose your character's antenna:", "Character Preference", GLOB.ipc_antennas_list)
 					if(new_ipc_antenna)
 						features["ipc_antenna"] = new_ipc_antenna
 
 				if("hairstyle")
-					/*
-					var/new_hairstyle
-					if(gender == MALE)
-						new_hairstyle = input(user, "Choose your character's hairstyle:", "Character Preference")  as null|anything in GLOB.hairstyles_male_list
-					else if(gender == FEMALE)
-						new_hairstyle = input(user, "Choose your character's hairstyle:", "Character Preference")  as null|anything in GLOB.hairstyles_female_list
-					else
-						new_hairstyle = input(user, "Choose your character's hairstyle:", "Character Preference")  as null|anything in GLOB.hairstyles_list
-					*/
 					var/list/options
 					switch(gender)
 						if(MALE) options = GLOB.hairstyles_male_list
@@ -1309,7 +1304,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						hairstyle = next_list_item(hairstyle, GLOB.hairstyles_list)
 
 				if("hair_grad_style")
-					var/new_grad_style = input(user, "Choose a color pattern for your hair:", "Character Preference")  as null|anything in GLOB.hair_gradients_list
+					var/new_grad_style = tgui_input_list(user, "Choose a color pattern for your hair:", "Character Preference", GLOB.hair_gradients_list)
 					if(new_grad_style)
 						hair_grad_style = new_grad_style
 
@@ -1319,7 +1314,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						hair_grad_color = sanitize_hexcolor(new_grad_color)
 
 				if("facial_grad_style")
-					var/new_grad_style = input(user, "Choose a color pattern for your facial:", "Character Preference")  as null|anything in GLOB.facial_hair_gradients_list
+					var/new_grad_style = tgui_input_list(user, "Choose a color pattern for your facial:", "Character Preference", GLOB.facial_hair_gradients_list)
 					if(new_grad_style)
 						facial_grad_style = new_grad_style
 
@@ -1342,17 +1337,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						facial_hair_color = sanitize_hexcolor(new_facial)
 
 				if("facial_hairstyle")
-					/*
-					var/new_facial_hairstyle
-					if(gender == MALE)
-						new_facial_hairstyle = input(user, "Choose your character's facial-hairstyle:", "Character Preference")  as null|anything in GLOB.facial_hairstyles_male_list
-					else if(gender == FEMALE)
-						new_facial_hairstyle = input(user, "Choose your character's facial-hairstyle:", "Character Preference")  as null|anything in GLOB.facial_hairstyles_female_list
-					else
-						new_facial_hairstyle = input(user, "Choose your character's facial-hairstyle:", "Character Preference")  as null|anything in GLOB.facial_hairstyles_list
-					if(new_facial_hairstyle)
-						facial_hairstyle = new_facial_hairstyle
-					*/
 					var/list/options
 					switch(gender)
 						if(MALE) options = GLOB.facial_hairstyles_male_list
@@ -1379,17 +1363,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						facial_hairstyle = previous_list_item(facial_hairstyle, GLOB.facial_hairstyles_list)
 
 				if("underwear")
-					/*
-					var/new_underwear
-					if(gender == MALE)
-						new_underwear = input(user, "Choose your character's underwear:", "Character Preference")  as null|anything in GLOB.underwear_m
-					else if(gender == FEMALE)
-						new_underwear = input(user, "Choose your character's underwear:", "Character Preference")  as null|anything in GLOB.underwear_f
-					else
-						new_underwear = input(user, "Choose your character's underwear:", "Character Preference")  as null|anything in GLOB.underwear_list
-					if(new_underwear)
-						underwear = new_underwear
-					*/
 					var/list/options
 					switch(gender)
 						if(MALE) options = GLOB.underwear_m
@@ -1405,17 +1378,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						underwear_color = sanitize_hexcolor(new_underwear_color)
 
 				if("undershirt")
-					/*
-					var/new_undershirt
-					if(gender == MALE)
-						new_undershirt = input(user, "Choose your character's undershirt:", "Character Preference") as null|anything in GLOB.undershirt_m
-					else if(gender == FEMALE)
-						new_undershirt = input(user, "Choose your character's undershirt:", "Character Preference") as null|anything in GLOB.undershirt_f
-					else
-						new_undershirt = input(user, "Choose your character's undershirt:", "Character Preference") as null|anything in GLOB.undershirt_list
-					if(new_undershirt)
-						undershirt = new_undershirt
-					*/
 					var/list/options
 					switch(gender)
 						if(MALE) options = GLOB.undershirt_m
@@ -1426,10 +1388,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						undershirt = new_undershirt
 
 				if("socks")
-					/*
-					var/new_socks
-					new_socks = input(user, "Choose your character's socks:", "Character Preference") as null|anything in GLOB.socks_list
-					*/
 					var/new_socks = tgui_input_list(user, "Choose your character's socks:", "Character Preference", GLOB.socks_list)
 					if(new_socks)
 						socks = new_socks
@@ -1457,7 +1415,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					if(user.ckey in GLOB.custom_race_donations)
 						custom_races += GLOB.custom_race_donations[user.ckey]
 
-					var/result = input(user, "Select a species", "Species Selection") as null|anything in GLOB.roundstart_races + custom_races
+					var/result = tgui_input_list(user, "Select a species", "Species Selection", GLOB.roundstart_races + custom_races)
 
 					if(result)
 						var/newtype = GLOB.species_list[result]
@@ -1481,20 +1439,20 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							to_chat(user, span_danger("Invalid color. Your color is not bright enough."))
 
 				if("color_ethereal")
-					var/new_etherealcolor = input(user, "Choose your ethereal color", "Character Preference") as null|anything in GLOB.color_list_ethereal
+					var/new_etherealcolor = tgui_input_list(user, "Choose your ethereal color", "Character Preference", GLOB.color_list_ethereal)
 					if(new_etherealcolor)
 						features["ethcolor"] = GLOB.color_list_ethereal[new_etherealcolor]
 
 
 				if("tail_lizard")
 					var/new_tail
-					new_tail = input(user, "Choose your character's tail:", "Character Preference") as null|anything in GLOB.tails_list_lizard
+					new_tail = tgui_input_list(user, "Choose your character's tail:", "Character Preference", GLOB.tails_list_lizard)
 					if(new_tail)
 						features["tail_lizard"] = new_tail
 
 				if("tail_human")
 					var/new_tail
-					new_tail = input(user, "Choose your character's tail:", "Character Preference") as null|anything in GLOB.tails_list_human
+					new_tail = tgui_input_list(user, "Choose your character's tail:", "Character Preference", GLOB.tails_list_human)
 					if((!user.client.holder && !(user.client.ckey in GLOB.custom_tails_donations)) && (new_tail == "Fox" || new_tail == "Oni"))
 						to_chat(user, span_danger("Pedos not allowed? <big>ВАШЕ ДЕЙСТВИЕ БУДЕТ ЗАПИСАНО</big>."))
 						message_admins("[ADMIN_LOOKUPFLW(user)] попытался выбрать фуррятину в виде хвоста.")
@@ -1504,72 +1462,72 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 				if("snout")
 					var/new_snout
-					new_snout = input(user, "Choose your character's snout:", "Character Preference") as null|anything in GLOB.snouts_list
+					new_snout = tgui_input_list(user, "Choose your character's snout:", "Character Preference", GLOB.snouts_list)
 					if(new_snout)
 						features["snout"] = new_snout
 
 				if("horns")
 					var/new_horns
-					new_horns = input(user, "Choose your character's horns:", "Character Preference") as null|anything in GLOB.horns_list
+					new_horns = tgui_input_list(user, "Choose your character's horns:", "Character Preference", GLOB.horns_list)
 					if(new_horns)
 						features["horns"] = new_horns
 
 				if("ears")
 					var/new_ears
-					new_ears = input(user, "Choose your character's ears:", "Character Preference") as null|anything in GLOB.ears_list
+					new_ears = tgui_input_list(user, "Choose your character's ears:", "Character Preference", GLOB.ears_list)
 					if(new_ears)
 						features["ears"] = new_ears
 
 				if("wings")
 					var/new_wings
-					new_wings = input(user, "Choose your character's wings:", "Character Preference") as null|anything in GLOB.r_wings_list
+					new_wings = tgui_input_list(user, "Choose your character's wings:", "Character Preference", GLOB.r_wings_list)
 					if(new_wings)
 						features["wings"] = new_wings
 
 				if("frills")
 					var/new_frills
-					new_frills = input(user, "Choose your character's frills:", "Character Preference") as null|anything in GLOB.frills_list
+					new_frills = tgui_input_list(user, "Choose your character's frills:", "Character Preference", GLOB.frills_list)
 					if(new_frills)
 						features["frills"] = new_frills
 
 				if("spines")
 					var/new_spines
-					new_spines = input(user, "Choose your character's spines:", "Character Preference") as null|anything in GLOB.spines_list
+					new_spines = tgui_input_list(user, "Choose your character's spines:", "Character Preference", GLOB.spines_list)
 					if(new_spines)
 						features["spines"] = new_spines
 
 				if("body_markings")
 					var/new_body_markings
-					new_body_markings = input(user, "Choose your character's body markings:", "Character Preference") as null|anything in GLOB.body_markings_list
+					new_body_markings = tgui_input_list(user, "Choose your character's body markings:", "Character Preference", GLOB.body_markings_list)
 					if(new_body_markings)
 						features["body_markings"] = new_body_markings
 
 				if("legs")
 					var/new_legs
-					new_legs = input(user, "Choose your character's legs:", "Character Preference") as null|anything in GLOB.legs_list
+					new_legs = tgui_input_list(user, "Choose your character's legs:", "Character Preference", GLOB.legs_list)
 					if(new_legs)
 						features["legs"] = new_legs
 
 				if("moth_wings")
 					var/new_moth_wings
-					new_moth_wings = input(user, "Choose your character's wings:", "Character Preference") as null|anything in GLOB.moth_wings_list
+					new_moth_wings = tgui_input_list(user, "Choose your character's wings:", "Character Preference", GLOB.moth_wings_list)
 					if(new_moth_wings)
 						features["moth_wings"] = new_moth_wings
 
 				if("moth_antennae")
 					var/new_moth_antennae
-					new_moth_antennae = input(user, "Choose your character's antennae:", "Character Preference") as null|anything in GLOB.moth_antennae_list
+					new_moth_antennae = tgui_input_list(user, "Choose your character's antennae:", "Character Preference", GLOB.moth_antennae_list)
 					if(new_moth_antennae)
 						features["moth_antennae"] = new_moth_antennae
 
 				if("moth_markings")
 					var/new_moth_markings
-					new_moth_markings = input(user, "Choose your character's markings:", "Character Preference") as null|anything in GLOB.moth_markings_list
+					new_moth_markings = tgui_input_list(user, "Choose your character's markings:", "Character Preference", GLOB.moth_markings_list)
 					if(new_moth_markings)
 						features["moth_markings"] = new_moth_markings
 
 				if("s_tone")
-					var/new_s_tone = input(user, "Choose your character's skin-tone:", "Character Preference")  as null|anything in GLOB.skin_tones
+					var/new_s_tone = tgui_input_list(user, "Choose your character's skin-tone:", "Character Preference", GLOB.skin_tones)
 					if(new_s_tone)
 						skin_tone = new_s_tone
 
@@ -1584,11 +1542,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						asaycolor = sanitize_ooccolor(new_asaycolor)
 
 				if("bag")
-					/*
-					var/new_backpack = input(user, "Choose your character's style of bag:", "Character Preference")  as null|anything in GLOB.backpacklist
-					if(new_backpack)
-						backpack = new_backpack
-					*/
 					var/new_backpack = tgui_input_list(user, "Choose your character's socks:", "Character Preference", GLOB.backpacklist)
 					if(new_backpack)
 						backpack = new_backpack
@@ -1600,7 +1553,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						jumpsuit_style = PREF_SUIT
 
 				if("uplink_loc")
-					var/new_loc = input(user, "Choose your character's traitor uplink spawn location:", "Character Preference") as null|anything in GLOB.uplink_spawn_loc_list
+					var/new_loc = tgui_input_list(user, "Choose your character's traitor uplink spawn location:", "Character Preference", GLOB.uplink_spawn_loc_list)
 					if(new_loc)
 						uplink_spawn_loc = new_loc
 
@@ -1609,12 +1562,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						playtime_reward_cloak = !playtime_reward_cloak
 
 				if("ai_core_icon")
-					var/ai_core_icon = input(user, "Choose your preferred AI core display screen:", "AI Core Display Screen Selection") as null|anything in GLOB.ai_core_display_screens - "Portrait"
+					var/ai_core_icon = tgui_input_list(user, "Choose your preferred AI core display screen:", "AI Core Display Screen Selection", GLOB.ai_core_display_screens - "Portrait")
 					if(ai_core_icon)
 						preferred_ai_core_display = ai_core_icon
 
 				if("sec_dept")
-					var/department = input(user, "Choose your preferred security department:", "Security Departments") as null|anything in GLOB.security_depts_prefs
+					var/department = tgui_input_list(user, "Choose your preferred security department:", "Security Departments", GLOB.security_depts_prefs)
 					if(department)
 						prefered_security_department = department
 
@@ -1632,15 +1585,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 							friendlyname += " (disabled)"
 						maplist[friendlyname] = VM.map_name
 					maplist[default] = null
-					var/pickedmap = input(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference")  as null|anything in sort_list(maplist)
+					var/pickedmap = tgui_input_list(user, "Choose your preferred map. This will be used to help weight random map selection.", "Character Preference", sort_list(maplist))
 					if (pickedmap)
 						preferred_map = maplist[pickedmap]
-
-				if ("widescreenwidth")
-					var/desiredwidth = input(user, "Какую ширину выберем от до 15-31?", "ВЫБОР", widescreenwidth)  as null|num
-					if (!isnull(desiredwidth))
-						widescreenwidth = sanitize_integer(desiredwidth, 15, 31, widescreenwidth)
-						user.client.view_size.setDefault("[widescreenwidth]x15")
 
 				if ("clientfps")
 					var/desiredfps = input(user, "Choose your desired fps.\n-1 means recommended value (currently:[RECOMMENDED_FPS])\n0 means world fps (currently:[world.fps])", "Character Preference", clientfps)  as null|num
@@ -1649,14 +1596,14 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						parent.fps = (clientfps < 0) ? RECOMMENDED_FPS : clientfps
 
 				if("ui")
-					var/pickedui = input(user, "Choose your UI style.", "Character Preference", UI_style)  as null|anything in sort_list(GLOB.available_ui_styles)
+					var/pickedui = tgui_input_list(user, "Choose your UI style.", "Character Preference", sort_list(GLOB.available_ui_styles), UI_style)
 					if(pickedui)
 						UI_style = pickedui
 						if (parent && parent.mob && parent.mob.hud_used)
 							parent.mob.hud_used.update_ui_style(ui_style2icon(UI_style))
 
 				if("phobia")
-					var/phobiaType = input(user, "What are you scared of?", "Character Preference", phobia) as null|anything in SStraumas.phobia_types
+					var/phobiaType = tgui_input_list(user, "What are you scared of?", "Character Preference", SStraumas.phobia_types, phobia)
 					if(phobiaType)
 						phobia = phobiaType
 
@@ -1670,6 +1617,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					if(new_time)
 						ice_cream_time = min(new_time MINUTES, 60 MINUTES)
 
+				if ("widescreenwidth")
+					var/desiredwidth = input(user, "Какую ширину выберем от до 15-19?", "ВЫБОР", widescreenwidth)  as null|num
+					if (!isnull(desiredwidth))
+						widescreenwidth = sanitize_integer(desiredwidth, 15, 19, widescreenwidth)
+						user.client.view_size.setDefault("[widescreenwidth]x15")
+
 		else
 			switch(href_list["preference"])
 				if("publicity")
@@ -1677,7 +1630,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						toggles ^= MEMBER_PUBLIC
 				if("gender")
 					var/list/friendlyGenders = list("Male" = "male", "Female" = "female", "Attack Helicopter" = "plural")
-					var/pickedGender = input(user, "Choose your gender.", "Character Preference", gender) as null|anything in friendlyGenders
+					var/pickedGender = tgui_input_list(user, "Choose your gender.", "Character Preference", friendlyGenders, gender)
 					if(pickedGender && friendlyGenders[pickedGender] != gender)
 						gender = friendlyGenders[pickedGender]
 						underwear = random_underwear(gender)
@@ -1763,7 +1716,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 						ShowChoices(user)
 						return
 					hotkeys = (choice == "Хоткеи")
-					key_bindings = (hotkeys) ? deepCopyList(GLOB.hotkey_keybinding_list_by_key) : deepCopyList(GLOB.classic_keybinding_list_by_key)
+					key_bindings = (hotkeys) ? deep_copy_list(GLOB.hotkey_keybinding_list_by_key) : deep_copy_list(GLOB.classic_keybinding_list_by_key)
 					user.client.set_macros()
 
 				if("chat_on_map")
@@ -1876,6 +1829,9 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				if("income_pings")
 					chat_toggles ^= CHAT_BANKCARD
 
+				if("chat_spam")
+					chat_toggles ^= CHAT_SPAM
+
 				if("pull_requests")
 					chat_toggles ^= CHAT_PULLR
 
@@ -1907,14 +1863,19 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					fullscreen = !fullscreen
 					parent.ToggleFullscreen()
 
-				if("tooltip_user")
-					w_toggles ^= TOOLTIP_USER_UP
-
 				if("tooltip_pos")
 					w_toggles ^= TOOLTIP_USER_POS
+					if(w_toggles & TOOLTIP_USER_POS)
+						user?.hud_used?.tooltip?.screen_loc = "SOUTH+1,CENTER-4:16"
+					else
+						user?.hud_used?.tooltip?.screen_loc = "TOP,CENTER-4:16"
 
 				if("tooltip_retro")
 					w_toggles ^= TOOLTIP_USER_RETRO
+					if(w_toggles & TOOLTIP_USER_RETRO)
+						winset(user, "mainwindow", "statusbar=true")
+					else
+						winset(user, "mainwindow", "statusbar=false")
 
 				if("horiz_inv")
 					w_toggles ^= SCREEN_HORIZ_INV
@@ -1938,11 +1899,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 					else
 						winset(user, "info", "show-splitter=true")
 						winset(user, "split", "show-splitter=true")
-
-				if("widescreenpref")
-					widescreenpref = !widescreenpref
-					user.client.view_size.setDefault(getScreenSize(widescreenpref))
-					user.client.view = "[user.client.prefs.widescreenwidth]x15"
 
 				if("disabled_autocap")
 					disabled_autocap = !disabled_autocap
@@ -2125,7 +2081,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	if(!namedata)
 		return
 
-	var/raw_name = input(user, "Choose your character's [namedata["qdesc"]]:","Character Preference") as text|null
+	var/raw_name = tgui_input_text(user, "Choose your character's [namedata["qdesc"]]:","Character Preference")
 	if(!raw_name)
 		if(namedata["allow_null"])
 			custom_names[name_id] = get_default_name(name_id)

@@ -52,7 +52,7 @@ SUBSYSTEM_DEF(research)
 
 	var/mining_multiplier = 1
 
-/datum/controller/subsystem/research/Initialize()
+/datum/controller/subsystem/research/Initialize(mapload)
 	point_types = TECHWEB_POINT_TYPE_LIST_ASSOCIATIVE_NAMES
 	initialize_all_techweb_designs()
 	initialize_all_techweb_nodes()
@@ -73,7 +73,7 @@ SUBSYSTEM_DEF(research)
 		var/income_time_difference = world.time - last_income
 		science_tech.last_bitcoins = bitcoins  // Doesn't take tick drift into account
 		for(var/i in bitcoins)
-			bitcoins[i] *= (income_time_difference / 10) * mining_multiplier
+			bitcoins[i] *= GLOB.is_research_sabotaged ? ROUND_UP((income_time_difference / 10) * mining_multiplier / 5) : (income_time_difference / 10) * mining_multiplier
 		science_tech.add_point_list(bitcoins)
 	last_income = world.time
 

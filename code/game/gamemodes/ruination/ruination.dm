@@ -139,7 +139,17 @@ GLOBAL_VAR_INIT(station_orbit_parallax_type, 1)
 			announce_stage = 1
 			sound_to_playing_players('white/valtos/sounds/rp6.ogg', 15, FALSE, channel = CHANNEL_RUINATION_OST)
 			priority_announce("Осталось 15 минут до активации блюспейс-транслокатора.", null, sound('white/valtos/sounds/trevoga2.ogg'), sender_override = "Синдикат")
-			omon_ert_request("Помешать террористам, мешающим работе невероятно важного оборудования на станции в виде импульсных двигателей.")
+			var/list/opslist = omon_ert_request("Помешать террористам, мешающим работе невероятно важного оборудования на станции в виде импульсных двигателей.", return_ert_list = TRUE)
+			if(opslist)
+				var/list/turf/valid_turfs = get_area_turfs(pick(GLOB.the_station_areas))
+				for(var/mob/living/carbon/human/H in opslist)
+					var/obj/structure/closet/supplypod/drip_pod = new()
+					drip_pod.bluespace = TRUE
+					drip_pod.explosionSize = list(0,0,1,3)
+					drip_pod.style = STYLE_CENTCOM
+					H.forceMove(drip_pod)
+					var/turf/T = pick(valid_turfs)
+					new /obj/effect/pod_landingzone(T, drip_pod)
 		if((started_at + (win_time - 10 MINUTES)) < world.time && announce_stage == 1)
 			announce_stage = 2
 			sound_to_playing_players('white/valtos/sounds/rp7.ogg', 15, FALSE, channel = CHANNEL_RUINATION_OST)
@@ -148,7 +158,17 @@ GLOBAL_VAR_INIT(station_orbit_parallax_type, 1)
 			announce_stage = 3
 			sound_to_playing_players('white/valtos/sounds/rp5.ogg', 15, FALSE, channel = CHANNEL_RUINATION_OST)
 			priority_announce("Осталось 5 минут до активации блюспейс-транслокатора. Держитесь.", null, sound('white/valtos/sounds/trevoga2.ogg'), sender_override = "Синдикат")
-			deathsquad_request("Уничтожить свидетелей.")
+			var/list/opslist = deathsquad_request("Уничтожить свидетелей и постараться ускорить работу двигателей.", return_ert_list = TRUE)
+			if(opslist)
+				var/list/turf/valid_turfs = get_area_turfs(pick(GLOB.the_station_areas))
+				for(var/mob/living/carbon/human/H in opslist)
+					var/obj/structure/closet/supplypod/drip_pod = new()
+					drip_pod.bluespace = TRUE
+					drip_pod.explosionSize = list(0,0,1,3)
+					drip_pod.style = STYLE_CENTCOM
+					H.forceMove(drip_pod)
+					var/turf/T = pick(valid_turfs)
+					new /obj/effect/pod_landingzone(T, drip_pod)
 		var/total_speed = 0
 		for(var/obj/structure/pulse_engine/PE in GLOB.pulse_engines)
 			total_speed += PE.engine_power * 5
@@ -197,7 +217,7 @@ GLOBAL_VAR_INIT(station_orbit_parallax_type, 1)
 					shake_camera(M, 7, 3)
 		if(cur_height == 2)
 			for(var/turf/T in world)
-				if(!is_station_level(T.z) || !(isspaceturf(T) || istype(T, /turf/open/openspace/airless)))
+				if(!is_station_level(T.z) || !(isspaceturf(T) || istype(T, /turf/open/space/openspace)))
 					continue
 				T.AddComponent(/datum/component/chasm, SSmapping.get_turf_above(T))
 
@@ -253,18 +273,18 @@ GLOBAL_VAR_INIT(station_orbit_parallax_type, 1)
 
 /atom/movable/screen/station_height
 	icon = 'white/valtos/icons/line.png'
-	screen_loc = "SOUTH:420, EAST-3:48"
+	screen_loc = "BOTTOM:420, RIGHT:48"
 	maptext_y = -4
 	maptext_width = 96
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
-/atom/movable/screen/station_height/Initialize()
+/atom/movable/screen/station_height/Initialize(mapload)
 	. = ..()
 	flicker_animation()
 	overlays += icon('white/valtos/icons/station.png')
 
 /atom/movable/screen/station_height/proc/update_height()
-	screen_loc = "SOUTH:[min(round((GLOB.station_orbit_height * 0.001), 1) + 120, 440)], EAST-3:48"
+	screen_loc = "BOTTOM:[min(round((GLOB.station_orbit_height * 0.001), 1) + 120, 440)], RIGHT-3:48"
 	maptext = "<span style='color: #A35D5B; font-size: 8px;'>[GLOB.station_orbit_height] M</br>[GLOB.station_orbit_speed] M/C</span>"
 
 /atom/movable/screen/station_height_bg

@@ -29,7 +29,8 @@
 	display_order = JOB_DISPLAY_ORDER_HEAD_OF_SECURITY
 	bounty_types = CIV_JOB_SEC
 
-	rpg_title = "Начальник стражи"
+	rpg_title = "Guard Leader"
+	rpg_title_ru = "Начальник стражи"
 
 /datum/job/head_of_security/announce(mob/living/carbon/human/H, announce_captaincy = FALSE)
 	..()
@@ -58,6 +59,7 @@
 	satchel = /obj/item/storage/backpack/satchel/sec
 	duffelbag = /obj/item/storage/backpack/duffelbag/sec
 	box = /obj/item/storage/box/survival/security
+	pda_slot = ITEM_SLOT_RPOCKET
 
 	implants = list(/obj/item/implant/mindshield, /obj/item/implant/krav_maga)
 

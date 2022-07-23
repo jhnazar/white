@@ -33,7 +33,7 @@ The console is located at computer/gulag_teleporter.dm
 		/obj/item/clothing/mask/breath,
 		/obj/item/clothing/mask/gas))
 
-/obj/machinery/gulag_teleporter/Initialize()
+/obj/machinery/gulag_teleporter/Initialize(mapload)
 	. = ..()
 	locate_reclaimer()
 
@@ -177,7 +177,7 @@ The console is located at computer/gulag_teleporter.dm
 /obj/structure/gulag_beacon
 	name = "labor camp bluespace beacon"
 	desc = "A receiving beacon for bluespace teleportations."
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "light_on-8"
 	resistance_flags = INDESTRUCTIBLE
 	anchored = TRUE

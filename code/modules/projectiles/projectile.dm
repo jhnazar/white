@@ -147,6 +147,7 @@
 	var/reflectable = NONE // Can it be reflected or not?
 	var/nomiss = FALSE //Can't miss cause of Valtos skill system
 	var/aim_mod = 1 //Hit multiplier for some weird ammo types
+	var/min_hitchance = 10 //Minimal chance to hit
 
 		//Effects
 	var/stun = 0
@@ -180,6 +181,8 @@
 	var/static/list/projectile_connections = list(
 		COMSIG_ATOM_ENTERED = .proc/on_entered,
 	)
+	/// If true directly targeted turfs can be hit
+	var/can_hit_turfs = FALSE
 
 /obj/projectile/Initialize(mapload)
 	. = ..()
@@ -288,13 +291,14 @@
 			playsound(loc, hitsound, 5, TRUE, -1)
 		else if(suppressed)
 			playsound(loc, hitsound, 5, TRUE, -1)
-			to_chat(L, span_userdanger("В [organ_hit_text] попадает <b>[src.name]</b>!"))
+			if(L?.client?.prefs?.chat_toggles & CHAT_SPAM)
+				to_chat(L, span_userdanger("В [organ_hit_text] попадает <b>[src.name]</b>!"))
 		else
 			if(hitsound)
 				var/volume = vol_by_damage()
 				playsound(src, hitsound, volume, TRUE, -1)
-			L.visible_message(span_danger("В [organ_hit_text] <b>[L]</b> попадает <b>[src.name]</b>!"), \
-					span_userdanger("В [organ_hit_text] попадает <b>[src.name]</b>!"), null, COMBAT_MESSAGE_RANGE)
+			L.visible_message(span_danger("В [organ_hit_text] <b>[L]</b> попадает <b>[src.name]</b>!"),
+					span_userdanger("В [organ_hit_text] попадает <b>[src.name]</b>!"), null, COMBAT_MESSAGE_RANGE, visible_message_flags = SPAM_MESSAGE)
 		L.on_hit(src)
 
 	var/reagent_note
@@ -418,11 +422,11 @@
 	if(ishuman(target) && target != original && ishuman(firer) && !GLOB.is_tournament_rules)
 		var/mob/living/carbon/human/H = firer
 		if(!nomiss)
-			if(!prob(((75 + H.mind.get_skill_modifier(/datum/skill/ranged, SKILL_PROBS_MODIFIER)) * aim_mod) - 7 * get_dist(T, starting)))
+			if(!prob(max(min_hitchance,	((75 + H.mind.get_skill_modifier(/datum/skill/ranged, SKILL_PROBS_MODIFIER)) * aim_mod) - 7 * get_dist(T, starting))))
 				SEND_SOUND(target, sound(pick('sound/weapons/bulletflyby.ogg', 'sound/weapons/bulletflyby2.ogg', 'sound/weapons/bulletflyby3.ogg')))
 				return
 		if(H.mind)
-			H.mind.adjust_experience(/datum/skill/ranged, 1)
+			H.mind.adjust_experience(/datum/skill/ranged, rand(2, 8))
 	var/mode = prehit_pierce(target)
 	if(mode == PROJECTILE_DELETE_WITHOUT_HITTING)
 		qdel(src)
@@ -500,7 +504,7 @@
 /obj/projectile/proc/can_hit_target(atom/target, direct_target = FALSE, ignore_loc = FALSE, cross_failed = FALSE)
 	if(QDELETED(target) || impacted[target])
 		return FALSE
-	if(!ignore_loc && (loc != target.loc))
+	if(!ignore_loc && (loc != target.loc) && !(can_hit_turfs && direct_target && loc == target))
 		return FALSE
 	// if pass_flags match, pass through entirely - unless direct target is set.
 	if((target.pass_flags_self & pass_flags) && !direct_target)
@@ -513,7 +517,7 @@
 		return TRUE
 	if(!isliving(target))
 		if(isturf(target)) // non dense turfs
-			return FALSE
+			return can_hit_turfs && direct_target
 		if(target.layer < hit_threshhold)
 			return FALSE
 		else if(!direct_target) // non dense objects do not get hit unless specifically clicked

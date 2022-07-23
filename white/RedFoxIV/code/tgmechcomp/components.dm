@@ -1,6 +1,6 @@
 /*
 /obj/item/mechcomp/debugspawn
-/obj/item/mechcomp/debugspawn/Initialize()
+/obj/item/mechcomp/debugspawn/Initialize(mapload)
 	. = ..()
 	for(var/i in typesof(/obj/item/mechcomp))
 		if(istype(i, /obj/item/mechcomp/debugspawn) || istype(i, /obj/item/mechcomp))
@@ -36,7 +36,7 @@
 		. = ..() // Please don't remove this again, thanks. //i have no fucking idea why gooncoders would do this lol
 		. += "<br><span class='notice'>Current Mode: [mode] | A = [A] | B = [B]</span>"
 
-/obj/item/mechcomp/math/Initialize()
+/obj/item/mechcomp/math/Initialize(mapload)
 		. = ..()
 
 		SEND_SIGNAL(src,COMSIG_MECHCOMP_ADD_INPUT,"Set A", "setA")
@@ -63,7 +63,7 @@
 	return 1
 
 /obj/item/mechcomp/math/proc/setMode(obj/item/W as obj, mob/user as mob)
-	mode = input("Set the math mode to what?", "Mode Selector", mode) in list("add","mul","div","sub","mod","pow","rng","eq","neq","gt","lt","gte","lte","sin","cos","tg","ctg","sec","cosec")
+	mode = tgui_input_list(usr, "Set the math mode to what?", "Mode Selector", list("add","mul","div","sub","mod","pow","rng","eq","neq","gt","lt","gte","lte","sin","cos","tg","ctg","sec","cosec"), mode)
 	//tooltip_rebuild = 1
 	return 1
 
@@ -138,7 +138,7 @@
 	part_icon_state = "comp_led"
 	has_anchored_icon_state = TRUE
 
-/obj/item/mechcomp/test_led/Initialize()
+/obj/item/mechcomp/test_led/Initialize(mapload)
 		. = ..()
 
 		SEND_SIGNAL(src,COMSIG_MECHCOMP_ADD_INPUT,"Activate", "activateproc")
@@ -161,7 +161,7 @@
 	part_icon_state = "comp_button"
 	active_icon_state = "comp_button1"
 
-/obj/item/mechcomp/button/Initialize()
+/obj/item/mechcomp/button/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ALLOW_MANUAL_SIGNAL)
 
@@ -180,7 +180,7 @@
 	active_icon_state = "comp_synth1"
 	var/cd = 3 SECONDS
 
-/obj/item/mechcomp/speaker/Initialize()
+/obj/item/mechcomp/speaker/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "speak", "activateproc")
 
@@ -203,7 +203,7 @@
 	active_icon_state = "comp_buttpanel1"
 
 /obj/item/mechcomp/textpad/interact_by_hand()
-	var/inp = input("What text would you like to input?", "Oh, the possibilities!", null) as text|null
+	var/inp = tgui_input_text(usr, "What text would you like to input?", "Oh, the possibilities!", null)
 	if(isnull(inp))
 		return
 
@@ -221,7 +221,7 @@
 	has_anchored_icon_state = TRUE
 	var/sensitive = FALSE
 
-/obj/item/mechcomp/pressurepad/Initialize()
+/obj/item/mechcomp/pressurepad/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ALLOW_MANUAL_SIGNAL)
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_CONFIG, "Fine tuning", "finetune")
@@ -263,7 +263,7 @@
 	. += "It is currently set to delay incoming messages by [delay/10] seconds."
 
 
-/obj/item/mechcomp/delay/Initialize()
+/obj/item/mechcomp/delay/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_CONFIG, "Set Delay" , "setdelaymanually")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Incoming", "incoming")
@@ -324,7 +324,7 @@
 	. = ..()
 	AddComponent(/datum/component/simple_rotation, ROTATION_ALTCLICK | ROTATION_CLOCKWISE, CALLBACK(src, .proc/can_user_rotate),CALLBACK(src, .proc/can_be_rotated),null)
 
-/obj/item/mechcomp/grav_accelerator/Initialize()
+/obj/item/mechcomp/grav_accelerator/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Activate", "activateproc")
 	//SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Power", "setpower") //maybe later
@@ -391,7 +391,7 @@
 	var/obj/machinery/recharger/recharger //lmfao
 
 
-/obj/item/mechcomp/egunholder/Initialize()
+/obj/item/mechcomp/egunholder/Initialize(mapload)
 	. = ..()
 	recharger = new(src)
 	recharger.recharge_coeff = 0.25 //4 times slower more inefficient than a regular weapon recharger
@@ -511,7 +511,7 @@
 		. += "<i>You will have to get closer to get a better look at it's data inputs.</i>"
 
 
-/obj/item/mechcomp/list_packer/Initialize()
+/obj/item/mechcomp/list_packer/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Build list", "build")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Input A", "update_A")
@@ -561,7 +561,7 @@
 	H = msg.signal
 
 /obj/item/mechcomp/list_packer/proc/prompt_update(var/varname, var/v)
-	var/input = input("Set [varname] to what? Careful, empty input will erase what's currently stored in [varname]!", "[varname]", v)
+	var/input = tgui_input_text(usr, "Set [varname] to what? Careful, empty input will erase what's currently stored in [varname]!", "[varname]", v)
 	return input
 
 //fucking kill me
@@ -606,7 +606,7 @@
 		H = p
 
 /obj/item/mechcomp/list_packer/proc/set_glue(obj/item/I, mob/user)
-	var/input = input("Set glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue!", "glue", glue) as null|text
+	var/input = tgui_input_text("Set glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue!", "glue", glue)
 	if(!isnull(input))
 		glue = input
 		to_chat(user, span_notice("You set [src.name]'s glue to \"[glue]\""))
@@ -644,7 +644,7 @@
 	part_icon_state = "comp_list_unpacker"
 	has_anchored_icon_state = TRUE
 
-/obj/item/mechcomp/list_extractor/Initialize()
+/obj/item/mechcomp/list_extractor/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "List in", "updatelist")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Extract from list", "extract")
@@ -665,7 +665,7 @@
 		SEND_SIGNAL(src, COMSIG_MECHCOMP_TRANSMIT_SIGNAL, memory[index])
 
 /obj/item/mechcomp/list_extractor/proc/set_glue(obj/item/I, mob/user)
-	var/input = input("Set glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue! Make sure the list you pass to [src.name] uses the same glue!", "Glue", glue) as null|text
+	var/input = tgui_input_text("Set glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue! Make sure the list you pass to [src.name] uses the same glue!", "Glue", glue)
 	if(!isnull(input))
 		glue = input
 		to_chat(user, span_notice("You set [src.name]'s glue to \"[glue]\""))
@@ -691,7 +691,7 @@
 	. = ..()
 	. += "<br><i>Currently the regex expression is [reg ? "\"<font color='orange'>[reg.name]</font>\"[i||g? " with flag[g&&i?"s":""] [g ? "g":""][i ? "i":""]." : "."]" : "<font color='orange'>not set!</font>"]</i>"
 
-/obj/item/mechcomp/find_regex/Initialize()
+/obj/item/mechcomp/find_regex/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "String to search", "find")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_CONFIG, "Set the Regex pattern", "setpattern")
@@ -702,7 +702,7 @@
 
 
 /obj/item/mechcomp/find_regex/proc/setpattern(obj/item/I, mob/user)
-	var/input = input("Input your regex pattern.", "[pick(80;"Regex", 5;"Reg-ekhs?", 5;"what the fuck is a regex", 5;"if you have a problem you want to solve with regex, you have 2 problems.", 5;"the regex is outlawed in 48 US states")]", reg?.name) as null|text
+	var/input = tgui_input_text("Input your regex pattern.", "[pick(80;"Regex", 5;"Reg-ekhs?", 5;"what the fuck is a regex", 5;"if you have a problem you want to solve with regex, you have 2 problems.", 5;"the regex is outlawed in 48 US states")]", reg?.name)
 	if(!isnull(input))
 		reg = regex(input, "[g ? "g":""][i ? "i":""]")
 		to_chat(user, span_notice("You set [src.name]'s pattern to \"[reg?.name]\""))
@@ -735,13 +735,13 @@
 
 
 /obj/item/mechcomp/find_regex/proc/set_group_glue(obj/item/I, mob/user)
-	var/input = input("Set group glue to what? Group glue for regex is used to glue together all the capture groups from the single search. It is heavily recommended to keep different from result glue which is used to glue together all search results.", "Glue", glue) as null|text
+	var/input = tgui_input_text("Set group glue to what? Group glue for regex is used to glue together all the capture groups from the single search. It is heavily recommended to keep different from result glue which is used to glue together all search results.", "Glue", glue)
 	if(!isnull(input))
 		glue = input
 		to_chat(user, span_notice("You set [src.name]'s group glue to \"[glue]\""))
 
 /obj/item/mechcomp/find_regex/proc/set_glue(obj/item/I, mob/user)
-	var/input = input("Set result glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue! Make sure to use a unique symbol or group or symbols, or else extracting data will be stupidly complicated!", "Glue", glue) as null|text
+	var/input = tgui_input_text(usr, "Set result glue to what? Glue is used to \"glue\" lists together into a single string. Default glue for most cases is \"&\", but you can use another one if you want to use lists of lists. You can even use multiple symbols as glue! Make sure to use a unique symbol or group or symbols, or else extracting data will be stupidly complicated!", "Glue", glue)
 	if(!isnull(input))
 		glue = input
 		to_chat(user, span_notice("You set [src.name]'s result glue to \"[glue]\""))
@@ -768,7 +768,7 @@
 	. = ..()
 	. += "<i>Currently set to <font color='orange'>[time/10]</font> seconds. [active ? "<font color='orange'>[timeleft(timer_id)]</font> seconds left until the next activation." : "It is deactivated."]</i>"
 
-/obj/item/mechcomp/timer/Initialize()
+/obj/item/mechcomp/timer/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Toggle state", "toggle")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_INPUT, "Set state", "setstate")
@@ -842,7 +842,7 @@
 	var/ignore_mechcomp = TRUE
 	var/ignore_radios = TRUE
 
-/obj/item/mechcomp/microphone/Initialize()
+/obj/item/mechcomp/microphone/Initialize(mapload)
 	. = ..()
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_CONFIG, "Toggle ignoring mechcomp devices", "togglemechcomp")
 	SEND_SIGNAL(src, COMSIG_MECHCOMP_ADD_CONFIG, "Toggle ignoring radios", "toggleradio")

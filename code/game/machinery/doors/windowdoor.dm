@@ -229,7 +229,7 @@
 		obj_flags |= EMAGGED
 		operating = TRUE
 		flick("[base_state]spark", src)
-		playsound(src, "sparks", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+		playsound(src, "zap", 75, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 		sleep(6)
 		operating = FALSE
 		desc += "<BR><span class='warning'>Its access panel is smoking slightly.</span>"
@@ -372,6 +372,7 @@
 	base_state = "leftsecure"
 	var/id = null
 	max_integrity = 300 //Stronger doors for prison (regular window door health is 200)
+	damage_deflection = 16
 	reinf = 1
 	explosion_block = 1
 

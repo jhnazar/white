@@ -40,6 +40,46 @@
 /obj/item/uplink/nuclear
 	uplink_flag = UPLINK_NUKE_OPS
 
+/obj/item/uplink/nuclear/locked
+	name = "защищённый аплинк"
+	var/lock_code
+
+/obj/item/uplink/nuclear/locked/Initialize(mapload, owner, tc_amount)
+	. = ..()
+	var/datum/component/uplink/hidden_uplink = GetComponent(/datum/component/uplink)
+	hidden_uplink.active = FALSE
+	hidden_uplink.locked = TRUE
+	// ну давай, налетай, у тебя всего лишь одна попытка
+	if(GLOB.round_id)
+		lock_code = ROUND_UP(ROOT(INVERSE_SQUARE(ROOT(text2num(GLOB.round_id) * rand(1, 10), 3), 10, 4), 9))
+
+/obj/item/uplink/nuclear/locked/attack_self(mob/user, modifiers)
+	. = ..()
+
+	var/datum/component/uplink/hidden_uplink = GetComponent(/datum/component/uplink)
+
+	if(hidden_uplink?.active)
+		return
+
+	var/solution = input(user, null, "Ответ?") as num|null
+
+	if(!solution)
+		return
+
+	if(solution != lock_code)
+		to_chat(user, span_info("Ответ неверный."))
+		if(isliving(user))
+			var/mob/living/L = user
+			L.gib()
+		else
+			qdel(user)
+		return
+
+	hidden_uplink.active = TRUE
+	hidden_uplink.locked = FALSE
+
+	to_chat(user, span_info("Ответ верный."))
+
 /obj/item/uplink/nuclear/debug
 	name = "debug nuclear uplink"
 	uplink_flag = UPLINK_NUKE_OPS
@@ -53,7 +93,7 @@
 /obj/item/uplink/nuclear_restricted
 	uplink_flag = UPLINK_NUKE_OPS
 
-/obj/item/uplink/nuclear_restricted/Initialize()
+/obj/item/uplink/nuclear_restricted/Initialize(mapload)
 	. = ..()
 	var/datum/component/uplink/hidden_uplink = GetComponent(/datum/component/uplink)
 	hidden_uplink.allow_restricted = FALSE

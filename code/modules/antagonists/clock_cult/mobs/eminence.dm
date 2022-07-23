@@ -67,7 +67,7 @@
 /mob/living/simple_animal/eminence/start_pulling(atom/movable/AM, state, force = move_force, supress_message = FALSE)
 	return FALSE
 
-/mob/living/simple_animal/eminence/Initialize()
+/mob/living/simple_animal/eminence/Initialize(mapload)
 	. = ..()
 	GLOB.clockcult_eminence = src
 	//Add spells
@@ -94,6 +94,27 @@
 	to_chat(src, span_large_brass("Я Преосвященство!"))
 	to_chat(src, span_brass("Кликаем на разные штуки и они начинают работать!"))
 	to_chat(src, span_brass("Большая часть заклинаний требует цель. Клик для выбора цели!"))
+
+/mob/living/simple_animal/eminence/update_health_hud()
+	return //we use no hud
+
+/mob/living/simple_animal/eminence/med_hud_set_health()
+	return //we use no hud
+
+/mob/living/simple_animal/eminence/med_hud_set_status()
+	return //we use no hud
+
+/mob/living/simple_animal/eminence/ex_act(severity, target)
+	return 1 //Immune to the effects of explosions.
+
+/mob/living/simple_animal/eminence/blob_act(obj/structure/blob/B)
+	return //blah blah blobs aren't in tune with the spirit world, or something.
+
+/mob/living/simple_animal/eminence/singularity_act()
+	return //don't walk into the singularity expecting to find corpses, okay?
+
+/mob/living/simple_animal/eminence/narsie_act()
+	return //most humans will now be either bones or harvesters, but we're still un-alive.
 
 /mob/living/simple_animal/eminence/say_verb(message as text)
 	if(GLOB.say_disabled)	//This is here to try to identify lag problems
@@ -182,7 +203,7 @@
 
 /obj/effect/proc_holder/spell/targeted/eminence/servant_warp/cast(list/targets, mob/user)
 	//Get a list of all servants
-	var/choice = input(user, "Выберем же его", "Перемещение к...", null) in GLOB.all_servants_of_ratvar
+	var/choice = tgui_input_list(user, "Выберем же его", "Перемещение к...", GLOB.all_servants_of_ratvar)
 	if(!choice)
 		return
 	for(var/mob/living/L in GLOB.all_servants_of_ratvar)
@@ -272,7 +293,7 @@
 	cog_cost = 5
 
 /obj/effect/proc_holder/spell/targeted/eminence/trigger_event/cast(list/targets, mob/user)
-	var/picked_event = input(user, "Что мы запустим?", "Манипуляция с реальностью", null) in list(
+	var/picked_event = tgui_input_list(user, "Что мы запустим?", "Манипуляция с реальностью", list(
 		"Anomaly",
 		"Brand Intelligence",
 		"Camera Failure",
@@ -284,7 +305,7 @@
 		"Mass Hallucination",
 		"Processor Overload",
 		"Radiation Storm"
-	)
+	))
 	if(!can_cast(user))
 		return
 	if(!picked_event)

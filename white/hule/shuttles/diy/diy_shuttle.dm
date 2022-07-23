@@ -12,7 +12,7 @@ GLOBAL_VAR_INIT(diy_shuttle_count, 0)
 	possible_destinations = ""
 	dir = 2
 
-/obj/machinery/computer/shuttle_flight/diy/Initialize()
+/obj/machinery/computer/shuttle_flight/diy/Initialize(mapload)
 	shuttleId += "[GLOB.diy_shuttle_count]"
 	possible_destinations += "diy_autism[GLOB.diy_shuttle_count]_home;"
 	possible_destinations += "diy_autism[GLOB.diy_shuttle_count]_custom"
@@ -29,8 +29,7 @@ GLOBAL_VAR_INIT(diy_shuttle_count, 0)
 	dwidth = 4
 	dheight = 14
 
-/obj/docking_port/mobile/diy/Initialize()
-	//id += "[GLOB.diy_shuttle_count]"
+/obj/docking_port/mobile/diy/Initialize(mapload)
 	. = ..()
 	register()
 
@@ -42,10 +41,6 @@ GLOBAL_VAR_INIT(diy_shuttle_count, 0)
 	height = 13
 	dwidth = 4
 	dheight = 14
-
-/obj/docking_port/stationary/diy/Initialize()
-	//id = "diy_autism[GLOB.diy_shuttle_count]_home"
-	. = ..()
 
 ///////////////////////////////////////////////////////////////////////
 

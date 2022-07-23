@@ -41,12 +41,15 @@
 #define ROLE_DEATHSQUAD			"Deathsquad"
 #define ROLE_LAVALAND			"Lavaland"
 #define ROLE_ICECREAM			"Ice Cream"
+#define ROLE_YOHEI				"Yohei"
 #define ROLE_INTERNAL_AFFAIRS	"Internal Affairs Agent"
 #define ROLE_FAMILIES			"Familes Antagonists"
 #define ROLE_SYNDICATE_CYBERSUN			"Cybersun Space Syndicate"		//Ghost role syndi from Forgottenship ruin
 #define ROLE_SYNDICATE_CYBERSUN_CAPTAIN	"Cybersun Space Syndicate Captain"		//Forgottenship captain syndie
 #define ROLE_SHADOWLING 		"Shadowling" // Yogs
 #define ROLE_DUNGEON_KEEPER		"Dungeon Keeper"
+#define ROLE_BLOODSUCKER		"Bloodsucker"
+#define ROLE_MONSTERHUNTER		"Monster Hunter"
 
 //Missing assignment means it's not a gamemode specific role, IT'S NOT A BUG OR ERROR.
 //The gamemode specific ones are just so the gamemodes can query whether a player is old enough
@@ -75,7 +78,9 @@ GLOBAL_LIST_INIT(special_roles, list(
 	ROLE_SENTIENCE,
 	ROLE_FAMILIES = /datum/game_mode/gang,
 	ROLE_HERETIC = /datum/game_mode/heretics,
-	ROLE_SHADOWLING = /datum/game_mode/shadowling //yogs
+	ROLE_SHADOWLING = /datum/game_mode/shadowling, //yogs
+	ROLE_BLOODSUCKER = /datum/game_mode/bloodsucker,
+	ROLE_MONSTERHUNTER
 ))
 
 //Job defines for what happens when you fail to qualify for any job during job selection

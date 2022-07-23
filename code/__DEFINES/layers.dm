@@ -24,9 +24,6 @@
 
 #define FLOOR_PLANE -7
 
-#define LOWER_SHUTTLE_MOVEMENT_PLANE -5
-#define LOWER_SHUTTLE_MOVEMENT_RENDER_TARGET "LOWER_SHUTTLE_MOVEMENT_PLANE"
-
 #define GAME_PLANE -6
 #define GAME_PLANE_FOV_HIDDEN -5
 #define GAME_PLANE_UPPER -4
@@ -191,6 +188,9 @@
 #define RUNECHAT_PLANE 501
 /// Plane for balloon text (text that fades up)
 #define BALLOON_CHAT_PLANE 502
+
+/// Bubble for typing indicators
+#define TYPING_LAYER 500
 
 //-------------------- Rendering ---------------------
 #define RENDER_PLANE_GAME 990

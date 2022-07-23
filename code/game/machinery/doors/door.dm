@@ -43,11 +43,11 @@
 	var/datum/effect_system/spark_spread/spark_system
 	var/real_explosion_block	//ignore this, just use explosion_block
 	var/red_alert_access = FALSE //if TRUE, this door will always open on red alert
-	var/poddoor = FALSE
 	var/unres_sides = 0 //Unrestricted sides. A bitflag for which direction (if any) can open the door with no access
 	var/safety_mode = FALSE ///Whether or not the airlock can be opened with bare hands while unpowered
 	var/can_crush = TRUE /// Whether or not the door can crush mobs.
 	var/prevent_clicks_under_when_closed = TRUE
+	var/can_open_with_hands = TRUE /// Whether or not the door can be opened by hand (used for blast doors and shutters)
 
 /obj/machinery/door/examine(mob/user)
 	. = ..()
@@ -57,8 +57,7 @@
 			. += "<span class='notice'>Учитывая угрозу, требования по доступу повышены!</span>\n"
 		else
 			. += "<span class='notice'>Учитывая красный код, требования по доступу повышены.</span>\n"
-	if(!poddoor)
-		. += "<hr><span class='notice'>Техническая панель <b>прикручена</b> на месте.</span>"
+	. += "<hr><span class='notice'>Техническая панель <b>прикручена</b> на месте.</span>"
 	if(safety_mode)
 		. += "<hr><span class='notice'>Здесь есть надпись, что этот шлюз откроется <b>просто твоими руками</b>, если здесь не будет энергии.</span>"
 
@@ -67,7 +66,7 @@
 		return TRUE
 	return ..()
 
-/obj/machinery/door/Initialize()
+/obj/machinery/door/Initialize(mapload)
 	. = ..()
 	set_init_door_layer()
 	update_freelook_sight()
@@ -162,7 +161,7 @@
 
 /obj/machinery/door/Bumped(atom/movable/AM)
 	. = ..()
-	if(operating || (obj_flags & EMAGGED))
+	if(operating || (obj_flags & EMAGGED) || (!can_open_with_hands && density))
 		return
 	if(ismob(AM))
 		var/mob/B = AM
@@ -206,7 +205,7 @@
 		return !opacity
 
 /obj/machinery/door/proc/bumpopen(mob/user)
-	if(operating)
+	if(operating || !can_open_with_hands)
 		return
 	add_fingerprint(user)
 	if(!requiresID())
@@ -237,7 +236,7 @@
 
 /obj/machinery/door/proc/try_to_activate_door(mob/user)
 	add_fingerprint(user)
-	if(operating || (obj_flags & EMAGGED))
+	if(operating || (obj_flags & EMAGGED) || !can_open_with_hands)
 		return
 	if(!requiresID())
 		user = null //so allowed(user) always succeeds
@@ -444,6 +443,11 @@
 /obj/machinery/door/proc/update_freelook_sight()
 	if(!glass && GLOB.cameranet)
 		GLOB.cameranet.updateVisibility(src, 0)
+
+/obj/machinery/door/BlockThermalConductivity() // All non-glass airlocks block heat, this is intended.
+	if(opacity || heat_proof)
+		return TRUE
+	return FALSE
 
 /obj/machinery/door/morgue
 	icon = 'icons/obj/doors/doormorgue.dmi'

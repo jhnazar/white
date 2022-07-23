@@ -2,7 +2,7 @@
 	name = "12g пуля"
 	damage = 50
 	sharpness = SHARP_POINTY
-	wound_bonus = 0
+	wound_bonus = -20 //Выбивание органов с двух пуль это смешно, но не очень честно.
 
 /obj/projectile/bullet/shotgun_slug/executioner
 	name = "executioner slug" // admin only, can dismember limbs
@@ -57,7 +57,7 @@
 		var/atom/throw_target = get_edge_target_turf(M, get_dir(src, get_step_away(M, src)))
 		M.safe_throw_at(throw_target, 3, 2, force = MOVE_FORCE_EXTREMELY_STRONG)
 
-/obj/projectile/bullet/shotgun_meteorslug/Initialize()
+/obj/projectile/bullet/shotgun_meteorslug/Initialize(mapload)
 	. = ..()
 	SpinAnimation()
 
@@ -74,6 +74,7 @@
 /obj/projectile/bullet/pellet
 	var/tile_dropoff = 0.45
 	var/tile_dropoff_s = 0.25
+	min_hitchance = 5 //Дробька маленькая
 
 /obj/projectile/bullet/pellet/Range()
 	..()
@@ -125,7 +126,7 @@
 	wound_bonus = 0
 	bare_wound_bonus = 7.5
 
-/obj/projectile/bullet/pellet/shotgun_improvised/Initialize()
+/obj/projectile/bullet/pellet/shotgun_improvised/Initialize(mapload)
 	. = ..()
 	range = rand(1, 8)
 

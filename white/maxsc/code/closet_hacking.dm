@@ -1,7 +1,7 @@
 /obj/item/closet_hacker
 	name = "взломщик кодов"
 	desc = "Устройство для подбора паролей к электронным замкам."
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/device.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "multitool_yellow"
@@ -13,6 +13,6 @@
 	name = "Взломщик кодов"
 	result = /obj/item/closet_hacker
 	time = 30
-	tool_behaviors = list(TOOL_SCREWDRIVER)
+	tool_behaviors = list(TOOL_MULTITOOL)
 	reqs = list(/obj/item/multitool = 1, /obj/item/stock_parts/subspace/filter = 1)
 	category = CAT_MISC

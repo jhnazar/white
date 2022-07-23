@@ -92,7 +92,8 @@
 			var/mob/living/carbon/human/H = user
 			H.adjustStaminaLoss(5)
 
-	playsound(get_turf(user), 'white/valtos/sounds/ladder.ogg', 55, TRUE)
+	if(isliving(user))
+		playsound(get_turf(user), "ladder", 55, TRUE)
 
 	var/turf/target = get_turf(ladder)
 	user.zMove(target = target, z_move_flags = ZMOVE_CHECK_PULLEDBY|ZMOVE_ALLOW_BUCKLED|ZMOVE_INCLUDE_PULLED)
@@ -175,7 +176,7 @@
 	var/id
 	var/height = 0  // higher numbers are considered physically higher
 
-/obj/structure/ladder/unbreakable/Initialize()
+/obj/structure/ladder/unbreakable/Initialize(mapload)
 	GLOB.ladders += src
 	return ..()
 
@@ -211,3 +212,19 @@
 
 /obj/structure/ladder/crafted
 	crafted = TRUE
+
+//should be called on turf above player
+/turf/proc/canlookthroughladderup(mob/M)
+	if(locate(/obj/structure/ladder) in src)
+		var/obj/structure/ladder/L = locate(/obj/structure/ladder) in src
+		if(M.z == L.down?.z)
+			return TRUE
+	return FALSE
+
+//should be called on turf where is player
+/turf/proc/canlookthroughladderdown(mob/M)
+	if(locate(/obj/structure/ladder) in src)
+		var/obj/structure/ladder/L = locate(/obj/structure/ladder) in src
+		if(L.down)
+			return TRUE
+	return FALSE

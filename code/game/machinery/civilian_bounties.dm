@@ -18,9 +18,9 @@
 	warmup_time = 3 SECONDS
 	var/obj/item/card/id/inserted_scan_id
 	circuit = /obj/item/circuitboard/computer/bountypad
-	interface_name = "CivCargoHoldTerminal"
+	interface_type = "CivCargoHoldTerminal"
 
-/obj/machinery/computer/piratepad_control/civilian/Initialize()
+/obj/machinery/computer/piratepad_control/civilian/Initialize(mapload)
 	. = ..()
 	pad = /obj/machinery/piratepad/civilian
 
@@ -267,7 +267,7 @@
 	addtimer(CALLBACK(src, .proc/launch_payload), 1 SECONDS)
 
 /obj/item/civ_bounty_beacon/proc/launch_payload()
-	playsound(src, "sparks", 80, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+	playsound(src, "zap", 80, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 	switch(uses)
 		if(2)
 			new /obj/machinery/piratepad/civilian(drop_location())

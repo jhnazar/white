@@ -80,7 +80,7 @@
 		if(D.check_access(access_card))
 			D.open()
 
-/obj/item/electronic_assembly/Initialize()
+/obj/item/electronic_assembly/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SScircuit, src)
 	set_custom_materials(list(GET_MATERIAL_REF(/datum/material/iron) = round((max_complexity + max_components) / 4) * SScircuit.cost_multiplier))
@@ -559,9 +559,9 @@
 	var/type_to_use
 
 	if(!sealed)
-		type_to_use = input("What would you like to do?","[src] type setting") as null|anything in list("repair", "seal")
+		type_to_use = tgui_input_list(user, "What would you like to do?", "[src] type setting", list("repair", "seal"))
 	else
-		type_to_use = input("What would you like to do?","[src] type setting") as null|anything in list("repair", "unseal")
+		type_to_use = tgui_input_list(user, "What would you like to do?", "[src] type setting", list("repair", "unseal"))
 
 	switch(type_to_use)
 		if("repair")
@@ -691,7 +691,7 @@
 			if(input_selection.len == 1)
 				choice = input_selection[input_selection[1]]
 			else
-				var/selection = input(user, "Where do you want to insert that item?", "Interaction") as null|anything in input_selection
+				var/selection = tgui_input_list(user, "Where do you want to insert that item?", "Interaction", input_selection)
 				if(!check_interactivity(user))
 					return ..()
 				if(selection)
@@ -732,7 +732,7 @@
 		if(input_selection.len ==1)
 			choice = input_selection[input_selection[1]]
 		else
-			var/selection = input(user, "What do you want to interact with?", "Interaction") as null|anything in input_selection
+			var/selection = tgui_input_list(user, "What do you want to interact with?", "Interaction", input_selection)
 			if(!check_interactivity(user))
 				return
 			if(selection)
@@ -1021,7 +1021,7 @@
 	if(!isfloorturf(T))
 		to_chat(user, span_warning("You cannot place [src] on this spot!"))
 		return
-	if(gotwallitem(T, ndir))
+	if(check_wall_item(T, ndir))
 		to_chat(user, span_warning("There's already an item on this wall!"))
 		return
 	playsound(src.loc, 'sound/machines/click.ogg', 75, 1)

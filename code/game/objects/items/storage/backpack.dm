@@ -95,7 +95,7 @@
 	inhand_icon_state = "giftbag"
 	w_class = WEIGHT_CLASS_BULKY
 
-/obj/item/storage/backpack/santabag/Initialize()
+/obj/item/storage/backpack/santabag/Initialize(mapload)
 	. = ..()
 	regenerate_presents()
 
@@ -401,7 +401,7 @@
 	inhand_icon_state = "duffel-drone"
 	slowdown = 0
 
-/obj/item/storage/backpack/duffelbag/c4_no_slowdown/Initialize()
+/obj/item/storage/backpack/duffelbag/c4_no_slowdown/Initialize(mapload)
 	. = ..()
 	add_overlay(duffel_anti_slow_overlay)
 
@@ -422,7 +422,7 @@
 	///counts time passed since it ate food
 	var/hunger = 0
 
-/obj/item/storage/backpack/duffelbag/cursed/Initialize()
+/obj/item/storage/backpack/duffelbag/cursed/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj,src)
 	ADD_TRAIT(src, TRAIT_NODROP, "duffelbag")
@@ -495,6 +495,7 @@
 	new /obj/item/cautery(src)
 	new /obj/item/bonesetter(src)
 	new /obj/item/surgical_drapes(src)
+	new /obj/item/breathing_bag(src)
 	new /obj/item/clothing/mask/surgical(src)
 	new /obj/item/razor(src)
 	new /obj/item/blood_filter(src)
@@ -518,6 +519,7 @@
 	new /obj/item/surgicaldrill(src)
 	new /obj/item/cautery(src)
 	new /obj/item/surgical_drapes(src)
+	new /obj/item/breathing_bag(src)
 	new /obj/item/clothing/mask/surgical(src)
 	new /obj/item/blood_filter(src)
 
@@ -605,6 +607,7 @@
 	new /obj/item/surgicaldrill(src)
 	new /obj/item/cautery(src)
 	new /obj/item/surgical_drapes(src)
+	new /obj/item/breathing_bag(src)
 	new /obj/item/clothing/suit/straight_jacket(src)
 	new /obj/item/clothing/mask/muzzle(src)
 	new /obj/item/mmi/syndie(src)

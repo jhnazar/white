@@ -31,7 +31,7 @@
 	var/internal_damage_to_deal = possible_int_damage
 	internal_damage_to_deal &= ~mecha_flags
 	if(internal_damage_to_deal)
-		set_internal_damage(pick(bitfield2list(internal_damage_to_deal)))
+		set_internal_damage(pick(bitfield_to_list(internal_damage_to_deal)))
 
 /// tries to damage mech equipment depending on damage and where is being targetted
 /obj/vehicle/sealed/mecha/proc/try_damage_component(damage, def_zone)
@@ -181,15 +181,11 @@
 		take_damage(30 / severity, BURN, ENERGY, 1)
 	log_message("EMP detected", LOG_MECHA, color="red")
 
-	if(istype(src, /obj/vehicle/sealed/mecha/combat)) //todo this stupid mouse icon should be a flag
-		mouse_pointer = 'icons/effects/mouse_pointers/mecha_mouse-disable.dmi'
-		for(var/occus in occupants)
-			var/mob/living/occupant = occus
-			occupant.update_mouse_pointer()
 	if(!equipment_disabled && LAZYLEN(occupants)) //prevent spamming this message with back-to-back EMPs
 		to_chat(occupants, span_warning("Ошибка -- Соединение с оборудованием прервано."))
 	addtimer(CALLBACK(src, /obj/vehicle/sealed/mecha.proc/restore_equipment), 3 SECONDS, TIMER_UNIQUE | TIMER_OVERRIDE)
 	equipment_disabled = TRUE
+	set_mouse_pointer()
 
 /obj/vehicle/sealed/mecha/should_atmos_process(datum/gas_mixture/air, exposed_temperature)
 	return exposed_temperature > max_temperature

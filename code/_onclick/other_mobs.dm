@@ -76,8 +76,8 @@
 		return interact(user)
 	return FALSE
 
-/atom/proc/can_interact(mob/user)
-	if(!user.can_interact_with(src))
+/atom/proc/can_interact(mob/user, require_adjacent_turf = TRUE)
+	if(!user.can_interact_with(src, interaction_flags_atom & INTERACT_ATOM_ALLOW_USER_LOCATION))
 		return FALSE
 	if((interaction_flags_atom & INTERACT_ATOM_REQUIRES_DEXTERITY) && !ISADVANCEDTOOLUSER(user))
 		to_chat(user, span_warning("У меня не хватает ловкости для этого!"))
@@ -95,6 +95,7 @@
 
 /atom/ui_status(mob/user)
 	. = ..()
+	//Check if both user and atom are at the same location
 	if(!can_interact(user))
 		. = min(., UI_UPDATE)
 
@@ -128,6 +129,47 @@
 	if(isturf(A) && get_dist(src,A) <= 1)
 		Move_Pulled(A)
 		return TRUE
+
+/mob/living/carbon/human/ranged_secondary_attack(atom/target, modifiers)
+	. = ..()
+	if(. || !has_active_hand() || stat)
+		return
+
+	if((!ismob(target) && !iscameraobj(target)) || get_dist(src, target) >= 8)
+		return
+
+	var/mob/target_mob = target
+	var/target_message
+
+	switch(a_intent)
+		if(INTENT_HELP)
+			visible_message(span_notice("<b>[src]</b> машет рукой <b>[target]</b>."), span_notice("Машу рукой <b>[target]</b>."), span_notice("Машу кому-то рукой."), ignored_mobs = target)
+			target_message = "машет мне рукой"
+		if(INTENT_DISARM)
+			visible_message(span_notice("<b>[src]</b> просит жестом <b>[target]</b> отойти."), span_notice("Прошу жестом <b>[target]</b> отойти."), span_notice("Прошу жестом кого-то отойти."), ignored_mobs = target)
+			target_message = "просит меня отойти"
+		if(INTENT_GRAB)
+			visible_message(span_notice("<b>[src]</b> подманивает пальчиком <b>[target]</b>."), span_notice("Подманиваю пальчиком <b>[target]</b>."), span_notice("Подманиваю пальчиком кого-то."), ignored_mobs = target)
+			target_message = "подманивает меня пальчиком"
+		if(INTENT_HARM)
+			visible_message(span_warning("<b>[src]</b> угрожает кулаком <b>[target]</b>!"), span_warning("Угрожаю кулаком <b>[target]</b>!"), span_warning("Угрожаю кому-то кулаком!"), ignored_mobs = target)
+			target_message = "угрожает мне кулаком"
+	changeNext_move(1 SECONDS)
+
+	SEND_SIGNAL(target, COMSIG_ATOM_FRIENDLY_WAVED, a_intent)
+
+	if(!istype(target_mob))
+		return TRUE
+
+	if(a_intent == INTENT_HARM)
+		to_chat(target, span_danger("<b>[src]</b> [target_message]!"))
+	else
+		to_chat(target, span_notice("<b>[src]</b> [target_message]."))
+
+	if(target_mob?.client?.prefs.chat_on_map)
+		target_mob.create_chat_message(src, target_message, runechat_flags = EMOTE_MESSAGE)
+
+	return TRUE
 
 /*
 	Animals & All Unspecified

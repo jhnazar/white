@@ -25,7 +25,7 @@
 	///is this barriade wired?
 	var/is_wired = FALSE
 
-/obj/structure/deployable_barricade/Initialize()
+/obj/structure/deployable_barricade/Initialize(mapload)
 	. = ..()
 	update_icon()
 	var/static/list/connections = list(
@@ -183,7 +183,8 @@
 			if(SOUTH)
 				layer = ABOVE_MOB_LAYER
 			if(NORTH)
-				layer = initial(layer) - 0.01
+				plane = GAME_PLANE_FOV_HIDDEN
+				layer = MOB_LAYER
 			else
 				layer = initial(layer)
 		if(!anchored)
@@ -278,6 +279,8 @@
 	. = ..()
 	if(dir == NORTH)
 		pixel_y = 12
+		plane = GAME_PLANE_FOV_HIDDEN
+		layer = MOB_LAYER
 
 /*----------------------*/
 // WOOD
@@ -970,7 +973,7 @@
 /obj/item/quikdeploy/cade
 	thing_to_deploy = /obj/structure/deployable_barricade/metal
 	icon_state = "metal"
-	delay = 3 SECONDS
+	delay = 0.5 SECONDS
 
 /obj/item/quikdeploy/cade/can_place(mob/user)
 	. = ..()

@@ -797,7 +797,7 @@
 		return
 	obj_flags |= EMAGGED
 	visible_message(span_warning("Sparks fly out of [src]!") , span_notice("You emag [src], disabling its safeties."))
-	playsound(src, "sparks", 50, 1)
+	playsound(src, "zap", 50, 1)
 
 /obj/machinery/advanced_airlock_controller/obj_break(damage_flag)
 	..()
@@ -815,7 +815,7 @@
 /obj/machinery/door/airlock
 	var/obj/machinery/advanced_airlock_controller/aac
 
-/obj/machinery/door/airlock/Initialize()
+/obj/machinery/door/airlock/Initialize(mapload)
 	. = ..()
 	update_aac_docked()
 /obj/machinery/door/airlock/Destroy()

@@ -21,7 +21,7 @@
 
 	interaction_flags_machine = INTERACT_MACHINE_ALLOW_SILICON | INTERACT_MACHINE_SET_MACHINE | INTERACT_MACHINE_REQUIRES_SIGHT
 
-/obj/machinery/computer/camera_advanced/Initialize()
+/obj/machinery/computer/camera_advanced/Initialize(mapload)
 	. = ..()
 	for(var/i in networks)
 		networks -= i
@@ -89,6 +89,7 @@
 		if(eyeobj.visible_icon && user.client)
 			user.client.images -= eyeobj.user_image
 		user.client.view_size.unsupress()
+		user.client.attempt_auto_fit_viewport()
 
 	eyeobj.eye_user = null
 	user.remote_control = null
@@ -290,7 +291,7 @@
 			T["[netcam.c_tag][netcam.can_use() ? null : " (Deactivated)"]"] = netcam
 
 	playsound(origin, 'sound/machines/terminal_prompt.ogg', 25, FALSE)
-	var/camera = input("Choose which camera you want to view", "Cameras") as null|anything in T
+	var/camera = tgui_input_list(usr, "Choose which camera you want to view", "Cameras", T)
 	var/obj/machinery/camera/final = T[camera]
 	playsound(src, "terminal_type", 25, FALSE)
 	if(final)

@@ -1,7 +1,9 @@
 SUBSYSTEM_DEF(title)
 	name = "Заставки"
-	flags = SS_NO_FIRE
+	flags = SS_BACKGROUND
+	wait = 90 SECONDS
 	init_order = INIT_ORDER_TITLE
+	init_stage = INITSTAGE_EARLY
 
 	var/file_path
 	var/icon/icon
@@ -9,7 +11,9 @@ SUBSYSTEM_DEF(title)
 	var/turf/closed/indestructible/splashscreen/splash_turf
 	var/cached_title
 
-/datum/controller/subsystem/title/Initialize()
+	var/list/title_screens = list()
+
+/datum/controller/subsystem/title/Initialize(mapload)
 	if(file_path && icon)
 		return
 
@@ -20,7 +24,7 @@ SUBSYSTEM_DEF(title)
 	fdel("data/previous_title.dat")
 
 	var/list/provisional_title_screens = flist("[global.config.directory]/title_screens/images/")
-	var/list/title_screens = list()
+
 	var/use_rare_screens = prob(1)
 
 	for(var/S in provisional_title_screens)
@@ -28,6 +32,11 @@ SUBSYSTEM_DEF(title)
 		if((L.len == 1 && (L[1] != "exclude" && L[1] != "blank.png"))|| (L.len > 1 && ((use_rare_screens && lowertext(L[1]) == "rare"))))
 			title_screens += S
 
+	rotate_title_screen()
+
+	return ..()
+
+/datum/controller/subsystem/title/proc/rotate_title_screen()
 	if(length(title_screens))
 		file_path = "[global.config.directory]/title_screens/images/[pick(title_screens)]"
 
@@ -41,7 +50,13 @@ SUBSYSTEM_DEF(title)
 	if(splash_turf)
 		splash_turf.icon = icon
 
-	return ..()
+/datum/controller/subsystem/title/fire(resumed = FALSE)
+	if((splash_turf?.datum_flags & DF_VAR_EDITED) || GLOB.violence_mode_activated)
+		return
+
+	rotate_title_screen()
+
+	return
 
 /datum/controller/subsystem/title/vv_edit_var(var_name, var_value)
 	. = ..()
@@ -105,13 +120,13 @@ SUBSYSTEM_DEF(title)
 	tcc += "[english_list(cum)]</td></tr></tbody></table>"
 	cached_title = tcc
 
-/client/proc/show_lobby()
-	usr << browse(file('html/lobby.html'), "window=pdec;display=1;is-visible=false;size=300x550;border=0;can_close=1;can_resize=1;can_minimize=1;titlebar=1;is-disabled=false;")
-	winset(usr, "pdec", "pos=10,60")
+/client/proc/show_lobby(mob/user)
+	user << browse(file('html/lobby.html'), "window=pdec;display=1;is-visible=false;size=300x550;border=0;can_close=1;can_resize=1;can_minimize=1;titlebar=1;is-disabled=false;")
+	winset(user, "pdec", "pos=10,60")
 	update_lobby()
 	spawn(13 SECONDS)
-		if(usr)
-			winset(usr, "pdec", "is-visible=true;pos=10,60")
+		if(user)
+			winset(user, "pdec", "is-visible=true;pos=10,60")
 		SStitle.update_lobby()
 
 /client/proc/kill_lobby()

@@ -122,7 +122,6 @@
 // -----------------------------
 /obj/item/storage/secure/briefcase
 	name = "secure briefcase"
-	icon = 'white/valtos/icons/items.dmi'
 	icon_state = "secure"
 	inhand_icon_state = "sec-case"
 	lefthand_file = 'icons/mob/inhands/equipment/briefcase_lefthand.dmi'
@@ -227,7 +226,7 @@ There appears to be a small amount of surface corrosion. It doesn't look like it
 	max_integrity = 300
 	color = "#ffdd33"
 
-/obj/item/storage/secure/safe/caps_spare/Initialize()
+/obj/item/storage/secure/safe/caps_spare/Initialize(mapload)
 	. = ..()
 
 	l_code = SSid_access.spare_id_safe_code

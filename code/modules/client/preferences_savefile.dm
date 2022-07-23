@@ -5,7 +5,7 @@
 // You do not need to raise this if you are adding new values that have sane defaults.
 // Only raise this value when changing the meaning/format/name/layout of an existing value
 // where you would want the updater procs below to run
-#define SAVEFILE_VERSION_MAX 54
+#define SAVEFILE_VERSION_MAX 58
 
 /*
 SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Carn
@@ -45,7 +45,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if(current_version < 49)
 		var/list/legacy_purchases = purchased_gear.Copy()
 		purchased_gear.Cut()
-		equipped_gear.Cut() //Not gonna bother.
 		for(var/l_gear in legacy_purchases)
 			var/n_gear
 			for(var/rg_nam in GLOB.gear_datums) //this is ugly.
@@ -66,14 +65,14 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	if (current_version < 52)
 		uses_glasses_colour = TRUE
 
-	if(current_version < 53)
-		widescreenwidth = 19
-
 	if(current_version < 54)
 		if("0474cf4afd90f3bd6ed0fc294e3e71f4" in purchased_gear)
 			purchased_gear += "b77fc4971b9920d93a5c1cab1aa490ed"
 		if("4d4919a746a01f2d0c17740fdbbd83ea" in purchased_gear)
 			purchased_gear += "6355ec980b834b9c956ad064bde6657a"
+
+	if (current_version < 58)
+		widescreenwidth = 19
 
 /datum/preferences/proc/update_character(current_version, savefile/S)
 	return
@@ -183,7 +182,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	READ_FILE(S["parallax"], parallax)
 	READ_FILE(S["ambientocclusion"], ambientocclusion)
 	READ_FILE(S["auto_fit_viewport"], auto_fit_viewport)
-	READ_FILE(S["widescreenpref"], widescreenpref)
 	READ_FILE(S["pixel_size"], pixel_size)
 	READ_FILE(S["scaling_method"], scaling_method)
 	READ_FILE(S["menuoptions"], menuoptions)
@@ -195,7 +193,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	READ_FILE(S["disabled_autocap"], disabled_autocap)
 
 	READ_FILE(S["purchased_gear"], purchased_gear)
-	READ_FILE(S["equipped_gear"], equipped_gear)
+	READ_FILE(S["equipped_gear_by_character"], equipped_gear_by_character)
 	READ_FILE(S["jobs_buyed"], jobs_buyed)
 	READ_FILE(S["w_toggles"], w_toggles)
 	READ_FILE(S["hearted_until"], hearted_until)
@@ -247,13 +245,12 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	toggles			= sanitize_integer(toggles, 0, (2**24)-1, initial(toggles))
 	w_toggles		= sanitize_integer(w_toggles, 0, 524288, initial(w_toggles))
 	clientfps		= sanitize_integer(clientfps, -1, 1000, 0)
-	widescreenwidth		= sanitize_integer(widescreenwidth, 15, 31, 0)
+	widescreenwidth		= sanitize_integer(widescreenwidth, 15, 19, 0)
 	parallax		= sanitize_integer(parallax, PARALLAX_INSANE, PARALLAX_DISABLE, null)
 	ambientocclusion	= sanitize_integer(ambientocclusion, FALSE, TRUE, initial(ambientocclusion))
 	auto_fit_viewport	= sanitize_integer(auto_fit_viewport, FALSE, TRUE, initial(auto_fit_viewport))
 	fullscreen		= sanitize_integer(fullscreen, 0, 1, initial(fullscreen))
 	disabled_autocap	= sanitize_integer(disabled_autocap, 0, 1, initial(disabled_autocap))
-	widescreenpref  = sanitize_integer(widescreenpref, FALSE, TRUE, initial(widescreenpref))
 	pixel_size		= sanitize_float(pixel_size, PIXEL_SCALING_AUTO, PIXEL_SCALING_3X, 0.5, initial(pixel_size))
 	scaling_method  = sanitize_text(scaling_method, initial(scaling_method))
 	ghost_form		= sanitize_inlist(ghost_form, GLOB.ghost_forms, initial(ghost_form))
@@ -267,8 +264,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	if(!purchased_gear)
 		purchased_gear = list()
-	if(!equipped_gear)
-		equipped_gear = list()
+	if(!equipped_gear_by_character)
+		equipped_gear_by_character = list()
 	if(!jobs_buyed)
 		jobs_buyed = list()
 
@@ -337,7 +334,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["parallax"], parallax)
 	WRITE_FILE(S["ambientocclusion"], ambientocclusion)
 	WRITE_FILE(S["auto_fit_viewport"], auto_fit_viewport)
-	WRITE_FILE(S["widescreenpref"], widescreenpref)
 	WRITE_FILE(S["pixel_size"], pixel_size)
 	WRITE_FILE(S["scaling_method"], scaling_method)
 	WRITE_FILE(S["menuoptions"], menuoptions)
@@ -348,7 +344,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	WRITE_FILE(S["btprefsnew"], btprefsnew)
 	WRITE_FILE(S["btvolume_max"], btvolume_max)
 	WRITE_FILE(S["purchased_gear"], purchased_gear)
-	WRITE_FILE(S["equipped_gear"], equipped_gear)
+	WRITE_FILE(S["equipped_gear_by_character"], equipped_gear_by_character)
 	WRITE_FILE(S["jobs_buyed"], jobs_buyed)
 	WRITE_FILE(S["hearted_until"], (hearted_until > world.realtime ? hearted_until : null))
 	WRITE_FILE(S["disabled_autocap"], disabled_autocap)

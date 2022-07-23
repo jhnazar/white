@@ -301,7 +301,6 @@
 
 /atom/movable/screen/internals
 	name = "подача воздуха"
-	icon = 'white/valtos/icons/hud.dmi'
 	icon_state = "internal0"
 	screen_loc = ui_internal
 
@@ -362,7 +361,6 @@
 
 /atom/movable/screen/spacesuit
 	name = "Состояние батареи костюма"
-	icon = 'white/valtos/icons/hud.dmi'
 	icon_state = "spacesuit_0"
 	screen_loc = ui_spacesuit
 
@@ -438,7 +436,7 @@
 /atom/movable/screen/storage
 	name = "хранилище"
 	icon_state = "block"
-	screen_loc = "7,7 to 10,8"
+	screen_loc = "WEST,SOUTH to EAST,NORTH"
 	plane = HUD_PLANE
 
 /atom/movable/screen/storage/Initialize(mapload, new_master)
@@ -490,6 +488,7 @@
 	return set_selected_zone(choice, usr)
 
 /atom/movable/screen/zone_sel/MouseEntered(location, control, params)
+	. = ..()
 	MouseMove(location, control, params)
 
 /atom/movable/screen/zone_sel/MouseMove(location, control, params)
@@ -672,7 +671,7 @@
 /atom/movable/screen/splash
 	icon = 'icons/blank_title.png'
 	icon_state = ""
-	screen_loc = "1,1"
+	screen_loc = "BOTTOM, LEFT" // Why here? The old is 1,1 - which makes it at the bottom left corner. Jank! This will avoid alignment issues altogether.
 	plane = SPLASHSCREEN_PLANE
 	var/client/holder
 

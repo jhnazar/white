@@ -1,6 +1,14 @@
 GLOBAL_LIST(admin_objective_list) //Prefilled admin assignable objective list
 GLOBAL_LIST_EMPTY(objectives)
 
+GLOBAL_VAR_INIT(is_engine_sabotaged, FALSE)
+GLOBAL_VAR_INIT(is_research_sabotaged, FALSE)
+GLOBAL_VAR_INIT(is_cargo_sabotaged, FALSE)
+//GLOBAL_VAR_INIT(is_medbay_sabotaged, FALSE)
+//GLOBAL_VAR_INIT(is_brig_sabotaged, FALSE)
+//GLOBAL_VAR_INIT(is_command_sabotaged, FALSE)
+//GLOBAL_VAR_INIT(is_service_sabotaged, FALSE)
+
 /datum/objective
 	var/datum/mind/owner				//The primary owner of the objective. !!SOMEWHAT DEPRECATED!! Prefer using 'team' for new code.
 	var/datum/team/team					//An alternative to 'owner': a team. Use this when writing new code.
@@ -38,13 +46,13 @@ GLOBAL_LIST_EMPTY(objectives)
 		if ((possible_target != src) && ishuman(possible_target.current))
 			possible_targets += possible_target.current
 
-	possible_targets = list("Ничего", "Random") + sortNames(possible_targets)
+	possible_targets = list("Ничего", "Random") + sort_names(possible_targets)
 
 
 	if(target?.current)
 		def_value = target.current
 
-	var/mob/new_target = input(admin,"Select target:", "Objective target", def_value) as null|anything in possible_targets
+	var/mob/new_target = tgui_input_list(admin, "Select target:", "Objective target", possible_targets, def_value)
 	if (!new_target)
 		return
 
@@ -123,7 +131,8 @@ GLOBAL_LIST_EMPTY(objectives)
 	for(var/datum/mind/possible_target in get_crewmember_minds())
 		if(is_valid_target(possible_target) && !(possible_target in owners) && ishuman(possible_target.current) && (possible_target.current.stat != DEAD) && is_unique_objective(possible_target,dupe_search_range))
 			if (!(possible_target in blacklist))
-				possible_targets += possible_target
+				if (!(possible_target?.assigned_role in list("Exploration Crew")))
+					possible_targets += possible_target
 	if(try_target_late_joiners)
 		var/list/all_possible_targets = possible_targets.Copy()
 		for(var/I in all_possible_targets)
@@ -683,12 +692,12 @@ GLOBAL_LIST_EMPTY(possible_items)
 
 /datum/objective/steal/admin_edit(mob/admin)
 	var/list/possible_items_all = GLOB.possible_items
-	var/new_target = input(admin,"Select target:", "Objective target", steal_target) as null|anything in sortNames(possible_items_all)+"custom"
+	var/new_target = tgui_input_list(admin,"Select target:", "Objective target", sort_names(possible_items_all)+"custom", steal_target)
 	if (!new_target)
 		return
 
 	if (new_target == "custom") //Can set custom items.
-		var/custom_path = input(admin,"Search for target item type:","Type") as null|text
+		var/custom_path = tgui_input_text(admin, "Search for target item type:", "Type")
 		if (!custom_path)
 			return
 		var/obj/item/custom_target = pick_closest_path(custom_path, make_types_fancy(subtypesof(/obj/item)))
@@ -958,7 +967,7 @@ GLOBAL_LIST_EMPTY(possible_items_special)
 /datum/objective/destroy/admin_edit(mob/admin)
 	var/list/possible_targets = active_ais(1)
 	if(possible_targets.len)
-		var/mob/new_target = input(admin,"Select target:", "Objective target") as null|anything in sortNames(possible_targets)
+		var/mob/new_target = tgui_input_list(admin,"Select target:", "Objective target", sort_names(possible_targets))
 		target = new_target.mind
 	else
 		to_chat(admin, span_boldwarning("No active AIs with minds."))
@@ -1108,4 +1117,34 @@ GLOBAL_LIST_EMPTY(possible_items_special)
 
 /datum/objective/sabotage/update_explanation_text()
 	..()
-	explanation_text = "Саботировать работу основного двигателя на станции."
+	explanation_text = "Саботировать подачу энергии или один из двигателей на станции."
+
+/datum/objective/sabotage/research
+	name = "sabotage research"
+
+/datum/objective/sabotage/research/find_target(dupe_search_range)
+	return TRUE
+
+/datum/objective/sabotage/research/check_completion()
+	if(GLOB.is_research_sabotaged)
+		return TRUE
+	return FALSE
+
+/datum/objective/sabotage/research/update_explanation_text()
+	..()
+	explanation_text = "Саботировать работу серверов научного отдела на станции."
+
+/datum/objective/sabotage/cargo
+	name = "sabotage cargo"
+
+/datum/objective/sabotage/cargo/find_target(dupe_search_range)
+	return TRUE
+
+/datum/objective/sabotage/cargo/check_completion()
+	if(GLOB.is_cargo_sabotaged)
+		return TRUE
+	return FALSE
+
+/datum/objective/sabotage/cargo/update_explanation_text()
+	..()
+	explanation_text = "Саботировать отдел снабжения на станции."

@@ -13,7 +13,7 @@
 	mergeable_decal = FALSE
 	beauty = -50
 
-/obj/effect/decal/cleanable/ash/Initialize()
+/obj/effect/decal/cleanable/ash/Initialize(mapload)
 	. = ..()
 	reagents.add_reagent(/datum/reagent/ash, 30)
 	pixel_x = base_pixel_x + rand(-5, 5)
@@ -28,7 +28,7 @@
 	icon_state = "big_ash"
 	beauty = -100
 
-/obj/effect/decal/cleanable/ash/large/Initialize()
+/obj/effect/decal/cleanable/ash/large/Initialize(mapload)
 	. = ..()
 	reagents.add_reagent(/datum/reagent/ash, 30) //double the amount of ash.
 
@@ -39,7 +39,7 @@
 	icon_state = "tiny"
 	beauty = -100
 
-/obj/effect/decal/cleanable/glass/Initialize()
+/obj/effect/decal/cleanable/glass/Initialize(mapload)
 	. = ..()
 	setDir(pick(GLOB.cardinals))
 
@@ -61,7 +61,7 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	beauty = -75
 
-/obj/effect/decal/cleanable/dirt/Initialize()
+/obj/effect/decal/cleanable/dirt/Initialize(mapload)
 	. = ..()
 	var/turf/T = get_turf(src)
 	if(T.tiled_dirt)
@@ -92,7 +92,7 @@
 /obj/effect/decal/cleanable/greenglow/ex_act()
 	return
 
-/obj/effect/decal/cleanable/greenglow/filled/Initialize()
+/obj/effect/decal/cleanable/greenglow/filled/Initialize(mapload)
 	. = ..()
 	reagents.add_reagent(pick(/datum/reagent/uranium, /datum/reagent/uranium/radium), 5)
 
@@ -257,7 +257,7 @@
 	beauty = -150
 	clean_type = CLEAN_TYPE_HARD_DECAL
 
-/obj/effect/decal/cleanable/garbage/Initialize()
+/obj/effect/decal/cleanable/garbage/Initialize(mapload)
 	. = ..()
 	AddElement(/datum/element/swabable, CELL_LINE_TABLE_SLUDGE, CELL_VIRUS_TABLE_GENERIC, rand(2,4), 15)
 
@@ -282,3 +282,76 @@
 		desc = "Небольшая колония космических муравьёв. Эти похоже были созданы из пластитана?"
 		memes = 25
 	AddComponent(/datum/component/caltrop, min_damage = 0.2, max_damage = memes, flags = (CALTROP_NOCRAWL | CALTROP_NOSTUN | CALTROP_BYPASS_SHOES), soundfile = 'sound/weapons/bite.ogg')
+
+/obj/effect/decal/cleanable/fuel_pool
+	name = "топливная лужа"
+	desc = "Горючая. Надо бы убрать это всё вот это..."
+	icon_state = "fuel_pool"
+	layer = LOW_OBJ_LAYER
+	beauty = -50
+	clean_type = CLEAN_TYPE_BLOOD
+	mouse_opacity = MOUSE_OPACITY_OPAQUE
+	/// Maximum amount of hotspots this pool can create before deleting itself
+	var/burn_amount = 3
+	/// Is this fuel pool currently burning?
+	var/burning = FALSE
+	/// Type of hotspot fuel pool spawns upon being ignited
+	var/hotspot_type = /obj/effect/hotspot
+
+/obj/effect/decal/cleanable/fuel_pool/Initialize(mapload, burn_stacks)
+	. = ..()
+	for(var/obj/effect/decal/cleanable/fuel_pool/pool in get_turf(src)) //Can't use locate because we also belong to that turf
+		if(pool == src)
+			continue
+		pool.burn_amount =  max(min(pool.burn_amount + burn_stacks, 10), 1)
+		return INITIALIZE_HINT_QDEL
+
+	if(burn_stacks)
+		burn_amount = max(min(burn_stacks, 10), 1)
+
+/obj/effect/decal/cleanable/fuel_pool/fire_act(exposed_temperature, exposed_volume)
+	. = ..()
+	ignite()
+
+/**
+ * Ignites the fuel pool. This should be the only way to ignite fuel pools.
+ */
+/obj/effect/decal/cleanable/fuel_pool/proc/ignite()
+	if(burning)
+		return
+	burning = TRUE
+	burn_process()
+
+/**
+ * Spends 1 burn_amount and spawns a hotspot. If burn_amount is equal to 0, deletes the fuel pool.
+ * Else, queues another call of this proc upon hotspot getting deleted and ignites other fuel pools around itself after 0.5 seconds.
+ * THIS SHOULD NOT BE CALLED DIRECTLY.
+ */
+/obj/effect/decal/cleanable/fuel_pool/proc/burn_process()
+	SIGNAL_HANDLER
+
+	burn_amount -= 1
+	var/obj/effect/hotspot/hotspot = new hotspot_type(get_turf(src))
+	addtimer(CALLBACK(src, .proc/ignite_others), 0.5 SECONDS)
+
+	if(!burn_amount)
+		qdel(src)
+		return
+
+	RegisterSignal(hotspot, COMSIG_PARENT_QDELETING, .proc/burn_process)
+
+/**
+ * Ignites other oil pools around itself.
+ */
+/obj/effect/decal/cleanable/fuel_pool/proc/ignite_others()
+	for(var/obj/effect/decal/cleanable/fuel_pool/oil in range(1, get_turf(src)))
+		oil.ignite()
+
+/obj/effect/decal/cleanable/fuel_pool/bullet_act(obj/projectile/hit_proj)
+	. = ..()
+	ignite()
+
+/obj/effect/decal/cleanable/fuel_pool/attackby(obj/item/item, mob/user, params)
+	if(item.ignition_effect(src, user))
+		ignite()
+	return ..()

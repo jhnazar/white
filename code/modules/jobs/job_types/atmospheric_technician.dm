@@ -3,8 +3,8 @@
 	ru_title = "Атмосферный Техник"
 	department_head = list("Chief Engineer" = "Старший Инженер")
 	faction = "Station"
-	total_positions = 3
-	spawn_positions = 2
+	total_positions = 1
+	spawn_positions = 1
 	supervisors = "старшему инженеру"
 	selection_color = "#fff5cc"
 	exp_requirements = 600
@@ -20,7 +20,8 @@
 	display_order = JOB_DISPLAY_ORDER_ATMOSPHERIC_TECHNICIAN
 	bounty_types = CIV_JOB_ENG
 
-	rpg_title = "Аэромансер"
+	rpg_title = "Aeromancer"
+	rpg_title_ru = "Аэромансер"
 
 /datum/outfit/job/atmos
 	name = "Atmospheric Technician"
@@ -33,6 +34,7 @@
 	r_pocket = /obj/item/analyzer
 
 	backpack = /obj/item/storage/backpack/industrial
+	backpack_contents = list(/obj/item/extinguisher/mini=1)
 	satchel = /obj/item/storage/backpack/satchel/eng
 	duffelbag = /obj/item/storage/backpack/duffelbag/engineering
 	box = /obj/item/storage/box/survival/engineer

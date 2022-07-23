@@ -28,6 +28,7 @@
 "aj" = (
 /obj/structure/bed,
 /obj/item/bedsheet/captain,
+/obj/item/card/id/advanced/gold/captains_spare,
 /turf/open/floor/carpet/royalblue,
 /area/command/heads_quarters/captain)
 "aw" = (
@@ -38,7 +39,7 @@
 	name = "port bay 2";
 	width = 5
 	},
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "aG" = (
 /obj/effect/spawner/structure/window/reinforced,
@@ -55,6 +56,10 @@
 	},
 /turf/open/floor/plasteel/white,
 /area/science/lab)
+"aP" = (
+/obj/machinery/telecomms/server/presets/service,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "aQ" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/machinery/door/poddoor/shutters{
@@ -64,11 +69,16 @@
 /turf/open/floor/plating,
 /area/security/prison/safe)
 "aW" = (
-/obj/structure/railing/corner{
+/obj/machinery/light/directional/east,
+/obj/effect/turf_decal/stripes/corner{
 	dir = 8
 	},
-/obj/structure/railing/corner,
-/obj/effect/turf_decal/stripes/line,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "bd" = (
@@ -171,6 +181,10 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/cult,
 /area/security/prison/garden)
+"co" = (
+/obj/machinery/telecomms/bus/preset_two,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "cw" = (
 /obj/structure/chair/sofa/bench/right{
 	dir = 4
@@ -184,10 +198,6 @@
 "cB" = (
 /turf/closed/indestructible/black,
 /area/space)
-"cH" = (
-/obj/machinery/telecomms/bus/preset_one/birdstation,
-/turf/open/floor/circuit/telecomms/mainframe,
-/area/tcommsat/server)
 "cJ" = (
 /obj/effect/turf_decal/bot,
 /obj/structure/cable/multilayer/multiz,
@@ -331,8 +341,8 @@
 /turf/open/floor/plasteel/dark,
 /area/command/heads_quarters/captain)
 "eB" = (
-/obj/structure/table,
 /obj/machinery/camera/autoname/directional/south,
+/obj/machinery/power/shieldwallgen,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
 "eC" = (
@@ -359,10 +369,10 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
 	},
-/obj/structure/railing{
+/obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
-/obj/effect/turf_decal/stripes/line{
+/obj/structure/railing/corner{
 	dir = 1
 	},
 /turf/open/floor/plasteel/dark,
@@ -435,9 +445,6 @@
 "ft" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
 	dir = 8
-	},
-/obj/structure/railing/corner{
-	dir = 1
 	},
 /obj/effect/turf_decal/stripes/corner{
 	dir = 1
@@ -554,7 +561,7 @@
 /turf/open/floor/plasteel/dark,
 /area/cargo/office)
 "hD" = (
-/obj/machinery/telecomms/server/presets/common/birdstation,
+/obj/machinery/telecomms/message_server/preset,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "hM" = (
@@ -562,18 +569,17 @@
 /turf/open/floor/plasteel/cult,
 /area/security/prison/garden)
 "hO" = (
-/obj/machinery/rnd/server,
+/obj/machinery/blackbox_recorder,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "hR" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
 	},
-/obj/structure/railing/corner,
+/obj/effect/turf_decal/stripes/line,
 /obj/structure/railing/corner{
 	dir = 8
 	},
-/obj/effect/turf_decal/stripes/line,
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "hY" = (
@@ -667,7 +673,7 @@
 /area/engineering/main)
 "je" = (
 /obj/machinery/camera/motion/directional/south,
-/obj/machinery/telecomms/hub/preset,
+/obj/machinery/ntnet_relay,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "jf" = (
@@ -685,10 +691,6 @@
 "jg" = (
 /obj/machinery/door/firedoor,
 /obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = -32
-	},
 /obj/machinery/door/poddoor/preopen{
 	id = "lockdown";
 	name = "LOCKDOWN"
@@ -729,14 +731,9 @@
 /turf/closed/wall/r_wall,
 /area/engineering/main)
 "jq" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = -32
+/obj/effect/turf_decal/stripes/line{
+	dir = 8
 	},
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general,
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "jw" = (
@@ -854,6 +851,10 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/ai_monitored/security/armory)
+"kH" = (
+/obj/machinery/telecomms/processor/preset_two,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "kI" = (
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
@@ -900,6 +901,10 @@
 /obj/structure/ladder,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
+"lj" = (
+/obj/machinery/telecomms/server/presets/science,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "lm" = (
 /obj/structure/cable,
 /obj/effect/turf_decal/tile/red{
@@ -930,6 +935,10 @@
 /obj/structure/cable,
 /turf/closed/wall/r_wall,
 /area/ai_monitored/security/armory)
+"lF" = (
+/obj/machinery/light/directional/west,
+/turf/open/floor/plasteel/white,
+/area/science/lab)
 "lG" = (
 /obj/structure/fans/tiny,
 /obj/machinery/button/door{
@@ -999,21 +1008,18 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"mF" = (
+/obj/machinery/telecomms/broadcaster/preset_left,
+/turf/closed/wall/r_wall,
+/area/tcommsat/server)
 "mJ" = (
 /turf/open/floor/engine/air,
 /area/engineering/main)
 "mK" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = 32
-	},
-/obj/machinery/door/poddoor/preopen{
-	id = "lockdown";
-	name = "LOCKDOWN"
-	},
-/turf/open/floor/plasteel/dark,
+/obj/effect/turf_decal/delivery,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
+/obj/structure/stairs/south,
+/turf/open/floor/plasteel/elevatorshaft,
 /area/hallway/primary/central)
 "mO" = (
 /obj/machinery/vending/hydronutrients,
@@ -1120,13 +1126,11 @@
 /turf/open/floor/glass/reinforced,
 /area/space/nearstation)
 "oa" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = -32
+/obj/effect/turf_decal/stripes/line,
+/obj/structure/railing,
+/obj/structure/railing/corner{
+	dir = 8
 	},
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "od" = (
@@ -1165,8 +1169,21 @@
 /turf/open/floor/glass/reinforced,
 /area/security/brig/upper)
 "ol" = (
-/turf/closed/wall/r_wall,
-/area/medical/morgue)
+/obj/machinery/light/directional/east,
+/obj/structure/railing/corner{
+	dir = 8
+	},
+/obj/effect/turf_decal/stripes/corner{
+	dir = 8
+	},
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/plasteel/dark,
+/area/hallway/primary/central)
 "op" = (
 /obj/effect/turf_decal/tile/red,
 /obj/effect/turf_decal/tile/red{
@@ -1201,8 +1218,8 @@
 /obj/machinery/camera/autoname/directional/west,
 /turf/open/floor/plasteel/cafeteria,
 /area/security/prison/mess)
-"oO" = (
-/obj/machinery/telecomms/receiver/preset_left/birdstation,
+"oG" = (
+/obj/machinery/telecomms/processor/preset_four,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "oS" = (
@@ -1235,6 +1252,12 @@
 "ph" = (
 /obj/machinery/light/directional/north,
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer2,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
 /turf/open/floor/resin,
 /area/security/prison/safe)
 "pk" = (
@@ -1355,6 +1378,15 @@
 /obj/effect/mapping_helpers/airlock/access/any/science/general,
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
+"qv" = (
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/plasteel/white,
+/area/science/lab)
 "qB" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
@@ -1404,7 +1436,7 @@
 	name = "SS13: Auxiliary Dock, Station-Fore";
 	width = 35
 	},
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "rb" = (
 /obj/structure/cable,
@@ -1432,12 +1464,13 @@
 "rE" = (
 /obj/structure/cable,
 /obj/machinery/power/apc/auto_name/west,
-/obj/machinery/camera/autoname/directional/north,
+/obj/machinery/light/directional/south,
+/obj/machinery/camera/autoname/directional/east,
 /turf/open/floor/plasteel/checker,
 /area/service/kitchen)
 "rF" = (
 /obj/structure/lattice,
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "rG" = (
 /obj/structure/cable/multilayer/multiz,
@@ -1446,14 +1479,10 @@
 /turf/open/openspace,
 /area/engineering/main)
 "rN" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = -32
+/obj/structure/railing{
+	dir = 8
 	},
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/durasteel,
 /area/hallway/primary/central)
 "rS" = (
 /obj/machinery/camera/autoname/directional/south,
@@ -1598,6 +1627,8 @@
 	dir = 1
 	},
 /obj/effect/turf_decal/tile/red,
+/obj/structure/rack,
+/obj/item/storage/box/flashbangs,
 /turf/open/floor/plasteel/dark,
 /area/security/brig/upper)
 "ta" = (
@@ -1609,9 +1640,9 @@
 /turf/open/floor/resin,
 /area/security/prison/safe)
 "tr" = (
-/obj/machinery/airalarm/directional/east,
 /obj/structure/cable,
-/turf/open/floor/plasteel/cult,
+/obj/structure/table/reinforced,
+/turf/open/floor/plating,
 /area/security/prison/garden)
 "tt" = (
 /obj/machinery/light_switch/directional/north,
@@ -1633,8 +1664,12 @@
 "tD" = (
 /obj/machinery/meteor_catcher,
 /obj/structure/lattice/catwalk,
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
+"tF" = (
+/obj/machinery/telecomms/bus/preset_one,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "tG" = (
 /obj/machinery/light/directional/east,
 /obj/machinery/door/poddoor/preopen{
@@ -1696,7 +1731,7 @@
 /turf/open/floor/plasteel/cafeteria,
 /area/security/prison/mess)
 "ue" = (
-/obj/machinery/telecomms/relay/preset/station,
+/obj/machinery/ntnet_relay,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "uf" = (
@@ -1797,6 +1832,10 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"vw" = (
+/obj/machinery/telecomms/receiver/preset_left,
+/turf/closed/wall/r_wall,
+/area/tcommsat/server)
 "vx" = (
 /obj/machinery/smartfridge,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
@@ -1832,7 +1871,7 @@
 /turf/open/floor/plasteel/cult,
 /area/security/prison/garden)
 "vL" = (
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "vQ" = (
 /obj/structure/chair/sofa/bench{
@@ -1884,12 +1923,15 @@
 /area/security/prison/mess)
 "wh" = (
 /obj/structure/table/wood,
-/obj/item/flashlight/lamp/green,
 /obj/machinery/airalarm/directional/north,
 /obj/effect/turf_decal/tile/blue,
 /obj/effect/turf_decal/tile/blue{
 	dir = 1
 	},
+/obj/item/stack/spacecash/c10000{
+	pixel_y = 3
+	},
+/obj/item/flashlight/lamp/green,
 /turf/open/floor/plasteel/dark,
 /area/command/heads_quarters/captain)
 "wi" = (
@@ -2030,10 +2072,6 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/medical/morgue)
-"xD" = (
-/obj/machinery/telecomms/message_server,
-/turf/open/floor/circuit/telecomms/mainframe,
-/area/tcommsat/server)
 "xE" = (
 /obj/structure/closet/crate,
 /obj/effect/turf_decal/bot,
@@ -2049,7 +2087,7 @@
 /turf/open/floor/plasteel/dark,
 /area/security/prison)
 "xT" = (
-/obj/structure/table,
+/obj/machinery/power/shieldwallgen,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
 "xU" = (
@@ -2080,18 +2118,18 @@
 /turf/open/floor/plasteel/white,
 /area/medical/morgue)
 "yp" = (
-/obj/structure/lattice,
 /turf/closed/wall/r_wall,
 /area/medical/morgue)
 "yw" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = 32
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
 	},
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general,
+/obj/structure/railing/corner{
+	dir = 4
+	},
+/obj/structure/railing/corner{
+	dir = 1
+	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "yC" = (
@@ -2138,6 +2176,10 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"yN" = (
+/obj/machinery/telecomms/bus/preset_three,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "yO" = (
 /obj/effect/spawner/structure/window/reinforced,
 /obj/structure/cable,
@@ -2189,6 +2231,10 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/white,
 /area/science/lab)
+"Ar" = (
+/obj/machinery/telecomms/server/presets/supply,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "At" = (
 /obj/item/cultivator,
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
@@ -2287,6 +2333,9 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
 	},
+/obj/structure/railing{
+	dir = 8
+	},
 /turf/open/floor/plasteel/elevatorshaft,
 /area/hallway/primary/central)
 "Br" = (
@@ -2375,6 +2424,15 @@
 /obj/machinery/light/directional/south,
 /turf/open/floor/resin,
 /area/security/prison/safe)
+"Cr" = (
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/plasteel/dark,
+/area/cargo/office)
 "Cw" = (
 /obj/machinery/power/apc/auto_name/east,
 /obj/structure/cable,
@@ -2451,7 +2509,11 @@
 /turf/open/floor/plasteel/cult,
 /area/security/prison/garden)
 "DP" = (
-/turf/open/openspace/airless,
+/obj/structure/stairs/north,
+/obj/structure/railing{
+	dir = 8
+	},
+/turf/open/floor/plasteel/durasteel,
 /area/hallway/primary/central)
 "DT" = (
 /turf/open/floor/plasteel/dark,
@@ -2466,12 +2528,6 @@
 	},
 /turf/open/floor/plasteel/white,
 /area/science/lab)
-"Ez" = (
-/obj/machinery/computer/telecomms/monitor{
-	dir = 8
-	},
-/turf/open/floor/circuit/telecomms/mainframe,
-/area/tcommsat/server)
 "EB" = (
 /obj/machinery/camera/autoname/directional/north,
 /obj/structure/cable,
@@ -2559,8 +2615,21 @@
 /area/cargo/office)
 "Fy" = (
 /obj/effect/landmark/carpspawn,
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
+"Fz" = (
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
+	dir = 4
+	},
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/resin,
+/area/security/prison/safe)
 "FM" = (
 /obj/structure/lattice/catwalk,
 /obj/structure/cable,
@@ -2617,6 +2686,9 @@
 /obj/machinery/rnd/production/protolathe/department/medical,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"Gk" = (
+/turf/open/floor/engine/hull/reinforced,
+/area/space/nearstation)
 "Gl" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
@@ -2640,35 +2712,27 @@
 /turf/open/floor/plasteel/white,
 /area/science/lab)
 "Gv" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
 	},
-/obj/machinery/door/poddoor/preopen{
-	id = "lockdown";
-	name = "LOCKDOWN"
+/obj/structure/railing/corner{
+	dir = 1
 	},
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/effect/mapping_helpers/airlock/access/any/service/hydroponics,
+/obj/structure/railing/corner{
+	dir = 4
+	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "GB" = (
 /turf/open/floor/engine/hull,
 /area/space/nearstation)
 "GD" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
+/obj/effect/turf_decal/stripes/line,
+/obj/structure/railing/corner{
+	dir = 8
 	},
-/obj/machinery/door/poddoor/preopen{
-	id = "lockdown";
-	name = "LOCKDOWN"
-	},
-/turf/open/floor/plasteel/monofloor,
+/obj/structure/railing/corner,
+/turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "GG" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
@@ -2687,6 +2751,12 @@
 	dir = 4
 	},
 /obj/structure/cable,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
 /turf/open/floor/resin,
 /area/security/prison/safe)
 "GQ" = (
@@ -2708,6 +2778,17 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"Hb" = (
+/obj/structure/railing/corner,
+/obj/effect/turf_decal/stripes/corner,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/plasteel/dark,
+/area/hallway/primary/central)
 "Hg" = (
 /obj/structure/lattice/catwalk,
 /turf/open/openspace,
@@ -2756,6 +2837,10 @@
 /obj/structure/cable,
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
+"HX" = (
+/obj/machinery/telecomms/server/presets/medical,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "HZ" = (
 /obj/machinery/griddle,
 /turf/open/floor/plasteel/checker,
@@ -2777,6 +2862,15 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /turf/open/floor/plasteel/checker,
 /area/service/kitchen)
+"Ir" = (
+/obj/effect/turf_decal/tile/red{
+	dir = 1
+	},
+/obj/effect/turf_decal/tile/red,
+/obj/structure/rack,
+/obj/item/storage/box/flashbangs,
+/turf/open/floor/plasteel/dark,
+/area/security/brig/upper)
 "Is" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
@@ -2947,7 +3041,7 @@
 "JU" = (
 /obj/structure/lattice/catwalk,
 /obj/structure/cable,
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/solars/ancientstation)
 "JV" = (
 /turf/open/floor/plasteel/dark,
@@ -2986,7 +3080,7 @@
 /turf/open/floor/plasteel/white,
 /area/medical/morgue)
 "Ku" = (
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/engineering/main)
 "Kz" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4,
@@ -3025,10 +3119,6 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
-"KY" = (
-/obj/machinery/blackbox_recorder,
-/turf/open/floor/circuit/telecomms/mainframe,
-/area/tcommsat/server)
 "Lb" = (
 /obj/structure/cable,
 /obj/machinery/light/directional/south,
@@ -3069,13 +3159,9 @@
 /turf/closed/wall/r_wall,
 /area/security/prison/garden)
 "LI" = (
-/obj/machinery/light/directional/west,
-/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
-	dir = 4
-	},
-/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/turf/open/floor/plasteel/checker,
-/area/service/kitchen)
+/obj/machinery/airalarm/directional/south,
+/turf/open/floor/plasteel/cult,
+/area/security/prison/garden)
 "LJ" = (
 /obj/machinery/door/poddoor/preopen{
 	id = "lockdown";
@@ -3084,6 +3170,10 @@
 /obj/machinery/light_switch/directional/south,
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"LL" = (
+/obj/machinery/telecomms/server/presets/security,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "LN" = (
 /obj/machinery/suit_storage_unit/security,
 /turf/open/floor/plasteel/dark,
@@ -3129,6 +3219,12 @@
 	pixel_y = 10
 	},
 /obj/structure/table,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
 /turf/open/floor/plasteel/checker,
 /area/service/kitchen)
 "Mh" = (
@@ -3157,7 +3253,9 @@
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
 "Ms" = (
-/obj/machinery/power/apc/auto_name/east,
+/obj/machinery/power/apc/auto_name/east{
+	cell_type = /obj/item/stock_parts/cell/bluespace
+	},
 /obj/structure/cable,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
@@ -3194,10 +3292,6 @@
 /obj/machinery/door/firedoor,
 /obj/machinery/door/airlock/grunge,
 /obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = -32
-	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/door/poddoor/preopen{
 	id = "lockdown";
@@ -3212,6 +3306,12 @@
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer2{
 	dir = 4
 	},
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
 /turf/open/floor/resin,
 /area/security/prison/safe)
 "ML" = (
@@ -3220,6 +3320,19 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"MR" = (
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
+	dir = 4
+	},
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
+/turf/open/floor/resin,
+/area/security/prison/safe)
 "MU" = (
 /obj/structure/cable,
 /obj/machinery/airalarm/directional/north,
@@ -3363,7 +3476,7 @@
 	name = "NT SS13: Cargo Bay";
 	width = 12
 	},
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "Os" = (
 /obj/machinery/light/directional/east,
@@ -3380,6 +3493,10 @@
 	},
 /turf/open/floor/plasteel/white,
 /area/medical/morgue)
+"Ow" = (
+/obj/machinery/telecomms/hub/preset,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "OA" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
@@ -3410,6 +3527,15 @@
 /obj/effect/landmark/xeno_spawn,
 /turf/open/floor/engine/air,
 /area/engineering/main)
+"OX" = (
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
+/turf/open/floor/plasteel/cafeteria,
+/area/security/prison/mess)
 "Pa" = (
 /obj/structure/cable,
 /obj/machinery/light/directional/west,
@@ -3427,11 +3553,13 @@
 	dir = 1
 	},
 /obj/effect/turf_decal/tile/red,
+/obj/structure/rack,
+/obj/item/storage/box/flashbangs,
 /turf/open/floor/plasteel/dark,
 /area/security/brig/upper)
 "Pj" = (
 /obj/machinery/camera/autoname/directional/south,
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/engineering/main)
 "Pr" = (
 /obj/machinery/camera/autoname/directional/north,
@@ -3485,39 +3613,39 @@
 /turf/open/openspace,
 /area/security/brig)
 "PW" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
+/obj/structure/railing{
+	dir = 4
 	},
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general,
-/turf/open/floor/plasteel/dark,
+/turf/open/floor/plasteel/durasteel,
 /area/hallway/primary/central)
 "Qb" = (
-/obj/machinery/telecomms/broadcaster/preset_left/birdstation,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/tcommsat/server)
 "Qc" = (
-/obj/structure/industrial_lift{
-	id = "publicElevator"
+/obj/structure/stairs/south,
+/obj/structure/railing{
+	dir = 4
 	},
-/turf/open/openspace,
+/turf/open/floor/plasteel/durasteel,
 /area/hallway/primary/central)
+"Qe" = (
+/obj/machinery/telecomms/processor/preset_three,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Qg" = (
 /obj/machinery/camera/autoname/directional/north,
 /turf/open/floor/plasteel/white,
 /area/medical/morgue)
 "Qv" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
+/obj/structure/railing{
+	dir = 1
 	},
-/obj/effect/mapping_helpers/airlock/access/any/supply/general,
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
+	},
+/obj/structure/railing/corner{
+	dir = 4
+	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "Qw" = (
@@ -3535,20 +3663,9 @@
 /turf/open/floor/plating,
 /area/security/prison/work)
 "QI" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = -32
-	},
-/obj/machinery/door/poddoor/preopen{
-	id = "lockdown";
-	name = "LOCKDOWN"
-	},
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/effect/mapping_helpers/airlock/access/any/science/general,
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/telecomms/broadcaster/preset_right,
+/turf/closed/wall/r_wall,
+/area/tcommsat/server)
 "QM" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
@@ -3612,6 +3729,12 @@
 /obj/machinery/light/directional/north,
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer2,
 /obj/structure/cable,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_y = 24;
+	prison_radio = 1
+	},
 /turf/open/floor/resin,
 /area/security/prison/safe)
 "Rq" = (
@@ -3661,7 +3784,7 @@
 	name = "BoxStation emergency evac bay";
 	width = 32
 	},
-/turf/open/openspace/airless,
+/turf/open/space/openspace,
 /area/space)
 "RN" = (
 /obj/effect/turf_decal/delivery,
@@ -3774,8 +3897,11 @@
 /area/hallway/primary/central)
 "SU" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/obj/structure/railing,
 /obj/effect/turf_decal/stripes/line,
+/obj/structure/railing/corner,
+/obj/structure/railing/corner{
+	dir = 8
+	},
 /turf/open/floor/plasteel/dark,
 /area/hallway/primary/central)
 "Ti" = (
@@ -3886,6 +4012,12 @@
 /area/engineering/main)
 "Uy" = (
 /obj/machinery/seed_extractor,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
 /turf/open/floor/plasteel/cult,
 /area/security/prison/garden)
 "Uz" = (
@@ -4144,19 +4276,18 @@
 	},
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
+"VW" = (
+/obj/structure/ladder,
+/obj/machinery/telecomms/processor/preset_one,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Wa" = (
 /turf/open/openspace,
 /area/hallway/primary/central)
 "Wb" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = -32
-	},
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/telecomms/server/presets/engineering,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Wu" = (
 /obj/machinery/light/directional/west,
 /turf/open/floor/plasteel/cafeteria,
@@ -4226,16 +4357,10 @@
 /turf/closed/wall/r_wall,
 /area/hallway/primary/central)
 "Xb" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = -32
-	},
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general,
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/camera/motion/directional/south,
+/obj/machinery/telecomms/server/presets/common,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Xd" = (
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4,
 /obj/machinery/airalarm/directional/west,
@@ -4309,15 +4434,9 @@
 /turf/open/floor/plasteel/cafeteria,
 /area/security/prison/mess)
 "Yh" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_y = 32
-	},
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/telecomms/server/presets/command,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Yi" = (
 /obj/machinery/light/directional/north,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
@@ -4347,6 +4466,12 @@
 "Yo" = (
 /obj/machinery/power/apc/auto_name/north,
 /obj/structure/cable,
+/obj/item/radio/intercom{
+	desc = "A station intercom. It looks like it has been modified to not broadcast.";
+	name = "Prison Intercom (General)";
+	pixel_x = -30;
+	prison_radio = 1
+	},
 /turf/open/floor/plasteel/durasteel,
 /area/security/prison/work)
 "Yp" = (
@@ -4405,15 +4530,9 @@
 /turf/open/floor/plasteel/dark,
 /area/security/brig/upper)
 "YQ" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
-	},
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/telecomms/receiver/preset_right,
+/turf/closed/wall/r_wall,
+/area/tcommsat/server)
 "YT" = (
 /obj/machinery/atmospherics/components/unary/vent_scrubber/on/layer2{
 	dir = 8
@@ -4471,23 +4590,9 @@
 /turf/open/floor/plasteel/dark,
 /area/engineering/main)
 "Zm" = (
-/obj/machinery/door/firedoor,
-/obj/machinery/door/airlock/grunge,
-/obj/effect/mapping_helpers/airlock/access/any/security/general,
-/obj/machinery/button/elevator{
-	id = "publicElevator";
-	pixel_x = 32
-	},
-/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
-	dir = 4
-	},
-/obj/machinery/door/poddoor/preopen{
-	id = "lockdown";
-	name = "LOCKDOWN"
-	},
-/obj/effect/mapping_helpers/airlock/access/any/engineering/general,
-/turf/open/floor/plasteel/dark,
-/area/hallway/primary/central)
+/obj/machinery/telecomms/bus/preset_four,
+/turf/open/floor/circuit/telecomms/mainframe,
+/area/tcommsat/server)
 "Zo" = (
 /obj/item/gun/energy/disabler{
 	pixel_x = 3;
@@ -6241,7 +6346,7 @@ OR
 mJ
 WZ
 WZ
-yw
+SO
 SO
 WZ
 WZ
@@ -6366,7 +6471,7 @@ Zc
 sb
 SU
 RN
-RN
+mK
 AD
 MA
 uR
@@ -6425,7 +6530,7 @@ dG
 Nb
 fE
 Hh
-Zm
+jk
 hR
 Bi
 Bi
@@ -6488,9 +6593,9 @@ dI
 dI
 dI
 WZ
-RT
-NG
-NG
+aW
+jq
+jq
 ft
 WZ
 HR
@@ -6552,7 +6657,7 @@ mJ
 WZ
 WZ
 ix
-Xb
+SO
 WZ
 WZ
 TM
@@ -9962,7 +10067,7 @@ dI
 Ku
 WZ
 WZ
-yw
+SO
 SO
 WZ
 WZ
@@ -10086,10 +10191,10 @@ FQ
 Lz
 SO
 Zg
-DP
-DP
-KX
-jq
+Wa
+Wa
+yw
+SO
 ch
 FQ
 bV
@@ -10146,11 +10251,11 @@ Vf
 jT
 FQ
 fN
-PW
-Ns
+SO
+oa
 DP
-DP
-KX
+rN
+Gv
 SO
 Lz
 FQ
@@ -10209,7 +10314,7 @@ jT
 dI
 jm
 WZ
-RT
+ol
 NG
 NG
 Ve
@@ -10273,7 +10378,7 @@ Ku
 WZ
 WZ
 jR
-Xb
+SO
 WZ
 WZ
 Sc
@@ -13683,7 +13788,7 @@ Oc
 eR
 WZ
 WZ
-mK
+kX
 kX
 WZ
 WZ
@@ -13744,13 +13849,13 @@ Dp
 vG
 px
 WZ
-Xp
+Hb
 Xu
 Xu
 Qw
 WZ
 zL
-Vq
+lF
 Is
 cj
 Vq
@@ -13806,11 +13911,11 @@ Gm
 Fa
 QU
 ZD
-Zg
-Wa
-Wa
-KX
-QI
+GD
+PW
+Qc
+Qv
+qq
 zL
 Vq
 Is
@@ -13867,8 +13972,8 @@ hM
 UC
 xf
 QU
-Gv
-aW
+ZD
+Ns
 Wa
 Wa
 KX
@@ -13927,8 +14032,8 @@ JS
 mO
 pf
 Gm
-tr
-QU
+Fa
+LI
 WZ
 RT
 NG
@@ -13987,9 +14092,9 @@ vL
 rF
 eR
 eR
-eR
+JS
 vx
-qb
+tr
 eR
 WZ
 WZ
@@ -14050,7 +14155,7 @@ BF
 BF
 Mg
 bq
-LI
+Ti
 Id
 rE
 ow
@@ -14121,7 +14226,7 @@ UP
 bq
 XQ
 BF
-Vq
+qv
 kn
 Is
 FU
@@ -15089,7 +15194,7 @@ vL
 vL
 NV
 NV
-Ez
+Qb
 NV
 NV
 vL
@@ -17156,7 +17261,7 @@ BL
 aQ
 wZ
 Dy
-Gl
+MR
 pr
 Gl
 AZ
@@ -17404,7 +17509,7 @@ tN
 ps
 WZ
 WZ
-Yh
+ZX
 ZX
 WZ
 WZ
@@ -17465,7 +17570,7 @@ sU
 vd
 ul
 WZ
-Xp
+Hb
 Xu
 Xu
 Qw
@@ -17530,14 +17635,14 @@ ZX
 Zg
 Wa
 Wa
-KX
-Wb
+yw
+ZX
 vF
 Ol
 ph
 SN
 Ol
-SN
+Fz
 WX
 Ol
 vL
@@ -17584,15 +17689,15 @@ Ol
 Ri
 SN
 Ol
-SN
+Fz
 JM
 Ol
 jw
-YQ
-Ns
-Wa
-Wa
-KX
+ZX
+oa
+DP
+rN
+Gv
 ZX
 vF
 Ol
@@ -17715,7 +17820,7 @@ uh
 WZ
 WZ
 Vx
-rN
+ZX
 WZ
 XD
 UY
@@ -18087,7 +18192,7 @@ fM
 BY
 Gl
 pr
-Gl
+MR
 wt
 sr
 oy
@@ -18686,7 +18791,7 @@ vL
 vL
 NV
 NV
-cH
+Qb
 NV
 NV
 vL
@@ -18810,7 +18915,7 @@ vL
 vL
 NV
 NV
-oO
+Qb
 NV
 NV
 vL
@@ -20683,24 +20788,24 @@ vL
 vL
 vL
 vL
-ol
-ol
-ol
-ol
-ol
-ol
+yp
+yp
+yp
+yp
+yp
+yp
 GB
 GB
 GB
 GB
 GB
 GB
-ol
-ol
-ol
-ol
-ol
-ol
+yp
+yp
+yp
+yp
+yp
+yp
 vL
 vL
 vL
@@ -20744,26 +20849,26 @@ vL
 vL
 vL
 vL
-ol
-ol
+yp
+yp
 uq
 Uz
 Uz
 uq
-ol
 yp
 yp
 yp
 yp
 yp
 yp
-ol
+yp
+yp
 uq
 Uz
 Uz
 uq
-ol
-ol
+yp
+yp
 vL
 vL
 vL
@@ -20806,7 +20911,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 KQ
 JV
 UF
@@ -20825,7 +20930,7 @@ UF
 UF
 JV
 VG
-ol
+yp
 vL
 vL
 vL
@@ -20868,7 +20973,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 jN
 UF
 Sx
@@ -20887,7 +20992,7 @@ gI
 Sx
 UF
 wp
-ol
+yp
 vL
 vL
 vL
@@ -20930,7 +21035,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 jN
 UF
 YE
@@ -20949,7 +21054,7 @@ wR
 DB
 UF
 wp
-ol
+yp
 vL
 vL
 vL
@@ -20992,7 +21097,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 KQ
 JV
 UF
@@ -21011,7 +21116,7 @@ wR
 UF
 JV
 VG
-ol
+yp
 vL
 vL
 vL
@@ -21054,8 +21159,8 @@ vL
 vL
 vL
 GB
-ol
-ol
+yp
+yp
 JV
 wp
 IR
@@ -21072,8 +21177,8 @@ JV
 Sj
 jN
 JV
-ol
-ol
+yp
+yp
 GB
 vL
 vL
@@ -21117,7 +21222,7 @@ vL
 vL
 GB
 GB
-ol
+yp
 JV
 wp
 IR
@@ -21134,7 +21239,7 @@ JV
 Sj
 jN
 JV
-ol
+yp
 GB
 GB
 vL
@@ -21179,14 +21284,14 @@ vL
 vL
 GB
 GB
-ol
+yp
 JV
 wp
 IR
 JV
 vV
 WZ
-Xp
+Hb
 Xu
 Xu
 Qw
@@ -21196,7 +21301,7 @@ JV
 Sj
 jN
 JV
-ol
+yp
 GB
 GB
 vL
@@ -21241,24 +21346,24 @@ vL
 vL
 GB
 GB
-ol
+yp
 CB
 ER
 IR
 UF
 lm
 WZ
-Zg
-Wa
-Wa
-KX
+GD
+PW
+Qc
+Qv
 WZ
 gY
 UF
 Sj
 jN
 pC
-ol
+yp
 GB
 GB
 vL
@@ -21303,7 +21408,7 @@ vL
 vL
 GB
 GB
-ol
+yp
 UF
 wp
 IR
@@ -21320,7 +21425,7 @@ UF
 Sj
 jN
 Qg
-ol
+yp
 GB
 GB
 vL
@@ -21365,7 +21470,7 @@ vL
 vL
 GB
 GB
-ol
+yp
 JV
 wp
 IR
@@ -21382,7 +21487,7 @@ JV
 Sj
 jN
 JV
-ol
+yp
 GB
 GB
 vL
@@ -21427,7 +21532,7 @@ vL
 vL
 GB
 GB
-ol
+yp
 JV
 wp
 IR
@@ -21444,7 +21549,7 @@ JV
 Sj
 jN
 JV
-ol
+yp
 GB
 GB
 vL
@@ -21488,8 +21593,8 @@ rF
 rF
 rF
 GB
-ol
-ol
+yp
+yp
 JV
 wp
 IR
@@ -21506,8 +21611,8 @@ JV
 Sj
 jN
 JV
-ol
-ol
+yp
+yp
 GB
 vL
 vL
@@ -21550,7 +21655,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 KQ
 JV
 UF
@@ -21569,7 +21674,7 @@ wR
 UF
 JV
 VG
-ol
+yp
 vL
 vL
 vL
@@ -21612,7 +21717,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 jN
 UF
 YE
@@ -21631,7 +21736,7 @@ wR
 DB
 UF
 wp
-ol
+yp
 vL
 vL
 vL
@@ -21674,7 +21779,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 jN
 UF
 Sx
@@ -21693,7 +21798,7 @@ yf
 Sx
 UF
 wp
-ol
+yp
 vL
 vL
 vL
@@ -21736,7 +21841,7 @@ vL
 vL
 vL
 vL
-ol
+yp
 KQ
 JV
 UF
@@ -21755,7 +21860,7 @@ UF
 UF
 JV
 VG
-ol
+yp
 vL
 vL
 vL
@@ -21798,26 +21903,26 @@ vL
 vL
 vL
 vL
-ol
-ol
+yp
+yp
 xC
 TP
 TP
 xC
-ol
-ol
-ol
-ol
-ol
-ol
-ol
-ol
+yp
+yp
+yp
+yp
+yp
+yp
+yp
+yp
 xC
 TP
 TP
 xC
-ol
-ol
+yp
+yp
 vL
 vL
 vL
@@ -21861,24 +21966,24 @@ vL
 vL
 vL
 vL
-ol
-ol
-ol
-ol
-ol
-ol
+yp
+yp
+yp
+yp
+yp
+yp
 GB
 GB
 GB
 GB
 GB
 GB
-ol
-ol
-ol
-ol
-ol
-ol
+yp
+yp
+yp
+yp
+yp
+yp
 vL
 vL
 vL
@@ -22407,7 +22512,7 @@ vL
 vL
 NV
 NV
-KY
+Qb
 NV
 NV
 rF
@@ -22531,7 +22636,7 @@ vL
 vL
 NV
 NV
-xD
+Qb
 NV
 NV
 vL
@@ -24653,7 +24758,7 @@ vL
 vL
 GB
 vC
-WJ
+OX
 NW
 Oq
 Oq
@@ -24972,8 +25077,8 @@ SA
 Zg
 Wa
 Wa
-KX
-Wb
+yw
+ZX
 af
 nN
 UU
@@ -25030,11 +25135,11 @@ WJ
 gg
 yC
 RD
-GD
-Ns
-Wa
-Wa
-KX
+SA
+oa
+DP
+rN
+Gv
 ZX
 af
 Nx
@@ -25093,7 +25198,7 @@ WJ
 yC
 Ig
 WZ
-RT
+ol
 NG
 NG
 Ve
@@ -25335,7 +25440,7 @@ vL
 vL
 GB
 vC
-WJ
+OX
 Rq
 vQ
 vQ
@@ -26002,11 +26107,11 @@ vL
 vL
 vL
 vL
-vL
-vL
-vL
-vL
-vL
+NV
+NV
+NV
+NV
+NV
 vL
 vL
 vL
@@ -26063,13 +26168,13 @@ vL
 vL
 vL
 vL
-vL
-vL
 NV
+QI
+Zm
+ue
+yN
+mF
 NV
-NV
-vL
-vL
 vL
 vL
 vL
@@ -26125,13 +26230,13 @@ vL
 vL
 vL
 vL
-vL
 NV
-NV
+Wb
+oG
 hD
+Qe
+Ar
 NV
-NV
-vL
 vL
 vL
 vL
@@ -26187,13 +26292,13 @@ vL
 vL
 vL
 vL
-vL
 NV
-ue
+Xb
+kH
 rX
-ld
+VW
+aP
 NV
-vL
 vL
 vL
 vL
@@ -26249,13 +26354,13 @@ vL
 vL
 vL
 vL
-vL
 NV
-NV
+Yh
+co
 hO
+tF
+LL
 NV
-NV
-vL
 vL
 vL
 vL
@@ -26311,13 +26416,13 @@ vL
 vL
 vL
 vL
-vL
-vL
 NV
+YQ
+HX
+Ow
+lj
+vw
 NV
-NV
-vL
-vL
 vL
 vL
 vL
@@ -26374,11 +26479,11 @@ vL
 vL
 vL
 vL
-vL
-vL
-vL
-vL
-vL
+NV
+NV
+NV
+NV
+NV
 vL
 vL
 vL
@@ -27821,7 +27926,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -27883,7 +27988,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 Fy
 vL
@@ -27945,7 +28050,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28007,7 +28112,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28069,7 +28174,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28131,7 +28236,7 @@ vL
 vL
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28321,7 +28426,7 @@ LX
 Pf
 Sy
 Sy
-Fk
+Ir
 LX
 GB
 vL
@@ -28427,7 +28532,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28438,7 +28543,7 @@ vL
 GB
 nW
 TN
-DT
+Cr
 uo
 qB
 QM
@@ -28551,7 +28656,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 Fy
@@ -28567,7 +28672,7 @@ uo
 gU
 WZ
 WZ
-Yh
+ZX
 ZX
 WZ
 WZ
@@ -28612,15 +28717,15 @@ vL
 vL
 rF
 vL
-vL
-vL
-vL
-vL
-vL
 rF
-vL
-vL
-vL
+rF
+rF
+rF
+rF
+rF
+rF
+rF
+rF
 lX
 BE
 DT
@@ -28675,7 +28780,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28691,8 +28796,8 @@ gM
 tO
 IC
 Zg
-Qc
-Qc
+Wa
+Wa
 KX
 WZ
 cU
@@ -28737,7 +28842,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28751,10 +28856,10 @@ DT
 DT
 uo
 tO
-Qv
+IC
 Ns
-Qc
-Qc
+Wa
+Wa
 KX
 WZ
 cU
@@ -28798,15 +28903,15 @@ vL
 vL
 rF
 vL
-vL
-vL
-vL
-vL
-vL
 rF
-vL
-vL
-vL
+rF
+rF
+rF
+rF
+rF
+rF
+rF
+rF
 lG
 BE
 DT
@@ -28814,7 +28919,7 @@ SI
 uo
 Lb
 WZ
-RT
+ol
 NG
 NG
 Ve
@@ -28861,7 +28966,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -28878,7 +28983,7 @@ AQ
 WZ
 WZ
 eC
-oa
+ZX
 WZ
 WZ
 OA
@@ -28985,7 +29090,7 @@ vL
 rF
 vL
 vL
-vL
+rF
 vL
 vL
 vL
@@ -29723,11 +29828,11 @@ vL
 vL
 vL
 vL
-vL
-vL
-vL
-rF
-vL
+Gk
+Gk
+Gk
+Gk
+Gk
 vL
 vL
 vL
@@ -29784,13 +29889,13 @@ vL
 vL
 vL
 vL
-vL
-vL
+Gk
+Gk
 NV
 bp
 NV
-vL
-vL
+Gk
+Gk
 vL
 vL
 vL
@@ -29846,13 +29951,13 @@ vL
 vL
 vL
 vL
-vL
+Gk
 NV
 NV
 GL
 NV
 NV
-rF
+Gk
 rF
 rF
 rF
@@ -29908,13 +30013,13 @@ vL
 vL
 vL
 vL
-vL
+Gk
 NV
 je
 rX
 ld
 NV
-vL
+Gk
 vL
 vL
 vL
@@ -29970,13 +30075,13 @@ vL
 vL
 vL
 vL
-vL
+Gk
 NV
 NV
 sj
 NV
 NV
-vL
+Gk
 vL
 vL
 vL
@@ -30032,13 +30137,13 @@ vL
 vL
 vL
 vL
-vL
-vL
+Gk
+Gk
 NV
 NV
 NV
-vL
-vL
+Gk
+Gk
 vL
 vL
 vL
@@ -30095,11 +30200,11 @@ vL
 vL
 vL
 vL
-vL
-vL
-vL
-vL
-vL
+Gk
+Gk
+Gk
+Gk
+Gk
 vL
 vL
 vL

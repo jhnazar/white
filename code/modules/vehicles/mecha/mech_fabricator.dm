@@ -80,17 +80,21 @@
 		T += M.rating
 	rmat.set_local_size((200000 + (T*50000)))
 
-	//resources adjustment coefficient (1 -> 0.85 -> 0.7 -> 0.55)
-	T = 1.15
+	//Затрачиваемые ресурсы (1 -> 0.75 -> 0.50 -> 0.25 -> 0.1)
+	T = 1.25
 	for(var/obj/item/stock_parts/micro_laser/Ma in component_parts)
-		T -= Ma.rating*0.15
+		T -= Ma.rating*0.25
+	if(T<=0.1)
+		T = 0.1				//минимальный порог при Т5
 	component_coeff = T
 
-	//building time adjustment coefficient (1 -> 0.8 -> 0.6)
+	//Скорость работы (1 -> 0.75 -> 0.50 -> 0.25 -> 0.1)
 	T = -1
 	for(var/obj/item/stock_parts/manipulator/Ml in component_parts)
 		T += Ml.rating
-	time_coeff = round(initial(time_coeff) - (initial(time_coeff)*(T))/5,0.01)
+	time_coeff = round(initial(time_coeff) - (initial(time_coeff)*(T))/4,0.01)
+	if(time_coeff<=0.1)
+		time_coeff = 0.1	//минимальный порог при Т5
 
 	// Adjust the build time of any item currently being built.
 	if(being_built)
@@ -105,7 +109,7 @@
 /obj/machinery/mecha_part_fabricator/examine(mob/user)
 	. = ..()
 	if(in_range(user, src) || isobserver(user))
-		. += "<hr><span class='notice'>Дисплей: хранение <b>[rmat.local_size]</b> материальных единиц.<br>Потребление <b>[component_coeff*100]%</b>.<br>Время создания уменьшено на <b>[100-time_coeff*100]%</b>.</span>"
+		. += "<hr><span class='notice'>Дисплей: хранение <b>[rmat.local_size]</b> материальных единиц.<br>Экономия ресурсов <b>[100-component_coeff*100]%</b>.<br>Время создания уменьшено на <b>[100-time_coeff*100]%</b>.</span>"
 
 /**
  * Generates an info list for a given part.
@@ -238,6 +242,8 @@
 	build_start = world.time
 	desc = "Создаёт [D.name]."
 
+	playsound(get_turf(src), "production", 75, TRUE)
+
 	rmat.silo_log(src, "built", -1, "[D.name]", build_materials)
 
 	return TRUE
@@ -249,7 +255,6 @@
 		if(exit.density)
 			return TRUE
 
-		playsound(src, 'white/valtos/sounds/click2.ogg', 20, TRUE)
 		say("Препятствие убрано. Деталь [stored_part] готова.")
 		stored_part.forceMove(exit)
 		stored_part = null

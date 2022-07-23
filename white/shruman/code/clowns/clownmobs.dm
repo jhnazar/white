@@ -141,7 +141,7 @@
 	emote_see = list("булькает", "пузырится")
 	loot = list(/obj/item/clothing/mask/gas/clown_hat, /obj/effect/particle_effect/foam)
 
-/mob/living/simple_animal/hostile/clown/lube/Initialize()
+/mob/living/simple_animal/hostile/clown/lube/Initialize(mapload)
 	. = ..()
 	AddElement(/datum/element/snailcrawl)
 
@@ -442,7 +442,7 @@
 	environment_smash = ENVIRONMENT_SMASH_NONE
 
 
-/mob/living/simple_animal/hostile/clown/mutant/glutton/Initialize()
+/mob/living/simple_animal/hostile/clown/mutant/glutton/Initialize(mapload)
 	. = ..()
 	AddSpell(new /obj/effect/proc_holder/spell/aoe_turf/lighteater)
 	myBuild = new
@@ -450,7 +450,7 @@
 	plantSkin = new
 	plantSkin.Grant(src)
 
-/mob/living/simple_animal/hostile/clown/fleshclown/Initialize()
+/mob/living/simple_animal/hostile/clown/fleshclown/Initialize(mapload)
 	. = ..()
 	plantSkin = new
 	plantSkin.Grant(src)
@@ -637,7 +637,8 @@
 		oldturf.add_filter("stasis_status_ripple", 2, list("type" = "ripple", "flags" = WAVE_BOUNDED, "radius" = 0, "size" = 2))
 		var/filter = oldturf.get_filter("stasis_status_ripple")
 		audible_message(span_warning("Кожистая стена начинает чавкать..."))
-		animate(filter, radius = 22, time = 20, size = 0, loop = -1)
+		animate(filter, radius = 0, time = 0.2 SECONDS, size = 2, easing = JUMP_EASING, loop = -1, flags = ANIMATION_PARALLEL)
+		animate(radius = 32, time = 1.5 SECONDS, size = 0)
 		if(do_after(src, 2 SECONDS, newloc))
 			src.invisibility = 0
 			forceMove(newloc)
@@ -686,7 +687,7 @@
 		return FALSE
 	else
 		new choice(glutton.loc)
-		to_chat(glutton, span_notice("Леплю из плоти [choice]."))
+		to_chat(glutton, span_notice("Леплю из плоти [spawner.name]."))
 		glutton.visible_message(span_notice("[glutton] формирует неестественное строение из накопленной плоти."))
 		glutton.biomass -= ccost
 		return TRUE
@@ -706,7 +707,7 @@
 			return FALSE
 		else
 			new choice(glutton.loc)
-			to_chat(glutton, span_notice("Леплю из плоти [choice]."))
+			to_chat(glutton, span_notice("Леплю из плоти [building.name]."))
 			glutton.visible_message(span_notice("[glutton] формирует неестественное строение из накопленной плоти."))
 			glutton.biomass -= ccost
 			return TRUE
@@ -718,7 +719,7 @@
 			return FALSE
 		else
 			new choice(glutton.loc)
-			to_chat(glutton, span_notice("Леплю из плоти [choice]."))
+			to_chat(glutton, span_notice("Леплю из плоти [building.name]."))
 			glutton.visible_message(span_notice("[glutton] создает стену из кожи и плоти."))
 			glutton.biomass -= ccost
 			return TRUE

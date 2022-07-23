@@ -162,6 +162,7 @@
 		"Синтетики" = GLOB.nonhuman_positions,
 		"Гости" = GLOB.scum_positions
 	)
+	var/list/heads = GLOB.command_positions
 	if(GLOB.violence_mode_activated)
 		manifest_out = list(
 			"Красные",
@@ -180,18 +181,24 @@
 			if(rank in jobs)
 				if(!manifest_out[department])
 					manifest_out[department] = list()
-				manifest_out[department] += list(list(
-					"name" = name,
-					"rank" = rank
-				))
+				// Append to beginning of list if captain or department head
+				if (rank == "Captain" || (department != "Command" && (rank in heads)))
+					manifest_out[department] = list(list(
+						"name" = name,
+						"rank" = ru_job_parse(rank)
+					)) + manifest_out[department]
+				else
+					manifest_out[department] += list(list(
+						"name" = name,
+						"rank" = ru_job_parse(rank)
+					))
 				has_department = TRUE
-				break
 		if(!has_department)
 			if(!manifest_out["Misc"])
 				manifest_out["Misc"] = list()
 			manifest_out["Misc"] += list(list(
 				"name" = name,
-				"rank" = rank
+				"rank" = ru_job_parse(rank)
 			))
 	for (var/department in departments)
 		if (!manifest_out[department])

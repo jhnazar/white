@@ -73,7 +73,7 @@ export const GenericUplink = (props, context) => {
             tooltip="Откроет страницу пополнения"
             mr={1}
             tooltipPosition="right"
-            onClick={() => Byond.command('❗-HUB-Auth')}>
+            onClick={() => Byond.command('Войти-в-ХАБ')}>
             Пополнить счёт
           </Button>
           Поиск
@@ -145,9 +145,9 @@ export const GenericUplink = (props, context) => {
                   </LabeledList.Item>
                   <LabeledList.Item label="sobe.ru">
                     <a
-                      href="https://yasobe.ru/na/novye_koleni_dlya_vaita"
+                      href="https://sobe.ru/na/novye_koleni_dlya_vaita"
                       style={{ "color": "#ffffff" }}>
-                      https://yasobe.ru/na/novye_koleni_dlya_vaita
+                      https://sobe.ru/na/novye_koleni_dlya_vaita
                     </a>
                   </LabeledList.Item>
                 </LabeledList>

@@ -50,14 +50,14 @@
 	erupting_state = null
 	var/list/options = list(/datum/reagent/clf3 = 10, /datum/reagent/water/hollowwater = 10,/datum/reagent/plasma_oxide = 8, /datum/reagent/medicine/omnizine/protozine = 6, /datum/reagent/wittel = 1)
 
-/obj/structure/geyser/random/Initialize()
+/obj/structure/geyser/random/Initialize(mapload)
 	. = ..()
 	reagent_id = pickweight(options)
 
 /obj/item/plunger
 	name = "вантуз"
 	desc = "Не для унитаза!"
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/watercloset.dmi'
 	icon_state = "plunger"
 
 	slot_flags = ITEM_SLOT_MASK
@@ -113,7 +113,7 @@
 	if(!istype(user) || !user.canUseTopic(src, BE_CLOSE))
 		return
 
-	var/new_layer = input("Select a layer", "Layer") as null|anything in layers
+	var/new_layer = tgui_input_list(usr, "Select a layer", "Layer", layers)
 	if(new_layer)
 		target_layer = layers[new_layer]
 

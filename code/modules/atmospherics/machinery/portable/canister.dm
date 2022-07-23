@@ -272,7 +272,7 @@
 /obj/machinery/portable_atmospherics/canister/fusion_test/create_gas()
 	air_contents.set_moles(GAS_PLASMA, 3000)
 	air_contents.set_moles(GAS_TRITIUM, 3000)
-	air_contents.set_moles(GAS_CO2, 3000)
+	air_contents.set_moles(GAS_HYDROGEN, 3000)
 	air_contents.set_temperature(500000)
 
 /obj/machinery/portable_atmospherics/canister/proc/get_time_left()
@@ -542,7 +542,7 @@
 		return
 	switch(action)
 		if("relabel")
-			var/label = input("New canister label:", name) as null|anything in sort_list(label2types)
+			var/label = tgui_input_list("New canister label:", name, sort_list(label2types))
 			if(label && !..())
 				var/newtype = label2types[label]
 				if(newtype)

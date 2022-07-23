@@ -142,7 +142,7 @@
 	var/list/keys = list()
 	for(var/mob/M in GLOB.player_list)
 		keys += M.client
-	var/client/selection = input("Please, select a player!", "Admin Jumping", null, null) as null|anything in sortKey(keys)
+	var/client/selection = tgui_input_list(usr, "Please, select a player!", "Admin Jumping", sortKey(keys))
 	if(!selection)
 		return
 	var/mob/M = selection.mob
@@ -158,13 +158,13 @@
 		usr.forceMove(M.loc)
 		SSblackbox.record_feedback("tally", "admin_verb", 1, "Get Key") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
-/client/proc/sendmob(mob/M in sortmobs())
+/client/proc/sendmob(mob/M in sort_mobs())
 	set category = "Адм.Игра"
 	set name = "Send Mob"
 	if(!src.holder)
 		to_chat(src, "Only administrators may use this command.")
 		return
-	var/area/A = input(usr, "Pick an area.", "Pick an area") in GLOB.sortedAreas|null
+	var/area/A = tgui_input_list(usr, "Pick an area.", "Pick an area", GLOB.sortedAreas|null)
 	if(A && istype(A))
 		var/list/turfs = get_area_turfs(A)
 		if(length(turfs) && M.forceMove(pick(turfs)))

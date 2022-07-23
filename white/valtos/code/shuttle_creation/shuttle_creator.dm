@@ -33,7 +33,7 @@
 	//After designation
 	var/linkedShuttleId
 
-/obj/item/shuttle_creator/Initialize()
+/obj/item/shuttle_creator/Initialize(mapload)
 	. = ..()
 	internal_shuttle_creator = new()
 	internal_shuttle_creator.owner_rsd = src
@@ -173,7 +173,7 @@
 	stationary_port.area_type = overwritten_area
 
 	var/portDirection = getNonShuttleDirection(get_turf(port))
-	var/invertedDir = invertDir(portDirection)
+	var/invertedDir = REVERSE_DIR(portDirection)
 	if(!portDirection || !invertedDir)
 		to_chat(usr, span_warning("Shuttle creation aborted, docking airlock must be on an external wall. Please select a new airlock."))
 		port.Destroy()
@@ -273,7 +273,7 @@
 	if(!port || !istype(port, /obj/docking_port/mobile))
 		return FALSE
 	var/static/list/choice = list("NORTH" = NORTH, "SOUTH" = SOUTH, "EAST" = EAST, "WEST" = WEST)
-	var/Pdir = input(user, "Shuttle Fly Direction:", "Blueprint Editing", "NORTH") as null|anything in list("NORTH", "SOUTH", "EAST", "WEST")
+	var/Pdir = tgui_input_list(user, "Shuttle Fly Direction:", "Blueprint Editing", list("NORTH", "SOUTH", "EAST", "WEST"), "NORTH")
 	if(Pdir)
 		port.preferred_direction = choice[Pdir]
 

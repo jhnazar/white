@@ -112,7 +112,7 @@
 						)
 	embedding = list("embed_chance" = 75)
 
-/obj/item/pen/fountain/captain/Initialize()
+/obj/item/pen/fountain/captain/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/butchering, 200, 115) //the pen is mightier than the sword
 
@@ -138,7 +138,7 @@
 
 	if(!force)
 		if(user.zone_selected == BODY_ZONE_HEAD)
-			var/input = input("Что бы ты хотел написать у [M] на лбу?","Засранец...", M.headstamp) as text|null
+			var/input = tgui_input_text(usr, "Что бы ты хотел написать у [M] на лбу?", "Засранец...", M.headstamp)
 			if(!input || length(input) >= 30)
 				to_chat(user, span_warning("Тебе перехотелось писать..."))
 				return
@@ -167,7 +167,7 @@
 	. = ..()
 	//Changing name/description of items. Only works if they have the UNIQUE_RENAME object flag set
 	if(isobj(O) && proximity && (O.obj_flags & UNIQUE_RENAME))
-		var/penchoice = input(user, "What would you like to edit?", "Rename, change description or reset both?") as null|anything in list("Rename","Change description","Reset")
+		var/penchoice = tgui_input_list(user, "What would you like to edit?", "Rename, change description or reset both?", list("Rename","Change description","Reset"))
 		if(QDELETED(O) || !user.canUseTopic(O, BE_CLOSE))
 			return
 		if(penchoice == "Rename")
@@ -225,7 +225,7 @@
 				reagents.trans_to(M, reagents.total_volume, transfered_by = user, methods = INJECT)
 
 
-/obj/item/pen/sleepy/Initialize()
+/obj/item/pen/sleepy/Initialize(mapload)
 	. = ..()
 	create_reagents(45, OPENCONTAINER)
 	reagents.add_reagent(/datum/reagent/toxin/chloralhydrate, 20)
@@ -244,7 +244,7 @@
 	/// Whether or pen is extended
 	var/extended = FALSE
 
-/obj/item/pen/edagger/Initialize()
+/obj/item/pen/edagger/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/butchering, _speed = 6 SECONDS, _butcher_sound = 'sound/weapons/blade1.ogg')
 	AddComponent(/datum/component/transforming, \

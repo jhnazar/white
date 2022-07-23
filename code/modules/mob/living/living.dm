@@ -1,4 +1,4 @@
-/mob/living/Initialize()
+/mob/living/Initialize(mapload)
 	. = ..()
 	register_init_signals()
 	if(unique_name)
@@ -1573,7 +1573,7 @@ GLOBAL_LIST_EMPTY(fire_appearances)
 
 /mob/living/proc/mob_pickup(mob/living/L)
 	var/obj/item/clothing/head/mob_holder/holder = new(get_turf(src), src, held_state, head_icon, held_lh, held_rh, worn_slot_flags)
-	L.visible_message(span_warning("[L] собирает [src]!"))
+	L.visible_message(span_warning("[L] подбирает [src]!"))
 	L.put_in_hands(holder)
 
 /mob/living/proc/set_name()
@@ -1792,19 +1792,22 @@ GLOBAL_LIST_EMPTY(fire_appearances)
 	SIGNAL_HANDLER
 	var/turf/ceiling = get_step_multiz(src, UP)
 	if(!ceiling) //We are at the highest z-level.
+		if (prob(0.1))
+			to_chat(src, span_warning("Вы вглядываетесь в бесконечную безбрежность глубокого космоса, на мгновение у вас возникает импульс продолжить путешествие, туда, вглубь, прежде чем ваше сознание снова заявит о себе, и вы решите остаться на расстоянии путешествия от станции."))
+			return
 		to_chat(src, span_warning("А как смотреть через потолок?"))
 		return
-	else if(!istransparentturf(ceiling)) //There is no turf we can look through above us
+	else if(!istransparentturf(ceiling) && !ceiling.canlookthroughladderup(src)) //There is no turf we can look through above us
 		var/turf/front_hole = get_step(ceiling, dir)
-		if(istransparentturf(front_hole))
+		if(istransparentturf(front_hole) || front_hole.canlookthroughladderup(src))
 			ceiling = front_hole
 		else
 			var/list/checkturfs = block(locate(x-1,y-1,ceiling.z),locate(x+1,y+1,ceiling.z))-ceiling-front_hole //Try find hole near of us
 			for(var/turf/checkhole in checkturfs)
-				if(istransparentturf(checkhole))
+				if(istransparentturf(checkhole) || checkhole.canlookthroughladderup(src))
 					ceiling = checkhole
 					break
-		if(!istransparentturf(ceiling))
+		if(!istransparentturf(ceiling) && !ceiling.canlookthroughladderup(src))
 			to_chat(src, span_warning("А как смотреть через пол?"))
 			return
 
@@ -1842,19 +1845,19 @@ GLOBAL_LIST_EMPTY(fire_appearances)
 	if(!lower_level) //We are at the lowest z-level.
 		to_chat(src, span_warning("А как смотреть через пол?"))
 		return
-	else if(!istransparentturf(floor)) //There is no turf we can look through below us
+	else if(!istransparentturf(floor) && !floor.canlookthroughladderdown(src)) //There is no turf we can look through below us
 		var/turf/front_hole = get_step(floor, dir)
-		if(istransparentturf(front_hole))
+		if(istransparentturf(front_hole) || front_hole.canlookthroughladderdown(src))
 			floor = front_hole
 			lower_level = get_step_multiz(front_hole, DOWN)
 		else
 			var/list/checkturfs = block(locate(x-1,y-1,z),locate(x+1,y+1,z))-floor //Try find hole near of us
 			for(var/turf/checkhole in checkturfs)
-				if(istransparentturf(checkhole))
+				if(istransparentturf(checkhole) || checkhole.canlookthroughladderdown(src))
 					floor = checkhole
 					lower_level = get_step_multiz(checkhole, DOWN)
 					break
-		if(!istransparentturf(floor))
+		if(!istransparentturf(floor) && !floor.canlookthroughladderdown(src))
 			to_chat(src, span_warning("А как смотреть через пол?"))
 			return
 
@@ -2120,19 +2123,17 @@ GLOBAL_LIST_EMPTY(fire_appearances)
  */
 /mob/living/proc/apply_martial_art(mob/living/target, modifiers, is_grab = FALSE)
 	if(HAS_TRAIT(target, TRAIT_MARTIAL_ARTS_IMMUNE))
-		return FALSE
+		return MARTIAL_ATTACK_INVALID
 	var/datum/martial_art/style = mind?.martial_art
-	var/attack_result = FALSE
-	if (style)
-		switch (a_intent)
-			if (INTENT_GRAB)
-				attack_result = style.grab_act(src, target)
-			if (INTENT_HARM)
-				if (HAS_TRAIT(src, TRAIT_PACIFISM))
-					return FALSE
-				attack_result = style.harm_act(src, target)
-			if (INTENT_DISARM)
-				attack_result = style.disarm_act(src, target)
-			if (INTENT_HELP)
-				attack_result = style.help_act(src, target)
-	return attack_result
+	if (!style)
+		return MARTIAL_ATTACK_INVALID
+	if(LAZYACCESS(modifiers, RIGHT_CLICK) || a_intent == INTENT_DISARM)
+		return style.disarm_act(src, target)
+	switch (a_intent)
+		if (INTENT_GRAB)
+			return style.grab_act(src, target)
+		if (INTENT_HARM)
+			if (HAS_TRAIT(src, TRAIT_PACIFISM))
+				return FALSE
+			return style.harm_act(src, target)
+	return style.help_act(src, target)

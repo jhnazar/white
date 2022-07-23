@@ -5,19 +5,10 @@
 	device_type = UNARY
 	pipe_flags = PIPING_ONE_PER_TURF
 	construction_type = /obj/item/pipe/directional
-	var/uid
-	var/static/gl_uid = 1
 
-/obj/machinery/atmospherics/components/unary/SetInitDirections()
+/obj/machinery/atmospherics/components/unary/set_init_directions()
 	initialize_directions = dir
 
 /obj/machinery/atmospherics/components/unary/on_construction()
 	..()
 	update_icon()
-
-/obj/machinery/atmospherics/proc/assign_uid_vents()
-	return
-
-/obj/machinery/atmospherics/components/unary/assign_uid_vents()
-	uid = num2text(gl_uid++)
-	return uid

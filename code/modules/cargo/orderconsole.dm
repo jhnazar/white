@@ -24,7 +24,8 @@
 	var/list/loaded_coupons
 	/// var that makes express console use rockets
 	var/is_express = FALSE
-
+	///Interface name for the ui_interact call for different subtypes.
+	var/interface_type = "Cargo"
 
 /obj/machinery/computer/cargo/request
 	name = "консоль запросов снабжения"
@@ -35,9 +36,10 @@
 	can_approve_requests = FALSE
 	requestonly = TRUE
 
-/obj/machinery/computer/cargo/Initialize()
+/obj/machinery/computer/cargo/Initialize(mapload)
 	. = ..()
 	radio = new /obj/item/radio/headset/headset_cargo(src)
+	AddElement(/datum/element/traitor_desc, "<i>Да, я определённо хотел заказать 500 коробок из под пиццы, когда нашу станцию пожирает хрен пойми что!</i> Я могу закоротить один из контактов, что приведёт к проблемам с заказами у <b>снабжения</b>. За это мне дадут целый 1 телекристалл.", SABOTAGE_CARGO)
 
 /obj/machinery/computer/cargo/Destroy()
 	QDEL_NULL(radio)
@@ -82,7 +84,7 @@
 	. = ..()
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
-		ui = new(user, src, "Cargo", name)
+		ui = new(user, src, interface_type, name)
 		ui.open()
 
 /obj/machinery/computer/cargo/ui_data()

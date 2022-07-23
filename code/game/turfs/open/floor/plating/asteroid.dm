@@ -5,7 +5,7 @@
 	gender = PLURAL
 	name = "астероидный песок"
 	baseturfs = /turf/open/floor/plating/asteroid
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "asteroid"
 	base_icon_state = "asteroid"
 	footstep = FOOTSTEP_SAND
@@ -27,7 +27,7 @@
 /turf/open/floor/plating/asteroid/setup_broken_states()
 	return list("asteroid_dug")
 
-/turf/open/floor/plating/asteroid/Initialize()
+/turf/open/floor/plating/asteroid/Initialize(mapload)
 	var/proper_name = name
 	. = ..()
 	name = proper_name
@@ -96,7 +96,7 @@
 /turf/open/floor/plating/asteroid/basalt
 	name = "вулканическая поверхность"
 	baseturfs = /turf/open/floor/plating/asteroid/basalt
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "basalt"
 	base_icon_state = "basalt"
 	floor_variance = 15
@@ -111,7 +111,7 @@
 /turf/open/floor/plating/asteroid/basalt/airless
 	initial_gas_mix = AIRLESS_ATMOS
 
-/turf/open/floor/plating/asteroid/basalt/Initialize()
+/turf/open/floor/plating/asteroid/basalt/Initialize(mapload)
 	. = ..()
 	set_basalt_light(src)
 

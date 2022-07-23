@@ -9,7 +9,7 @@
 	var/independent = FALSE
 	var/list/channels = list()
 
-/obj/item/encryptionkey/Initialize()
+/obj/item/encryptionkey/Initialize(mapload)
 	. = ..()
 	if(!channels.len && !translate_binary)
 		desc += "Никаких специальных кодов в нем нет. Вы, наверное, должны сказать кодеру!"
@@ -147,6 +147,11 @@
 	name = "ключ шифрования сервиса"
 	icon_state = "srv_cypherkey"
 	channels = list(RADIO_CHANNEL_SERVICE = 1)
+
+/obj/item/encryptionkey/headset_yohei
+	name = "ключ шифрования Йохеев"
+	icon_state = "cap_cypherkey"
+	channels = list(RADIO_CHANNEL_YOHEI = 1)
 
 /obj/item/encryptionkey/headset_cent
 	name = "ключ шифрования ЦК"

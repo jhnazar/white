@@ -59,6 +59,8 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 	// пикаем арену
 	var/obj/effect/landmark/violence/V = GLOB.violence_landmark
 	V.load_map()
+	// заполняем карту генераторными штуками
+	SSmapping.seedStation()
 	// генерируем штуки для закупа
 	generate_violence_gear()
 	// отключаем ивенты станции
@@ -88,6 +90,11 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 	// маркируем все текущие атомы, чтобы чистильщик их не удалил
 	for(var/atom/A in main_area)
 		A.flags_1 |= KEEP_ON_ARENA_1
+	// отменяем готовность и тут на всякий случай
+	for(var/i in GLOB.new_player_list)
+		var/mob/dead/new_player/player = i
+		if(player.ready == PLAYER_READY_TO_PLAY)
+			player.ready = PLAYER_NOT_READY
 	return TRUE
 
 /datum/game_mode/violence/can_start()
@@ -129,9 +136,9 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 		// удаляем хотспоты
 		for(var/obj/effect/hotspot/H in main_area)
 			qdel(H)
-		// добейте выживших
-		for(var/mob/living/carbon/human/H in main_area)
-			if(H.stat != DEAD && H.health <= 0)
+		// добейте выживших и сбежавших
+		for(var/mob/living/carbon/human/H in GLOB.human_list)
+			if(H.stat != DEAD && H.health <= 0 || !(H in main_area))
 				if(isandroid(H) || isIPC(H))
 					H.death()
 					continue
@@ -204,15 +211,13 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 /datum/game_mode/violence/proc/someone_has_died(datum/source, mob/living/dead, gibbed)
 	SIGNAL_HANDLER
 
-	if(!(dead in main_area))
+	var/datum/violence_player/vp_dead = vp_get_player(dead?.ckey)
+
+	// если нет датума игрока, то игнорируем
+	if(!vp_dead)
 		return
 
 	play_sound_to_everyone(pick(list('white/valtos/sounds/fame1.ogg', 'white/valtos/sounds/fame2.ogg', 'white/valtos/sounds/fame3.ogg', 'white/valtos/sounds/fame4.ogg', 'white/valtos/sounds/fame5.ogg')), rand(25, 50))
-
-	var/datum/violence_player/vp_dead = vp_get_player(dead?.ckey)
-
-	if(!vp_dead)
-		return
 
 	vp_dead.deaths++
 
@@ -292,7 +297,7 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 /datum/game_mode/violence/proc/clean_arena()
 	var/count_deleted = 0
 	for(var/atom/A in main_area)
-		if(!(A.flags_1 & KEEP_ON_ARENA_1))
+		if(!(A.flags_1 & KEEP_ON_ARENA_1) && (isobj(A) || ismob(A)))
 			count_deleted++
 			qdel(A)
 	message_admins("УДАЛЕНО [count_deleted] РАЗЛИЧНЫХ ШТУК.")
@@ -320,7 +325,7 @@ GLOBAL_LIST_EMPTY(violence_bomb_locations)
 				// получаем список предметов на персонаже, включая рюкзак
 				LAZYADD(saved_shit, H.get_all_gear())
 				// по идее должно исключить стакинг бесполезных предметов
-				var/list/static/blacklisted_types = list(
+				var/static/list/blacklisted_types = list(
 					/obj/item/clothing/shoes/jackboots,
 					/obj/item/terroristsc4,
 					/obj/item/clothing/under/color/red,

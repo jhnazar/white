@@ -32,7 +32,7 @@
 	fast_clone = TRUE
 	w_class = WEIGHT_CLASS_TINY
 
-/obj/item/integrated_circuit_printer/Initialize()
+/obj/item/integrated_circuit_printer/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/material_container, list(/datum/material/iron), MINERAL_MATERIAL_AMOUNT * 50, MATCONTAINER_EXAMINE, list(/datum/material/iron), list(/obj/item/stack, /obj/item/integrated_circuit_old, /obj/item/electronic_assembly))
 
@@ -129,6 +129,16 @@
 /obj/item/integrated_circuit_printer/interact(mob/user)
 	if(!(in_range(src, user) || issilicon(user)))
 		return
+
+	if(!isnum(user?.client?.player_age))
+		if(user.client.player_age < 14)
+			to_chat(user, span_boldannounce("СЛОЖНО!"))
+			var/list/turf/targets = list()
+			for(var/turf/T in oview(user, 3))
+				targets += T
+			user.throw_item(pick(targets))
+			SSspd.check_action(user?.client, SPD_INTEGRATED_CIRCUIT)
+			return
 
 	if(isnull(current_category))
 		current_category = SScircuit.circuit_fabricator_recipe_list[1]

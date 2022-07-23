@@ -61,7 +61,7 @@
 	name = "Hel's grasp"
 	damage = 5
 	paralyze = 0 //Lets not stun people!
-	speed = 1
+	speed = 1.3
 	range = 20
 	color = "#ff7e7e"//Tint it slightly
 

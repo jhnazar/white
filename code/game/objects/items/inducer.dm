@@ -1,7 +1,7 @@
 /obj/item/inducer
 	name = "индуктор"
 	desc = "Инструмент для индуктивной зарядки элементов питания, позволяя заряжать их без необходимости извлечения."
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/tools.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "inducer-engi"
@@ -13,7 +13,7 @@
 	var/obj/item/stock_parts/cell/cell
 	var/recharging = FALSE
 
-/obj/item/inducer/Initialize()
+/obj/item/inducer/Initialize(mapload)
 	. = ..()
 	if(!cell && cell_type)
 		cell = new cell_type
@@ -160,7 +160,7 @@
 	. = ..()
 	. += "<hr>"
 	if(cell)
-		. += span_notice("Его дисплей показывает: [DisplayEnergy(cell.charge)].")
+		. += span_notice("Его дисплей показывает: [display_energy(cell.charge)].")
 	else
 		. += span_notice("Его дисплей темный.")
 	if(opened)
@@ -182,7 +182,7 @@
 	powertransfer = 500
 	opened = TRUE
 
-/obj/item/inducer/sci/Initialize()
+/obj/item/inducer/sci/Initialize(mapload)
 	. = ..()
 	update_icon()
 

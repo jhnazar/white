@@ -8,6 +8,7 @@
 	max_integrity = 200
 	ui_x = 1200
 	lights_power = 7
+	force = 10
 	armor = list(MELEE = 40, BULLET = 20, LASER = 10, ENERGY = 20, BOMB = 40, BIO = 0, FIRE = 100, ACID = 100)
 	max_equip_by_category = list(
 		MECHA_UTILITY = 2,
@@ -64,8 +65,8 @@
 	return ..()
 
 /obj/vehicle/sealed/mecha/working/ripley/mk2
-	desc = "Autonomous Power Loader Unit MK-II. This prototype Ripley is refitted with a pressurized cabin, trading its prior speed for atmospheric protection and armor."
-	name = "\improper APLU MK-II \"Ripley\""
+	desc = "Автономный силовой погрузчик МК-2. Тяжелая модернизация с полной защитой пилота от окружающей среды."
+	name = "АПЛУ \"Рипли\" МК-2"
 	icon_state = "ripleymkii"
 	fast_pressure_step_in = 2 //step_in while in low pressure conditions
 	slow_pressure_step_in = 4 //step_in while in normal pressure conditions
@@ -122,7 +123,7 @@
 	name = "\improper APLU \"Miner\""
 	obj_integrity = 75 //Low starting health
 
-/obj/vehicle/sealed/mecha/working/ripley/mining/Initialize()
+/obj/vehicle/sealed/mecha/working/ripley/mining/Initialize(mapload)
 	. = ..()
 	if(cell)
 		cell.charge = FLOOR(cell.charge * 0.25, 1) //Starts at very low charge
@@ -144,6 +145,8 @@
 	var/obj/item/mecha_parts/mecha_equipment/mining_scanner/scanner = new
 	scanner.attach(src)
 
+GLOBAL_DATUM(cargo_ripley, /obj/vehicle/sealed/mecha/working/ripley/cargo)
+
 /obj/vehicle/sealed/mecha/working/ripley/cargo
 	desc = "An ailing, old, repurposed cargo hauler. Most of its equipment wires are frayed or missing and its frame is rusted."
 	name = "\improper APLU \"Big Bess\""
@@ -151,7 +154,7 @@
 	base_icon_state = "hauler"
 	max_integrity = 100 //Has half the health of a normal RIPLEY mech, so it's harder to use as a weapon.
 
-/obj/vehicle/sealed/mecha/working/ripley/cargo/Initialize()
+/obj/vehicle/sealed/mecha/working/ripley/cargo/Initialize(mapload)
 	. = ..()
 	if(cell)
 		cell.charge = FLOOR(cell.charge * 0.25, 1) //Starts at very low charge
@@ -159,6 +162,14 @@
 	//Attach hydraulic clamp ONLY
 	var/obj/item/mecha_parts/mecha_equipment/hydraulic_clamp/HC = new
 	HC.attach(src)
+	if(!GLOB.cargo_ripley && mapload)
+		GLOB.cargo_ripley = src
+
+/obj/vehicle/sealed/mecha/working/ripley/cargo/Destroy()
+	if(GLOB.cargo_ripley == src)
+		GLOB.cargo_ripley = null
+
+	return ..()
 
 /obj/vehicle/sealed/mecha/working/ripley/Exit(atom/movable/O)
 	if(O in cargo)

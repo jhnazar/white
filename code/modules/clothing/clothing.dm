@@ -62,7 +62,7 @@
 	/// A lazily initiated "food" version of the clothing for moths
 	var/obj/item/food/clothing/moth_snack
 
-/obj/item/clothing/Initialize()
+/obj/item/clothing/Initialize(mapload)
 	if((clothing_flags & VOICEBOX_TOGGLABLE))
 		actions_types += /datum/action/item_action/toggle_voice_box
 	. = ..()
@@ -309,7 +309,7 @@
 		if (pockets.can_hold?.len) // If pocket type can hold anything, vs only specific items
 			how_cool_are_your_threads += "[capitalize(src.name)] может хранить [pockets.max_items] <a href='?src=[REF(src)];show_valid_pocket_items=1'>предметов</a>.\n"
 		else
-			how_cool_are_your_threads += "[capitalize(src.name)] может хранить [pockets.max_items] [weightclass2text(pockets.max_w_class)] размера или меньше.\n"
+			how_cool_are_your_threads += "[capitalize(src.name)] может хранить [pockets.max_items] [weight_class_to_text(pockets.max_w_class)] размера или меньше.\n"
 		if(pockets.quickdraw)
 			how_cool_are_your_threads += "Могу быстро вытащить предмет из [src] используя ПКМ.\n"
 		if(pockets.silent)

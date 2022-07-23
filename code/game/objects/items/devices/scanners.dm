@@ -20,9 +20,9 @@ GENE SCANNER
 
 /obj/item/t_scanner
 	name = "терагерцовый сканер"
-	desc = "Терагерцовый излучатель лучей и просто сканнер, который подсвечивает провода и трубы под полом."
+	desc = "Терагерцовый излучатель лучей и просто сканер, который подсвечивает провода и трубы под полом."
 	custom_price = PAYCHECK_ASSISTANT * 0.7
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/device.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "t-ray0"
@@ -85,7 +85,7 @@ GENE SCANNER
 	worn_icon_state = "healthanalyzer"
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
-	desc = "Ручной медицинский сканнер для определения жизненных показателей пациента."
+	desc = "Ручной медицинский сканер для определения жизненных показателей пациента."
 	flags_1 = CONDUCT_1
 	item_flags = NOBLUDGEON
 	slot_flags = ITEM_SLOT_BELT
@@ -244,9 +244,18 @@ GENE SCANNER
 		render_list += "<span class='info ml-1'>Уровень активности мозга: [(200 - M.getOrganLoss(ORGAN_SLOT_BRAIN))/2]%.</span>\n"
 
 	if (M.radiation)
-		render_list += "<span class='alert ml-1'>Пациент облучён.</span>\n"
+		render_list += "<span class='alert ml-1'>Обнаружено радиоактивное заражение.</span>\n"
 		if(advanced)
 			render_list += "<span class='info ml-1'>Уровень облучения: [M.radiation]%.</span>\n"
+		else
+			if(M.radiation>=0 && M.radiation<=100)
+				render_list += "<span class='info ml-1'>Уровень облучения <b>низкий</b>.</span>\n"
+			if(M.radiation>100 && M.radiation<=400)
+				render_list += "<span class='info ml-1'>Уровень облучения <b>средний</b>.</span>\n"
+			if(M.radiation>400 && M.radiation<=1500)
+				render_list += "<span class='info ml-1'>Уровень облучения <b>высокий</b>.</span>\n"
+			if(M.radiation>1500)
+				render_list += "<span class='info ml-1'>Уровень облучения <b>критический</b>.</span>\n"
 
 	if(advanced && M.hallucinating())
 		render_list += "<span class='info ml-1'>Пациент под воздействием галлюциногенов.</span>\n"
@@ -439,6 +448,8 @@ GENE SCANNER
 			if(blood_id != /datum/reagent/blood) // special blood substance
 				var/datum/reagent/R = GLOB.chemical_reagents_list[blood_id]
 				blood_type = R ? R.name : blood_id
+			if(HAS_TRAIT(M, TRAIT_MASQUERADE)) //bloodsuckers
+				render_list += "<span class='info ml-1'>Уровень крови: 100%, 560 cl, Тип: [blood_type]</span>\n"
 			if(C.blood_volume <= BLOOD_VOLUME_SAFE && C.blood_volume > BLOOD_VOLUME_OKAY)
 				render_list += "<span class='alert ml-1'>Уровень крови: НИЗКИЙ [blood_percent]%, [C.blood_volume] cl,</span> <span class='info'>Тип: [blood_type]</span>\n"
 			else if(C.blood_volume <= BLOOD_VOLUME_OKAY)
@@ -521,7 +532,7 @@ GENE SCANNER
 /obj/item/healthanalyzer/advanced
 	name = "продвинутый анализатор здоровья"
 	icon_state = "health_adv"
-	desc = "Ручной медицинский сканнер для определения жизненных показателей пациента с более высокой точностью."
+	desc = "Ручной медицинский сканер для определения жизненных показателей пациента с более высокой точностью."
 	advanced = TRUE
 
 /// Displays wounds with extended information on their status vs medscanners
@@ -530,7 +541,7 @@ GENE SCANNER
 		return
 
 	if(user.is_blind())
-		to_chat(user, span_warning("Вспоминаю, что данный сканнер не умеет работать со слепыми!"))
+		to_chat(user, span_warning("Этот сканер не адаптирован для слепых! Я буду жаловаться в профсоюз!"))
 		return
 
 	var/render_list = ""
@@ -593,7 +604,7 @@ GENE SCANNER
 	desc = "Ручной анализатор, который сканирует состояние воздуха в помещении. ПКМ, чтобы использовать барометр."
 	name = "газоанализатор"
 	custom_price = PAYCHECK_ASSISTANT * 0.9
-	icon = 'white/valtos/icons/items.dmi'
+	icon = 'icons/obj/device.dmi'
 	lefthand_file = 'white/valtos/icons/lefthand.dmi'
 	righthand_file = 'white/valtos/icons/righthand.dmi'
 	icon_state = "analyzer"
@@ -773,7 +784,7 @@ GENE SCANNER
 			render_list += "<span class='notice'>Моли: [round(total_moles, 0.01)] моль</span>\
 							\n<span class='notice'>Объём: [volume] Л</span>\
 							\n<span class='notice'>Давление: [round(pressure,0.01)] кПа</span>\
-							\n<span class='notice'>Т.Энергия: [DisplayJoules(air_contents.thermal_energy())]</span>"
+							\n<span class='notice'>Т.Энергия: [display_joules(air_contents.thermal_energy())]</span>"
 
 			for(var/id in air_contents.get_gases())
 				var/gas_concentration = air_contents.get_moles(id) / total_moles
@@ -929,6 +940,9 @@ GENE SCANNER
 /obj/item/sequence_scanner/proc/gene_scan(mob/living/carbon/C, mob/living/user)
 	if(!iscarbon(C) || !C.has_dna())
 		return
+
+	to_chat(user, span_notice("Генетическая стабильность: [C.dna.stability]%."))
+
 	buffer = C.dna.mutation_index
 	to_chat(user, span_notice("ДНК пациента [C.name] сохранено в буффер."))
 	if(LAZYLEN(buffer))
@@ -943,7 +957,7 @@ GENE SCANNER
 	for(var/A in buffer)
 		options += get_display_name(A)
 
-	var/answer = input(user, "Analyze Potential", "Sequence Analyzer")  as null|anything in sort_list(options)
+	var/answer = tgui_input_list(user, "Analyze Potential", "Sequence Analyzer", sort_list(options))
 	if(answer && ready && user.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
 		var/sequence
 		for(var/A in buffer) //this physically hurts but i dont know what anything else short of an assoc list

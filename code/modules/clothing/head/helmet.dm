@@ -19,12 +19,40 @@
 	var/obj/item/flashlight/seclite/attached_light
 	var/datum/action/item_action/toggle_helmet_flashlight/alight
 
-/obj/item/clothing/head/helmet/Initialize()
+/obj/item/clothing/head/helmet/AltClick(mob/user)
 	. = ..()
-	AddComponent(/datum/component/armor_plate/plasteel)
+	if(.)
+		return
+
+	if(!user.canUseTopic(src, BE_CLOSE, NO_DEXTERITY, FALSE, !iscyborg(user)))
+		return
+	rolldown()
+
+/obj/item/clothing/head/helmet/verb/helmet_adjust()
+	set name = "Поправить прическу"
+	set category = null
+	set src in usr
+	rolldown()
+
+/obj/item/clothing/head/helmet/proc/rolldown()
+	if(ishuman(usr))
+		if(flags_inv == HIDEHAIR)
+			to_chat(usr, span_notice("Распускаю волосы."))
+			flags_inv = null
+		else
+			to_chat(usr, span_notice("Заправляю волосы под шлем."))
+			flags_inv = initial(flags_inv)
+		var/mob/living/carbon/human/H = usr
+//		H.update_inv_w_uniform()
+		H.update_hair()
+		H.update_inv_head()
+
+/obj/item/clothing/head/helmet/Initialize(mapload)
+	. = ..()
+//	AddComponent(/datum/component/armor_plate/plasteel)
 	if(attached_light)
 		alight = new(src)
-
+/*
 /obj/item/clothing/head/helmet/worn_overlays(isinhands)
 	. = ..()
 	if(!isinhands)
@@ -32,6 +60,7 @@
 		if(ap?.amount)
 			var/mutable_appearance/armor_overlay = mutable_appearance('icons/mob/clothing/head.dmi', "armor_plasteel_[ap.amount]")
 			. += armor_overlay
+*/
 
 /obj/item/clothing/head/helmet/Destroy()
 	var/obj/item/flashlight/seclite/old_light = set_attached_light(null)
@@ -48,6 +77,7 @@
 			. += "<hr><span class='info'>Похоже, что [attached_light] может быть <b>откручен</b> от [src].</span>"
 	else if(can_flashlight)
 		. += "<hr>Имеет точку для монтирования <b>фонарика</b>."
+	. += "<hr><b>ПКМ или Alt + Клик</b> для изменения отображения прически."
 
 
 /obj/item/clothing/head/helmet/handle_atom_del(atom/A)
@@ -117,7 +147,7 @@
 	can_flashlight = TRUE
 	dog_fashion = null
 
-/obj/item/clothing/head/helmet/marine/Initialize()
+/obj/item/clothing/head/helmet/marine/Initialize(mapload)
 	set_attached_light(new /obj/item/flashlight/seclite)
 	update_helmlight()
 	update_icon()
@@ -165,6 +195,24 @@
 	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH | PEPPERPROOF
 	visor_flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH | PEPPERPROOF
 	dog_fashion = null
+	can_flashlight = TRUE
+
+/obj/item/clothing/head/helmet/riot/update_icon_state()
+	var/state = "[initial(icon_state)]"
+	if(up)
+		state += "up"
+		if(attached_light)
+			if(attached_light.on)
+				state += "-flight-on"
+			else
+				state += "-flight"
+	else
+		if(attached_light)
+			if(attached_light.on)
+				state += "-flight-on"
+			else
+				state += "-flight"
+	icon_state = state
 
 /obj/item/clothing/head/helmet/attack_self(mob/user)
 	if(can_toggle && !user.incapacitated())
@@ -174,7 +222,7 @@
 			flags_1 ^= visor_flags
 			flags_inv ^= visor_flags_inv
 			flags_cover ^= visor_flags_cover
-			icon_state = "[initial(icon_state)][up ? "up" : ""]"
+			update_icon_state()
 			to_chat(user, span_notice("[up ? alt_toggle_message : toggle_message] [src]."))
 
 			user.update_inv_head()
@@ -195,7 +243,7 @@
 	///Looping sound datum for the siren helmet
 	var/datum/looping_sound/siren/weewooloop
 
-/obj/item/clothing/head/helmet/justice/Initialize()
+/obj/item/clothing/head/helmet/justice/Initialize(mapload)
 	. = ..()
 	weewooloop = new(src, FALSE, FALSE)
 
@@ -241,13 +289,10 @@
 /obj/item/clothing/head/helmet/constable
 	name = "шлем констебля"
 	desc = "Такой британский."
-	worn_icon = 'icons/mob/large-worn-icons/64x64/head.dmi'
 	icon_state = "constable"
 	inhand_icon_state = "constable"
-	worn_x_dimension = 64
-	worn_y_dimension = 64
-	clothing_flags = LARGE_WORN_ICON
 	custom_price = PAYCHECK_HARD * 1.5
+	worn_y_offset = 4
 
 /obj/item/clothing/head/helmet/swat/nanotrasen
 	name = "шлем спецназа"
@@ -433,7 +478,7 @@
 	var/polling = FALSE///if the helmet is currently polling for targets (special code for removal)
 	var/light_colors = 1 ///which icon state color this is (red, blue, yellow)
 
-/obj/item/clothing/head/helmet/monkey_sentience/Initialize()
+/obj/item/clothing/head/helmet/monkey_sentience/Initialize(mapload)
 	. = ..()
 	light_colors = rand(1,3)
 	update_icon()

@@ -15,7 +15,7 @@ GLOBAL_LIST(labor_sheet_values)
 	/// Needed to send messages to sec radio
 	var/obj/item/radio/Radio
 
-/obj/machinery/mineral/labor_claim_console/Initialize()
+/obj/machinery/mineral/labor_claim_console/Initialize(mapload)
 	. = ..()
 	Radio = new /obj/item/radio(src)
 	Radio.set_listening(FALSE)
@@ -62,21 +62,24 @@ GLOBAL_LIST(labor_sheet_values)
 	if(obj_flags & EMAGGED)
 		data["emagged"] = TRUE
 		can_go_home = TRUE
-	var/obj/item/card/id/I
-	if(isliving(usr))
-		var/mob/living/L = usr
-		I = L.get_idcard(TRUE)
-	if(istype(I, /obj/item/card/id/advanced/prisoner))
-		var/obj/item/card/id/advanced/prisoner/P = I
-		data["id_points"] = P.points
-		if(P.points >= P.goal)
-			can_go_home = TRUE
-			data["status_info"] = "Goal met!"
+
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		var/obj/item/card/id/I = H.get_idcard(TRUE)
+		if(istype(I, /obj/item/card/id/advanced/prisoner))
+			var/obj/item/card/id/advanced/prisoner/P = I
+			data["id_points"] = P.points
+			if(P.points >= P.goal)
+				can_go_home = TRUE
+				data["status_info"] = "Всё соблюдено!"
+			else
+				data["status_info"] = "Осталось [(P.goal - P.points)] очков."
 		else
-			data["status_info"] = "You are [(P.goal - P.points)] points away."
+			data["status_info"] = "Не обнаружена ID-карта."
+			data["id_points"] = 0
 	else
-		data["status_info"] = "No Prisoner ID detected."
-		data["id_points"] = 0
+		data["status_info"] = "ПОШЁЛ НА ХУЙ."
+		data["id_points"] = 666
 
 	if(stacking_machine)
 		data["unclaimed_points"] = stacking_machine.points

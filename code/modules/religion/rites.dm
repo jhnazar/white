@@ -392,7 +392,7 @@
 	if(!honormut.guilty.len)
 		to_chat(user, span_warning("[GLOB.deity] is holding no grudges to forgive."))
 		return FALSE
-	var/forgiven_choice = input(user, "Choose one of [GLOB.deity]'s guilty to forgive.", "Forgive") as null|anything in honormut.guilty
+	var/forgiven_choice = tgui_input_list(user, "Choose one of [GLOB.deity]'s guilty to forgive.", "Forgive", honormut.guilty)
 	if(!forgiven_choice)
 		return FALSE
 	who = forgiven_choice
@@ -449,7 +449,7 @@
 	show_written_words = FALSE
 
 	//info set in here because we need GLOB.deity
-/obj/item/paper/holy_writ/Initialize()
+/obj/item/paper/holy_writ/Initialize(mapload)
 	add_filter("holy_outline", 9, list("type" = "outline", "color" = "#fdff6c"))
 	name = "[GLOB.deity]'s honorbound rules"
 	info = {"[GLOB.deity]'s honorbound rules:

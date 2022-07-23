@@ -43,7 +43,7 @@
 	*/
 	var/list/module_traits = null
 
-/obj/item/robot_module/Initialize()
+/obj/item/robot_module/Initialize(mapload)
 	. = ..()
 	for(var/i in basic_modules)
 		var/obj/item/I = new i(src)
@@ -260,6 +260,7 @@
 		/obj/item/circular_saw/augment,
 		/obj/item/bonesetter/augment,
 		/obj/item/blood_filter/augment,
+		/obj/item/breathing_bag,
 		/obj/item/healthanalyzer,
 		/obj/item/reagent_containers/borghypo,
 		/obj/item/stack/medical/gauze,
@@ -320,6 +321,7 @@
 		/obj/item/weldingtool/largetank/cyborg,
 		/obj/item/multitool/cyborg,
 		/obj/item/construction/rcd/borg,
+		/obj/item/borg/charger,
 		/obj/item/pipe_dispenser,
 		/obj/item/stack/cable_coil,
 		/obj/item/lightreplacer/cyborg,
@@ -528,10 +530,16 @@
 			cyborg_base_icon = "janitor"
 		if("Zoomba")
 			cyborg_base_icon = "zoomba_jani" // Ну это же просто уборщик, зачем ему штраф на ХП, у остальных зумба вырезан
+			special_light_key = "zoomba_jani_l"
+			hat_offset = -13
 		if("Zoomba_green")
 			cyborg_base_icon = "zoomba_green"
+			special_light_key = "zoomba_green_l"
+			hat_offset = -13
 		if("Zoomba_engi")
 			cyborg_base_icon = "zoomba_engi"
+			special_light_key = "zoomba_engi_l"
+			hat_offset = -13
 		if("Flynn")
 			cyborg_base_icon = "flynn"
 		if("Heavy")

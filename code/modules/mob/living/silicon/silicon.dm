@@ -48,7 +48,7 @@
 	var/interaction_range = 7			//wireless control range
 	var/obj/item/modular_computer/tablet/integrated/modularInterface
 
-/mob/living/silicon/Initialize()
+/mob/living/silicon/Initialize(mapload)
 	. = ..()
 	GLOB.silicon_mobs += src
 	faction += "silicon"
@@ -245,7 +245,7 @@
 
 	for (var/index in 1 to length(lawcache_hacked))
 		var/law = lawcache_hacked[index]
-		var/num = ionnum()
+		var/num = ion_num()
 		if (length(law) > 0)
 			if (force || lawcache_hackedcheck[index] == "Yes")
 				say("[radiomod] [num]. [law]")
@@ -253,7 +253,7 @@
 
 	for (var/index in 1 to length(lawcache_ion))
 		var/law = lawcache_ion[index]
-		var/num = ionnum()
+		var/num = ion_num()
 		if (length(law) > 0)
 			if (force || lawcache_ioncheck[index] == "Yes")
 				say("[radiomod] [num]. [law]")
@@ -299,7 +299,7 @@
 		if (length(law) > 0)
 			if (!hackedcheck[index])
 				hackedcheck[index] = "No"
-			list += {"<A href='byond://?src=[REF(src)];lawh=[index]'>[hackedcheck[index]] [ionnum()]:</A> <font color='#660000'>[law]</font><BR>"}
+			list += {"<A href='byond://?src=[REF(src)];lawh=[index]'>[hackedcheck[index]] [ion_num()]:</A> <font color='#660000'>[law]</font><BR>"}
 			hackedcheck.len += 1
 
 	for (var/index = 1, index <= laws.ion.len, index++)
@@ -308,7 +308,7 @@
 		if (length(law) > 0)
 			if (!ioncheck[index])
 				ioncheck[index] = "Yes"
-			list += {"<A href='byond://?src=[REF(src)];lawi=[index]'>[ioncheck[index]] [ionnum()]:</A> <font color='#547DFE'>[law]</font><BR>"}
+			list += {"<A href='byond://?src=[REF(src)];lawi=[index]'>[ioncheck[index]] [ion_num()]:</A> <font color='#547DFE'>[law]</font><BR>"}
 			ioncheck.len += 1
 
 	var/number = 1
@@ -342,9 +342,10 @@
 		return
 	client.crew_manifest_delay = world.time + (1 SECONDS)
 
-	var/datum/browser/popup = new(src, "airoster", "Crew Manifest", 387, 420)
-	popup.set_content(GLOB.data_core.get_manifest_html())
-	popup.open()
+	if(!GLOB.crew_manifest_tgui)
+		GLOB.crew_manifest_tgui = new /datum/crew_manifest(src)
+
+	GLOB.crew_manifest_tgui.ui_interact(src)
 
 /mob/living/silicon/proc/set_autosay() //For allowing the AI and borgs to set the radio behavior of auto announcements (state laws, arrivals).
 	if(!radio)
@@ -352,7 +353,7 @@
 		return
 
 	//Ask the user to pick a channel from what it has available.
-	var/Autochan = input("Select a channel:") as null|anything in list("Default","None") + radio.channels
+	var/Autochan = tgui_input_list(usr, "Select a channel:", , list("Default","None") + radio.channels)
 
 	if(!Autochan)
 		return
@@ -474,3 +475,11 @@
 	var/datum/computer_file/program/robotact/program = modularInterface.get_robotact()
 	if(program)
 		program.force_full_update()
+
+/// Same as the normal character name replacement, but updates the contents of the modular interface.
+/mob/living/silicon/fully_replace_character_name(oldname, newname)
+	. = ..()
+	if(!modularInterface)
+		stack_trace("Silicon [src] ( [type] ) was somehow missing their integrated tablet. Please make a bug report.")
+		create_modularInterface()
+	modularInterface.saved_identification = newname

@@ -103,7 +103,7 @@ DEFINE_BITFIELD(turret_flags, list(
 	/// Mob that is remotely controlling the turret
 	var/mob/remote_controller
 
-/obj/machinery/porta_turret/Initialize()
+/obj/machinery/porta_turret/Initialize(mapload)
 	. = ..()
 	if(!base)
 		base = src
@@ -764,8 +764,8 @@ DEFINE_BITFIELD(turret_flags, list(
 /obj/machinery/porta_turret/syndicate/shuttle
 	scan_range = 9
 	shot_delay = 3
-	stun_projectile = /obj/projectile/bullet/p50/penetrator/shuttle
-	lethal_projectile = /obj/projectile/bullet/p50/penetrator/shuttle
+	stun_projectile = /obj/projectile/bullet/syndicate_turret
+	lethal_projectile = /obj/projectile/bullet/syndicate_turret
 	lethal_projectile_sound = 'sound/weapons/gun/smg/shot.ogg'
 	stun_projectile_sound = 'sound/weapons/gun/smg/shot.ogg'
 	armor = list(MELEE = 50, BULLET = 30, LASER = 30, ENERGY = 30, BOMB = 80, BIO = 0, RAD = 0, FIRE = 90, ACID = 90)
@@ -807,7 +807,7 @@ DEFINE_BITFIELD(turret_flags, list(
 /obj/machinery/porta_turret/aux_base/interact(mob/user) //Controlled solely from the base console.
 	return
 
-/obj/machinery/porta_turret/aux_base/Initialize()
+/obj/machinery/porta_turret/aux_base/Initialize(mapload)
 	. = ..()
 	cover.name = name
 	cover.desc = desc

@@ -75,10 +75,11 @@
 	hud_possible = list(HACKER_HUD)
 	var/extra_damage = 0				//Number to add to individual bullets.
 	var/extra_penetration = 0			//Number to add to armor penetration of individual bullets.
+	var/extra_minhitchance = 0			//Number you add to minimal hit chance
 
 	var/custom_skin_name = null
 
-/obj/item/gun/Initialize()
+/obj/item/gun/Initialize(mapload)
 	. = ..()
 	if(pin)
 		pin = new pin(src)
@@ -166,24 +167,25 @@
 	if(recoil)
 		shake_camera(user, recoil + 1, recoil)
 
+	SSspd.check_action(user?.client, SPD_SHOTS_FIRED)
+
 	if(suppressed)
 		playsound(user, suppressed_sound, suppressed_volume, vary_fire_sound, ignore_walls = FALSE, extrarange = SILENCED_SOUND_EXTRARANGE, falloff_distance = 0)
 	else
 		playsound(user, fire_sound, fire_sound_volume, vary_fire_sound)
 		if(message)
 			if(pointblank)
-				user.visible_message(span_danger("<b>[user]</b> стреляет из <b>[src.name]</b> <b>В УПОР</b> по <b>[pbtarget]</b>!"), \
-								span_danger("Стреляю из [src.name] <b>В УПОР</b> по <b>[pbtarget]</b>!"), \
-								span_hear("Слышу выстрел!"), COMBAT_MESSAGE_RANGE, pbtarget)
-				to_chat(pbtarget, span_userdanger("<b>[user]</b> стреляет из <b>[src.name]</b> в меня <b>В УПОР</b>!"))
+				user.visible_message(span_danger("<b>[user]</b> стреляет из <b>[src.name]</b> <b>В УПОР</b> по <b>[pbtarget]</b>!"),
+								span_danger("Стреляю из [src.name] <b>В УПОР</b> по <b>[pbtarget]</b>!"),
+								span_hear("Слышу выстрел!"), COMBAT_MESSAGE_RANGE, pbtarget, visible_message_flags = SPAM_MESSAGE)
 				if(pb_knockback > 0 && ismob(pbtarget))
 					var/mob/PBT = pbtarget
 					var/atom/throw_target = get_edge_target_turf(PBT, user.dir)
 					PBT.throw_at(throw_target, pb_knockback, 2)
 			else
-				user.visible_message(span_danger("<b>[user]</b> стреляет из <b>[src.name]</b> в <b>[pbtarget]</b>!"), \
-								span_danger("Стреляю из [src.name] в <b>[pbtarget]</b>!"), \
-								span_hear("Слышу выстрел!"), COMBAT_MESSAGE_RANGE)
+				user.visible_message(span_danger("<b>[user]</b> стреляет из <b>[src.name]</b>!"),
+								span_danger("Стреляю из [src.name]!"),
+								span_hear("Слышу выстрел!"), COMBAT_MESSAGE_RANGE, visible_message_flags = SPAM_MESSAGE)
 
 /obj/item/gun/emp_act(severity)
 	. = ..()
@@ -322,8 +324,11 @@
 				shoot_live_shot(user, 1, target, message)
 			else
 				shoot_live_shot(user, 0, target, message)
+			SEND_SIGNAL(src, COMSIG_UPDATE_AMMO_HUD)
 			if (iteration >= burst_size)
+				semicd = TRUE
 				firing_burst = FALSE
+				addtimer(CALLBACK(src, .proc/reset_semicd), fire_delay * burst_size)
 	else
 		shoot_with_empty_chamber(user)
 		firing_burst = FALSE
@@ -358,6 +363,10 @@
 		randomized_gun_spread =	rand(0,spread)
 	var/randomized_bonus_spread = rand(base_bonus_spread, bonus_spread)
 
+	var/modified_delay = fire_delay
+	if(user && HAS_TRAIT(user, TRAIT_DOUBLE_TAP))
+		modified_delay = ROUND_UP(fire_delay * 0.5)
+
 	if(check_for_assblast(user, ASSBLAST_WIZARD)) //nice shootin' tex nice shootin' tex nice shootin' tex nice shootin' tex
 		user.emote("spin")
 		randomized_gun_spread = 360
@@ -366,7 +375,7 @@
 	if(burst_size > 1)
 		firing_burst = TRUE
 		for(var/i = 1 to burst_size)
-			addtimer(CALLBACK(src, .proc/process_burst, user, target, message, params, zone_override, sprd, randomized_gun_spread, randomized_bonus_spread, rand_spr, i), fire_delay * (i - 1))
+			addtimer(CALLBACK(src, .proc/process_burst, user, target, message, params, zone_override, sprd, randomized_gun_spread, randomized_bonus_spread, rand_spr, i), modified_delay * (i - 1))
 	else
 		if(chambered)
 			if(HAS_TRAIT(user, TRAIT_PACIFISM)) // If the user has the pacifist trait, then they won't be able to fire [src] if the round chambered inside of [src] is lethal.
@@ -389,7 +398,7 @@
 		process_chamber()
 		update_appearance()
 		semicd = TRUE
-		addtimer(CALLBACK(src, .proc/reset_semicd), fire_delay)
+		addtimer(CALLBACK(src, .proc/reset_semicd), modified_delay)
 
 	if(user)
 		user.update_inv_hands()
@@ -454,7 +463,7 @@
 		return
 	if((can_flashlight && gun_light) && (can_bayonet && bayonet)) //give them a choice instead of removing both
 		var/list/possible_items = list(gun_light, bayonet)
-		var/obj/item/item_to_remove = input(user, "Select an attachment to remove", "Attachment Removal") as null|obj in sortNames(possible_items)
+		var/obj/item/item_to_remove = tgui_input_list(user, "Select an attachment to remove", "Attachment Removal", sort_names(possible_items))
 		if(!item_to_remove || !user.canUseTopic(src, BE_CLOSE, FALSE, NO_TK))
 			return
 		return remove_gun_attachment(user, I, item_to_remove)

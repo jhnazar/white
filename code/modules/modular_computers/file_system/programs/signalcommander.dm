@@ -1,9 +1,9 @@
 /datum/computer_file/program/signal_commander
 	filename = "signaler"
-	filedesc = "SignalCommander"
+	filedesc = "СигналКомандер"
 	category = PROGRAM_CATEGORY_MISC
 	program_icon_state = "signal"
-	extended_desc = "A small built-in frequency app that sends out signaller signals with the appropriate hardware."
+	extended_desc = "Программа малого размера для отправки сигналов на различной частоте с вашего устройства."
 	size = 2
 	tgui_id = "NtosSignaler"
 	program_icon = "satellite-dish"
@@ -30,7 +30,7 @@
 	switch(action)
 		if("signal")
 			if(TIMER_COOLDOWN_CHECK(src, COOLDOWN_SIGNALLER_SEND))
-				to_chat(usr, span_warning("[src] все еще перезаряжается..."))
+				to_chat(usr, span_warning("[filename] все еще перезаряжается..."))
 				return
 			TIMER_COOLDOWN_START(src, COOLDOWN_SIGNALLER_SEND, 1 SECONDS)
 			INVOKE_ASYNC(src, .proc/signal)
@@ -60,7 +60,6 @@
 
 	var/logging_data
 	if(usr)
-		message_admins("usr is true")
 		logging_data = "[time] <B>:</B> [usr.key] used [computer] @ location ([T.x],[T.y],[T.z]) <B>:</B> [format_frequency(signal_frequency)]/[signal_code]"
 		GLOB.lastsignalers.Add(logging_data)
 

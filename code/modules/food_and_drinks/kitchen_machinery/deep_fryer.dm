@@ -34,7 +34,7 @@ GLOBAL_LIST_INIT(oilfry_blacklisted_items, typecacheof(list(
 	/obj/item/multitool,
 	/obj/item/weldingtool))
 
-/obj/machinery/deepfryer/Initialize()
+/obj/machinery/deepfryer/Initialize(mapload)
 	. = ..()
 	create_reagents(50, OPENCONTAINER)
 	reagents.add_reagent(/datum/reagent/consumable/cooking_oil, 25)
@@ -139,6 +139,7 @@ GLOBAL_LIST_INIT(oilfry_blacklisted_items, typecacheof(list(
 		if(reagents.reagent_list) //This can runtime if reagents has nothing in it.
 			reagents.remove_any((reagents.total_volume/2))
 		C.Paralyze(60)
+		SEND_SIGNAL(C, COMSIG_ADD_MOOD_EVENT, "fryer", /datum/mood_event/fried)
 		user.changeNext_move(CLICK_CD_MELEE)
 	return ..()
 

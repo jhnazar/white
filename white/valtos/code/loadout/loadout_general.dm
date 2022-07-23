@@ -51,7 +51,7 @@
 	cost = 950
 
 /datum/gear/auvtomat
-	display_name = "Нанопистолеты"
+	display_name = "Нанопистолет"
 	path = /obj/item/storage/belt/holster/thermal
 	allowed_roles = list("Security Officer", "Head of Security")
 	cost = 5000
@@ -62,12 +62,12 @@
 	allowed_roles = list("Warden")
 	cost = 7500
 
-/datum/gear/spare_id
-	display_name = "Золотая ID-карта капитана"
+/datum/gear/golden_id
+	display_name = "Золотая ID-карта"
 	description = "Мечта, которая никогда не сбудется. Наверное."
-	path = /obj/item/card/id/advanced/gold/captains_spare
+	path = /obj/item/card/id/advanced/gold
 	allowed_roles = list("Assistant")
-	cost = 99999
+	cost = 50000
 
 /datum/gear/guitar
 	display_name = "Гитара"
@@ -113,3 +113,9 @@
 	path = /obj/item/kinetic_shield
 	allowed_roles = list("Captain", "Head of Security", "Chief Engineer", "Chief Medical Officer", "Head of Personnel", "Research Director")
 	cost = 1500
+
+/datum/gear/merchant_dope
+	display_name = "Золотая цепочка"
+	path = /obj/item/clothing/neck/necklace/dope/merchant
+	allowed_roles = list("Quartermaster")
+	cost = 5000

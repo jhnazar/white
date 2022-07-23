@@ -3,7 +3,7 @@
 	ru_title = "Повар"
 	department_head = list("Head of Personnel")
 	faction = "Station"
-	total_positions = 2
+	total_positions = 1
 	spawn_positions = 1
 	supervisors = "главе персонала"
 	selection_color = "#bbe291"
@@ -19,7 +19,8 @@
 	display_order = JOB_DISPLAY_ORDER_COOK
 	bounty_types = CIV_JOB_CHEF
 
-	rpg_title = "Повар Трактира"
+	rpg_title = "Tavern Chef"
+	rpg_title_ru = "Повар Трактира"
 
 	mail_goodies = list(
 		/obj/item/storage/box/ingredients/random = 80,

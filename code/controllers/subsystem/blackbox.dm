@@ -16,7 +16,7 @@ SUBSYSTEM_DEF(blackbox)
 							"round_end_stats" = 2,
 							"testmerged_prs" = 2) //associative list of any feedback variables that have had their format changed since creation and their current version, remember to update this
 
-/datum/controller/subsystem/blackbox/Initialize()
+/datum/controller/subsystem/blackbox/Initialize(mapload)
 	triggertime = world.time
 	record_feedback("amount", "random_seed", Master.random_seed)
 	record_feedback("amount", "dm_version", DM_VERSION)
@@ -63,7 +63,7 @@ SUBSYSTEM_DEF(blackbox)
 //no touchie
 /datum/controller/subsystem/blackbox/vv_get_var(var_name)
 	if(var_name == "feedback")
-		return debug_variable(var_name, deepCopyList(feedback), 0, src)
+		return debug_variable(var_name, deep_copy_list(feedback), 0, src)
 	return ..()
 
 /datum/controller/subsystem/blackbox/vv_edit_var(var_name, var_value)

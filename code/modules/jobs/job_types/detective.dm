@@ -14,8 +14,8 @@
 
 	outfit = /datum/outfit/job/detective
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_EXPERT)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_EXPERT)
+	skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_NOVICE)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_LEGENDARY, /datum/skill/parry = SKILL_EXP_NOVICE)
 
 	paycheck = PAYCHECK_MEDIUM
 	paycheck_department = ACCOUNT_SEC
@@ -36,7 +36,8 @@
 		/obj/item/storage/belt/holster/detective/full = 1
 	)
 
-	rpg_title = "Ловец воров"
+	rpg_title = "Thiefcatcher"
+	rpg_title_ru = "Ловец воров"
 
 /datum/outfit/job/detective
 	name = "Detective"

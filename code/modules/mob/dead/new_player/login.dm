@@ -20,6 +20,13 @@
 	if(motd && !GLOB.violence_mode_activated)
 		to_chat(src, "<div class=\"motd\">[motd]</div>")
 
+	var/version = global.config.current_version_string
+	if(version && !GLOB.violence_mode_activated)
+		to_chat(src, span_nzcrentr("[version]"))
+
+	if(GLOB.changelog_json)
+		to_chat(src, span_nzcrentr("-- <a href='byond://winset?command=view-changelog'>Список изменений</a> --"))
+
 	if(GLOB.admin_notice)
 		to_chat(src, span_notice("<b>ВАЖНАЯ ЗАМЕТКА:</b>\n \t [GLOB.admin_notice]"))
 
@@ -58,4 +65,4 @@
 	client.update_metabalance_cache()
 	client.proverka_na_pindosov()
 
-	client?.show_lobby()
+	client?.show_lobby(src)

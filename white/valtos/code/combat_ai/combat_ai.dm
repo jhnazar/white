@@ -10,6 +10,7 @@
 	var/static/list/loc_connections = list(
 		COMSIG_ATOM_ENTERED = .proc/on_Crossed,
 	)
+	var/debug_mode = 1
 
 /datum/ai_controller/combat_ai/TryPossessPawn(atom/new_pawn)
 	if(!ishuman(new_pawn))
@@ -24,6 +25,8 @@
 	RegisterSignal(new_pawn, COMSIG_ATOM_HULK_ATTACK, .proc/on_attack_hulk)
 	RegisterSignal(new_pawn, COMSIG_CARBON_CUFF_ATTEMPTED, .proc/on_attempt_cuff)
 	AddComponent(/datum/component/connect_loc_behalf, pawn, loc_connections)
+	new_pawn.maptext_width = 256
+	new_pawn.maptext_height = 256
 	return ..() //Run parent at end
 
 /datum/ai_controller/combat_ai/UnpossessPawn(destroy)
@@ -51,6 +54,12 @@
 
 	if(HAS_TRAIT(pawn, TRAIT_PACIFISM))
 		return
+
+	if(debug_mode == 1)
+		var/rt = ""
+		for(var/i in blackboard)
+			rt += "[i] = [blackboard]"
+		living_pawn.maptext = MAPTEXT(rt)
 
 	if(length(enemies) || blackboard[BB_COMBAT_AI_ANGRY_GAY])
 
@@ -91,7 +100,7 @@
 			return FALSE
 		return TRUE
 
-	W = locate(/obj/item/gun/ballistic) in oview(5, living_pawn)
+	W = locate(/obj/item/gun/ballistic) in oview(10, living_pawn)
 
 	if(W && W.trigger_guard == TRIGGER_GUARD_NORMAL && W.pin && W.get_ammo(TRUE) && !blackboard[BB_COMBAT_AI_WEAPON_BL][W])
 		blackboard[BB_COMBAT_AI_WEAPON_TARGET] = W
@@ -113,8 +122,12 @@
 /datum/ai_controller/combat_ai/PerformIdleBehavior(delta_time)
 	var/mob/living/living_pawn = pawn
 
-	if(!TryFindWeapon())
-		living_pawn.say("Не могу найти оружие!")
+	if(!isturf(living_pawn.loc) || living_pawn.pulledby || length(living_pawn.buckled_mobs))
+		return
+
+	if(!TryFindWeapon() && (living_pawn.mobility_flags & MOBILITY_MOVE))
+		var/move_dir = pick(GLOB.alldirs)
+		living_pawn.Move(get_step(living_pawn, move_dir), move_dir)
 	else if(DT_PROB(5, delta_time))
 		INVOKE_ASYNC(living_pawn, /mob.proc/emote, pick("cough", "yawn", "sigh"))
 
@@ -368,27 +381,27 @@
 /mob/living/carbon/human/combat_ai
 	ai_controller = /datum/ai_controller/combat_ai
 
-/mob/living/carbon/human/combat_ai/Initialize()
+/mob/living/carbon/human/combat_ai/Initialize(mapload)
 	. = ..()
 	setMaxHealth(25)
 
-/mob/living/carbon/human/combat_ai/sniper/Initialize()
+/mob/living/carbon/human/combat_ai/sniper/Initialize(mapload)
 	. = ..()
 	equipOutfit(pick(typesof(/datum/outfit/combat_ai/sniper)))
 
-/mob/living/carbon/human/combat_ai/smg/Initialize()
+/mob/living/carbon/human/combat_ai/smg/Initialize(mapload)
 	. = ..()
 	equipOutfit(pick(typesof(/datum/outfit/combat_ai/smg)))
 
-/mob/living/carbon/human/combat_ai/pistol/Initialize()
+/mob/living/carbon/human/combat_ai/pistol/Initialize(mapload)
 	. = ..()
 	equipOutfit(pick(typesof(/datum/outfit/combat_ai/pistol)))
 
-/mob/living/carbon/human/combat_ai/magnum/Initialize()
+/mob/living/carbon/human/combat_ai/magnum/Initialize(mapload)
 	. = ..()
 	equipOutfit(pick(typesof(/datum/outfit/combat_ai/magnum)))
 
-/mob/living/carbon/human/combat_ai/shotgun/Initialize()
+/mob/living/carbon/human/combat_ai/shotgun/Initialize(mapload)
 	. = ..()
 	equipOutfit(pick(typesof(/datum/outfit/combat_ai/shotgun)))
 

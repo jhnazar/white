@@ -20,7 +20,7 @@
 	permeability_coefficient = 0.01
 	clothing_flags = THICKMATERIAL
 	body_parts_covered = CHEST|GROIN|LEGS|FEET|ARMS|HANDS
-	slowdown = 0.5
+	slowdown = 0.25
 	allowed = list(/obj/item/tank/internals, /obj/item/reagent_containers/dropper, /obj/item/flashlight/pen, /obj/item/reagent_containers/syringe, /obj/item/reagent_containers/hypospray, /obj/item/reagent_containers/glass/beaker, /obj/item/gun/syringe)
 	armor = list(MELEE = 0, BULLET = 0, LASER = 0,ENERGY = 0, BOMB = 0, BIO = 100, RAD = 80, FIRE = 30, ACID = 100)
 	flags_inv = HIDEGLOVES|HIDESHOES|HIDEJUMPSUIT
@@ -53,7 +53,7 @@
 	armor = list(MELEE = 25, BULLET = 15, LASER = 25, ENERGY = 35, BOMB = 25, BIO = 100, RAD = 80, FIRE = 30, ACID = 100)
 	icon_state = "bio_security"
 
-/obj/item/clothing/suit/bio_suit/security/Initialize()
+/obj/item/clothing/suit/bio_suit/security/Initialize(mapload)
 	. = ..()
 	allowed += GLOB.security_vest_allowed
 
@@ -64,7 +64,7 @@
 /obj/item/clothing/suit/bio_suit/janitor
 	icon_state = "bio_janitor"
 
-/obj/item/clothing/suit/bio_suit/janitor/Initialize()
+/obj/item/clothing/suit/bio_suit/janitor/Initialize(mapload)
 	. = ..()
 	allowed += list(/obj/item/storage/bag/trash, /obj/item/reagent_containers/spray)
 
@@ -82,7 +82,7 @@
 /obj/item/clothing/suit/bio_suit/cmo
 	icon_state = "bio_cmo"
 
-/obj/item/clothing/suit/bio_suit/cmo/Initialize()
+/obj/item/clothing/suit/bio_suit/cmo/Initialize(mapload)
 	. = ..()
 	allowed += list(/obj/item/melee/classic_baton/telescopic)
 
@@ -95,6 +95,6 @@
 	strip_delay = 40
 	equip_delay_other = 20
 
-/obj/item/clothing/suit/bio_suit/plaguedoctorsuit/Initialize()
+/obj/item/clothing/suit/bio_suit/plaguedoctorsuit/Initialize(mapload)
 	. = ..()
 	allowed += list(/obj/item/storage/book/bible, /obj/item/nullrod, /obj/item/cane)

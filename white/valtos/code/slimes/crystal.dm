@@ -48,7 +48,7 @@
 		max_integrity = 1000
 		obj_integrity = 1000
 
-/obj/structure/slime_crystal/Initialize()
+/obj/structure/slime_crystal/Initialize(mapload)
 	. = ..()
 	name =  "[colour] slimic pylon"
 	var/itemcolor = "#FFFFFF"
@@ -222,7 +222,7 @@
 	light_power = 0.75
 	uses_process = FALSE
 
-/obj/structure/slime_crystal/yellow/Initialize()
+/obj/structure/slime_crystal/yellow/Initialize(mapload)
 	. = ..()
 	set_light(3)
 
@@ -287,7 +287,7 @@
 	///Is it in use?
 	var/in_use = FALSE
 
-/obj/structure/slime_crystal/bluespace/Initialize()
+/obj/structure/slime_crystal/bluespace/Initialize(mapload)
 	. = ..()
 	GLOB.bluespace_slime_crystals += src
 
@@ -326,7 +326,7 @@
 
 		assoc_list[name] = BSC
 
-	var/chosen_input = input(user,"What destination do you want to choose",null) as null|anything in assoc_list
+	var/chosen_input = tgui_input_list(user, "What destination do you want to choose", , assoc_list)
 	in_use = FALSE
 
 	if(!chosen_input || !assoc_list[chosen_input])
@@ -364,7 +364,7 @@
 	var/stage = 0
 	var/max_stage = 5
 
-/obj/structure/cerulean_slime_crystal/Initialize()
+/obj/structure/cerulean_slime_crystal/Initialize(mapload)
 	. = ..()
 	transform *= 1/(max_stage-1)
 	stage_growth()
@@ -407,7 +407,7 @@
 	colour = "pyrite"
 	uses_process = FALSE
 
-/obj/structure/slime_crystal/pyrite/Initialize()
+/obj/structure/slime_crystal/pyrite/Initialize(mapload)
 	. = ..()
 	change_colour()
 
@@ -609,7 +609,7 @@
 	uses_process = FALSE
 	var/list/inserted_cores = list()
 
-/obj/structure/slime_crystal/rainbow/Initialize()
+/obj/structure/slime_crystal/rainbow/Initialize(mapload)
 	. = ..()
 	for(var/X in subtypesof(/obj/item/slimecross/crystalized) - /obj/item/slimecross/crystalized/rainbow)
 		inserted_cores[X] = FALSE

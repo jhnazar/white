@@ -1,8 +1,8 @@
 /**********************Mining Scanners**********************/
 /obj/item/mining_scanner
 	desc = "Сканер, проверяющий окружающую породу на наличие полезных минералов; его также можно использовать для остановки детонации гибтонита."
-	name = "ручной шахтёрский сканнер"
-	icon = 'white/valtos/icons/items.dmi'
+	name = "ручной шахтёрский сканер"
+	icon = 'icons/obj/device.dmi'
 	icon_state = "miningmanual"
 	inhand_icon_state = "analyzer"
 	worn_icon_state = "analyzer"
@@ -32,7 +32,7 @@
 
 /obj/item/t_scanner/adv_mining_scanner
 	desc = "Сканер, автоматически проверяющий окружающую породу на наличие полезных минералов; его также можно использовать для остановки детонации гибтонита. У этого есть расширенный диапазон."
-	name = "продвинутый автоматический шахтёрский сканнер"
+	name = "продвинутый автоматический шахтёрский сканер"
 	icon_state = "adv_mining0"
 	inhand_icon_state = "analyzer"
 	lefthand_file = 'icons/mob/inhands/equipment/tools_lefthand.dmi'
@@ -44,12 +44,12 @@
 	var/current_cooldown = 0
 	var/range = 7
 
-/obj/item/t_scanner/adv_mining_scanner/cyborg/Initialize()
+/obj/item/t_scanner/adv_mining_scanner/cyborg/Initialize(mapload)
 	. = ..()
 	toggle_on()
 
 /obj/item/t_scanner/adv_mining_scanner/lesser
-	name = "автоматический шахтёрский сканнер"
+	name = "автоматический шахтёрский сканер"
 	desc = "Сканер, автоматически проверяющий окружающую породу на наличие полезных минералов; его также можно использовать для остановки детонации гибтонита."
 	icon_state = "mining0"
 	range = 4
@@ -120,7 +120,7 @@
 	pixel_x = -224
 	pixel_y = -224
 
-/obj/effect/temp_visual/mining_overlay/Initialize()
+/obj/effect/temp_visual/mining_overlay/Initialize(mapload)
 	. = ..()
 	animate(src, alpha = 0, time = duration, easing = EASE_IN)
 
@@ -135,6 +135,6 @@
 	alpha = 100
 	icon_state = "mining_scan"
 
-/obj/effect/temp_visual/mining_scanner/Initialize()
+/obj/effect/temp_visual/mining_scanner/Initialize(mapload)
 	. = ..()
 	animate(src, alpha = 0, time = duration, easing = EASE_IN)

@@ -1,10 +1,11 @@
 /obj/structure/closet/secure_closet/research_director
-	name = "\proper шкафчик директора по исследованиям"
+	name = "шкафчик директора по исследованиям"
 	req_access = list(ACCESS_RD)
 	icon_state = "rd"
 
 /obj/structure/closet/secure_closet/research_director/PopulateContents()
 	..()
+	new /obj/item/key/forklift/science(src)
 	new /obj/item/clothing/neck/cloak/rd(src)
 	new /obj/item/clothing/suit/bio_suit/scientist(src)
 	new /obj/item/clothing/head/bio_hood/scientist(src)
@@ -28,6 +29,7 @@
 	new /obj/item/laser_pointer(src)
 	new /obj/item/door_remote/research_director(src)
 	new /obj/item/circuitboard/machine/techfab/department/science(src)
+	new /obj/item/circuitboard/machine/mechfab/sci(src)
 	new /obj/item/storage/photo_album/rd(src)
 	new /obj/item/storage/box/skillchips/science(src)
 

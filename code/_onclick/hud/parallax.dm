@@ -1,5 +1,5 @@
 
-/datum/hud/proc/create_parallax(mob/viewmob, forced_parallax = 0)
+/datum/hud/proc/create_parallax(mob/viewmob)
 	var/mob/screenmob = viewmob || mymob
 	var/client/C = screenmob.client
 	if(SSmapping.level_trait(screenmob.z, ZTRAIT_NOPARALLAX))
@@ -9,10 +9,10 @@
 
 	C.parallax_layers_cached = list()
 
-	if(forced_parallax == 1)
+	if(HAS_TRAIT(viewmob, TRAIT_HACKER))
 		C.parallax_layers_cached += new /atom/movable/screen/parallax_layer/cyberspess(null, screenmob)
 		C.parallax_layers_cached += new /atom/movable/screen/parallax_layer/mazespace(null, screenmob)
-	else if(forced_parallax == 2)
+	else if(HAS_TRAIT(viewmob, TRAIT_DREAMER))
 		C.parallax_layers_cached += new /atom/movable/screen/parallax_layer/shizospace(null, screenmob)
 	else if(GLOB.station_orbit_parallax_type == 3)
 		C.parallax_layers_cached += new /atom/movable/screen/parallax_layer/ice_surface(null, screenmob)
@@ -52,6 +52,8 @@
 /datum/hud/proc/remove_parallax(mob/viewmob)
 	var/mob/screenmob = viewmob || mymob
 	var/client/C = screenmob.client
+	if(!C)
+		return
 	C.screen -= (C.parallax_layers_cached)
 	var/atom/movable/screen/plane_master/PM = screenmob.hud_used.plane_masters["[PLANE_SPACE]"]
 	if(screenmob != mymob)
@@ -68,6 +70,8 @@
 		return FALSE
 
 	var/client/C = screenmob.client
+	if(!C)
+		return FALSE
 	// Default to HIGH
 	var/parallax_selection = PARALLAX_HIGH
 	if(C?.prefs)
@@ -99,9 +103,9 @@
 		if (PARALLAX_DISABLE)
 			return FALSE
 
-/datum/hud/proc/update_parallax_pref(mob/viewmob, forced_parallax = 0)
+/datum/hud/proc/update_parallax_pref(mob/viewmob)
 	remove_parallax(viewmob)
-	create_parallax(viewmob, forced_parallax)
+	create_parallax(viewmob)
 	update_parallax(viewmob)
 
 // This sets which way the current shuttle is moving (returns true if the shuttle has stopped moving so the caller can append their animation)
@@ -141,7 +145,8 @@
 	if(!skip_windups)
 		for(var/thing in C.parallax_layers)
 			var/atom/movable/screen/parallax_layer/L = thing
-
+			if(!L)
+				continue
 			var/T = PARALLAX_LOOP_TIME / L.speed
 			if (isnull(shortesttimer))
 				shortesttimer = T
@@ -188,6 +193,8 @@
 /datum/hud/proc/update_parallax(mob/viewmob)
 	var/mob/screenmob = viewmob || mymob
 	var/client/C = screenmob.client
+	if(!C)
+		return
 	var/turf/posobj = get_turf(C.eye)
 	if(!posobj)
 		return

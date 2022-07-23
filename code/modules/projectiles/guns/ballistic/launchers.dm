@@ -37,6 +37,7 @@
 	icon_state = "gyropistol"
 	fire_sound = 'sound/weapons/gun/general/grenade_launch.ogg'
 	mag_type = /obj/item/ammo_box/magazine/m75
+	auto_fire = FALSE
 	burst_size = 1
 	fire_delay = 0
 	actions_types = list()
@@ -65,7 +66,7 @@
 	/// Do we shit flames behind us when we fire?
 	var/backblast = TRUE
 
-/obj/item/gun/ballistic/rocketlauncher/Initialize()
+/obj/item/gun/ballistic/rocketlauncher/Initialize(mapload)
 	. = ..()
 	if(backblast)
 		AddElement(/datum/element/backblast)

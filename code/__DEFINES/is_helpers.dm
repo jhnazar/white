@@ -80,6 +80,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define isdullahan(A) (is_species(A, /datum/species/dullahan))
 #define ismonkey(A) (is_species(A, /datum/species/monkey))
 #define isdwarf(A) (is_species(A, /datum/species/dwarf))
+#define isszlachta(A) (is_species(A, /datum/species/szlachta))
 
 //more carbon mobs
 
@@ -147,6 +148,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define ismegafauna(A) (istype(A, /mob/living/simple_animal/hostile/megafauna))
 
+#define iselite(A) (istype(A, /mob/living/simple_animal/hostile/asteroid/elite))
+
 #define isclown(A) (istype(A, /mob/living/simple_animal/hostile/clown))
 
 #define iseminence(A) (istype(A, /mob/living/simple_animal/eminence))
@@ -190,6 +193,8 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define isstructure(A) (istype(A, /obj/structure))
 
 #define ismachinery(A) (istype(A, /obj/machinery))
+
+#define iscameraobj(A) (istype(A, /obj/machinery/camera))
 
 #define isvehicle(A) (istype(A, /obj/vehicle))
 
@@ -261,3 +266,6 @@ GLOBAL_LIST_INIT(book_types, typecacheof(list(
 
 // Xen mobs
 #define isxenmob(A) (istype(A, /mob/living/simple_animal/hostile/blackmesa/xen))
+
+#define is_traitor(M) (istype(M, /mob/living) && M.mind?.has_antag_datum(/datum/antagonist/traitor))
+#define is_hired_yohei(M) (istype(M, /mob/living) && M.mind?.has_antag_datum(/datum/antagonist/yohei))

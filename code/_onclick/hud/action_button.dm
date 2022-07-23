@@ -78,7 +78,7 @@
 	var/mutable_appearance/hide_appearance
 	var/mutable_appearance/show_appearance
 
-/atom/movable/screen/movable/action_button/hide_toggle/Initialize()
+/atom/movable/screen/movable/action_button/hide_toggle/Initialize(mapload)
 	. = ..()
 	var/static/list/icon_cache = list()
 
@@ -164,6 +164,7 @@
 		. += hide_appearance
 
 /atom/movable/screen/movable/action_button/MouseEntered(location,control,params)
+	. = ..()
 	if(!QDELETED(src))
 		openToolTip(usr,src,params,title = name,content = desc,theme = actiontooltipstyle)
 

@@ -29,6 +29,8 @@
 
 /obj/item/modular_computer/tablet/pda/heads/hop
 	name = "head of personnel PDA"
+	greyscale_config = /datum/greyscale_config/tablet/stripe_thick/head
+	greyscale_colors = "#374f7e#a52f29#a52f29"
 	default_applications = list(
 		/datum/computer_file/program/crew_manifest,
 		/datum/computer_file/program/status,
@@ -346,6 +348,14 @@
 	greyscale_colors = null
 	icon_state = "pda-library"
 	insert_type = /obj/item/pen/fountain
+
+/obj/item/modular_computer/tablet/pda/curator/Initialize(mapload)
+	. = ..()
+	var/obj/item/computer_hardware/hard_drive/hdd = all_components[MC_HDD]
+
+	if(hdd)
+		for(var/datum/computer_file/program/messenger/msg in hdd.stored_files)
+			msg.allow_emojis = TRUE
 
 /**
  * Non-roles

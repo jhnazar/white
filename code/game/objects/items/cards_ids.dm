@@ -37,7 +37,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/idcards_righthand.dmi'
 	var/detail_color = COLOR_ASSEMBLY_ORANGE
 
-/obj/item/card/data/Initialize()
+/obj/item/card/data/Initialize(mapload)
 	. = ..()
 	update_icon()
 
@@ -81,6 +81,8 @@
 
 	/// How many magical mining Disney Dollars this card has for spending at the mining equipment vendors.
 	var/mining_points = 0
+	/// Очки Рейнджеров
+	var/exploration_points = 0
 	/// The name registered on the card (for example: Dr Bryan See)
 	var/registered_name = null
 	/// Linked bank account.
@@ -557,6 +559,8 @@
 		msg += "Владелец карты имеет возраст <b>[registered_age]</b> лет. [(registered_age < AGE_MINOR) ? "Тут есть голографическая полоса, которая гласит <b><span class='danger'>'СТАЖИРОВКА: НЕ ПРОДАВАТЬ АЛКОГОЛЬ ИЛИ ТАБАК'</span></b> в самом низу карты." : ""]"
 	if(mining_points)
 		msg += "\nВау, здесь же есть [mining_points] шахтёрских очков на разные штуки из шахтёрского инвентаря."
+	if(exploration_points)
+		msg += "\nВау, здесь же есть [exploration_points] исследовательских очков на разные штуки из рейнджерского инвентаря."
 	msg += "<hr>"
 	if(registered_account)
 		msg += "Привязанный аккаунт принадлежит '[registered_account.account_holder]' и сообщает о балансе в размере <b>[registered_account.account_balance] кредит[get_num_string(registered_account.account_balance)]</b>."
@@ -653,7 +657,7 @@
 	var/department_name = ACCOUNT_CIV_NAME
 	registered_age = null
 
-/obj/item/card/id/departmental_budget/Initialize()
+/obj/item/card/id/departmental_budget/Initialize(mapload)
 	. = ..()
 	var/datum/bank_account/B = SSeconomy.get_dep_account(department_ID)
 	if(B)
@@ -900,7 +904,7 @@
 	trim = /datum/id_trim/admin
 	wildcard_slots = WILDCARD_LIMIT_ADMIN
 
-/obj/item/card/id/advanced/debug/Initialize()
+/obj/item/card/id/advanced/debug/Initialize(mapload)
 	. = ..()
 	registered_account = SSeconomy.get_dep_account(ACCOUNT_CAR)
 
@@ -1208,7 +1212,7 @@
 							trim_list[fake_trim_name] = trim_path
 
 					var/selected_trim_path
-					selected_trim_path = input("Какой же образ мы выберем.\nЗаметка: это не добавит доступа.", "Модификация карты", selected_trim_path) as null|anything in sort_list(trim_list, /proc/cmp_typepaths_asc)
+					selected_trim_path = tgui_input_list(usr, "Какой же образ мы выберем.\nЗаметка: это не добавит доступа.", "Модификация карты", sort_list(trim_list, /proc/cmp_typepaths_asc), selected_trim_path)
 					if(selected_trim_path)
 						SSid_access.apply_trim_to_chameleon_card(src, trim_list[selected_trim_path])
 

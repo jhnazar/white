@@ -14,6 +14,7 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	MODE_BINARY = MODE_TOKEN_BINARY,
 	RADIO_CHANNEL_AI_PRIVATE = RADIO_TOKEN_AI_PRIVATE,
 	RADIO_CHANNEL_FACTION = RADIO_TOKEN_FACTION,
+	RADIO_CHANNEL_YOHEI = RADIO_TOKEN_YOHEI,
 ))
 
 /obj/item/radio/headset
@@ -55,7 +56,7 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	else
 		. += "<hr><span class='notice'>На гарнитуре мигает маленький экран, он слишком мал для чтения без удержания или ношения гарнитуры.</span>"
 
-/obj/item/radio/headset/Initialize()
+/obj/item/radio/headset/Initialize(mapload)
 	. = ..()
 	set_listening(TRUE)
 	recalculateChannels()
@@ -96,12 +97,12 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	name = "гарнитура лидера команды"
 	command = TRUE
 
-/obj/item/radio/headset/syndicate/Initialize()
+/obj/item/radio/headset/syndicate/Initialize(mapload)
 	. = ..()
 	make_syndie()
 
 /obj/item/radio/headset/binary
-/obj/item/radio/headset/binary/Initialize()
+/obj/item/radio/headset/binary/Initialize(mapload)
 	. = ..()
 	qdel(keyslot)
 	keyslot = new /obj/item/encryptionkey/binary
@@ -147,6 +148,16 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	desc = "Гарнитура для обученного персонала медотсека. С доступом к каналу охраны."
 	icon_state = "med_headset"
 	keyslot = new /obj/item/encryptionkey/headset_medsec
+
+/obj/item/radio/headset/headset_medsec/alt
+	name = "гарнитура-бабочка полевого медика"
+	desc = "Гарнитура для обученного персонала медотсека. С доступом к каналу охраны. Защищает уши от светошумовых гранат."
+	icon_state = "med_headset_alt"
+	keyslot = new /obj/item/encryptionkey/headset_medsec
+
+/obj/item/radio/headset/headset_medsec/alt/ComponentInitialize()
+	. = ..()
+	AddComponent(/datum/component/wearertargeting/earprotection, list(ITEM_SLOT_EARS))
 
 /obj/item/radio/headset/headset_sci
 	name = "научная гарнитура"
@@ -269,10 +280,18 @@ GLOBAL_LIST_INIT(channel_tokens, list(
 	keyslot = new /obj/item/encryptionkey/headset_service
 
 /obj/item/radio/headset/headset_curator
-	name = "гарнитура куратор"
+	name = "гарнитура куратора"
 	desc = "Специальная гарнитура, которая позволяет зачитывать порно прямо в канал рейнджеров."
 	icon_state = "srv_headset"
 	keyslot = new /obj/item/encryptionkey/headset_curator
+
+/obj/item/radio/headset/headset_yohei
+	name = "гарнитура Йохея"
+	desc = "Через это общаются наёмники."
+	icon = 'icons/obj/abductor.dmi'
+	icon_state = "abductor_headset"
+	inhand_icon_state = "abductor_headset"
+	keyslot = new /obj/item/encryptionkey/headset_yohei
 
 /obj/item/radio/headset/headset_cent
 	name = "гарнитура ЦентКома"

@@ -338,7 +338,7 @@
 
 /obj/item/voodoo/attack_self(mob/user)
 	if(!target && possible.len)
-		target = input(user, "Select your victim!", "Voodoo") as null|anything in sortNames(possible)
+		target = tgui_input_list(user, "Select your victim!", "Voodoo", sort_names(possible))
 		return
 
 	if(user.zone_selected == BODY_ZONE_CHEST)
@@ -490,6 +490,6 @@
 	duration = 40
 	pixel_x = 500
 
-/obj/effect/temp_visual/tornado/Initialize()
+/obj/effect/temp_visual/tornado/Initialize(mapload)
 	. = ..()
 	animate(src, pixel_x = -500, time = 40)

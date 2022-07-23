@@ -307,7 +307,7 @@
 	for(var/atom/movable/AM in L)
 		if(AM != src && insert(AM) == LOCKER_FULL) // limit reached
 			break
-	for(var/i in reverseRange(L.get_all_contents()))
+	for(var/i in reverse_range(L.get_all_contents()))
 		var/atom/movable/thing = i
 		SEND_SIGNAL(thing, COMSIG_TRY_STORAGE_HIDE_ALL)
 
@@ -750,7 +750,7 @@
 			user.visible_message(span_warning("От [src.name] летят искры!") ,
 							span_warning("Взламываю защиту [src.name]!") ,
 							span_hear("Слышу слабое искрение."))
-		playsound(src, "sparks", 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+		playsound(src, "zap", 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 		broken = TRUE
 		locked = FALSE
 		update_icon()

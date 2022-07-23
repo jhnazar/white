@@ -64,7 +64,7 @@
  * * set a random nutrition level
  * * Intialize the movespeed of the mob
  */
-/mob/Initialize()
+/mob/Initialize(mapload)
 	SEND_GLOBAL_SIGNAL(COMSIG_GLOB_MOB_CREATED, src)
 	add_to_mob_list()
 	if(stat == DEAD)
@@ -253,6 +253,9 @@
 		if(!M.client)
 			continue
 
+		if((visible_message_flags & SPAM_MESSAGE) && !(M.client.prefs.chat_toggles & CHAT_SPAM))
+			continue
+
 		//This entire if/else chain could be in two lines but isn't for readibilties sake.
 		var/msg = message
 		var/msg_type = MSG_VISUAL
@@ -279,6 +282,8 @@
 /mob/visible_message(message, self_message, blind_message, vision_distance = DEFAULT_MESSAGE_RANGE, list/ignored_mobs, visible_message_flags = NONE)
 	. = ..()
 	if(self_message)
+		if((visible_message_flags & SPAM_MESSAGE) && !(client?.prefs?.chat_toggles & CHAT_SPAM))
+			return
 		show_message(self_message, MSG_VISUAL, blind_message, MSG_AUDIBLE)
 
 /**
@@ -979,6 +984,7 @@
 	if(SEND_SIGNAL(src, COMSIG_MOB_SWAP_HANDS, held_item) & COMPONENT_BLOCK_SWAP)
 		to_chat(src, span_warning("Другая рука слишком занята тем, чтобы держать [held_item]."))
 		return FALSE
+	SSspd.check_action(client, SPD_FAST_HANDS)
 	return TRUE
 
 /mob/proc/activate_hand(selhand)
@@ -1095,8 +1101,13 @@
 	return 9
 
 ///Can the mob interact() with an atom?
-/mob/proc/can_interact_with(atom/A)
-	if(isAdminGhostAI(src) || Adjacent(A))
+/mob/proc/can_interact_with(atom/A, treat_mob_as_adjacent)
+	if(isAdminGhostAI(src))
+		return TRUE
+	//Return early. we do not need to check that we are on adjacent turfs (i.e we are inside a closet)
+	if (treat_mob_as_adjacent && src == A.loc)
+		return TRUE
+	if (Adjacent(A))
 		return TRUE
 	var/datum/dna/mob_dna = has_dna()
 	if(mob_dna?.check_mutation(TK) && tkMaxRangeCheck(src, A))
@@ -1533,3 +1544,14 @@
 	SIGNAL_HANDLER
 
 	INVOKE_ASYNC(src, .proc/unperform_zoom)
+
+/mob/verb/view_changelog()
+	set hidden = TRUE
+
+	if(!client)
+		return
+
+	if(!GLOB.changelog_tgui)
+		GLOB.changelog_tgui = new /datum/changelog(src)
+
+	GLOB.changelog_tgui.ui_interact(src)

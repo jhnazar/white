@@ -135,7 +135,7 @@
 /obj/machinery/power/apc/highcap/five_k{
 	dir = 1;
 	name = "Virology APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/machinery/camera{
 	c_tag = "Virology Module";
@@ -360,7 +360,7 @@
 	areastring = "/area/medical/pharmacy";
 	dir = 1;
 	name = "Pharmacy APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /turf/open/floor/plasteel/monofloor/white,
 /area/medical/pharmacy)
@@ -1227,6 +1227,10 @@
 /obj/machinery/door/firedoor/border_only{
 	dir = 8
 	},
+/obj/structure/desk_bell{
+	pixel_x = -6;
+	pixel_y = 8
+	},
 /turf/open/floor/plasteel/white,
 /area/medical/medbay/lobby)
 "lQ" = (
@@ -1676,7 +1680,7 @@
 	areastring = "/area/command/heads_quarters/cmo";
 	dir = 1;
 	name = "CM Office APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
@@ -1908,6 +1912,7 @@
 /obj/effect/spawner/lootdrop/donkpockets,
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/table,
+/obj/item/reagent_containers/spray/cleaner,
 /turf/open/floor/carpet/purple,
 /area/medical/break_room)
 "tp" = (
@@ -1976,7 +1981,7 @@
 /obj/machinery/power/apc{
 	areastring = "/area/medical/psychology";
 	name = "Psychology APC";
-	pixel_y = -24
+	pixel_y = -25
 	},
 /obj/effect/turf_decal/tile/blue{
 	dir = 8
@@ -2418,6 +2423,9 @@
 	},
 /obj/effect/turf_decal/trimline/green/filled/line{
 	dir = 9
+	},
+/obj/machinery/light_switch{
+	pixel_x = -23
 	},
 /turf/open/floor/plasteel/white,
 /area/medical/virology)
@@ -3618,10 +3626,17 @@
 /turf/open/floor/plasteel/monofloor/dark,
 /area/medical/morgue)
 "If" = (
-/obj/machinery/stasis,
-/obj/tacmap/directional/south,
-/turf/open/floor/plasteel,
-/area/medical/medbay)
+/obj/structure/cable,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
+	dir = 9
+	},
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2{
+	dir = 4
+	},
+/obj/effect/turf_decal/siding/wood,
+/obj/structure/mirror/directional/north,
+/turf/open/floor/wood,
+/area/medical/break_room)
 "Ig" = (
 /obj/effect/turf_decal/trimline/green/filled/corner{
 	dir = 4
@@ -3764,7 +3779,7 @@
 	areastring = "/area/medical/morgue";
 	dir = 1;
 	name = "Morgue APC";
-	pixel_y = 23
+	pixel_y = 25
 	},
 /obj/structure/cable,
 /turf/open/floor/plasteel/monofloor/dark,
@@ -3897,6 +3912,10 @@
 	},
 /turf/open/floor/plasteel/white,
 /area/medical/chemistry)
+"Km" = (
+/obj/tacmap/directional/south,
+/turf/open/floor/plasteel/monofloor/white,
+/area/medical/medbay)
 "Kq" = (
 /obj/machinery/light{
 	dir = 4
@@ -4077,6 +4096,9 @@
 /obj/item/gun/syringe,
 /obj/item/reagent_containers/dropper,
 /obj/item/soap/nanotrasen,
+/obj/machinery/light_switch{
+	pixel_x = -23
+	},
 /turf/open/floor/plasteel/monofloor/white,
 /area/medical/storage)
 "Mp" = (
@@ -4107,6 +4129,10 @@
 "MS" = (
 /obj/structure/table/reinforced,
 /obj/item/wrench/medical,
+/obj/item/storage/pill_bottle/mannitol{
+	pixel_y = 10;
+	pixel_x = -7
+	},
 /turf/open/floor/plasteel,
 /area/medical/cryo)
 "MT" = (
@@ -5020,6 +5046,9 @@
 	dir = 4
 	},
 /obj/effect/turf_decal/tile/yellow,
+/obj/vehicle/ridden/forklift/medical{
+	dir = 8
+	},
 /turf/open/floor/plasteel/white,
 /area/medical/chemistry)
 "Ut" = (
@@ -5262,7 +5291,6 @@
 	name = "Connector Port (Air Supply)"
 	},
 /obj/machinery/portable_atmospherics/canister/oxygen,
-/obj/machinery/light_switch/directional/south,
 /turf/open/floor/plasteel,
 /area/medical/cryo)
 "WI" = (
@@ -5416,14 +5444,17 @@
 /turf/open/floor/plasteel/monofloor/white,
 /area/medical/medbay/aft)
 "XN" = (
-/obj/structure/closet/crate/freezer,
-/obj/item/reagent_containers/blood,
-/obj/item/reagent_containers/blood,
-/obj/item/reagent_containers/blood/random,
-/obj/item/reagent_containers/blood/random,
-/obj/item/reagent_containers/blood/random,
 /obj/machinery/power/apc/auto_name/south,
 /obj/structure/cable,
+/obj/structure/closet/crate/freezer/blood,
+/obj/item/reagent_containers/blood/o_plus,
+/obj/item/reagent_containers/blood/o_minus,
+/obj/item/reagent_containers/blood/lizard,
+/obj/item/reagent_containers/blood/ethereal,
+/obj/item/reagent_containers/blood/b_plus,
+/obj/item/reagent_containers/blood/b_minus,
+/obj/item/reagent_containers/blood/a_plus,
+/obj/item/reagent_containers/blood/a_minus,
 /turf/open/floor/plasteel,
 /area/medical/surgery)
 "XV" = (
@@ -6062,7 +6093,7 @@ Ps
 yg
 wn
 jK
-If
+yg
 UB
 Ax
 TH
@@ -6351,7 +6382,7 @@ Gt
 WB
 oT
 vg
-oT
+Km
 cl
 cl
 Dq
@@ -6784,7 +6815,7 @@ rW
 tZ
 pc
 iZ
-KY
+If
 Vf
 zN
 So

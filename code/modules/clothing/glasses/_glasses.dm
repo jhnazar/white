@@ -419,7 +419,7 @@
 
 	var/datum/action/item_action/chameleon/change/chameleon_action
 
-/obj/item/clothing/glasses/thermal/syndi/Initialize()
+/obj/item/clothing/glasses/thermal/syndi/Initialize(mapload)
 	. = ..()
 	chameleon_action = new(src)
 	chameleon_action.chameleon_type = /obj/item/clothing/glasses
@@ -556,3 +556,9 @@
 	inhand_icon_state = "glasses"
 	glass_colour_type = /datum/client_colour/glass_colour/nightmare
 	forced_glass_color = TRUE
+
+/obj/item/clothing/glasses/regular/kim
+	name = "binoclard lenses"
+	desc = "Shows you know how to sew a lapel and center a back vent."
+	icon_state = "binoclard_lenses"
+	inhand_icon_state = "binoclard_lenses"

@@ -9,7 +9,7 @@
 	var/obj/item/card/id/inserted_id
 	var/list/prize_list = list()
 
-/obj/machinery/vendor/Initialize()
+/obj/machinery/vendor/Initialize(mapload)
 	. = ..()
 	build_inventory()
 
@@ -200,13 +200,18 @@
 	return ..()
 
 /obj/machinery/vendor/proc/RedeemVoucher(obj/item/mining_voucher/voucher, mob/redeemer)
-	var/items = list("Survival Capsule and Explorer's Webbing", "Resonator Kit", "Minebot Kit", "Extraction and Rescue Kit", "Crusher Kit", "Mining Conscription Kit")
+	var/items = list("Asteroid Miner Kit", "Survival Capsule and Explorer's Webbing", "Resonator Kit", "Minebot Kit", "Extraction and Rescue Kit", "Crusher Kit", "Mining Conscription Kit")
 
-	var/selection = input(redeemer, "Pick your equipment", "Mining Voucher Redemption") as null|anything in sort_list(items)
+	var/selection = tgui_input_list(redeemer, "Pick your equipment", "Mining Voucher Redemption", sort_list(items))
 	if(!selection || !Adjacent(redeemer) || QDELETED(voucher) || voucher.loc != redeemer)
 		return
 	var/drop_location = drop_location()
 	switch(selection)
+		if("Asteroid Miner Kit")
+			new /obj/item/clothing/suit/space/hardsuit/mining(drop_location)
+			new /obj/item/tank/internals/oxygen(drop_location)
+			new /obj/item/gps/mining(drop_location)
+			new /obj/item/wormhole_jaunter(drop_location)
 		if("Survival Capsule and Explorer's Webbing")
 			new /obj/item/storage/belt/mining/vendor(drop_location)
 		if("Resonator Kit")
@@ -239,7 +244,7 @@
 	density = TRUE
 	circuit = /obj/item/circuitboard/machine/mining_equipment_vendor/golem
 
-/obj/machinery/vendor/golem/Initialize()
+/obj/machinery/vendor/golem/Initialize(mapload)
 	desc += "\nIt seems a few selections have been added."
 	prize_list += list(
 		new /datum/data/vendor_equipment("Extra Id",       				/obj/item/card/id/advanced/mining, 				           		250),

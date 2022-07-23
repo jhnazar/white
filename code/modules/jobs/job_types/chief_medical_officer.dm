@@ -35,7 +35,8 @@
 		/obj/effect/spawner/lootdrop/space/fancytool/raremedicalonly = 1
 	)
 
-	rpg_title = "Высший Клерик"
+	rpg_title = "High Cleric"
+	rpg_title_ru = "Высший Клерик"
 
 /datum/job/chief_medical_officer/announce(mob/living/carbon/human/H, announce_captaincy = FALSE)
 	..()
@@ -56,6 +57,7 @@
 	new /obj/item/bonesetter/advanced(src)
 	new /obj/item/reagent_containers/medigel/sal_acid_oxandrolone(src)
 	new /obj/item/reagent_containers/medigel/pen_acid(src)
+	new /obj/item/sensor_device(src)
 
 /datum/outfit/job/cmo
 	name = "Chief Medical Officer"
@@ -83,6 +85,7 @@
 	chameleon_extras = list(/obj/item/gun/syringe, /obj/item/stamp/cmo)
 
 	id_trim = /datum/id_trim/job/chief_medical_officer
+	pda_slot = ITEM_SLOT_RPOCKET
 
 /datum/outfit/job/cmo/hardsuit
 	name = "Chief Medical Officer (Hardsuit)"

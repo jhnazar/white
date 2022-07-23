@@ -12,7 +12,6 @@
 	name = "аптечка первой помощи"
 	desc = "It's an emergency medical kit for those serious boo-boos."
 	icon_state = "firstaid"
-	icon = 'white/valtos/icons/items.dmi'
 	lefthand_file = 'icons/mob/inhands/equipment/medical_lefthand.dmi'
 	righthand_file = 'icons/mob/inhands/equipment/medical_righthand.dmi'
 	throw_speed = 3
@@ -94,6 +93,7 @@
 		/obj/item/clothing/mask/breath,
 		/obj/item/clothing/mask/breath/medical,
 		/obj/item/surgical_drapes, //for true paramedics
+		/obj/item/breathing_bag,
 		/obj/item/scalpel,
 		/obj/item/circular_saw,
 		/obj/item/bonesetter,
@@ -516,7 +516,7 @@
 	name = "баночка с подозрительным таблетками"
 	desc = "Странная таблетка без маркировки, найденная в весьма сомнительном месте."
 
-/obj/item/storage/pill_bottle/maintenance_pill/Initialize()
+/obj/item/storage/pill_bottle/maintenance_pill/Initialize(mapload)
 	. = ..()
 	var/obj/item/reagent_containers/pill/P = locate() in src
 	name = "баночка с [P.name]s"
@@ -577,7 +577,7 @@
 		/obj/item/food/icecream
 		))
 
-/obj/item/storage/organbox/Initialize()
+/obj/item/storage/organbox/Initialize(mapload)
 	. = ..()
 	create_reagents(100, TRANSPARENT)
 	RegisterSignal(src, COMSIG_ATOM_ENTERED, .proc/freeze)

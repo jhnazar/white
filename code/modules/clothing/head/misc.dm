@@ -270,7 +270,7 @@
 	desc = "Как только он надет, он никогда не снимется."
 	dog_fashion = null
 
-/obj/item/clothing/head/sombrero/shamebrero/Initialize()
+/obj/item/clothing/head/sombrero/shamebrero/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, SHAMEBRERO_TRAIT)
 
@@ -467,13 +467,11 @@
 	name = "парик святой девы"
 	desc = "Очищайтесь стильно!"
 	flags_inv = HIDEHAIR //bald
-	worn_icon = 'icons/mob/large-worn-icons/64x64/head.dmi'
 	icon_state = "shrine_wig"
 	inhand_icon_state = "shrine_wig"
-	worn_x_dimension = 64
-	worn_y_dimension = 64
 	clothing_flags = LARGE_WORN_ICON
 	dynamic_hair_suffix = ""
+	worn_y_offset = 1
 
 /obj/item/clothing/head/intern
 	name = "шляпа интерна"
@@ -515,7 +513,7 @@
 	icon_state = "devil_horns"
 	armor = list(MELEE = 10, BULLET = 10, LASER = 10, ENERGY = 10, BOMB = 0, BIO = 0, RAD = 0, FIRE = 50, ACID = 100)
 
-/obj/item/clothing/head/devil_horns/Initialize()
+/obj/item/clothing/head/devil_horns/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT(type))
 
@@ -526,7 +524,7 @@
 	attack_verb_continuous = list("коронует")
 	attack_verb_simple = list("коронует")
 
-/obj/item/clothing/head/rainbowbunchcrown/Initialize()
+/obj/item/clothing/head/rainbowbunchcrown/Initialize(mapload)
 	. = ..()
 	var/crown_type = rand(1,4)
 	switch(crown_type)
@@ -624,3 +622,8 @@
 	name = "basil boys helmet"
 	icon_state = "football_helmet_red"
 	inhand_icon_state = "football_helmet_red"
+
+/obj/item/clothing/head/maidheadband
+	name = "maid headband"
+	desc = "Just like from one of those chinese cartoons!"
+	icon_state = "maid_headband"

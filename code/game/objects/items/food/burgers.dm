@@ -16,7 +16,7 @@
 	custom_price = PAYCHECK_ASSISTANT * 0.8
 	venue_value = FOOD_PRICE_CHEAP
 
-/obj/item/food/burger/plain/Initialize()
+/obj/item/food/burger/plain/Initialize(mapload)
 	. = ..()
 	if(prob(1))
 		new/obj/effect/particle_effect/smoke(get_turf(src))
@@ -159,7 +159,7 @@
 	venue_value = FOOD_PRICE_EXOTIC
 	preserved_food = TRUE
 
-/obj/item/food/burger/ghost/Initialize()
+/obj/item/food/burger/ghost/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 
@@ -349,6 +349,14 @@
 	foodtypes = GRAIN | TOXIC
 	venue_value = FOOD_PRICE_CHEAP
 
+/obj/item/food/burger/catburger
+	name = "catburger"
+	desc = "Finally those cats and catpeople are worth something!"
+	icon_state = "catburger"
+	food_reagents = list(/datum/reagent/consumable/nutriment = 6, /datum/reagent/consumable/nutriment/protein = 3, /datum/reagent/consumable/nutriment/vitamin = 2)
+	tastes = list("bun" = 4, "meat" = 2, "cat" = 2)
+	foodtypes = GRAIN | MEAT | GROSS
+
 /obj/item/food/burger/crab
 	name = "crab burger"
 	desc = "A delicious patty of the crabby kind, slapped in between a bun."
@@ -403,7 +411,7 @@
 	foodtypes = GRAIN | MEAT | DAIRY
 	venue_value = FOOD_PRICE_CHEAP
 
-/obj/item/food/burger/cheese/Initialize()
+/obj/item/food/burger/cheese/Initialize(mapload)
 	. = ..()
 	if(prob(33))
 		icon_state = "cheeseburgeralt"
@@ -416,7 +424,7 @@
 	food_reagents = list(/datum/reagent/consumable/nutriment = 4, /datum/reagent/consumable/nutriment/protein = 6, /datum/reagent/consumable/capsaicin = 3, /datum/reagent/consumable/condensedcapsaicin = 3, /datum/reagent/consumable/nutriment/vitamin = 6)
 	foodtypes = GRAIN | MEAT | DAIRY
 
-/obj/item/food/burger/crazy/Initialize()
+/obj/item/food/burger/crazy/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSobj, src)
 

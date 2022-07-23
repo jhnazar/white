@@ -6,7 +6,7 @@
 
 
 /obj/effect/particle_effect/foam
-	name = "foam"
+	name = "пена"
 	icon_state = "foam"
 	base_icon_state = "foam_smooth"
 	opacity = FALSE
@@ -32,7 +32,7 @@
 	can_bypass_density = TRUE
 
 /obj/effect/particle_effect/foam/firefighting
-	name = "firefighting foam"
+	name = "пожарная пена"
 	lifetime = 20 //doesn't last as long as normal foam
 	amount = 0 //no spread
 	slippery_foam = FALSE
@@ -76,26 +76,26 @@
 	L.adjust_wet_stacks(2)
 
 /obj/effect/particle_effect/foam/metal
-	name = "aluminium foam"
+	name = "металлопена"
 	metal = ALUMINUM_FOAM
 	icon_state = "mfoam"
 	slippery_foam = FALSE
 
 /obj/effect/particle_effect/foam/metal/smart
-	name = "smart foam"
+	name = "металлопена"
 
 /obj/effect/particle_effect/foam/metal/iron
-	name = "iron foam"
+	name = "металлопена"
 	metal = IRON_FOAM
 
 /obj/effect/particle_effect/foam/metal/resin
-	name = "resin foam"
+	name = "пожарная пена"
 	metal = RESIN_FOAM
 
 /obj/effect/particle_effect/foam/long_life
 	lifetime = 150
 
-/obj/effect/particle_effect/foam/Initialize()
+/obj/effect/particle_effect/foam/Initialize(mapload)
 	. = ..()
 	create_reagents(1000, REAGENT_HOLDER_INSTANT_REACT) //limited by the size of the reagent holder anyway. Works without instant possibly edit in future
 	START_PROCESSING(SSfastprocess, src)
@@ -229,6 +229,8 @@
 /datum/effect_system/foam_spread/metal
 	effect_type = /obj/effect/particle_effect/foam/metal
 
+/datum/effect_system/foam_spread/metal/resin
+	effect_type = /obj/effect/particle_effect/foam/metal/resin
 
 /datum/effect_system/foam_spread/metal/smart
 	effect_type = /obj/effect/particle_effect/foam/smart
@@ -301,7 +303,7 @@
 	canSmoothWith = list(SMOOTH_GROUP_METALFOAM)
 	var/smooth_icon = 'white/valtos/icons/foam_smooth.dmi'
 
-/obj/structure/foamedmetal/Initialize()
+/obj/structure/foamedmetal/Initialize(mapload)
 	. = ..()
 	air_update_turf(TRUE)
 	if(smoothing_flags & SMOOTH_BITMASK)
@@ -341,8 +343,8 @@
 
 //Atmos Backpack Resin, transparent, prevents atmos and filters the air
 /obj/structure/foamedmetal/resin
-	name = "\improper ATMOS Resin"
-	desc = "A lightweight, transparent resin used to suffocate fires, scrub the air of toxins, and restore the air to a safe temperature."
+	name = "пожарная пена"
+	desc = "Легкий прозрачный полимер, используемый для тушения пожаров, очистки воздуха от токсинов и восстановления безопасной температуры воздуха."
 	opacity = FALSE
 	icon_state = "atmos_resin"
 	alpha = 120
@@ -350,7 +352,7 @@
 	pass_flags_self = PASSGLASS
 	smoothing_flags = NONE
 
-/obj/structure/foamedmetal/resin/Initialize()
+/obj/structure/foamedmetal/resin/Initialize(mapload)
 	. = ..()
 	if(isopenturf(loc))
 		var/turf/open/O = loc
@@ -369,7 +371,7 @@
 			if(!U.welded)
 				U.welded = TRUE
 				U.update_icon()
-				U.visible_message(span_danger("[U] sealed shut!"))
+				U.visible_message(span_danger("[U] запечатан!"))
 		for(var/mob/living/L in O)
 			L.extinguish_mob()
 		for(var/obj/item/Item in O)

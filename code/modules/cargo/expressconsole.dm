@@ -7,16 +7,14 @@
 #define SP_UNREADY 5
 
 /obj/machinery/computer/cargo/express
-	name = "экспресс консоль"
-	desc = "Эта консоль позволяет пользователю приобрести пакет \
-		с 1/40 от времени доставки: стало возможным благодаря новой \
-		орбитальной пушки NT \
-		Все продажи практически мгновенные - пожалуйста, выбирайте внимательно"
+	name = "экспресс консоль снабжения"
+	desc = "Благодаря новой орбитальной пушке Нано Трейзен все входящие посылки доставляются практически мгновенно. Стандартная зона сброса - отдел карго. Допустима смена зоны сброса посредством маяка производимого в консоли. Возможна модификация консоли посредством установки диска с ПО блюспейс телепортатора."
 	icon_screen = "supply_express"
 	circuit = /obj/item/circuitboard/computer/cargo/express
 	blockade_warning = "Замечена блюспейс нестабильность. Доставка невозможна."
 	req_access = list(ACCESS_QM)
 	is_express = TRUE
+	interface_type = "CargoExpress"
 
 	var/message
 	var/printed_beacons = 0 //number of beacons printed. Used to determine beacon names.
@@ -28,7 +26,7 @@
 	var/locked = TRUE //is the console locked? unlock with ID
 	var/usingBeacon = FALSE //is the console in beacon mode? exists to let beacon know when a pod may come in
 
-/obj/machinery/computer/cargo/express/Initialize()
+/obj/machinery/computer/cargo/express/Initialize(mapload)
 	. = ..()
 	packin_up()
 
@@ -64,7 +62,7 @@
 	if(obj_flags & EMAGGED)
 		return
 	if(user)
-		user.visible_message(span_warning("[user] проводит подохрительной картой по [src]!") ,
+		user.visible_message(span_warning("[user] проводит подозрительной картой по [src]!") ,
 		span_notice("Изменяю протоколы маршрутизации, позволяя консоли снабжения приземлиться в любом месте на станции."))
 	obj_flags |= EMAGGED
 	contraband = TRUE
@@ -93,13 +91,6 @@
 			"id" = pack,
 			"desc" = P.desc || P.name // If there is a description, use it. Otherwise use the pack's name.
 		))
-
-/obj/machinery/computer/cargo/express/ui_interact(mob/living/user, datum/tgui/ui)
-	. = ..()
-	ui = SStgui.try_update_ui(user, src, ui)
-	if(!ui)
-		ui = new(user, src, "CargoExpress", name)
-		ui.open()
 
 /obj/machinery/computer/cargo/express/ui_data(mob/user)
 	var/canBeacon = beacon && (isturf(beacon.loc) || ismob(beacon.loc))//is the beacon in a valid location?
@@ -163,7 +154,7 @@
 
 		if("add")//Generate Supply Order first
 			if(TIMER_COOLDOWN_CHECK(src, COOLDOWN_EXPRESSPOD_CONSOLE))
-				say("Railgun recalibrating. Stand by.")
+				say("Орбитальная катапульта перезаряжается, ожидайте.")
 				return
 			var/id = text2path(params["id"])
 			var/datum/supply_pack/pack = SSshuttle.supply_packs[id]

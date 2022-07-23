@@ -1257,10 +1257,21 @@
 	if(methods & (TOUCH|VAPOR))
 		exposed_mob.adjust_fire_stacks(reac_volume / 10)
 
-/datum/reagent/fuel/on_mob_life(mob/living/carbon/M, delta_time, times_fired)
-	M.adjustToxLoss(0.5*delta_time, 0)
+/datum/reagent/fuel/on_mob_life(mob/living/carbon/victim, delta_time, times_fired)
+	victim.adjustToxLoss(0.5 * delta_time, 0)
 	..()
 	return TRUE
+
+/datum/reagent/fuel/expose_turf(turf/exposed_turf, reac_volume)
+	. = ..()
+
+	if(!istype(exposed_turf) || isspaceturf(exposed_turf))
+		return
+
+	if((reac_volume < 5))
+		return
+
+	new /obj/effect/decal/cleanable/fuel_pool(exposed_turf, round(reac_volume / 5))
 
 /datum/reagent/space_cleaner
 	name = "Космочист"
@@ -1439,6 +1450,16 @@
 	reagent_state = SOLID
 	color = "#664B63" // rgb: 102, 75, 99
 	taste_description = "металл"
+	ph = 11.8
+	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
+
+/datum/reagent/resin_foaming_agent // Пожарная пена
+	name = "Реагент резиновой пены"
+	enname = "Resin agent"
+	description = "Противопожарный реагент."
+	reagent_state = SOLID
+	color = "#664B63" // rgb: 102, 75, 99
+	taste_description = "резина"
 	ph = 11.8
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
 

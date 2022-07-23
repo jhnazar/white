@@ -17,7 +17,7 @@
 	var/beacon_cooldown = 0
 	var/toggle = FALSE
 
-/mob/living/simple_animal/hostile/guardian/healer/Initialize()
+/mob/living/simple_animal/hostile/guardian/healer/Initialize(mapload)
 	. = ..()
 	var/datum/atom_hud/medsensor = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
 	medsensor.show_to(src)
@@ -90,7 +90,7 @@
 
 /obj/structure/receiving_pad
 	name = "bluespace receiving pad"
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	desc = "A receiving zone for bluespace teleportations."
 	icon_state = "light_on-8"
 	light_range = MINIMUM_USEFUL_LIGHT_RANGE

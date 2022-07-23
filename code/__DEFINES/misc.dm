@@ -31,37 +31,36 @@
 }
 
 //Human Overlays Indexes/////////
-#define MUTATIONS_LAYER			30		//mutations. Tk headglows, cold resistance glow, etc
-#define BODY_BEHIND_LAYER		29		//certain mutantrace features (tail when looking south) that must appear behind the body parts
-#define BODYPARTS_LAYER			28		//Initially "AUGMENTS", this was repurposed to be a catch-all bodyparts flag
-#define BODY_ADJ_LAYER			27		//certain mutantrace features (snout, body markings) that must appear above the body parts
-#define BODY_LAYER				26		//underwear, undershirts, socks, eyes, lips(makeup)
-#define FRONT_MUTATIONS_LAYER	25		//mutations that should appear above body, body_adj and bodyparts layer (e.g. laser eyes)
-#define DAMAGE_LAYER			24		//damage indicators (cuts and burns)
-#define UNIFORM_LAYER			23
-#define ID_LAYER				22
-#define ID_CARD_LAYER 			21
-#define HANDS_PART_LAYER		20
-#define GLOVES_LAYER			19
-#define SHOES_LAYER				18
-#define EARS_LAYER				17
-#define SUIT_LAYER				16
-#define GLASSES_LAYER			15
-#define BELT_LAYER				14		//Possible make this an overlay of somethign required to wear a belt?
-#define SUIT_STORE_LAYER		13
-#define NECK_LAYER				12
-#define BACK_LAYER				11
-#define HAIR_LAYER				10		//TODO: make part of head layer?
-#define FACEMASK_LAYER			9
-#define HEAD_LAYER				8
-#define HANDCUFF_LAYER			7
-#define LEGCUFF_LAYER			6
-#define HANDS_LAYER				5
-#define BODY_FRONT_LAYER		4
-#define HALO_LAYER				3		//blood cult ascended halo, because there's currently no better solution for adding/removing
-#define TYPING_LAYER			2
+#define MUTATIONS_LAYER			29		//mutations. Tk headglows, cold resistance glow, etc
+#define BODY_BEHIND_LAYER		28		//certain mutantrace features (tail when looking south) that must appear behind the body parts
+#define BODYPARTS_LAYER			27		//Initially "AUGMENTS", this was repurposed to be a catch-all bodyparts flag
+#define BODY_ADJ_LAYER			26		//certain mutantrace features (snout, body markings) that must appear above the body parts
+#define BODY_LAYER				25		//underwear, undershirts, socks, eyes, lips(makeup)
+#define FRONT_MUTATIONS_LAYER	24		//mutations that should appear above body, body_adj and bodyparts layer (e.g. laser eyes)
+#define DAMAGE_LAYER			23		//damage indicators (cuts and burns)
+#define UNIFORM_LAYER			22
+#define ID_LAYER				21
+#define ID_CARD_LAYER 			20
+#define HANDS_PART_LAYER		19
+#define GLOVES_LAYER			18
+#define SHOES_LAYER				17
+#define EARS_LAYER				16
+#define SUIT_LAYER				15
+#define GLASSES_LAYER			14
+#define BELT_LAYER				13		//Possible make this an overlay of somethign required to wear a belt?
+#define SUIT_STORE_LAYER		12
+#define NECK_LAYER				11
+#define BACK_LAYER				10
+#define HAIR_LAYER				9		//TODO: make part of head layer?
+#define FACEMASK_LAYER			8
+#define HEAD_LAYER				7
+#define HANDCUFF_LAYER			6
+#define LEGCUFF_LAYER			5
+#define HANDS_LAYER				4
+#define BODY_FRONT_LAYER		3
+#define HALO_LAYER				2		//blood cult ascended halo, because there's currently no better solution for adding/removing
 #define FIRE_LAYER				1		//If you're on fire
-#define TOTAL_LAYERS			30		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
+#define TOTAL_LAYERS			29		//KEEP THIS UP-TO-DATE OR SHIT WILL BREAK ;_;
 
 //Human Overlay Index Shortcuts for alternate_worn_layer, layers
 //Because I *KNOW* somebody will think layer+1 means "above"
@@ -79,9 +78,6 @@
 #define SEC_LEVEL_BLUE	1
 #define SEC_LEVEL_RED	2
 #define SEC_LEVEL_DELTA	3
-
-//some arbitrary defines to be used by self-pruning global lists. (see master_controller)
-#define PROCESS_KILL 26	//Used to trigger removal from a processing list
 
 // Cargo-related stuff.
 #define MANIFEST_ERROR_CHANCE		5
@@ -130,11 +126,6 @@
 #define AI_TRANS_TO_CARD	1 //Downloading AI to InteliCard.
 #define AI_TRANS_FROM_CARD	2 //Uploading AI from InteliCard
 #define AI_MECH_HACK		3 //Malfunctioning AI hijacking mecha
-
-//check_target_facings() return defines
-#define FACING_SAME_DIR											1
-#define FACING_EACHOTHER										2
-#define FACING_INIT_FACING_TARGET_TARGET_FACING_PERPENDICULAR	3 //Do I win the most informative but also most stupid define award?
 
 //stages of shoe tying-ness
 #define SHOES_UNTIED 0

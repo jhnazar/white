@@ -16,7 +16,6 @@ SUBSYSTEM_DEF(mapping)
 	var/list/ruins_templates = list()
 	var/list/space_ruins_templates = list()
 	var/list/lava_ruins_templates = list()
-	var/list/gens_ruins_templates = list()
 	var/list/ice_ruins_templates = list()
 	var/list/ice_ruins_underground_templates = list()
 
@@ -103,9 +102,6 @@ SUBSYSTEM_DEF(mapping)
 		for (var/lava_z in lava_ruins)
 			spawn_rivers(lava_z)
 
-	var/list/gens_ruins = levels_by_trait(ZTRAIT_GENSOKYO_RUINS)
-	if (gens_ruins.len)
-		seedRuins(gens_ruins, CONFIG_GET(number/lavaland_budget), /area/mine/unexplored/gensokyo, gens_ruins_templates)
 	var/list/ice_ruins = levels_by_trait(ZTRAIT_ICE_RUINS)
 	if (ice_ruins.len)
 		// needs to be whitelisted for underground too so place_below ruins work
@@ -133,7 +129,26 @@ SUBSYSTEM_DEF(mapping)
 	setup_map_transitions()
 	generate_station_area_list()
 	initialize_reserved_level(transit.z_value)
+
+	// spawn yohei shuttle
+	spawn_yohei_shuttle()
 	return ..()
+
+/datum/controller/subsystem/mapping/proc/spawn_yohei_shuttle()
+
+	var/datum/map_template/shuttle/yohei/ship = new /datum/map_template/shuttle/yohei
+	var/x = rand(TRANSITIONEDGE, world.maxx - TRANSITIONEDGE - ship.width)
+	var/y = rand(TRANSITIONEDGE, world.maxy - TRANSITIONEDGE - ship.height)
+	var/z = SSmapping.empty_space?.z_value
+	if(!z)
+		message_admins("Yohei ship can't be loaded.")
+		return
+	var/turf/T = locate(x, y, z)
+
+	if(!ship.load(T))
+		message_admins("Yohei load failed!")
+
+	message_admins("Yohei ship loaded at [x], [y], [z].")
 
 /datum/controller/subsystem/mapping/proc/wipe_reservations(wipe_safety_delay = 100)
 	if(clearing_reserved_turfs || !initialized)			//in either case this is just not needed.
@@ -447,8 +462,6 @@ GLOBAL_LIST_EMPTY(the_station_areas)
 
 		if(istype(R, /datum/map_template/ruin/lavaland))
 			lava_ruins_templates[R.name] = R
-		else if(istype(R, /datum/map_template/ruin/gensokyo))
-			gens_ruins_templates[R.name] = R
 		else if(istype(R, /datum/map_template/ruin/icemoon/underground))
 			ice_ruins_underground_templates[R.name] = R
 		else if(istype(R, /datum/map_template/ruin/icemoon))
@@ -511,7 +524,7 @@ GLOBAL_LIST_EMPTY(the_station_areas)
 	var/away_name
 	var/datum/space_level/away_level
 
-	var/answer = input("What kind ? ","Away") as null|anything in possible_options
+	var/answer = tgui_input_list(src, "What kind ? ", "Away", possible_options)
 	switch(answer)
 		if("Custom")
 			var/mapfile = input("Pick file:", "File") as null|file

@@ -432,7 +432,7 @@
 			destination = SSshuttle.getDock("emergency_home")
 		else if(mode == SHUTTLE_ESCAPE)
 			destination = SSshuttle.getDock("emergency_away")
-		create_ripples(destination, time_left)
+		create_ripples(destination)
 
 	switch(mode)
 		if(SHUTTLE_RECALL)
@@ -680,7 +680,7 @@ GLOBAL_LIST_EMPTY(emergency_storages)
 	icon_state = "safe"
 	var/unlocked = FALSE
 
-/obj/item/storage/pod/Initialize()
+/obj/item/storage/pod/Initialize(mapload)
 	. = ..()
 	GLOB.emergency_storages += src
 
@@ -745,7 +745,7 @@ GLOBAL_LIST_EMPTY(emergency_storages)
 	height = 8
 	dir = EAST
 
-/obj/docking_port/mobile/emergency/backup/Initialize()
+/obj/docking_port/mobile/emergency/backup/Initialize(mapload)
 	// We want to be a valid emergency shuttle
 	// but not be the main one, keep whatever's set
 	// valid.

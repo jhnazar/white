@@ -37,7 +37,7 @@
 		"Standard" = /obj/machinery/door/airlock
 	)
 
-/obj/item/airlock_painter/Initialize()
+/obj/item/airlock_painter/Initialize(mapload)
 	. = ..()
 	ink = new initial_ink_type(src)
 
@@ -322,7 +322,7 @@
 	cross_round_cachable = TRUE
 
 	/// The floor icon used for blend_preview_floor()
-	var/preview_floor_icon = 'icons/turf/floors.dmi'
+	var/preview_floor_icon = DEFAULT_FLOORS_ICON
 	/// The floor icon state used for blend_preview_floor()
 	var/preview_floor_state = "floor"
 	/// The associated decal painter type to grab decals, colors, etc from.
@@ -496,7 +496,7 @@
 
 /obj/item/floor_painter/interact(mob/user as mob) //TODO: Make TGUI for this because ouch
 	if(!floor_icon)
-		floor_icon = icon('icons/turf/floors.dmi', floor_state, floor_dir)
+		floor_icon = icon(DEFAULT_FLOORS_ICON, floor_state, floor_dir)
 	user << browse_rsc(floor_icon, "floor.png")
 	var/dat = {"
 		<center>
@@ -525,12 +525,12 @@
 		return
 
 	if(href_list["choose_state"])
-		var/state = input("Please select a style", "[src]") as null|anything in allowed_states
+		var/state = tgui_input_list(usr, "Please select a style", "[src]", allowed_states)
 		if(state)
 			floor_state = state
 			check_directional_tile()
 	if(href_list["choose_dir"])
-		var/seldir = input("Please select a direction", "[src]") as null|anything in allowed_directions
+		var/seldir = tgui_input_list(usr, "Please select a direction", "[src]", allowed_directions)
 		if(seldir)
 			floor_dir = text2dir(seldir)
 	if(href_list["cycledirleft"])
@@ -560,16 +560,16 @@
 		floor_state = allowed_states[index]
 		check_directional_tile()
 
-	floor_icon = icon('icons/turf/floors.dmi', floor_state, floor_dir)
+	floor_icon = icon(DEFAULT_FLOORS_ICON, floor_state, floor_dir)
 	if(usr)
 		attack_self(usr)
 
 /obj/item/floor_painter/proc/check_directional_tile()
-	var/icon/current = icon('icons/turf/floors.dmi', floor_state, NORTHWEST)
+	var/icon/current = icon(DEFAULT_FLOORS_ICON, floor_state, NORTHWEST)
 	if(current.GetPixel(1,1) != null)
 		allowed_directions = star_directions
 	else
-		current = icon('icons/turf/floors.dmi', floor_state, WEST)
+		current = icon(DEFAULT_FLOORS_ICON, floor_state, WEST)
 		if(current.GetPixel(1,1) != null)
 			allowed_directions = cardinal_directions
 		else

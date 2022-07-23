@@ -12,6 +12,7 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 	integrity_failure = 0.5
 	max_integrity = 100
 	armor = list(MELEE = 0, BULLET = 20, LASER = 20, ENERGY = 100, BOMB = 0, BIO = 100, RAD = 100, FIRE = 0, ACID = 0)
+	light_system = MOVABLE_LIGHT_DIRECTIONAL
 
 	var/bypass_state = FALSE // bypassing the set icon state
 
@@ -55,13 +56,18 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 	var/saved_identification = null // next two values are the currently imprinted id and job values
 	var/saved_job = null
 
+	/// Allow people with chunky fingers to use?
+	var/allow_chunky = FALSE
+
 	var/honkamnt = 0 /// honk honk honk honk honk honkh onk honkhnoohnk
 
 	var/list/idle_threads // Idle programs on background. They still receive process calls but can't be interacted with.
 	var/obj/physical = null // Object that represents our computer. It's used for Adjacent() and UI visibility checks.
 	var/has_light = FALSE //If the computer has a flashlight/LED light/what-have-you installed
-	var/comp_light_luminosity = 3 //The brightness of that light
-	var/comp_light_color //The color of that light
+	/// How far the computer's light can reach, is not editable by players.
+	var/comp_light_luminosity = 3
+	/// The built-in light's color, editable by players.
+	var/comp_light_color = "#FFFFFF"
 	var/invisible = FALSE // whether or not the tablet is invisible in messenger and other apps
 
 	var/datum/picture/saved_image // the saved image used for messaging purpose like come on dude
@@ -70,19 +76,22 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 
 	var/datum/action/item_action/toggle_computer_light/light_butt
 
-/obj/item/modular_computer/Initialize()
+/obj/item/modular_computer/Initialize(mapload)
 	. = ..()
 
 	var/obj/item/computer_hardware/identifier/id = all_components[MC_IDENTIFY]
 	START_PROCESSING(SSobj, src)
 	if(!physical)
 		physical = src
-	comp_light_color = "#FFFFFF"
+	set_light_color(comp_light_color)
+	set_light_range(comp_light_luminosity)
 	idle_threads = list()
 	if(looping_sound)
 		soundloop = new(src, enabled)
 	if(id)
 		id.UpdateDisplay()
+	if(has_light)
+		light_butt = new(src)
 	update_icon()
 	Add_Messenger()
 
@@ -324,7 +333,7 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 		user.put_in_hands(ssd)
 		playsound(src, 'sound/machines/card_slide.ogg', 50)
 
-/obj/item/modular_computer/proc/turn_on(mob/user)
+/obj/item/modular_computer/proc/turn_on(mob/user, open_ui = TRUE)
 	var/issynth = issilicon(user) // Robots and AIs get different activation messages.
 	if(obj_integrity <= integrity_failure * max_integrity)
 		if(issynth)
@@ -347,7 +356,8 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 			soundloop.start()
 		enabled = 1
 		update_icon()
-		ui_interact(user)
+		if(open_ui)
+			ui_interact(user)
 		return TRUE
 	else // Unpowered
 		if(issynth)
@@ -500,6 +510,46 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 		INVOKE_ASYNC(src, /datum/proc/ui_interact, user) // Re-open the UI on this computer. It should show the main screen now.
 	update_icon()
 
+/obj/item/modular_computer/proc/open_program(mob/user, datum/computer_file/program/program)
+	if(program.computer != src)
+		CRASH("tried to open program that does not belong to this computer")
+
+	if(!program || !istype(program)) // Program not found or it's not executable program.
+		to_chat(user, span_danger("<b>[src.name]</b>'s экран показывает предупреждение \"I/O ОШИБКА — невозможно запустить программу\"."))
+		return FALSE
+
+	if(!program.is_supported_by_hardware(hardware_flag, 1, user))
+		return FALSE
+
+	// The program is already running. Resume it.
+	if(program in idle_threads)
+		program.program_state = PROGRAM_STATE_ACTIVE
+		active_program = program
+		program.alert_pending = FALSE
+		idle_threads.Remove(program)
+		update_appearance()
+		updateUsrDialog()
+		return TRUE
+
+	var/obj/item/computer_hardware/processor_unit/PU = all_components[MC_CPU]
+
+	if(idle_threads.len > PU.max_idle_programs)
+		to_chat(user, span_danger("<b>[src.name]</b> отображает ошибку \"Достигнута максимальная загрузка процессора. Невозможно запустить другую программу.\"."))
+		return FALSE
+
+	if(program.requires_ntnet && !get_ntnet_status(program.requires_ntnet_feature)) // The program requires NTNet connection, but we are not connected to NTNet.
+		to_chat(user, span_danger("<b>[src.name]</b>'s экран отображает \"Невозможно подсоединиться к NTNet. Попробуйте заново. Если проблема не исчезнет, обратитесь к системному администратору.\" предупреждение."))
+		return FALSE
+
+	if(program.on_start(user))
+		active_program = program
+		program.alert_pending = FALSE
+		update_appearance()
+		updateUsrDialog()
+		return TRUE
+
+	return FALSE
+
 // Returns 0 for No Signal, 1 for Low Signal and 2 for Good Signal. 3 is for wired connection (always-on)
 /obj/item/modular_computer/proc/get_ntnet_status(specific_action = 0)
 	var/obj/item/computer_hardware/network_card/network_card = all_components[MC_NET]
@@ -537,13 +587,8 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 	if(!has_light)
 		return FALSE
 	set_light_on(!light_on)
-	if(light_on)
-		set_light(comp_light_luminosity, 1, comp_light_color)
-	else
-		set_light(0)
 	update_appearance()
-	if(light_butt)
-		update_action_buttons(force = TRUE) // must force if just the overlays changed.
+	update_action_buttons(force = TRUE) //force it because we added an overlay, not changed its icon
 	return TRUE
 
 /**
@@ -559,7 +604,6 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 		return FALSE
 	comp_light_color = color
 	set_light_color(color)
-	update_light()
 	return TRUE
 
 /obj/item/modular_computer/screwdriver_act(mob/user, obj/item/tool)
@@ -573,7 +617,7 @@ GLOBAL_LIST_EMPTY(TabletMessengers) // a list of all active messengers, similar 
 		var/obj/item/computer_hardware/H = all_components[h]
 		component_names.Add(H.name)
 
-	var/choice = input(user, "Which component do you want to uninstall?", "Computer maintenance", null) as null|anything in sort_list(component_names)
+	var/choice = tgui_input_list(user, "Which component do you want to uninstall?", "Computer maintenance", sort_list(component_names))
 
 	if(!choice)
 		return

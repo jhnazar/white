@@ -2,7 +2,7 @@
 	gender = PLURAL
 	name = "грязь"
 	desc = "Даже если очень сильно присмотреться, это всё ещё земля."
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "dirt"
 	base_icon_state = "dirt"
 	baseturfs = /turf/open/chasm/jungle
@@ -36,7 +36,7 @@
 /turf/open/floor/plating/dirt/jungle/wasteland //Like a more fun version of living in Arizona.
 	name = "засохшая грязь"
 	desc = "Слишком сухая."
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "wasteland"
 	base_icon_state = "wasteland"
 	slowdown = 1
@@ -45,7 +45,7 @@
 /turf/open/floor/plating/dirt/jungle/wasteland/setup_broken_states()
 	return list("[initial(icon_state)]0")
 
-/turf/open/floor/plating/dirt/jungle/wasteland/Initialize()
+/turf/open/floor/plating/dirt/jungle/wasteland/Initialize(mapload)
 	. = ..()
 	if(prob(floor_variance))
 		icon_state = "[initial(icon_state)][rand(0,12)]"
@@ -61,7 +61,7 @@
 	base_icon_state = "junglegrass"
 	smooth_icon = 'icons/turf/floors/junglegrass.dmi'
 
-/turf/open/floor/plating/grass/jungle/Initialize()
+/turf/open/floor/plating/grass/jungle/Initialize(mapload)
 	. = ..()
 	if(smoothing_flags & SMOOTH_BITMASK)
 		var/matrix/M = new

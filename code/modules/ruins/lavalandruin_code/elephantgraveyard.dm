@@ -32,7 +32,7 @@
 //***Wasteland floor and rock turfs here.
 /turf/open/floor/plating/asteroid/basalt/wasteland //Like a more fun version of living in Arizona.
 	name = "cracked earth"
-	icon = 'icons/turf/floors.dmi'
+	icon = DEFAULT_FLOORS_ICON
 	icon_state = "wasteland"
 	base_icon_state = "wasteland"
 	baseturfs = /turf/open/floor/plating/asteroid/basalt/wasteland
@@ -44,7 +44,7 @@
 /turf/open/floor/plating/asteroid/basalt/wasteland/setup_broken_states()
 	return list("wasteland")
 
-/turf/open/floor/plating/asteroid/basalt/wasteland/Initialize()
+/turf/open/floor/plating/asteroid/basalt/wasteland/Initialize(mapload)
 	. = ..()
 	if(prob(floor_variance))
 		icon_state = "[base_icon_state][rand(0,6)]"
@@ -75,7 +75,7 @@
 	icon_state = "puddle-oil"
 	dispensedreagent = /datum/reagent/fuel/oil
 
-/obj/structure/sink/oil_well/Initialize()
+/obj/structure/sink/oil_well/Initialize(mapload)
 	. = ..()
 	create_reagents(20)
 	reagents.add_reagent(dispensedreagent, 20)

@@ -19,7 +19,8 @@
 	display_order = JOB_DISPLAY_ORDER_SHAFT_MINER
 	bounty_types = CIV_JOB_MINE
 
-	rpg_title = "Боссхантер"
+	rpg_title = "Bosshunter"
+	rpg_title_ru = "Боссхантер"
 
 	metalocked = TRUE
 
@@ -48,6 +49,7 @@
 	satchel = /obj/item/storage/backpack/satchel/explorer
 	duffelbag = /obj/item/storage/backpack/duffelbag
 	box = /obj/item/storage/box/survival/mining
+	pda_slot = ITEM_SLOT_RPOCKET
 
 	chameleon_extras = /obj/item/gun/energy/kinetic_accelerator/super_kinetic_accelerator
 
@@ -65,11 +67,10 @@
 /datum/id_trim/job/hunter
 	assignment = "Hunter"
 	trim_state = "trim_hunter"
-	full_access = list(ACCESS_MAINT_TUNNELS, ACCESS_MAILSORTING, ACCESS_CARGO, ACCESS_QM, ACCESS_MINING, ACCESS_MECH_MINING, ACCESS_MINING_STATION, ACCESS_MINERAL_STOREROOM, ACCESS_AUX_BASE)
-	minimal_access = list(ACCESS_MINING, ACCESS_MECH_MINING, ACCESS_MINING_STATION, ACCESS_MAILSORTING, ACCESS_MINERAL_STOREROOM, ACCESS_AUX_BASE)
+	full_access = list(ACCESS_MAINT_TUNNELS, ACCESS_MAILSORTING, ACCESS_CARGO, ACCESS_QM, ACCESS_MINING, ACCESS_MECH_MINING, ACCESS_MINING_STATION, ACCESS_MINERAL_STOREROOM, ACCESS_AUX_BASE, ACCESS_GATEWAY)
+	minimal_access = list(ACCESS_MINING, ACCESS_MECH_MINING, ACCESS_MINING_STATION, ACCESS_MAILSORTING, ACCESS_MINERAL_STOREROOM, ACCESS_AUX_BASE, ACCESS_GATEWAY)
 	config_job = "hunter"
 	template_access = list(ACCESS_CAPTAIN, ACCESS_HOP, ACCESS_CHANGE_IDS)
-	trim_icon = 'white/valtos/icons/card.dmi'
 
 /obj/item/energylance
 	name = "энергокопьё"
@@ -101,7 +102,7 @@
 	. += "<hr>"
 	. += span_green("Накоплено урона: <b>[collected_force]</b>")
 
-/obj/item/energylance/Initialize()
+/obj/item/energylance/Initialize(mapload)
 	. = ..()
 	RegisterSignal(src, COMSIG_TRANSFORMING_ON_TRANSFORM, .proc/on_transform)
 
@@ -150,7 +151,7 @@
 		check_upgrade(target, user, proximity_flag)
 
 /obj/item/energylance/proc/check_upgrade(atom/target, mob/living/user, proximity_flag)
-	if(proximity_flag && isliving(target))
+	if(proximity_flag && isanimal(target))
 		var/mob/living/L = target
 		if(!L || (L && L.health <= 0 && L.maxHealth > 90))
 			collected_force++

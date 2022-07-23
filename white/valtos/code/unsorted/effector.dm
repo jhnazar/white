@@ -11,72 +11,51 @@
 	desc = "Парит. Гы."
 	icon = 'white/valtos/icons/effector.dmi'
 	icon_state = "effector"
-	var/workout = TRUE
+	layer = ABOVE_ALL_MOB_LAYER
 	var/workdir = "up"
 	var/datum/looping_sound/effector_vaper/soundloop
-	var/temp_cd = 30
+	particles = new /particles/vaper_smoke
+
+/obj/machinery/effector/Initialize(mapload)
+	. = ..()
+	soundloop = new(src, TRUE)
+	soundloop.start()
+	if(workdir != "up")
+		particles.gravity = list(0, -1)
 
 /obj/machinery/effector/attack_hand(mob/living/user)
-	if(Adjacent(user) && user.pulling)
-		if(isliving(user.pulling))
-			var/mob/living/pushed_mob = user.pulling
-			if(pushed_mob.buckled)
-				to_chat(user, span_warning("<b>[pushed_mob]</b> прикован к <b>[pushed_mob.buckled]</b>!"))
-				return
-			if(user.a_intent == INTENT_GRAB)
-				if(user.grab_state < GRAB_AGGRESSIVE)
-					to_chat(user, span_warning("Надо бы посильнее взять!"))
-					return
-				if(user.grab_state >= GRAB_NECK)
-					user.emote("laugh")
-					pushed_mob.visible_message(span_warning("<b>[user]</b> пытается принудить <b>[pushed_mob]</b> подышать паром над <b>парилкой</b>...") , \
-									span_userdanger("<b>[user]</b> пытается приставить <b>мою голову</b> к <b>парилке</b>..."))
-					if(do_after(user, 35, target = pushed_mob) && temp_cd == 30)
-						if(temp_cd < 30)
-							return
-						temp_cd = 0
-						pushed_mob.Knockdown(10)
-						pushed_mob.apply_damage(30, BURN, BODY_ZONE_HEAD)
-						pushed_mob.apply_damage(60, STAMINA)
-						pushed_mob.emote("agony")
-						playsound(pushed_mob, 'sound/machines/shower/shower_mid1.ogg', 90, TRUE)
-						pushed_mob.visible_message(span_danger("<b>[user]</b> принуждает <b>[pushed_mob]</b> вкусить свежий пар!") ,
-									span_userdanger("<b>[user]</b> принуждает меня вкусить свежий пар!"))
-						log_combat(user, pushed_mob, "head fried", null, "against <b>[src]</b>")
-						SEND_SIGNAL(pushed_mob, COMSIG_ADD_MOOD_EVENT, "table", /datum/mood_event/table)
-					else
-						return
+	if(user.pulling && user.grab_state >= GRAB_NECK && isliving(user.pulling))
+		user.emote("laugh")
+		var/mob/living/projarka_mob = user.pulling
+		projarka_mob.visible_message(span_warning("<b>[user]</b> пытается принудить <b>[projarka_mob]</b> подышать паром над <b>парилкой</b>...") , \
+						span_userdanger("<b>[user]</b> пытается приставить <b>мою голову</b> к <b>парилке</b>..."))
+		if(do_after(user, 3 SECONDS, target = projarka_mob))
+			projarka_mob.emote("agony")
+			playsound(projarka_mob, 'sound/machines/shower/shower_mid1.ogg', 90, TRUE)
+			projarka_mob.visible_message(span_danger("<b>[user]</b> принуждает <b>[projarka_mob]</b> вкусить свежий пар!") ,
+						span_userdanger("<b>[user]</b> принуждает меня вкусить свежий пар!"))
+			log_combat(user, projarka_mob, "head fried", null, "against <b>[src]</b>")
+			SEND_SIGNAL(projarka_mob, COMSIG_ADD_MOOD_EVENT, "effector", /datum/mood_event/fried)
+			projarka_mob.apply_damage(30, BURN, BODY_ZONE_HEAD)
+			projarka_mob.Paralyze(60)
+			user.changeNext_move(CLICK_CD_RESIST)
+		return
 	return ..()
 
 /obj/machinery/effector/Destroy()
 	QDEL_NULL(soundloop)
 	return ..()
 
-/obj/machinery/effector/process()
-	if(temp_cd < 30)
-		temp_cd++
-	if(workout)
-		soundloop = new(src, TRUE)
-		soundloop.start()
-		workout = FALSE
-	//var/obj/effect/vaper_smoke/S = new(get_turf(src))
-	//switch(workdir)
-	//	if("up")
-	//		animate(S, pixel_y = 64, pixel_x = rand(-12, 12), transform = matrix()*2, alpha = 0, time = 40)
-	//	if("down")
-	//		animate(S, pixel_y = -64, pixel_x = rand(-12, 12), transform = matrix()*2, alpha = 0, time = 40)
-
-/obj/effect/vaper_smoke
-	name = "пар"
-	alpha = 60
-	layer = FLY_LAYER
+/particles/vaper_smoke
 	icon = 'white/valtos/icons/effector.dmi'
 	icon_state = "smoke"
-	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-
-/obj/effect/vaper_smoke/Initialize()
-	. = ..()
-	return INITIALIZE_HINT_LATELOAD
-
-/obj/effect/vaper_smoke/LateInitialize()
-	QDEL_IN(src, 80)
+	width = 64
+	height = 128
+	count = 10
+	spawning = 1
+	lifespan = 10
+	fade = 7
+	fadein = 7
+	position = generator("box", list(2,2,0), list(-2,-2,0))
+	scale = generator("num", 0.5, 0.7)
+	gravity = list(0, 1)

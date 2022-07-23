@@ -5,6 +5,7 @@
 
 /obj/structure/closet/secure_closet/engineering_chief/PopulateContents()
 	..()
+	new /obj/item/key/forklift/engineering(src)
 	new /obj/item/clothing/neck/cloak/ce(src)
 	new /obj/item/clothing/under/rank/engineering/chief_engineer(src)
 	new /obj/item/clothing/under/rank/engineering/chief_engineer/skirt(src)
@@ -79,7 +80,7 @@
 
 
 /obj/structure/closet/secure_closet/atmospherics
-	name = "\proper шкафчик атмосферника"
+	name = "шкафчик атмотеха"
 	req_access = list(ACCESS_ATMOSPHERICS)
 	icon_state = "atmos"
 
@@ -96,3 +97,4 @@
 	new /obj/item/clothing/head/hardhat/atmos(src)
 	new /obj/item/clothing/glasses/meson/engine/tray(src)
 	new /obj/item/extinguisher/advanced(src)
+	new /obj/item/grenade/chem_grenade/resin_foam(src)

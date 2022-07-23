@@ -6,6 +6,7 @@
 	worn_icon_state = null
 	w_class = WEIGHT_CLASS_BULKY
 	force = 10
+	extra_minhitchance = 22 //Минимум 30% на попадание. Это же пульсач, ебана.
 	modifystate = TRUE
 	flags_1 =  CONDUCT_1
 	slot_flags = ITEM_SLOT_BACK
@@ -18,7 +19,7 @@
 /obj/item/gun/energy/pulse/prize
 	pin = /obj/item/firing_pin
 
-/obj/item/gun/energy/pulse/prize/Initialize()
+/obj/item/gun/energy/pulse/prize/Initialize(mapload)
 	. = ..()
 	SSpoints_of_interest.make_point_of_interest(src)
 	var/turf/T = get_turf(src)

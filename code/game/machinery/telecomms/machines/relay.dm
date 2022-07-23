@@ -79,6 +79,10 @@
 	toggled = FALSE
 	autolinkers = list("r_relay")
 
+/obj/machinery/telecomms/relay/preset/yohei
+	id = "Реле Йохеев"
+	autolinkers = list("y_relay")
+
 //Generic preset relay
 /obj/machinery/telecomms/relay/preset/auto
 	hide = TRUE
@@ -94,4 +98,3 @@
 	autolinkers = list("h_relay")
 	icon = 'icons/obj/clockwork_objects.dmi'
 	icon_state = "relay"
-	broadcasting = FALSE	//It only receives

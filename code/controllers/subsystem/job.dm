@@ -497,7 +497,7 @@ SUBSYSTEM_DEF(job)
 	if(living_mob.mind)
 		living_mob.mind.assigned_role = rank
 
-	to_chat(M, "\n<big><b>Мне досталась должность под названием [ru_job_parse(rank)]. [gvorno(TRUE)].</b></big>\n")
+	to_chat(M, "\n<big><b>Я - [ru_job_parse(rank)], [gvorno()].</b></big>\n")
 	if(job)
 		var/new_mob = job.equip(living_mob, null, null, joined_late , null, M.client, is_captain)//silicons override this proc to return a mob
 		if(ismob(new_mob))
@@ -514,10 +514,10 @@ SUBSYSTEM_DEF(job)
 				M.client.holder.auto_deadmin()
 			else
 				handle_auto_deadmin_roles(M.client, rank)
-		to_chat(M, span_notice("\nНа должности <b>[ru_job_parse(rank)]</b> я подчиняюсь [job.supervisors]. Некоторые обстоятельства могут изменить это."))
+		to_chat(M, span_notice("\nКак <b>[ru_job_parse(rank)]</b>, я подчиняюсь [job.supervisors]. Некоторые обстоятельства могут изменить это."))
 		job.radio_help_message(M)
 		if(job.req_admin_notify)
-			to_chat(M, "\n<span class='revenbignotice'>Это важная работа. Перед уходом стоит найти себе замену.</spawn>")
+			to_chat(M, "\n<span class='revenbignotice'>Это ответственная должность. Перед уходом стоит найти себе замену.</spawn>")
 
 	var/related_policy = get_policy(rank)
 	if(related_policy)
@@ -772,11 +772,12 @@ SUBSYSTEM_DEF(job)
 		"Shaft Miner", "Hunter", "Clown", "Mime", "Janitor", "Curator", "Lawyer", "Chaplain", "Chief Engineer", "Station Engineer", \
 		"Atmospheric Technician", "Chief Medical Officer", "Medical Doctor", "Paramedic", "Chemist", "Geneticist", "Virologist", "Psychologist", \
 		"Research Director", "Scientist", "Roboticist", "Head of Security", "Warden", "Detective", "Security Officer", "Russian Officer", \
-		"Veteran", "Field Medic", "Mechanic", "Bomj", "Prisoner")
+		"Veteran", "Field Medic", "Mechanic", "Bomj", "Prisoner", "Exploration Crew")
 
 	additional_jobs_with_icons = list("Emergency Response Team Commander", "Security Response Officer", "Engineering Response Officer", "Medical Response Officer", \
-		"Entertainment Response Officer", "Religious Response Officer", "Janitorial Response Officer", "Death Commando", "Security Officer (Engineering)", \
-		"Security Officer (Cargo)", "Security Officer (Medical)", "Security Officer (Science)","SOBR","SOBR Leader")
+		"Entertainment Response Officer", "Religious Response Officer", "Janitorial Response Officer", "Death Commando", \
+		"SOBR","SOBR Leader", "Security Officer (Cargo)", "Security Officer (Medical)", "Security Officer (Science)", "Security Officer (Engineering)", "Yohei", \
+		"red", "blue", "yellow", "green", "white")
 
 	centcom_jobs = list("Central Command","VIP Guest","Custodian","Thunderdome Overseer","CentCom Official","Medical Officer","Research Officer", \
 		"Special Ops Officer","Admiral","CentCom Commander","CentCom Bartender","Private Security Force")
@@ -785,7 +786,7 @@ SUBSYSTEM_DEF(job)
 	name = "Запасные коды от сейфа"
 	desc = "Доказательство того, что вы точно заслужили должность Капитана этой станции."
 
-/obj/item/paper/fluff/spare_id_safe_code/Initialize()
+/obj/item/paper/fluff/spare_id_safe_code/Initialize(mapload)
 	. = ..()
 	var/safe_code = SSid_access.spare_id_safe_code
 

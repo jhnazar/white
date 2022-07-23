@@ -1,17 +1,15 @@
 /datum/component/tts
 	var/mob/owner
 
-	var/next_line_time = 0
 	var/creation = 0 //create tts on hear
 	var/lang
 
-	var/charcd = 0.2 //ticks for one char
 	var/maxchars = 140 //sasai kudosai
 
 	var/assigned_channel
 	var/frequency = 1
 
-/datum/component/tts/Initialize()
+/datum/component/tts/Initialize(mapload)
 	if(!isatom(parent))
 		return COMPONENT_INCOMPATIBLE
 
@@ -31,18 +29,19 @@
 		INVOKE_ASYNC(src, .proc/prikolize, speech_args[SPEECH_MESSAGE])
 
 /datum/component/tts/proc/prikolize(msg)
-	if(world.time < next_line_time)
-		return
-	next_line_time = world.time
 	msg = trim(msg, maxchars)
-	next_line_time += length(msg)*charcd * 2
 	if(lang)
 		owner.tts(msg, lang, freq = frequency)
 	else
-		var/lang_to_use = "ruslan" // plural go fuck
+		var/lang_to_use = "eugene" // plural go fuck
 		switch(owner.gender)
 			if(MALE)
 				lang_to_use = "aidar"
 			if(FEMALE)
-				lang_to_use = "baya" // блять ну и говно
+				lang_to_use = "xenia"
+		if(ishuman(owner))
+			var/mob/living/carbon/human/H = owner
+			frequency = 32000 - (H.age * 200)
+		if(HAS_TRAIT(owner, TRAIT_CLUMSY) || isfelinid(owner))
+			frequency *= 1.5
 		owner.tts(msg, lang_to_use, freq = frequency)

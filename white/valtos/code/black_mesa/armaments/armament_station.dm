@@ -41,13 +41,13 @@
 	/// How many points does this card have to use at the vendor?
 	var/points = 10
 
-/obj/item/armament_points_card/Initialize(mapload)
+/obj/item/armament_points_card/LateInitialize()
 	. = ..()
-	maptext = span_maptext("<div align='center' valign='middle' style='position:relative'>[points]</div>")
+	update_maptext()
 
 /obj/item/armament_points_card/examine(mob/user)
 	. = ..()
-	. += span_notice("It has [points] points left.")
+	. += span_notice("<hr>Здесь [points] очков осталось.")
 
 /obj/item/armament_points_card/proc/use_points(points_to_use)
 	if(points_to_use > points)

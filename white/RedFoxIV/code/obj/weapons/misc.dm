@@ -657,7 +657,7 @@
 	resistance_flags = INDESTRUCTIBLE
 	item_flags = NEEDS_PERMIT | ABSTRACT | DROPDEL
 
-/obj/item/clothing/under/color/grey/artist/Initialize()
+/obj/item/clothing/under/color/grey/artist/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, "Initialize")
 
@@ -667,7 +667,7 @@
 	resistance_flags = INDESTRUCTIBLE
 	item_flags = NEEDS_PERMIT | ABSTRACT | DROPDEL
 
-/obj/item/clothing/shoes/combat/artist/Initialize()
+/obj/item/clothing/shoes/combat/artist/Initialize(mapload)
 	. = ..()
 	ADD_TRAIT(src, TRAIT_NODROP, "Initialize")
 
@@ -675,7 +675,7 @@
 //artist's version of toolset implant
 /obj/item/organ/cyberimp/arm/toolset/artist
 
-/obj/item/organ/cyberimp/arm/toolset/artist/Initialize()
+/obj/item/organ/cyberimp/arm/toolset/artist/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSmachines, src)
 
@@ -707,7 +707,7 @@
 	var/global/list/round_banned_ckeys = list()
 	var/global/amount = 0
 
-/obj/effect/mob_spawn/human/donate/artist/Initialize()
+/obj/effect/mob_spawn/human/donate/artist/Initialize(mapload)
 	. = ..()
 	START_PROCESSING(SSprocessing, src)
 
@@ -1161,7 +1161,8 @@ GLOBAL_LIST_INIT(assblasts, list(ASSBLAST_CUMJAR = "Puts people in a cum jar on 
 								ASSBLAST_SHOCKING = "Patient shows SHOCKING incompetence around machines.",\
 								ASSBLAST_WIZARD = "What do you do when you can't aim properly? You spin, spray and pray.",\
 								ASSBLAST_BAD_CONNECTION = "I selled my wife for internet connection for play \"spac station 13\" and i want to become the robustest player",\
-								ASSBLAST_LIFEWEB = "Why does Rendi Sendi not give me access to LifeWeb, am I oldfeg from 201x???"))
+								ASSBLAST_LIFEWEB = "Why does Rendi Sendi not give me access to LifeWeb, am I oldfeg from 201x???",
+								ASSBLAST_PACIFIST = "HOW TO KILL THOSE RETARDS F1 I CANT CLICK!!"))
 
 GLOBAL_LIST_EMPTY(assblasted_people)
 
@@ -1202,7 +1203,7 @@ GLOBAL_LIST_EMPTY(assblasted_people)
 	var/kill_me = "Ввести сикей..." //awful crutch to show the ckey list menu only when there are entries to said list. fucking awful way of doing it, must redo it later
 	if(ops.len>2)
 		kill_me = "-CANCEL-"
-		kill_me = input("Добро пожаловать. Снова.", "") in ops
+		kill_me = tgui_input_list(usr, "Добро пожаловать. Снова.", "", ops)
 	if(kill_me == "-CANCEL-")
 		return
 	var/asskey
@@ -1223,7 +1224,7 @@ GLOBAL_LIST_EMPTY(assblasted_people)
 		else
 			options.Add("\[ ] [punishment]")
 	options.Add("-CANCEL-")
-	var/svin = input("Выбирай наказание засранцу.", "Unforeseen consequenses") in options
+	var/svin = tgui_input_list(usr, "Выбирай наказание засранцу.", "Unforeseen consequenses", options)
 	if(isnull(svin) || svin == "" || svin == "-CANCEL-")
 		return
 	svin = copytext(svin, 5)
@@ -1241,8 +1242,24 @@ GLOBAL_LIST_EMPTY(assblasted_people)
 		GLOB.assblasted_people[asskey] = jointext(asskey_blasts,"|")
 	else
 		GLOB.assblasted_people.Remove(asskey)
+	save_assblast()
 
-
+/proc/save_assblast()
+	//snowflake handling for saving assblasteds
+	fdel("[global.config.directory]/assblasted_people.txt") // no way this could end badly
+	var/newblast = ""
+	for(var/asskey in GLOB.assblasted_people)
+		var/list/asskey_blasts = retrieve_assblasts(asskey)
+		for(var/blast in asskey_blasts) //cutting out invalid entries
+			if(!GLOB.assblasts.Find(blast))
+				asskey_blasts.Remove(blast)
+		if(asskey_blasts.len == 0)
+			continue
+		newblast += "\n"
+		var/ab = jointext(asskey_blasts,"|")
+		newblast += "[asskey]||[ab]"
+	newblast = copytext(newblast, 2)
+	text2file(newblast, "[global.config.directory]/assblasted_people.txt")
 
 /datum/smite/cumjar
 	name = "Cumjar"

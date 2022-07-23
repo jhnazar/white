@@ -1,13 +1,14 @@
 	////////////
 	//SECURITY//
 	////////////
-#define UPLOAD_LIMIT		8388608	//Restricts client uploads to the server to 0.5MB
-#define UPLOAD_LIMIT_ADMIN	16777216	//Restricts admin client uploads to the server to 2.5MB
+#define UPLOAD_LIMIT		4194304	//Restricts client uploads to the server to 4MB
+#define UPLOAD_LIMIT_ADMIN	8388608	//Restricts admin client uploads to the server to 8MB
 
 GLOBAL_LIST_INIT(blacklisted_builds, list(
 	"1407" = "bug preventing client display overrides from working leads to clients being able to see things/mobs they shouldn't be able to see",
 	"1408" = "bug preventing client display overrides from working leads to clients being able to see things/mobs they shouldn't be able to see",
 	"1428" = "bug causing right-click menus to show too many verbs that's been fixed in version 1429",
+	"1583" = "probably spoofed byond version, banned because public",
 
 	))
 
@@ -222,6 +223,8 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	// Instantiate tgui panel
 	tgui_panel = new(src, "browseroutput")
 
+	tgui_say = new(src, "tgui_say")
+
 	set_right_click_menu_mode(TRUE)
 
 	GLOB.ahelp_tickets.ClientLogin(src)
@@ -313,8 +316,8 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		if (!length(GLOB.stickybanadminexemptions))
 			restore_stickybans()
 
-	if (byond_version >= 512)
-		if (!byond_build || byond_build < 1386)
+	if (byond_version >= 514)
+		if (!byond_build)
 			message_admins(span_adminnotice("[key_name(src)] has been detected as spoofing their byond version. Connection rejected."))
 			add_system_note("Spoofed-Byond-Version", "Detected as using a spoofed byond version.")
 			log_access("Failed Login: [key] - Spoofed byond version")
@@ -336,14 +339,16 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 
 	// Initialize stat panel
 	stat_panel.initialize(
-		inline_html = file2text('html/statbrowser.html'),
-		inline_js = file2text('html/statbrowser.js'),
-		inline_css = file2text('html/statbrowser.css'),
+		inline_html = file("html/statbrowser.html"),
+		inline_js = file("html/statbrowser.js"),
+		inline_css = file("html/statbrowser.css"),
 	)
 	addtimer(CALLBACK(src, .proc/check_panel_loaded), 30 SECONDS)
 
 	// Initialize tgui panel
 	tgui_panel.initialize()
+
+	tgui_say.initialize()
 
 	if(alert_mob_dupe_login)
 		spawn()
@@ -471,15 +476,11 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	if (prefs.fullscreen)
 		ToggleFullscreen()
 
-	if(isnewplayer(src.mob))
-		view_size = new(src, getScreenSize(prefs.widescreenpref))
-		view = "[prefs.widescreenwidth]x15"
-	else
-		view_size = new(src, getScreenSize(prefs.widescreenpref))
+	view_size = new(src, getScreenSize())
 
 	view_size.resetFormat()
 	view_size.setZoomMode()
-	fit_viewport()
+	attempt_auto_fit_viewport()
 
 	SStitle.update_lobby()
 
@@ -546,6 +547,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 		movingmob = null
 	active_mousedown_item = null
 	SSambience.remove_ambience_client(src)
+	SSmouse_entered.hovers -= src
 	QDEL_NULL(view_size)
 	QDEL_NULL(void)
 	QDEL_NULL(tooltips)
@@ -556,7 +558,7 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 	return QDEL_HINT_HARDDEL_NOW
 
 /client/proc/set_client_age_from_db(connectiontopic)
-	if (IsGuestKey(src.key))
+	if (is_guest_key(src.key))
 		return
 	if(!SSdbcore.Connect())
 		return
@@ -1014,19 +1016,22 @@ GLOBAL_LIST_INIT(blacklisted_builds, list(
 					movement_keys[key] = WEST
 				if("South")
 					movement_keys[key] = SOUTH
-				if("Сказать")
-					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=.сказать")
-				if("OOC")
-					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=ooc")
-				if("Действия")
-					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=Действия")
+				if(SAY_CHANNEL)
+					var/say = tgui_say_create_open_command(SAY_CHANNEL)
+					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=[say]")
+				if(RADIO_CHANNEL)
+					var/radio = tgui_say_create_open_command(RADIO_CHANNEL)
+					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=[radio]")
+				if(ME_CHANNEL)
+					var/me = tgui_say_create_open_command(ME_CHANNEL)
+					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=[me]")
+				if(OOC_CHANNEL)
+					var/ooc = tgui_say_create_open_command(OOC_CHANNEL)
+					winset(src, "default-[REF(key)]", "parent=default;name=[key];command=[ooc]")
 
-/client/proc/change_view(new_size, forced = FALSE)
+/client/proc/change_view(new_size)
 	if (isnull(new_size))
 		CRASH("change_view called without argument.")
-
-	if(prefs && !prefs.widescreenpref && new_size == CONFIG_GET(string/default_view) && !forced)
-		new_size = CONFIG_GET(string/default_view_square)
 
 	view = new_size
 	SEND_SIGNAL(src, COMSIG_VIEW_SET, new_size)

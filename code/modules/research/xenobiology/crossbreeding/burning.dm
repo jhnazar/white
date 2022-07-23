@@ -9,7 +9,7 @@ Burning extracts:
 	effect = "burning"
 	icon_state = "burning"
 
-/obj/item/slimecross/burning/Initialize()
+/obj/item/slimecross/burning/Initialize(mapload)
 	. = ..()
 	create_reagents(10, INJECTABLE | DRAWABLE)
 
@@ -156,7 +156,7 @@ Burning extracts:
 		if(L != user)
 			do_teleport(L, get_turf(L), 6, asoundin = 'sound/effects/phasein.ogg', channel = TELEPORT_CHANNEL_BLUESPACE) //Somewhere between the effectiveness of fake and real BS crystal
 			new /obj/effect/particle_effect/sparks(get_turf(L))
-			playsound(get_turf(L), "sparks", 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+			playsound(get_turf(L), "zap", 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
 	..()
 
 /obj/item/slimecross/burning/sepia

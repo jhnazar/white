@@ -84,7 +84,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
 	warcry = "EVERYONE DOWN ON THE GROUND!!"
 
-/obj/item/banner/security/Initialize()
+/obj/item/banner/security/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.security_positions
 
@@ -108,7 +108,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
 	warcry = "No wounds cannot be healed!"
 
-/obj/item/banner/medical/Initialize()
+/obj/item/banner/medical/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.medical_positions
 
@@ -140,7 +140,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
 	warcry = "For Cuban Pete!"
 
-/obj/item/banner/science/Initialize()
+/obj/item/banner/science/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.science_positions
 
@@ -167,7 +167,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
 	warcry = "Hail Cargonia!"
 
-/obj/item/banner/cargo/Initialize()
+/obj/item/banner/cargo/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.supply_positions
 
@@ -191,7 +191,7 @@
 	righthand_file = 'icons/mob/inhands/equipment/banners_righthand.dmi'
 	warcry = "All hail lord Singuloth!!"
 
-/obj/item/banner/engineering/Initialize()
+/obj/item/banner/engineering/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.engineering_positions
 
@@ -215,7 +215,7 @@
 	//No icon state here since the default one is the NT banner
 	warcry = "Hail Nanotrasen!"
 
-/obj/item/banner/command/Initialize()
+/obj/item/banner/command/Initialize(mapload)
 	. = ..()
 	job_loyalties = GLOB.command_positions
 
@@ -250,7 +250,7 @@
 	desc = "It's a backpack with lots of extra room. A banner with Nanotrasen's logo is attached, that can't be removed."
 	icon_state = "bannerpack"
 
-/obj/item/storage/backpack/bannerpack/Initialize()
+/obj/item/storage/backpack/bannerpack/Initialize(mapload)
 	. = ..()
 	var/datum/component/storage/STR = GetComponent(/datum/component/storage)
 	STR.max_combined_w_class = 27 //6 more then normal, for the tradeoff of declaring yourself an antag at all times.
@@ -299,13 +299,10 @@
 /obj/item/clothing/head/helmet/plate/crusader/prophet
 	name = "Prophet's Hat"
 	desc = "A religious-looking hat."
-	worn_icon = 'icons/mob/large-worn-icons/64x64/head.dmi'
 	icon_state = null
 	flags_1 = 0
 	armor = list(MELEE = 60, BULLET = 60, LASER = 60, ENERGY = 60, BOMB = 70, BIO = 50, RAD = 50, FIRE = 60, ACID = 60) //religion protects you from disease and radiation, honk.
-	worn_x_dimension = 64
-	worn_y_dimension = 64
-	clothing_flags = LARGE_WORN_ICON
+	worn_y_offset = 6
 
 /obj/item/clothing/head/helmet/plate/crusader/prophet/red
 	icon_state = "prophet-red"

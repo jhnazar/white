@@ -5,7 +5,7 @@
 	sexes = 0
 	species_traits = list(NOTRANSSTING, NOBLOOD, TRAIT_EASYDISMEMBER, NOEYESPRITES) //all of these + whatever we inherit from the real species
 	inherent_traits = list(TRAIT_ADVANCEDTOOLUSER, TRAIT_VIRUSIMMUNE, TRAIT_NOLIMBDISABLE, TRAIT_NOHUNGER, TRAIT_NOBREATH, TRAIT_RADIMMUNE, TRAIT_LIMBATTACHMENT, TRAIT_CAN_STRIP, TRAIT_NOHYDRATION, TRAIT_RESISTLOWPRESSURE, TRAIT_RESISTCOLD, TRAIT_RESISTHEAT, TRAIT_RESISTHIGHPRESSURE, TRAIT_TOXIMMUNE, TRAIT_LIMBATTACHMENT, TRAIT_PIERCEIMMUNE)
-	inherent_biotypes = list(MOB_ROBOTIC, MOB_HUMANOID)
+	inherent_biotypes = MOB_ROBOTIC|MOB_HUMANOID
 	meat = null
 	exotic_blood = /datum/reagent/fuel/oil
 	damage_overlay_type = "synth"
@@ -107,7 +107,7 @@
 
 /datum/action/innate/monitor_change/Activate()
 	var/mob/living/carbon/human/H = owner
-	var/new_ipc_screen = input(usr, "Выбираем:", "Смена экрана") as null|anything in GLOB.ipc_screens_list
+	var/new_ipc_screen = tgui_input_list(usr, "Выбираем:", "Смена экрана", GLOB.ipc_screens_list)
 	if(!new_ipc_screen)
 		return
 	H.dna.features["ipc_screen"] = new_ipc_screen

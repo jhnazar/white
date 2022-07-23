@@ -23,7 +23,7 @@
 	vis_flags = VIS_INHERIT_ID
 	blocks_air = FALSE
 
-/turf/open/floor/dz/normal/Initialize()
+/turf/open/floor/dz/normal/Initialize(mapload)
 	SHOULD_CALL_PARENT(FALSE)
 	vis_contents.Cut()
 	visibilityChanged()
@@ -83,11 +83,101 @@
 	name = "си-блок"
 	icon_state = "c_wall1"
 
-/turf/closed/dz/normal/cyber/Initialize()
+/turf/closed/dz/normal/cyber/Initialize(mapload)
 	. = ..()
 	if(prob(0.1))
 		icon_state = "c_wall2"
 		density = 0
+
+/turf/closed/dz/normal/cyber/ice
+	name = "лёд"
+	icon_state = "ice"
+
+/turf/closed/dz/normal/cyber/ice/attack_hand(mob/user)
+	. = ..()
+	if(isliving(user))
+		melt_ice(user)
+
+/turf/closed/dz/normal/cyber/ice/bullet_act(obj/projectile/P, def_zone, piercing_hit)
+	. = ..()
+	if(P?.firer && isliving(P?.firer))
+		melt_ice(P.firer)
+
+/turf/closed/dz/normal/cyber/ice/proc/melt_ice(mob/living/user)
+	playsound(src, 'white/valtos/sounds/rapidslice.ogg', 60, TRUE)
+
+	var/turf/T = ChangeTurf(/turf/open/floor/dz/cyber)
+
+	spawn(60 SECONDS)
+		if(!T)
+			return
+		if(prob(15))
+			T.ChangeTurf(pick(subtypesof(/turf/closed/dz/normal/cyber/ice)))
+		else
+			T.ChangeTurf(/turf/closed/dz/normal/cyber/ice/blue)
+
+/turf/closed/dz/normal/cyber/ice/red
+	name = "красный лёд"
+	color = "#B34646"
+
+/turf/closed/dz/normal/cyber/ice/red/melt_ice(mob/living/user)
+	visible_message(span_warning("<b>[user]</b> уничтожает <b>[src]</b> и покрывается ссадинами!"), \
+					span_userdanger("Уничтожаю <b>[src]</b> и... УХ БЛЯ!"))
+	user.adjustBruteLoss(5)
+	. = ..()
+
+/turf/closed/dz/normal/cyber/ice/yellow
+	name = "жёлтый лёд"
+	color = "#AEA341"
+
+/turf/closed/dz/normal/cyber/ice/yellow/melt_ice(mob/living/user)
+	visible_message(span_warning("<b>[user]</b> уничтожает <b>[src]</b> и загорается!"), \
+					span_userdanger("Уничтожаю <b>[src]</b> и... ЗАГОРАЮСЬ!"))
+	user.adjust_fire_stacks(1)
+	user.ignite_mob()
+	. = ..()
+
+/turf/closed/dz/normal/cyber/ice/green
+	name = "зелёный лёд"
+	color = "#55AC3F"
+
+/turf/closed/dz/normal/cyber/ice/green/melt_ice(mob/living/user)
+	visible_message(span_warning("<b>[user]</b> уничтожает <b>[src]</b> и покрывается кислотой!"), \
+					span_userdanger("Уничтожаю <b>[src]</b> и... КИСЛОТА-А-А!"))
+	user.acid_act(25, 10)
+	. = ..()
+
+/turf/closed/dz/normal/cyber/ice/black
+	name = "чёрный лёд"
+	color = "#222222"
+
+/turf/closed/dz/normal/cyber/ice/black/melt_ice(mob/living/user)
+	visible_message(span_warning("<b>[user]</b> уничтожает <b>[src]</b> и засыпает!"), \
+					span_userdanger("Уничтожаю <b>[src]</b> и засыпаю..."))
+	user.AdjustSleeping(1 SECONDS)
+	. = ..()
+
+/turf/closed/dz/normal/cyber/ice/blue
+	name = "синий лёд"
+	color = "#4684B3"
+	var/static/list/things = list()
+
+/turf/closed/dz/normal/cyber/ice/blue/Initialize(mapload)
+	. = ..()
+	if(!length(things))
+		things = subtypesof(/obj/item)
+
+/turf/closed/dz/normal/cyber/ice/blue/melt_ice(mob/living/user)
+	var/obj/item/found_something = null
+
+	if(prob(30) && length(things))
+		var/obj/item/thingy = pick(things)
+		found_something = new thingy(src)
+
+	visible_message(span_notice("<b>[user]</b> уничтожает <b>[src]</b>[found_something ? " и находит внутри <b>[found_something]</b>" : ""]."), \
+					span_notice("Уничтожаю <b>[src]</b>[found_something ? " и нахожу внутри <b>[found_something]</b>" : ""]."))
+
+	. = ..()
 
 /turf/closed/dz/lab
 	name = "сверхкрепкая стена"
@@ -165,7 +255,7 @@
 		icon_state = "monitor_cracked"
 	return ..()
 
-/obj/lab_monitor/Initialize()
+/obj/lab_monitor/Initialize(mapload)
 	. = ..()
 	add_overlay(what_pic)
 
@@ -174,7 +264,7 @@
 	icon = 'white/valtos/icons/dz-031.dmi'
 	icon_state = "attention"
 
-/obj/effect/attack_spike/Initialize()
+/obj/effect/attack_spike/Initialize(mapload)
 	. = ..()
 	spawn(10)
 		icon_state = "spike_hole"
@@ -209,7 +299,7 @@
 	armor = list("melee" = 100, "bullet" = 100, "laser" = 100, "energy" = 100, "bomb" = 100, "bio" = 100, "rad" = 100, "fire" = 100, "acid" = 100)
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | LAVA_PROOF
 	damage_deflection = 90
-	poddoor = TRUE
+	can_open_with_hands = FALSE
 	safe = FALSE
 	use_power = NO_POWER_USE
 	var/id = 1
@@ -312,7 +402,7 @@
 		return ..()
 
 /obj/machinery/card_button/emag_act(mob/user)
-	playsound(src, "sparks", 100, TRUE)
+	playsound(src, "zap", 100, TRUE)
 	return
 
 /obj/machinery/card_button/attack_ai(mob/user)
@@ -362,7 +452,7 @@
 	light_color = LIGHT_COLOR_CYAN
 	//var/mob/living/carbon/human/virtual_reality/vr_human
 
-/obj/machinery/cyberdeck/Initialize()
+/obj/machinery/cyberdeck/Initialize(mapload)
 	. = ..()
 	set_light(1)
 
@@ -397,7 +487,7 @@
 	light_color = LIGHT_COLOR_ORANGE
 	var/cur_deck = 0
 
-/obj/structure/sign/decksign/Initialize()
+/obj/structure/sign/decksign/Initialize(mapload)
 	. = ..()
 	add_overlay("deck-[cur_deck]")
 

@@ -19,7 +19,7 @@
 /datum/atom_hud/hacker
 	hud_icons = list(HACKER_HUD)
 
-/mob/living/carbon/Initialize()
+/mob/living/carbon/Initialize(mapload)
 	. = ..()
 	if(!src)
 		return
@@ -28,7 +28,7 @@
 	hud_list[HACKER_HUD].icon = image('white/valtos/icons/dz-031.dmi', src)
 	hud_list[HACKER_HUD].icon_state = "node"
 
-/mob/living/simple_animal/hostile/Initialize()
+/mob/living/simple_animal/hostile/Initialize(mapload)
 	. = ..()
 	hud_list[HACKER_HUD]?.add_overlay("node_enemy")
 
@@ -299,7 +299,7 @@
 
 /obj/effect/proc_holder/spell/self/hacker_immater/cast(list/targets, mob/living/carbon/human/user)
 
-	var/obj/item/stack/sheet/sheetsel = input("Предмет:", "Создаём!", null, null) as null|anything in allowed_items
+	var/obj/item/stack/sheet/sheetsel = tgui_input_list(usr, "Предмет:", "Создаём!", allowed_items)
 
 	if(!sheetsel)
 		return FALSE
@@ -387,7 +387,7 @@
 	comp_light_luminosity = 6.3
 	has_variants = FALSE
 
-/obj/item/modular_computer/tablet/hacktool/Initialize()
+/obj/item/modular_computer/tablet/hacktool/Initialize(mapload)
 	. = ..()
 	var/obj/item/computer_hardware/hard_drive/small/hacker/hard_drive = new
 	var/datum/computer_file/program/hacktool/ht = new
@@ -424,6 +424,6 @@
 	ui_x = 500
 	ui_y = 600
 
-/datum/computer_file/program/hacktool/run_program(var/mob/living/user)
+/datum/computer_file/program/hacktool/on_start(var/mob/living/user)
 	. = ..(user)
 */
