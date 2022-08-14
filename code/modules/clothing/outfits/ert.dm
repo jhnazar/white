@@ -228,8 +228,8 @@
 	name = "Охранник Инвизиторов"
 
 	l_hand = /obj/item/tank/internals/tactical/e_gun_taser
+	r_hand = /obj/item/melee/baton/loaded
 	back = /obj/item/mod/control/pre_equipped/responsory/inquisitory/security
-	r_hand = /obj/item/melee/baton/loaded = 1
 	backpack_contents = list(
 		/obj/item/construction/rcd/loaded = 1,
 		/obj/item/storage/box/handcuffs = 1,
@@ -239,8 +239,8 @@
 	name = "Медик Инвизиторов"
 
 	l_hand = /obj/item/tank/internals/oxygen
+	r_hand = /obj/item/melee/baton/loaded
 	back = /obj/item/mod/control/pre_equipped/responsory/inquisitory/medic
-	r_hand = /obj/item/melee/baton/loaded = 1
 	backpack_contents = list(
 		/obj/item/gun/medbeam = 1,
 		/obj/item/storage/box/survival/engineer = 1,
@@ -284,8 +284,8 @@
 	name = "Уборщик ERT"
 
 	id = /obj/item/card/id/advanced/centcom/ert/janitor
-	r_hand = /obj/item/tank/internals/oxygen
-	l_hand = /obj/item/melee/baton/loaded = 1
+	r_hand = /obj/item/melee/baton/loaded
+	l_hand = /obj/item/storage/bag/trash/bluespace
 	back = /obj/item/mod/control/pre_equipped/responsory/janitor
 	backpack_contents = list(
 		/obj/item/grenade/clusterbuster/cleaner = 1,
@@ -293,12 +293,12 @@
 		/obj/item/reagent_containers/glass/bucket = 1,
 		/obj/item/storage/box/lights/mixed = 1,
 		/obj/item/storage/box/survival/engineer = 1,
+		/obj/item/tank/internals/oxygen = 1,
 	)
 	belt = /obj/item/storage/belt/janitor/full
 	glasses = /obj/item/clothing/glasses/night
 	l_pocket = /obj/item/grenade/chem_grenade/cleaner
 	r_pocket = /obj/item/grenade/chem_grenade/cleaner
-	l_hand = /obj/item/storage/bag/trash/bluespace
 
 /datum/outfit/centcom/ert/janitor/post_equip(mob/living/carbon/human/H, visualsOnly = FALSE)
 	..()
