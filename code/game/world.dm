@@ -41,10 +41,6 @@ GLOBAL_VAR(restart_counter)
 
 	GLOB.config_error_log = GLOB.world_manifest_log = GLOB.world_pda_log = GLOB.world_job_debug_log = GLOB.sql_error_log = GLOB.world_href_log = GLOB.world_runtime_log = GLOB.world_attack_log = GLOB.world_game_log = GLOB.world_econ_log = GLOB.world_shuttle_log = "data/logs/config_error.[GUID()].log" //temporary file used to record errors with loading config, moved to log directory once logging is set bl
 
-	GLOB.revdata = new
-
-	InitTgs()
-
 	config.Load(params[OVERRIDE_CONFIG_DIRECTORY_PARAMETER])
 
 	load_admins()
@@ -60,9 +56,6 @@ GLOBAL_VAR(restart_counter)
 
 #ifndef USE_CUSTOM_ERROR_HANDLER
 	world.log = file("[GLOB.log_directory]/dd.log")
-#else
-	if (TgsAvailable())
-		world.log = file("[GLOB.log_directory]/dd.log") //not all runtimes trigger world/Error, so this is the only way to ensure we can see all of them.
 #endif
 
 	LoadVerbs(/datum/verbs/menu)
@@ -89,10 +82,6 @@ GLOBAL_VAR(restart_counter)
 	#ifdef AUTOWIKI
 	setup_autowiki()
 	#endif
-
-/world/proc/InitTgs()
-	TgsNew(new /datum/tgs_event_handler/impl, TGS_SECURITY_TRUSTED)
-	GLOB.revdata.load_tgs_info()
 
 /world/proc/HandleTestRun()
 	//trigger things to run the whole process
@@ -130,8 +119,10 @@ GLOBAL_VAR(restart_counter)
 		GLOB.picture_logging_prefix = "O_[override_dir]_"
 		GLOB.picture_log_directory = "data/picture_logs/[override_dir]"
 
+	GLOB.dynamic_log = "[GLOB.log_directory]/dynamic.log"
 	GLOB.world_game_log = "[GLOB.log_directory]/game.log"
 	GLOB.world_mecha_log = "[GLOB.log_directory]/mecha.log"
+	GLOB.world_mob_tag_log = "[GLOB.log_directory]/mob_tags.log"
 	GLOB.world_virus_log = "[GLOB.log_directory]/virus.log"
 	GLOB.world_cloning_log = "[GLOB.log_directory]/cloning.log"
 	GLOB.world_asset_log = "[GLOB.log_directory]/asset.log"
@@ -151,11 +142,15 @@ GLOBAL_VAR(restart_counter)
 	GLOB.world_paper_log = "[GLOB.log_directory]/paper.log"
 	GLOB.tgui_log = "[GLOB.log_directory]/tgui.log"
 	GLOB.world_shuttle_log = "[GLOB.log_directory]/shuttle.log"
+	GLOB.world_silicon_log = "[GLOB.log_directory]/silicon.log"
 	GLOB.world_mechcomp_log = "[GLOB.log_directory]/mechcomp.log"
 	GLOB.world_exrp_log = "[GLOB.log_directory]/exrp.log"
 	GLOB.world_uplink_log = "[GLOB.log_directory]/uplink.log"
-
+	GLOB.world_tool_log = "[GLOB.log_directory]/tools.log"
 	GLOB.demo_log = "[GLOB.log_directory]/demo.log"
+	GLOB.world_suspicious_login_log = "[GLOB.log_directory]/suspicious_logins.log"
+
+	GLOB.lua_log = "[GLOB.log_directory]/lua.log"
 
 #ifdef UNIT_TESTS
 	GLOB.test_log = "[GLOB.log_directory]/tests.log"
@@ -185,14 +180,7 @@ GLOBAL_VAR(restart_counter)
 	if(GLOB.round_id)
 		log_game("Round ID: [GLOB.round_id]")
 
-	// This was printed early in startup to the world log and config_error.log,
-	// but those are both private, so let's put the commit info in the runtime
-	// log which is ultimately public.
-	log_runtime(GLOB.revdata.get_log_message())
-
 /world/Topic(T, addr, master, key)
-	TGS_TOPIC	//redirect to server tools if necessary
-
 	var/static/list/topic_handlers = TopicHandlers()
 
 	var/list/input = params2list(T)
@@ -261,40 +249,20 @@ GLOBAL_VAR(restart_counter)
 	return
 	#endif
 
-	if(TgsAvailable())
-		var/do_hard_reboot
-		// check the hard reboot counter
-		var/ruhr = CONFIG_GET(number/rounds_until_hard_restart)
-		switch(ruhr)
-			if(-1)
-				do_hard_reboot = FALSE
-			if(0)
-				do_hard_reboot = TRUE
-			else
-				if(GLOB.restart_counter >= ruhr)
-					do_hard_reboot = TRUE
-				else
-					text2file("[++GLOB.restart_counter]", RESTART_COUNTER_PATH)
-					do_hard_reboot = FALSE
-
-		if(do_hard_reboot)
-			log_world("World hard rebooted at [time_stamp()]")
-			shutdown_logging() // See comment below.
-			TgsEndProcess()
-
 	log_world("World rebooted at [time_stamp()]")
 
-	TgsReboot()
 	shutdown_logging() // Past this point, no logging procs can be used, at risk of data loss.
 	if(CONFIG_GET(flag/this_shit_is_stable))
 		shelleo("curl -X POST http://localhost:3636/hard-reboot-white")
 		shelleo("python3 /home/ubuntu/tenebrae/prod/server_white/data/parser.py [GLOB.round_id]")
 	AUXTOOLS_SHUTDOWN(AUXMOS)
+	AUXTOOLS_FULL_SHUTDOWN(AUXLUA)
 	..()
 
 /world/Del()
 	shutdown_logging() // makes sure the thread is closed before end, else we terminate
 	AUXTOOLS_SHUTDOWN(AUXMOS)
+	AUXTOOLS_FULL_SHUTDOWN(AUXLUA)
 	var/debug_server = world.GetConfig("env", "AUXTOOLS_DEBUG_DLL")
 	if (debug_server)
 		call(debug_server, "auxtools_shutdown")()

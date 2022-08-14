@@ -1,5 +1,5 @@
 /datum/job/cyborg
-	title = "Cyborg"
+	title = JOB_CYBORG
 	ru_title = "Киборг"
 	auto_deadmin_role_flags = DEADMIN_POSITION_SILICON
 	faction = "Station"
@@ -7,9 +7,13 @@
 	spawn_positions = 1
 	supervisors = "моим законам и ИИ"	//Nodrak
 	selection_color = "#ddffdd"
-	minimal_player_age = 15
-	exp_requirements = 600
+	minimal_player_age = 14
+	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
+
+	departments_list = list(
+		/datum/job_department/silicon,
+	)
 
 	display_order = JOB_DISPLAY_ORDER_CYBORG
 

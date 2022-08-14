@@ -14,6 +14,7 @@ If you create T5+ please take a pass at mech_fabricator.dm. The parts being good
 	var/works_from_distance = FALSE
 	var/pshoom_or_beepboopblorpzingshadashwoosh = 'sound/items/rped.ogg'
 	var/alt_sound = null
+	slot_flags = ITEM_SLOT_BELT
 
 /obj/item/storage/part_replacer/pre_attack(obj/machinery/T, mob/living/user, params)
 	if(!istype(T) || !T.component_parts)
@@ -155,7 +156,8 @@ If you create T5+ please take a pass at mech_fabricator.dm. The parts being good
 	component_type = /datum/component/storage/concrete/rped/cyborg
 
 /datum/component/storage/concrete/rped/cyborg
-	max_items = 100
+	max_items = 150
+	max_combined_w_class = 300
 
 /proc/cmp_rped_sort(obj/item/A, obj/item/B)
 	return B.get_part_rating() - A.get_part_rating()
@@ -163,7 +165,7 @@ If you create T5+ please take a pass at mech_fabricator.dm. The parts being good
 /obj/item/stock_parts
 	name = "stock part"
 	desc = "What?"
-	icon = 'white/valtos/icons/stock_parts.dmi'
+	icon = 'icons/obj/stock_parts.dmi'
 	w_class = WEIGHT_CLASS_SMALL
 	var/rating = 1
 	var/energy_rating = 1
@@ -421,6 +423,6 @@ If you create T5+ please take a pass at mech_fabricator.dm. The parts being good
 
 /obj/item/research//Makes testing much less of a pain -Sieve
 	name = "research"
-	icon = 'white/valtos/icons/stock_parts.dmi'
+	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "capacitor"
 	desc = "A debug item for research."

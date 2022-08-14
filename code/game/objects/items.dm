@@ -127,8 +127,6 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 	var/body_parts_covered = 0
 	///Literally does nothing right now
 	var/gas_transfer_coefficient = 1
-	/// How likely a disease or chemical is to get through a piece of clothing
-	var/permeability_coefficient = 1
 	/// for electrical admittance/conductance (electrocution checks and shit)
 	var/siemens_coefficient = 1
 	/// How much clothing is slowing you down. Negative values speeds you up
@@ -144,8 +142,6 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 	///In deciseconds, how long an item takes to remove from another person
 	var/strip_delay = 40
 	///How long it takes to resist out of the item (cuffs and such)
-	var/breakoutchance = 0
-	var/breakoutchanceincrement = 0
 	var/breakouttime = 0
 
 	///Used in [atom/proc/attackby] to say how something was attacked `"[x] has been [z.attack_verb] by [y] with [z]"`
@@ -355,7 +351,7 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 
 	. += span_smallnotice("<b>Размер:</b> [weight_class_to_icon(w_class, user, TRUE)]")
 
-	if(!user.research_scanner)
+	if(!HAS_TRAIT(user, TRAIT_RESEARCH_SCANNER))
 		return
 
 	/// Research prospects, including boostable nodes and point values. Deliver to a console to know whether the boosts have already been used.
@@ -847,12 +843,12 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 
 /obj/item/MouseDrop(atom/over, src_location, over_location, src_control, over_control, params)
 	. = ..()
-	remove_filter("hover_outline") //get rid of the hover effect in case the mouse exit isn't called if someone drags and drops an item and somthing goes wrong
+	remove_filter(HOVER_OUTLINE_FILTER) //get rid of the hover effect in case the mouse exit isn't called if someone drags and drops an item and somthing goes wrong
 
 /obj/item/MouseExited()
 	deltimer(tip_timer)//delete any in-progress timer if the mouse is moved off the item before it finishes
 	closeToolTip(usr)
-	remove_filter("hover_outline")
+	remove_filter(HOVER_OUTLINE_FILTER)
 
 /obj/item/proc/apply_outline(outline_color = null)
 	if(get(src, /mob) != usr || QDELETED(src) || isobserver(usr)) //cancel if the item isn't in an inventory, is being deleted, or if the person hovering is a ghost (so that people spectating you don't randomly make your items glow)
@@ -879,7 +875,7 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 	if(color)
 		outline_color = COLOR_WHITE //if the item is recolored then the outline will be too, let's make the outline white so it becomes the same color instead of some ugly mix of the theme and the tint
 
-	add_filter("hover_outline", 1, list("type" = "outline", "size" = 1, "color" = outline_color))
+	add_filter(HOVER_OUTLINE_FILTER, 1, list("type" = "outline", "size" = 1, "color" = outline_color))
 
 /// Called when a mob tries to use the item as a tool. Handles most checks.
 /obj/item/proc/use_tool(atom/target, mob/living/user, delay, amount=0, volume=0, datum/callback/extra_checks)
@@ -896,7 +892,9 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 
 			if(user.mind.get_skill_level(/datum/skill/mining) >= SKILL_LEVEL_JOURNEYMAN && prob(user.mind.get_skill_modifier(/datum/skill/mining, SKILL_PROBS_MODIFIER))) // we check if the skill level is greater than Journeyman and then we check for the probality for that specific level.
 				mineral_scan_pulse(get_turf(user), SKILL_LEVEL_JOURNEYMAN - 2) //SKILL_LEVEL_JOURNEYMAN = 3 So to get range of 1+ we have to subtract 2 from it,.
-
+	else if((tool_behaviour == TOOL_CROWBAR || tool_behaviour == TOOL_MULTITOOL || tool_behaviour == TOOL_SCREWDRIVER || tool_behaviour == TOOL_WELDER || tool_behaviour == TOOL_WIRECUTTER || tool_behaviour == TOOL_WRENCH) && ishuman(user))
+		if(user.mind)
+			skill_modifier = user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER)
 	delay *= toolspeed * skill_modifier
 
 
@@ -918,7 +916,7 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 		// Invoke the extra checks once, just in case.
 		if(extra_checks && !extra_checks.Invoke())
 			return
-
+	user.mind.adjust_experience(/datum/skill/engineering, (delay / toolspeed / skill_modifier))
 	// Use tool's fuel, stack sheets or charges if amount is set.
 	if(amount && !use(amount))
 		return
@@ -1199,6 +1197,10 @@ GLOBAL_VAR_INIT(embedpocalypse, FALSE) // if true, all items will be able to emb
 /obj/item/proc/on_offer_taken(mob/living/carbon/offerer, mob/living/carbon/taker)
 	if(SEND_SIGNAL(src, COMSIG_ITEM_OFFER_TAKEN, offerer, taker) & COMPONENT_OFFER_INTERRUPT)
 		return TRUE
+
+/// Special stuff you want to do when an outfit equips this item.
+/obj/item/proc/on_outfit_equip(mob/living/carbon/human/outfit_wearer, visuals_only, item_slot)
+	return
 
 /obj/item/proc/do_pickup_animation(atom/target)
 	if(!istype(loc, /turf))

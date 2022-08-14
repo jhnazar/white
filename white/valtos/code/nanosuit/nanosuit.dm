@@ -39,7 +39,7 @@
 	desc = "Boots part of a nanosuit. Slip resistant. Property of CryNet Systems."
 	clothing_flags = NOSLIP
 	gas_transfer_coefficient = 0.01
-	permeability_coefficient = 0.01
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, FIRE = 0, ACID = 0)
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | FREEZE_PROOF
 	var/jumpdistance = 2 //-1 from to see the actual distance, e.g 3 goes over 2 tiles
 	var/jumpspeed = 1
@@ -89,7 +89,7 @@
 	desc = "These tactical gloves are built into a nanosuit and are fireproof and shock resistant. Property of CryNet Systems."
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | FREEZE_PROOF
 	gas_transfer_coefficient = 0.01
-	permeability_coefficient = 0.01
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, FIRE = 0, ACID = 0)
 	item_flags = DROPDEL
 	var/datum/component/tackler
 	var/tackle_stam_cost = 30
@@ -204,7 +204,7 @@
 	slowdown = 0.5
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | FREEZE_PROOF
 	actions_types = list(/datum/action/item_action/nanosuit/armor, /datum/action/item_action/nanosuit/cloak, /datum/action/item_action/nanosuit/speed, /datum/action/item_action/nanosuit/strength)
-	permeability_coefficient = 0.01
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, FIRE = 0, ACID = 0)
 	var/mob/living/carbon/human/Wearer = null
 	var/criticalpower = FALSE
 	var/mode = NANO_NONE
@@ -605,7 +605,7 @@
 	//item_color = "nano"
 	siemens_coefficient = 0
 	gas_transfer_coefficient = 0.01
-	permeability_coefficient = 0.01
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, FIRE = 0, ACID = 0)
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | FREEZE_PROOF //No longer shall our kind be foiled by lone chemists with spray bottles!
 	armor = list("melee" = 40, "bullet" = 40, "laser" = 40, "energy" = 45, "bomb" = 70, "bio" = 100, "rad" = 100, "fire" = 100, "acid" = 100)
 	heat_protection = HEAD
@@ -613,7 +613,6 @@
 	var/list/datahuds = list(DATA_HUD_SECURITY_ADVANCED, DATA_HUD_MEDICAL_ADVANCED, DATA_HUD_DIAGNOSTIC_BASIC)
 	var/zoom_range = 12
 	var/zoom = FALSE
-	//scan_reagents = TRUE
 	actions_types = list(/datum/action/item_action/nanosuit/zoom)
 	rad_insulation = RAD_NO_INSULATION
 	var/explosion_detection_dist = 21
@@ -1038,8 +1037,8 @@
 	new /obj/item/clothing/suit/space/hardsuit/nano(src)
 
 /obj/item/implant/explosive/disintegrate
-	name = "disintegration implant"
-	desc = "Ashes to ashes."
+	name = "дезинтеграционный имплант"
+	desc = "Прах к праху."
 	icon_state = "explosive"
 	actions_types = list(/datum/action/item_action/dusting_implant)
 	resistance_flags = INDESTRUCTIBLE | FIRE_PROOF | ACID_PROOF | FREEZE_PROOF
@@ -1049,13 +1048,13 @@
 		return FALSE
 	if(cause == "action_button" && !popup)
 		popup = TRUE
-		var/response = tgui_alert(imp_in, "Are you sure you want to activate your [name]? This will cause you to disintergrate!", "[name] Confirmation", list("Yes", "No"))
+		var/response = tgui_alert(imp_in, "Активируем [name]? Это действие необратимо!", "[name]", list("Да", "Нет"))
 		popup = FALSE
-		if(response == "No")
+		if(response == "Нет")
 			return FALSE
 	active = TRUE //to avoid it triggering multiple times due to dying
-	to_chat(imp_in, span_notice("Your dusting implant activates!"))
-	imp_in.visible_message(span_warning("[imp_in] burns up in a flash!"))
+	to_chat(imp_in, span_notice("Кислотный имплант активируется!"))
+	imp_in.visible_message(span_warning("[imp_in] обращается в пепел!"))
 	var/turf/T = get_turf(imp_in)
 	message_admins("[ADMIN_LOOKUPFLW(imp_in)] has activated their [name] at [ADMIN_VERBOSEJMP(T)], with cause of [cause].")
 	playsound(loc, 'sound/effects/fuse.ogg', 30, FALSE)

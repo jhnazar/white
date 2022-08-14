@@ -81,10 +81,12 @@
 		return freq
 
 /proc/r_stutter(text) //ненавижу пиндосов
-	var/list/soglasnie = list(	"б","в","г","д","ж","з","к","л","м","н","п","р","с","т","ф","х","ц","ч","ш","щ",
-								"Б","В","Г","Д","Ж","З","К","Л","М","Н","П","Р","С","Т","Ф","Х","Ц","Ч","Ш","Щ",
-								"b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z",
-								"B","C","D","F","G","H","J","K","L","M","N","P","Q","R","S","T","V","W","X","Y","Z")
+	var/list/soglasnie = list(
+		"б","в","г","д","ж","з","к","л","м","н","п","р","с","т","ф","х","ц","ч","ш","щ",
+		"Б","В","Г","Д","Ж","З","К","Л","М","Н","П","Р","С","Т","Ф","Х","Ц","Ч","Ш","Щ",
+		"b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z",
+		"B","C","D","F","G","H","J","K","L","M","N","P","Q","R","S","T","V","W","X","Y","Z"
+	)
 	var/t = ""
 	for(var/i = 1, i <= length(text), i++)
 		var/a = text2ascii(text, i)
@@ -107,6 +109,15 @@
 	message = replacetextEx(message, "Р", "Л")
 	return message
 
+/proc/negrish(message)
+	message = replacetextEx(message, "е", "э")
+	message = replacetextEx(message, "а", "э")
+	message = replacetextEx(message, "и", "ы")
+	message = replacetextEx(message, "Е", "Э")
+	message = replacetextEx(message, "А", "Э")
+	message = replacetextEx(message, "И", "Ы")
+	return message
+
 /proc/asiatish(message)
 	message = replacetext_char(message, "ра", "ля")
 	message = replacetext_char(message, "ла", "ля")
@@ -124,11 +135,11 @@
 	message = replacetextEx(message, "з", "с")
 	message = replacetextEx(message, "р", "л")
 	message = replacetextEx(message, "ы", "и")
-	message = replacetextEx(message, "Д", "Т")
-	message = replacetextEx(message, "Ч", "С")
-	message = replacetextEx(message, "З", "С")
-	message = replacetextEx(message, "Р", "Л")
-	message = replacetextEx(message, "Ы", "И")
+	message = replacetextEx(message, "Д", "т")
+	message = replacetextEx(message, "Ч", "с")
+	message = replacetextEx(message, "З", "с")
+	message = replacetextEx(message, "Р", "л")
+	message = replacetextEx(message, "Ы", "и")
 	return message
 
 /datum/quirk/asiat

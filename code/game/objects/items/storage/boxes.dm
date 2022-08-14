@@ -91,8 +91,8 @@
 	if(user.mind.miming)
 		alpha = 255
 
-/obj/item/storage/box/mime/Moved(oldLoc, dir)
-	if (iscarbon(oldLoc))
+/obj/item/storage/box/mime/Moved(atom/old_loc, movement_dir, forced, list/old_locs, momentum_change = TRUE)
+	if (iscarbon(old_loc))
 		alpha = 0
 	return ..()
 
@@ -144,6 +144,16 @@
 /obj/item/storage/box/survival/radio/PopulateContents()
 	..() // we want the survival stuff too.
 	new /obj/item/radio/off(src)
+
+/obj/item/storage/box/survival/proc/wardrobe_removal()
+	if(!isplasmaman(loc)) //We need to specially fill the box with plasmaman gear, since it's intended for one
+		return
+	var/obj/item/mask = locate(mask_type) in src
+	var/obj/item/internals = locate(internal_type) in src
+	new /obj/item/tank/internals/plasmaman/belt(src)
+	qdel(mask) // Get rid of the items that shouldn't be
+	qdel(internals)
+
 
 // Mining survival box
 /obj/item/storage/box/survival/mining
@@ -282,7 +292,7 @@
 	generate_items_inside(items_inside,src)
 
 /obj/item/storage/box/flashbangs
-	name = "коробка светошумовых гранат (ВНИМАНИЕ)"
+	name = "коробка светошумовых гранат"
 	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут вызвать слепоту или глухоту при многократном использовании.</B>"
 	icon_state = "secbox"
 	illustration = "flashbang"
@@ -292,7 +302,7 @@
 		new /obj/item/grenade/flashbang(src)
 
 /obj/item/storage/box/stingbangs
-	name = "коробка стингбэнгов (ВНИМАНИЕ)"
+	name = "коробка травматических гранат"
 	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут привести к тяжелым травмам или смерти при повторном использовании.</B>"
 	icon_state = "secbox"
 	illustration = "flashbang"
@@ -332,7 +342,7 @@
 
 
 /obj/item/storage/box/teargas
-	name = "ящик со слезоточивым газом (ВНИМАНИЕ)"
+	name = "ящик со слезоточивым газом"
 	desc = "<B>ВНИМАНИЕ: Гранаты чрезвычайно опасны и могут вызвать слепоту и раздражение кожи.</B>"
 	icon_state = "secbox"
 	illustration = "grenade"

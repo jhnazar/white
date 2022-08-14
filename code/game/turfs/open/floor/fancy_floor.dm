@@ -108,7 +108,7 @@
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 
 /turf/open/floor/bamboo/setup_broken_states()
-	return list("damaged")
+	return list("bamboodamaged")
 
 /turf/open/floor/grass
 	name = "травяной покров"
@@ -131,21 +131,13 @@
 
 /turf/open/floor/grass/Initialize(mapload)
 	. = ..()
+	AddElement(/datum/element/diggable, ore_type, 2, "вскапываю", "вскапывает")
 	if(nospawn)
 		return
 	spawniconchange()
 
 /turf/open/floor/grass/proc/spawniconchange()
 	icon_state = "grass[rand(0,3)]"
-
-/turf/open/floor/grass/attackby(obj/item/C, mob/user, params)
-	if((C.tool_behaviour == TOOL_SHOVEL) && params)
-		new ore_type(src, 2)
-		user.visible_message(span_notice("[user] вскапывает [src].") , span_notice("[turfverb] [src]."))
-		playsound(src, 'sound/effects/shovel_dig.ogg', 50, TRUE)
-		make_plating()
-	if(..())
-		return
 
 /turf/open/floor/grass/fairy //like grass but fae-er
 	name = "сказочный пласт"
@@ -204,12 +196,12 @@
 
 /turf/open/floor/grass/snow/safe
 	slowdown = 1.5
+	initial_temperature = T20C
 	initial_gas_mix = OPENTURF_DEFAULT_ATMOS
-	planetary_atmos = FALSE
 
 /turf/open/floor/grass/snow/actually_safe
 	slowdown = 0
-	planetary_atmos = FALSE
+	initial_temperature = T20C
 	initial_gas_mix = OPENTURF_DEFAULT_ATMOS
 
 
@@ -249,9 +241,6 @@
 	clawfootstep = FOOTSTEP_CARPET_BAREFOOT
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 	tiled_dirt = FALSE
-
-/turf/open/floor/carpet/setup_broken_states()
-	return list("damaged")
 
 /turf/open/floor/carpet/examine(mob/user)
 	. = ..()
@@ -455,10 +444,10 @@
 
 /turf/open/floor/fakespace/Initialize(mapload)
 	. = ..()
-	icon_state = SPACE_ICON_STATE
+	icon_state = SPACE_ICON_STATE(x, y, z)
 
 /turf/open/floor/fakespace/get_smooth_underlay_icon(mutable_appearance/underlay_appearance, turf/asking_turf, adjacency_dir)
 	underlay_appearance.icon = 'icons/turf/space.dmi'
-	underlay_appearance.icon_state = SPACE_ICON_STATE
+	underlay_appearance.icon_state = SPACE_ICON_STATE(x, y, z)
 	underlay_appearance.plane = PLANE_SPACE
 	return TRUE

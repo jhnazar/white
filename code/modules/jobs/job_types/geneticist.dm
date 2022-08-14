@@ -1,15 +1,15 @@
 /datum/job/geneticist
-	title = "Geneticist"
+	title = JOB_GENETICIST
 	ru_title = "Генетик"
-	department_head = list("Research Director")
+	department_head = list(JOB_RESEARCH_DIRECTOR)
 	faction = "Station"
 	total_positions = 2
 	spawn_positions = 2
 	supervisors = "научному руководителю"
 	selection_color = "#ffeef0"
 	exp_type = EXP_TYPE_CREW
-	minimal_player_age = 15
-	exp_requirements = 900
+	minimal_player_age = 14
+	exp_requirements = 300
 
 	outfit = /datum/outfit/job/geneticist
 
@@ -23,11 +23,15 @@
 		/obj/item/storage/box/monkeycubes = 10
 	)
 
+	departments_list = list(
+		/datum/job_department/science,
+	)
+
 	rpg_title = "Genemancer"
 	rpg_title_ru = "Геномансер"
 
 /datum/outfit/job/geneticist
-	name = "Geneticist"
+	name = JOB_GENETICIST
 	jobtype = /datum/job/geneticist
 
 	belt = /obj/item/modular_computer/tablet/pda/geneticist

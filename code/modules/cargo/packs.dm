@@ -1304,6 +1304,7 @@
 					/obj/item/stack/medical/bone_gel/four,
 					/obj/item/stack/medical/bone_gel/four,
 					/obj/item/vending_refill/medical,
+					/obj/item/vending_refill/chetverochka/pharma,
 					/obj/item/vending_refill/drugs)
 	crate_name = "medical supplies crate"
 
@@ -1508,6 +1509,18 @@
 					/obj/item/storage/box/swab,
 					/obj/item/construction/plumbing/research)
 	crate_name = "cytology supplies crate"
+
+/datum/supply_pack/science/mod_core
+	name = "MOD core Crate"
+	desc = "Three cores, perfect for any MODsuit construction! Naturally harvested™, of course."
+	cost = BUY_CRATE_VALUE * 3
+	access = ACCESS_ROBOTICS
+	access_view = ACCESS_ROBOTICS
+	contains = list(/obj/item/mod/core/standard,
+		/obj/item/mod/core/standard,
+		/obj/item/mod/core/standard)
+	crate_name = "MOD core crate"
+	crate_type = /obj/structure/closet/crate/secure/science
 
 /datum/supply_pack/science/reserve
 	name = "Резервные платы Научного отдела"
@@ -2386,7 +2399,7 @@
 	var/the_toy
 	for(var/i in 1 to num_contained)
 		if(prob(50))
-			the_toy = pickweight(GLOB.arcade_prize_pool)
+			the_toy = pick_weight(GLOB.arcade_prize_pool)
 		else
 			the_toy = pick(subtypesof(/obj/item/toy/plush))
 		new the_toy(C)
@@ -2738,6 +2751,7 @@
 	cost = BUY_CRATE_VALUE * 5
 	contains = list(/obj/item/vending_refill/medical,
 					/obj/item/vending_refill/drugs,
+					/obj/machinery/vending/chetverochka/pharma,
 					/obj/item/vending_refill/wallmed)
 	crate_name = "medical vending crate"
 
@@ -2761,7 +2775,8 @@
 	name = "Snack Supply Crate"
 	desc = "One vending machine refill of cavity-bringin' goodness! The number one dentist recommended order!"
 	cost = BUY_CRATE_VALUE * 3
-	contains = list(/obj/item/vending_refill/snack)
+	contains = list(/obj/item/vending_refill/snack,
+					/obj/item/vending_refill/chetverochka)
 	crate_name = "snacks supply crate"
 
 /datum/supply_pack/vending/cola

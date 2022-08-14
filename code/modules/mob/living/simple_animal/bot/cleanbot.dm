@@ -39,13 +39,13 @@
 
 	var/list/stolen_valor
 
-	var/static/list/officers = list("Captain", "Head of Personnel", "Head of Security")
-	var/static/list/command = list("Captain" = "Cpt.","Head of Personnel" = "Lt.")
-	var/static/list/security = list("Head of Security" = "Maj.", "Warden" = "Sgt.", "Detective" =  "Det.", "Security Officer" = "Officer")
-	var/static/list/engineering = list("Chief Engineer" = "Chief Engineer", "Station Engineer" = "Engineer", "Atmospherics Technician" = "Technician")
-	var/static/list/medical = list("Chief Medical Officer" = "C.M.O.", "Medical Doctor" = "M.D.", "Chemist" = "Pharm.D.")
-	var/static/list/research = list("Research Director" = "Ph.D.", "Roboticist" = "M.S.", "Scientist" = "B.S.")
-	var/static/list/legal = list("Lawyer" = "Esq.")
+	var/static/list/officers = list(JOB_CAPTAIN, JOB_HEAD_OF_PERSONNEL, JOB_HEAD_OF_SECURITY)
+	var/static/list/command = list(JOB_CAPTAIN = "Cpt.",JOB_HEAD_OF_PERSONNEL = "Lt.")
+	var/static/list/security = list(JOB_HEAD_OF_SECURITY = "Maj.", JOB_WARDEN = "Sgt.", JOB_DETECTIVE =  "Det.", JOB_SECURITY_OFFICER = "Officer")
+	var/static/list/engineering = list(JOB_CHIEF_ENGINEER = JOB_CHIEF_ENGINEER, JOB_STATION_ENGINEER = "Engineer", "Atmospherics Technician" = "Technician")
+	var/static/list/medical = list(JOB_CHIEF_MEDICAL_OFFICER = "C.M.O.", JOB_MEDICAL_DOCTOR = "M.D.", JOB_CHEMIST = "Pharm.D.")
+	var/static/list/research = list(JOB_RESEARCH_DIRECTOR = "Ph.D.", JOB_ROBOTICIST = "M.S.", JOB_SCIENTIST = "B.S.")
+	var/static/list/legal = list(JOB_LAWYER = "Esq.")
 
 	var/list/prefixes
 	var/list/suffixes
@@ -100,6 +100,7 @@
 
 /mob/living/simple_animal/bot/cleanbot/Initialize(mapload)
 	. = ..()
+	AddComponent(/datum/component/cleaner, 0.1 SECONDS)
 
 	chosen_name = name
 	get_targets()
@@ -326,11 +327,8 @@
 		mode = BOT_CLEANING
 
 		var/turf/T = get_turf(A)
-		if(do_after(src, 1, target = T))
-			T.wash(CLEAN_SCRUB)
-			visible_message(span_notice("[capitalize(src.name)] очищает [T]."))
-			target = null
-
+		start_cleaning(src, T, src)
+		target = null
 		mode = BOT_IDLE
 		icon_state = "cleanbot[on]"
 	else if(istype(A, /obj/item) || istype(A, /obj/effect/decal/remains))
@@ -366,7 +364,7 @@
 					T.MakeSlippery(TURF_WET_WATER, min_wet_time = 20 SECONDS, wet_time_to_add = 15 SECONDS)
 			else
 				visible_message(span_danger("[capitalize(src.name)] бурно жужжит, прежде чем выпустить шлейф пены!"))
-				new /obj/effect/particle_effect/foam(loc)
+				new /obj/effect/particle_effect/fluid/foam(loc)
 
 	else
 		..()

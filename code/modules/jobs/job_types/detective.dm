@@ -1,15 +1,15 @@
 /datum/job/detective
-	title = "Detective"
+	title = JOB_DETECTIVE
 	ru_title = "Детектив"
 	auto_deadmin_role_flags = DEADMIN_POSITION_SECURITY
-	department_head = list("Head of Security")
+	department_head = list(JOB_HEAD_OF_SECURITY)
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "начальнику охраны"
 	selection_color = "#ffeeee"
-	minimal_player_age = 15
-	exp_requirements = 900
+	minimal_player_age = 14
+	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/detective
@@ -36,11 +36,15 @@
 		/obj/item/storage/belt/holster/detective/full = 1
 	)
 
+	departments_list = list(
+		/datum/job_department/security,
+	)
+
 	rpg_title = "Thiefcatcher"
 	rpg_title_ru = "Ловец воров"
 
 /datum/outfit/job/detective
-	name = "Detective"
+	name = JOB_DETECTIVE
 	jobtype = /datum/job/detective
 
 	belt = /obj/item/modular_computer/tablet/pda/detective

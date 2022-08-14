@@ -98,7 +98,7 @@ This section is for the event controller
 		crystal_spawner_turfs += range_turf
 
 	for(var/i in 1 to 6)
-		var/pick_portal = pickweight(GLOB.crystal_invasion_waves["big wave"])
+		var/pick_portal = pick_weight(GLOB.crystal_invasion_waves["big wave"])
 		var/turf/portal_spawner_turf = pick(crystal_spawner_turfs)
 		new pick_portal(portal_spawner_turf)
 
@@ -149,7 +149,7 @@ This section is for the event controller
 		for(var/i in 1 to 6)
 			if(!length(portal_spawner_turfs))
 				break
-			var/pick_portal = pickweight(GLOB.crystal_invasion_waves[wave_name])
+			var/pick_portal = pick_weight(GLOB.crystal_invasion_waves[wave_name])
 			var/turf/portal_spawner_turf = pick_n_take(portal_spawner_turfs)
 			new pick_portal(portal_spawner_turf)
 	dest_crystal.icon_state = "psy_shielded"
@@ -169,7 +169,7 @@ This section is for the event controller
 ///Choose the type of the wave
 /datum/round_event/crystal_invasion/proc/choose_wave_type()
 	if(!wave_name)
-		wave_name = pickweight(list(
+		wave_name = pick_weight(list(
 			"small wave" = 35,
 			"medium wave" = 45,
 			"big wave" = 15,
@@ -196,7 +196,7 @@ This section is for the event controller
 /datum/round_event/crystal_invasion/proc/spawn_portal(list/wave_type, list/spawners)
 	if(!spawners.len)
 		CRASH("No landmarks on the station map, aborting")
-	var/pick_portal = pickweight(wave_type)
+	var/pick_portal = pick_weight(wave_type)
 	var/obj/spawner = pick(spawners)
 	new pick_portal(spawner.loc)
 
@@ -696,11 +696,11 @@ This section is for the crystal monsters variations
 
 /mob/living/simple_animal/hostile/crystal_monster/minion/Destroy()
 	if(isturf(loc))
-		var/datum/effect_system/smoke_spread/chem/S = new
+		var/datum/effect_system/fluid_spread/smoke/chem/S = new
 		create_reagents(3)
 		reagents.add_reagent(/datum/reagent/toxin/lexorin, 4)
 		S.attach(loc)
-		S.set_up(reagents, death_cloud_size, loc, silent = TRUE)
+		S.set_up(death_cloud_size, carry = reagents, location = loc, silent = TRUE)
 		S.start()
 	return ..()
 

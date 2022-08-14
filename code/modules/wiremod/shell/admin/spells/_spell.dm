@@ -77,7 +77,7 @@
 		"school" = list(
 			"Unset" = SCHOOL_UNSET,
 			"Holy" = SCHOOL_HOLY,
-			"Mime" = SCHOOL_MIME,
+			JOB_MIME = SCHOOL_MIME,
 			"Restoration" = SCHOOL_RESTORATION,
 			"Evocation" = SCHOOL_EVOCATION,
 			"Transmutation" = SCHOOL_TRANSMUTATION,
@@ -250,7 +250,7 @@
 	for(var/port_to_disable in ports_to_disable)
 		if(spell_var_ports[port_to_disable])
 			var/datum/port/input/port_datum = spell_var_ports[port_to_disable]
-			port_datum.disconnect_all(clear_value = FALSE)
+			port_datum.disconnect_all()
 			input_ports -= port_datum
 	for(var/port_to_enable in ports_to_enable)
 		if(spell_var_ports[port_to_enable])

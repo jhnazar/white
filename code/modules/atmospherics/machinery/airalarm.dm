@@ -200,18 +200,18 @@
 	var/pressure = environment.return_pressure()
 	cur_tlv = TLV["pressure"]
 	data["environment_data"] += list(list(
-							"name" = "Давление",
-							"value" = pressure,
-							"unit" = "кПа",
-							"danger_level" = cur_tlv.get_danger_level(pressure)
+		"name" = "Давление",
+		"value" = pressure,
+		"unit" = "кПа",
+		"danger_level" = cur_tlv.get_danger_level(pressure)
 	))
 	var/temperature = environment.return_temperature()
 	cur_tlv = TLV["temperature"]
 	data["environment_data"] += list(list(
-							"name" = "Температура",
-							"value" = temperature,
-							"unit" = "K ([round(temperature - T0C, 0.1)]C)",
-							"danger_level" = cur_tlv.get_danger_level(temperature)
+		"name" = "Температура",
+		"value" = temperature,
+		"unit" = "K ([round(temperature - T0C, 0.1)]C)",
+		"danger_level" = cur_tlv.get_danger_level(temperature)
 	))
 	var/total_moles = environment.total_moles()
 	var/partial_pressure = R_IDEAL_GAS_EQUATION * environment.return_temperature() / environment.return_volume()
@@ -220,10 +220,10 @@
 			continue
 		cur_tlv = TLV[gas_id]
 		data["environment_data"] += list(list(
-								"name" = GLOB.gas_data.names[gas_id],
-								"value" = environment.get_moles(gas_id) / total_moles * 100,
-								"unit" = "%",
-								"danger_level" = cur_tlv.get_danger_level(environment.get_moles(gas_id) * partial_pressure)
+			"name" = GLOB.gas_data.names[gas_id],
+			"value" = environment.get_moles(gas_id) / total_moles * 100,
+			"unit" = "%",
+			"danger_level" = cur_tlv.get_danger_level(environment.get_moles(gas_id) * partial_pressure)
 		))
 
 	if(!locked || user.has_unlimited_silicon_privilege)
@@ -451,30 +451,11 @@
 					"set_external_pressure" = ONE_ATMOSPHERE
 				), signal_source)
 		if(AALARM_MODE_CONTAMINATED)
+			var/list/all_gases = GLOB.gas_data.get_by_flag(GAS_FLAG_DANGEROUS)
 			for(var/device_id in my_area.air_scrub_info)
 				send_signal(device_id, list(
 					"power" = 1,
-					"set_filters" = list(
-						GAS_CO2,
-						GAS_MIASMA,
-						GAS_PLASMA,
-						GAS_H2O,
-						GAS_HYPERNOB,
-						GAS_NITROUS,
-						GAS_NITRYL,
-						GAS_TRITIUM,
-						GAS_BZ,
-						GAS_STIMULUM,
-						GAS_PLUOXIUM,
-						GAS_FREON,
-						GAS_HYDROGEN,
-						GAS_HEALIUM,
-						GAS_PROTO_NITRATE,
-						GAS_ZAUKER,
-						GAS_HELIUM,
-						GAS_ANTINOBLIUM,
-						GAS_HALON
-					),
+					"set_filters" = all_gases,
 					"scrubbing" = 1,
 					"widenet" = 1
 				), signal_source)

@@ -69,6 +69,10 @@
 	},
 /turf/open/floor/dune,
 /area/violence)
+"ls" = (
+/obj/effect/baseturf_helper/dune,
+/turf/closed/indestructible/sandstone,
+/area/violence)
 "lU" = (
 /obj/effect/decal/cleanable/generic,
 /turf/open/floor/dune/sandstone,
@@ -457,7 +461,7 @@
 /area/violence)
 
 (1,1,1) = {"
-rX
+ls
 rX
 rX
 rX

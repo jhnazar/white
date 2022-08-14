@@ -199,7 +199,7 @@
 /obj/item/circuitboard/machine/deepcore/drill
 	name = "бур глубокого погружения"
 	desc = "Мощная машина, которая способна извлекать руду из недр планеты."
-	icon_state = "supply"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
 	build_path = /obj/machinery/deepcore/drill
 	req_components = list(
 		/obj/item/stock_parts/micro_laser = 1,
@@ -209,7 +209,7 @@
 /obj/item/circuitboard/machine/deepcore/hopper
 	name = "блюспейс рудоприемник"
 	desc = "Машина, предназначенная для приема руды от любых подключенных к ней буров глубокого погружения посредством блюспейс телепортации."
-	icon_state = "supply"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
 	build_path = /obj/machinery/deepcore/hopper
 	req_components = list(
 		/obj/item/stack/ore/bluespace_crystal = 2,
@@ -236,7 +236,7 @@
 	playsound(src, 'sound/effects/phasein.ogg', 100, TRUE)
 	var/turf/deploy_location = get_turf(src)
 	new to_deploy(deploy_location)
-	new /obj/effect/particle_effect/smoke(deploy_location)
+	new /obj/effect/particle_effect/fluid(deploy_location)
 	qdel(src)
 
 /obj/item/pinpointer/deepcore

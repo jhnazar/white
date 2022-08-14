@@ -204,7 +204,6 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/check_missing_sprites,
 	/client/proc/check_missing_states,
 	#ifdef TESTING
-	/client/proc/export_dynamic_json,
 	/client/proc/run_dynamic_simulations,
 	#endif
 	/client/proc/display_sendmaps,
@@ -212,6 +211,7 @@ GLOBAL_PROTECT(admin_verbs_debug)
 	/client/proc/check_timer_sources,
 	/client/proc/toggle_cdn,
 	/client/proc/load_circuit,
+	/client/proc/open_lua_editor,
 	)
 GLOBAL_LIST_INIT(admin_verbs_possess, list(/proc/possess, /proc/possess, /proc/release))
 GLOBAL_PROTECT(admin_verbs_possess)
@@ -833,7 +833,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 
 	holder.deactivate()
 
-	to_chat(src, span_interface("Ты больше не пидор."))
+	to_chat(src, span_interface("DEADMINED"))
 	log_admin("[src] deadminned themselves.")
 	message_admins("[src] deadminned themselves.")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Deadmin")
@@ -861,7 +861,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 	if (!holder)
 		return //This can happen if an admin attempts to vv themself into somebody elses's deadmin datum by getting ref via brute force
 
-	to_chat(src, span_interface("Ты пидор."))
+	to_chat(src, span_interface("ADMINED"))
 	message_admins("[src] re-adminned themselves.")
 	log_admin("[src] re-adminned themselves.")
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Readmin")

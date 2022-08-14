@@ -79,7 +79,7 @@
 		qdel(src)
 
 /obj/effect/anomaly/proc/anomalyNeutralize()
-	new /obj/effect/particle_effect/smoke/bad(loc)
+	new /obj/effect/particle_effect/fluid/smoke/bad(loc)
 
 	if(drops_core)
 		aSignal.forceMove(drop_location())
@@ -169,14 +169,14 @@
 		boing = 0
 
 /obj/effect/anomaly/grav/high
-	var/grav_field
+	var/datum/proximity_monitor/advanced/gravity/grav_field
 
 /obj/effect/anomaly/grav/high/Initialize(mapload, new_lifespan)
 	. = ..()
 	INVOKE_ASYNC(src, .proc/setup_grav_field)
 
 /obj/effect/anomaly/grav/high/proc/setup_grav_field()
-	grav_field = make_field(/datum/proximity_monitor/advanced/gravity, list("current_range" = 7, "host" = src, "gravity_value" = rand(0,3)))
+	grav_field = new(src, 7, TRUE, rand(0, 3))
 
 /obj/effect/anomaly/grav/high/Destroy()
 	QDEL_NULL(grav_field)

@@ -144,8 +144,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	var/sparks_spread = 0
 	var/sparks_amt = 0 //cropped at 10
-	var/smoke_spread = 0 //1 - harmless, 2 - harmful
-	var/smoke_amt = 0 //cropped at 10
+	/// The typepath of the smoke to create on cast.
+	var/smoke_spread = null
+	/// The amount of smoke to create on case. This is a range so a value of 5 will create enough smoke to cover everything within 5 steps.
+	var/smoke_amt = 0
 
 	var/centcom_cancast = TRUE //Whether or not the spell should be allowed on z2
 
@@ -200,18 +202,12 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 		var/mob/living/carbon/human/H = user
 
-		var/list/casting_clothes = typecacheof(list(/obj/item/clothing/suit/wizrobe,
-		/obj/item/clothing/suit/space/hardsuit/wizard,
-		/obj/item/clothing/head/wizard,
-		/obj/item/clothing/head/helmet/space/hardsuit/wizard,
-		/obj/item/clothing/suit/space/hardsuit/shielded/wizard,
-		/obj/item/clothing/head/helmet/space/hardsuit/shielded/wizard))
-
 		if(clothes_req) //clothes check
-			if(!is_type_in_typecache(H.wear_suit, casting_clothes))
+			var/mob/living/carbon/human/human_owner = owner
+			if(!(human_owner.wear_suit?.clothing_flags & CASTING_CLOTHES))
 				to_chat(H, span_warning("You don't feel strong enough without your robe!"))
 				return FALSE
-			if(!is_type_in_typecache(H.head, casting_clothes))
+			if(!(human_owner.head?.clothing_flags & CASTING_CLOTHES))
 				to_chat(H, span_warning("You don't feel strong enough without your hat!"))
 				return FALSE
 		if(cult_req) //CULT_REQ CLOTHES CHECK
@@ -357,19 +353,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 			to_chat(target, text("[message]"))
 		if(sparks_spread)
 			do_sparks(sparks_amt, FALSE, location)
-		if(smoke_spread)
-			if(smoke_spread == 1)
-				var/datum/effect_system/smoke_spread/smoke = new
-				smoke.set_up(smoke_amt, location)
-				smoke.start()
-			else if(smoke_spread == 2)
-				var/datum/effect_system/smoke_spread/bad/smoke = new
-				smoke.set_up(smoke_amt, location)
-				smoke.start()
-			else if(smoke_spread == 3)
-				var/datum/effect_system/smoke_spread/sleeping/smoke = new
-				smoke.set_up(smoke_amt, location)
-				smoke.start()
+		if(ispath(smoke_spread, /datum/effect_system/fluid_spread/smoke)) // Dear god this code is :agony:
+			var/datum/effect_system/fluid_spread/smoke/smoke = new smoke_spread()
+			smoke.set_up(smoke_amt, location = location)
+			smoke.start()
 
 
 /obj/effect/proc_holder/spell/proc/cast(list/targets,mob/user = usr)

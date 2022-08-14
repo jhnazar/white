@@ -326,7 +326,7 @@
 			return 250
 
 		if(SLIME_ACTIVATE_MAJOR)
-			user.reagents.create_foam(/datum/effect_system/foam_spread,20)
+			user.reagents.create_foam(/datum/effect_system/fluid_spread/foam,20)
 			user.visible_message(span_danger("Foam spews out from [user] skin!") , span_warning("You activate [src], and foam bursts out of your skin!"))
 			return 600
 
@@ -898,6 +898,8 @@
 	if(!istype(C))
 		// applying this to vehicles is handled in the ridable element, see [/datum/element/ridable/proc/check_potion]
 		to_chat(user, span_warning("The potion can only be used on items or vehicles!"))
+		return
+	if(SEND_SIGNAL(C, COMSIG_SPEED_POTION_APPLIED, src, user) & SPEED_POTION_STOP)
 		return
 	if(isitem(C))
 		var/obj/item/I = C

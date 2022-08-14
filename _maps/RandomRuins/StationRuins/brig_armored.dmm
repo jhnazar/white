@@ -18,10 +18,7 @@
 	name = "Interrogation";
 	req_access_txt = "63"
 	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "ar" = (
@@ -325,6 +322,7 @@
 /obj/item/stack/sheet/armor_plate/plasteel/three,
 /obj/item/full_armor_upgrade,
 /obj/item/full_armor_upgrade,
+/obj/item/full_armor_upgrade,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "ck" = (
@@ -466,6 +464,7 @@
 /obj/effect/turf_decal/tile/hex/neutral{
 	dir = 8
 	},
+/obj/item/gun/energy/temperature/security,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "cn" = (
@@ -609,6 +608,20 @@
 	pixel_x = 9
 	},
 /obj/item/key/security,
+/obj/item/grenade/barrier{
+	pixel_x = 16;
+	pixel_y = 9
+	},
+/obj/item/grenade/barrier{
+	pixel_x = 11;
+	pixel_y = 9
+	},
+/obj/item/grenade/barrier{
+	pixel_x = 5;
+	pixel_y = 9
+	},
+/obj/item/gun/energy/e_gun/dragnet,
+/obj/item/gun/energy/e_gun/dragnet,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "cK" = (
@@ -684,6 +697,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 1
 	},
+/obj/item/gun/ballistic/shotgun/sniper,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "dc" = (
@@ -727,13 +741,30 @@
 /area/ai_monitored/security/armory)
 "de" = (
 /obj/effect/turf_decal/bot,
-/obj/item/gun/ballistic/shotgun/sniper,
-/obj/structure/guncase/shotgun{
-	anchored = 1;
-	can_be_unanchored = 1
+/obj/structure/rack,
+/obj/structure/window/reinforced{
+	dir = 1;
+	layer = 2.9
 	},
-/obj/item/gun/ballistic/shotgun/sniper,
-/obj/item/gun/ballistic/shotgun/sniper,
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/machinery/door/window/southleft{
+	name = "Armory Rack";
+	req_access_txt = "3"
+	},
+/obj/item/gun/energy/laser{
+	pixel_x = -3;
+	pixel_y = 3
+	},
+/obj/item/gun/energy/laser,
+/obj/item/gun/energy/laser{
+	pixel_x = 3;
+	pixel_y = -3
+	},
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "df" = (
@@ -747,9 +778,20 @@
 	pixel_x = 3;
 	pixel_y = -3
 	},
-/obj/structure/guncase/ecase{
-	anchored = 1;
-	can_be_unanchored = 1
+/obj/structure/rack,
+/obj/structure/window/reinforced{
+	dir = 1;
+	layer = 2.9
+	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/structure/window/reinforced{
+	dir = 4
+	},
+/obj/machinery/door/window/southleft{
+	name = "Armory Rack";
+	req_access_txt = "3"
 	},
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
@@ -770,20 +812,35 @@
 /obj/structure/window/reinforced{
 	dir = 8
 	},
-/obj/item/storage/belt/holster/thermal,
-/obj/item/storage/belt/holster/thermal,
+/obj/item/gun/energy/e_gun{
+	pixel_x = -3;
+	pixel_y = 3
+	},
+/obj/item/gun/energy/e_gun,
+/obj/item/gun/energy/e_gun{
+	pixel_x = 3;
+	pixel_y = -3
+	},
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "dh" = (
-/obj/effect/landmark/event_spawn,
-/mob/living/simple_animal/bot/secbot{
-	arrest_type = 1;
-	health = 45;
-	icon_state = "secbot1";
-	idcheck = 1;
-	name = "Sergeant-at-Armsky";
-	weaponscheck = 1
+/obj/structure/rack,
+/obj/structure/window/reinforced{
+	dir = 4
 	},
+/obj/structure/window/reinforced{
+	dir = 1;
+	layer = 2.9
+	},
+/obj/structure/window/reinforced{
+	dir = 8
+	},
+/obj/machinery/door/window/southleft{
+	name = "Armory Rack";
+	req_access_txt = "3"
+	},
+/obj/item/storage/belt/holster/thermal,
+/obj/item/storage/belt/holster/thermal,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "di" = (
@@ -800,6 +857,7 @@
 	id = "armory";
 	name = "Armoury Shutter"
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "dk" = (
@@ -909,6 +967,15 @@
 /area/ai_monitored/security/armory)
 "dO" = (
 /obj/structure/cable,
+/mob/living/simple_animal/bot/secbot{
+	arrest_type = 1;
+	health = 45;
+	icon_state = "secbot1";
+	idcheck = 1;
+	name = "Sergeant-at-Armsky";
+	weaponscheck = 1
+	},
+/obj/effect/landmark/event_spawn,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "dP" = (
@@ -929,6 +996,7 @@
 	name = "Armoury Shutter"
 	},
 /obj/effect/turf_decal/delivery,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "dR" = (
@@ -1272,10 +1340,7 @@
 	id = "armory";
 	name = "Armoury Shutter"
 	},
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "eX" = (
@@ -1287,10 +1352,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/ai_monitored/security/armory)
 "eY" = (
@@ -1301,10 +1363,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/main)
 "fb" = (
@@ -1412,10 +1471,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "ft" = (
@@ -1427,10 +1483,7 @@
 /obj/machinery/door/airlock/public/glass{
 	name = "Prison Wing"
 	},
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "fu" = (
@@ -1675,6 +1728,7 @@
 /obj/item/clothing/gloves/color/latex,
 /obj/item/clothing/mask/surgical,
 /obj/item/reagent_containers/spray/cleaner,
+/obj/item/healthanalyzer,
 /turf/open/floor/engine,
 /area/security/brig)
 "fX" = (
@@ -1845,9 +1899,6 @@
 	id = "briggateteh";
 	name = "security blast door"
 	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 8
-	},
 /turf/open/floor/engine,
 /area/security/main)
 "gn" = (
@@ -1907,12 +1958,7 @@
 	security_level = 6
 	},
 /obj/structure/cable,
-/obj/machinery/door/firedoor/border_only{
-	dir = 4
-	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 8
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/warden)
 "gx" = (
@@ -2405,10 +2451,7 @@
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/warden)
 "hr" = (
@@ -2421,10 +2464,7 @@
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/main)
 "hs" = (
@@ -2434,10 +2474,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "ht" = (
@@ -2509,6 +2546,9 @@
 /obj/machinery/computer/operating{
 	dir = 1
 	},
+/obj/machinery/light{
+	pixel_y = 0
+	},
 /turf/open/floor/engine,
 /area/security/brig)
 "hA" = (
@@ -2527,12 +2567,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4{
 	dir = 4
 	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 4
-	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 8
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "hB" = (
@@ -2804,10 +2839,7 @@
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/command/heads_quarters/hos)
 "ih" = (
@@ -2884,10 +2916,7 @@
 /obj/effect/turf_decal/tile/hex/red{
 	dir = 8
 	},
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "is" = (
@@ -2902,10 +2931,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iu" = (
@@ -2920,10 +2946,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iv" = (
@@ -2938,10 +2961,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iw" = (
@@ -2950,10 +2970,7 @@
 	req_access_txt = "1";
 	security_level = 6
 	},
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "ix" = (
@@ -2979,10 +2996,7 @@
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iz" = (
@@ -3004,10 +3018,7 @@
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iB" = (
@@ -3022,10 +3033,7 @@
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
-/obj/machinery/door/firedoor/border_only,
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iC" = (
@@ -3138,6 +3146,7 @@
 /obj/machinery/door/poddoor/shutters/window/preopen{
 	id = "briggate"
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "iL" = (
@@ -3320,6 +3329,7 @@
 /obj/machinery/door/poddoor/shutters/window/preopen{
 	id = "briggate"
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "jd" = (
@@ -3411,6 +3421,7 @@
 /obj/machinery/door/poddoor/shutters/window/preopen{
 	id = "briggate"
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "jl" = (
@@ -3427,6 +3438,7 @@
 /obj/structure/desk_bell{
 	pixel_x = 7
 	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "jm" = (
@@ -3463,10 +3475,7 @@
 	dir = 4
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "jo" = (
@@ -3500,10 +3509,7 @@
 	dir = 1
 	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/obj/machinery/door/firedoor/border_only,
-/obj/machinery/door/firedoor/border_only{
-	dir = 1
-	},
+/obj/machinery/door/firedoor,
 /turf/open/floor/engine,
 /area/security/brig)
 "jD" = (

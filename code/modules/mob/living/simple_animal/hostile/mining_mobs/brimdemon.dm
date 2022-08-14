@@ -53,7 +53,7 @@
 	return ..()
 
 /mob/living/simple_animal/hostile/asteroid/brimdemon/death()
-	firing = FALSE
+	end_laser()
 	cut_overlay("brimdemon_telegraph_dir")
 	move_resist = initial(move_resist)
 	return ..()
@@ -95,7 +95,7 @@
 	addtimer(CALLBACK(src, .proc/fire_laser), 1 SECONDS)
 	COOLDOWN_START(src, ranged_cooldown, ranged_cooldown_time)
 
-/mob/living/simple_animal/hostile/asteroid/brimdemon/Moved()
+/mob/living/simple_animal/hostile/asteroid/brimdemon/Moved(atom/old_loc, movement_dir, forced, list/old_locs, momentum_change = TRUE)
 	. = ..()
 	check_fire()
 

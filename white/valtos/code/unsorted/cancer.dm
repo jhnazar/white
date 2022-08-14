@@ -66,7 +66,7 @@
 			if(!(M in introduced) && (stat != DEAD))
 				introduction(M)
 
-/mob/living/simple_animal/hostile/megafauna/sans/apply_damage(damage = 0,damagetype = BRUTE, def_zone = null, blocked = FALSE, forced = FALSE, spread_damage = FALSE, wound_bonus = 0, bare_wound_bonus = 0, sharpness = NONE, attack_direction = null) //skyrat edit
+/mob/living/simple_animal/hostile/megafauna/sans/apply_damage(damage, damagetype = BRUTE, def_zone = null, blocked = FALSE, forced = FALSE, spread_damage = FALSE, wound_bonus = 0, bare_wound_bonus = 0, sharpness = NONE, attack_direction = null)
 	if(speen)
 		visible_message("<span class='danger'>[capitalize(src.name)] уворачивается всех входящих атак!")
 		step(src, pick(GLOB.cardinals))
@@ -87,10 +87,12 @@
 		return
 	if(ishuman(target))
 		var/mob/living/carbon/human/H = target
-		var/list/messages = list("Ха! Никогда не понимал, почему люди не используют в начале самую сильную атаку.",\
-								"Какой чудесный на улице день: птички поют, цветочки благоухают. В такие дни дети, как ты, ДОЛЖНЫ ГОРЕТЬ В АДУ!",\
-								"Давай-ка позовём всех твоих друзей на большую шумную вечеринку. Там будет пирог, и хот-доги, и... хммм... стоп... что-то не так. У тебя нет друзей.",\
-								"Так что, эм, эй... Даже если мы тут внизу не сдаемся, то и ты не смей сдаваться, где бы ты ни был, окей?")
+		var/list/messages = list(
+			"Ха! Никогда не понимал, почему люди не используют в начале самую сильную атаку.",
+			"Какой чудесный на улице день: птички поют, цветочки благоухают. В такие дни дети, как ты, ДОЛЖНЫ ГОРЕТЬ В АДУ!",
+			"Давай-ка позовём всех твоих друзей на большую шумную вечеринку. Там будет пирог, и хот-доги, и... хммм... стоп... что-то не так. У тебя нет друзей.",
+			"Так что, эм, эй... Даже если мы тут внизу не сдаемся, то и ты не смей сдаваться, где бы ты ни был, окей?"
+		)
 		say(message = pick(messages))
 		introduced |= H
 

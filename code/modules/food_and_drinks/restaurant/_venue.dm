@@ -48,7 +48,7 @@
 
 	// In practice, the list will never run out, but this is for sanity.
 	while (customer_types_to_choose.len)
-		customer_type = pickweight(customer_types_to_choose)
+		customer_type = pick_weight(customer_types_to_choose)
 
 		var/datum/customer_data/customer = SSrestaurant.all_customers[customer_type]
 		if (customer.can_use(src))
@@ -162,7 +162,7 @@
 
 	for(var/type_key in SSrestaurant.all_venues)
 		var/datum/venue/venue = SSrestaurant.all_venues[type_key]
-		radial_items[venue.name] = image('icons/obj/machines/restaurant_portal.dmi', venue.name)
+		radial_items[venue.name] = image('icons/effects/effects.dmi', venue.name)
 		radial_results[venue.name] = venue
 
 	var/choice = show_radial_menu(user, src, radial_items, null, require_near = TRUE)

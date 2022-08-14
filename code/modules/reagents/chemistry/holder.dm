@@ -160,7 +160,8 @@
  * * ignore splitting - Don't call the process that handles reagent spliting in a mob (impure/inverse) - generally leave this false unless you care about REAGENTS_DONOTSPLIT flags (see reagent defines)
  */
 /datum/reagents/proc/add_reagent(reagent, amount, list/data=null, reagtemp = DEFAULT_REAGENT_TEMPERATURE, added_purity = null, added_ph, no_react = FALSE, override_base_ph = FALSE, ignore_splitting = FALSE)
-	if(!isnum(amount) || !amount)
+	if(!isnum(amount) || ISNAN(amount) || !amount)
+		stack_trace("invalid number amount passed to add reagent [amount] [reagent]")
 		return FALSE
 
 	if(amount <= CHEMICAL_QUANTISATION_LEVEL)//To prevent small amount problems.
@@ -265,14 +266,11 @@
 /// Remove a specific reagent
 /datum/reagents/proc/remove_reagent(reagent, amount, safety = TRUE)//Added a safety check for the trans_id_to
 	if(isnull(amount))
-		amount = 0
-		CRASH("null amount passed to reagent code")
-
-	if(!isnum(amount))
+		stack_trace("null amount passed to reagent code")
 		return FALSE
 
-	if(amount < 0)
-		return FALSE
+	if(!isnum(amount) || ISNAN(amount) || amount < 0)
+		stack_trace("invalid number passed to remove_reagent [amount]")
 
 	var/list/cached_reagents = reagent_list
 	for(var/datum/reagent/cached_reagent as anything in cached_reagents)
@@ -418,6 +416,20 @@
 					return holder_reagent
 	return FALSE
 
+/**
+ * Check if this holder contains a reagent with a chemical_flags containing this flag
+ * Reagent takes the bitflag to search for
+ * Amount checks for having a specific amount of reagents matching that chemical
+ */
+/datum/reagents/proc/has_chemical_flag(chemical_flag, amount = 0)
+	var/found_amount = 0
+	var/list/cached_reagents = reagent_list
+	for(var/datum/reagent/holder_reagent as anything in cached_reagents)
+		if (holder_reagent.chemical_flags & chemical_flag)
+			found_amount += holder_reagent.volume
+			if(found_amount >= amount)
+				return TRUE
+	return FALSE
 
 /**
  * Transfer some stuff from this holder to a target object

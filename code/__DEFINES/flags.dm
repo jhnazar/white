@@ -61,6 +61,8 @@ GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 /// Can players recolor this in-game via vendors (and maybe more if support is added)?
 #define IS_PLAYER_COLORABLE_1 (1<<21)
 #define KEEP_ON_ARENA_1 (1<<22)
+/// Whether or not this atom has contextual screentips when hovered OVER
+#define HAS_CONTEXTUAL_SCREENTIPS_1 (1<<23)
 
 // Update flags for [/atom/proc/update_appearance]
 /// Update the atom's name
@@ -253,6 +255,8 @@ GLOBAL_LIST_INIT(bitflags, list(1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 204
 #define EWDIRFLIP(d)     (d^(EAST|WEST))
 ///Turns the dir by 180 degrees
 #define DIRFLIP(d)       turn(d, 180)
+
+#define MAX_BITFIELD_SIZE 24
 
 /// 33554431 (2^24 - 1) is the maximum value our bitflags can reach.
 #define MAX_BITFLAG_DIGITS 8

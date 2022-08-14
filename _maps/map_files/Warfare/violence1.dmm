@@ -449,7 +449,7 @@
 /turf/open/floor/plating/is12/surface,
 /area/violence)
 "QR" = (
-/obj/effect/baseturf_helper/asteroid,
+/obj/effect/baseturf_helper/dune,
 /turf/closed/indestructible/necropolis,
 /area/violence)
 "Rh" = (
@@ -610,7 +610,7 @@
 (1,1,1) = {"
 Sa
 Sa
-ZD
+QR
 ZD
 ZD
 ZD
@@ -771,7 +771,7 @@ IR
 IR
 IR
 IR
-QR
+ZD
 Sa
 Sa
 "}

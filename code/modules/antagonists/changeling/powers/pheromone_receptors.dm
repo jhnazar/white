@@ -7,6 +7,8 @@
 	name = "Феромонные рецепторы"
 	desc = "Мы настраиваем наши чувства, чтобы отслеживать других генокрадов по запаху. Чем ближе они, тем легче их найти."
 	helptext = "Мы узнаем общее направление ближайших генокрадов, причем более близкие ароматы будут сильнее. Наша регенерация химикатов замедляется, пока оно активно."
+	icon_icon = 'icons/mob/actions/actions_spells.dmi'
+	button_icon_state = "nose"
 	chemical_cost = 0 //Reduces regain rate while active.
 	dna_cost = 2
 	var/receptors_active = FALSE
@@ -48,7 +50,7 @@
 					changelings[C] = (CHANGELING_PHEROMONE_MAX_DISTANCE ** 2) - (distance ** 2)
 
 	if(changelings.len)
-		scan_target = pickweight(changelings) //Point at a 'random' changeling, biasing heavily towards closer ones.
+		scan_target = pick_weight(changelings) //Point at a 'random' changeling, biasing heavily towards closer ones.
 	else
 		scan_target = null
 

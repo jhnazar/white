@@ -48,7 +48,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	var/atom/movable/screen/alien_plasma_display
 	var/atom/movable/screen/alien_queen_finder
 
-	var/atom/movable/screen/devil/soul_counter/devilsouldisplay
+	var/atom/movable/screen/combo/combo_display
 
 	var/atom/movable/screen/fixeye/fixeye
 
@@ -77,7 +77,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	var/atom/movable/screen/stamina
 	var/atom/movable/screen/healthdoll
 	var/atom/movable/screen/internals
-	var/atom/movable/screen/tooltip
+	var/atom/movable/screen/tooltip/tooltip
 	var/atom/movable/screen/timelimit/timelimit
 	var/atom/movable/screen/wanted/wanted_lvl
 	var/atom/movable/screen/spacesuit
@@ -108,7 +108,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	tooltip = new /atom/movable/screen/tooltip()
 	tooltip?.hud = src
 	if (owner?.client?.prefs?.w_toggles & TOOLTIP_USER_POS)
-		tooltip?.screen_loc = "SOUTH+1,CENTER-4:16"
+		tooltip?.screen_loc = "BOTTOM+2,LEFT"
 	infodisplay += tooltip
 
 	if(GLOB.violence_mode_activated)
@@ -152,14 +152,12 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 	internals = null
 	spacesuit = null
 	lingchemdisplay = null
-	devilsouldisplay = null
 	lingstingdisplay = null
 	blobpwrdisplay = null
 	keeper_magic_display = null
 	alien_plasma_display = null
 	alien_queen_finder = null
-
-
+	combo_display = null
 
 	QDEL_LIST_ASSOC_VAL(plane_masters)
 	QDEL_LIST_ASSOC_VAL(plane_master_controllers)

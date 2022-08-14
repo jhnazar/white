@@ -31,6 +31,8 @@
 	var/stop_automated_movement = 0
 	///Does the mob wander around when idle?
 	var/wander = 1
+	/// Makes Goto() return FALSE and not start a move loop
+	var/prevent_goto_movement = FALSE
 	///When set to 1 this stops the animal from moving when someone is pulling it.
 	var/stop_automated_movement_when_pulled = 1
 
@@ -557,7 +559,7 @@
 		else if(isliving(M) && !faction_check_mob(M)) //shyness check. we're not shy in front of things that share a faction with us.
 			return //we never mate when not alone, so just abort early
 	if(alone && partner && (children < 3) && (friends < 8))
-		var/childspawn = pickweight(childtype)
+		var/childspawn = pick_weight(childtype)
 		var/turf/target = get_turf(loc)
 		if(target)
 			return new childspawn(target)
@@ -738,6 +740,11 @@
 /mob/living/simple_animal/proc/stop_deadchat_plays()
 	stop_automated_movement = FALSE
 
+/mob/living/simple_animal/proc/Goto(target, delay, minimum_distance)
+	if(prevent_goto_movement)
+		return FALSE
+	SSmove_manager.move_to(src, target, minimum_distance, delay)
+	return TRUE
 
 //Makes this mob hunt the prey, be it living or an object. Will kill living creatures, and delete objects.
 /mob/living/simple_animal/proc/hunt(hunted)

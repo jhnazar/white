@@ -1,8 +1,8 @@
 /datum/job/head_of_personnel
-	title = "Head of Personnel"
+	title = JOB_HEAD_OF_PERSONNEL
 	ru_title = "Глава Персонала"
 	auto_deadmin_role_flags = DEADMIN_POSITION_HEAD
-	department_head = list("Captain")
+	department_head = list(JOB_CAPTAIN)
 	head_announce = list(RADIO_CHANNEL_SUPPLY, RADIO_CHANNEL_SERVICE)
 	faction = "Station"
 	total_positions = 1
@@ -10,8 +10,8 @@
 	supervisors = "капитану"
 	selection_color = "#ddddff"
 	req_admin_notify = 1
-	minimal_player_age = 45
-	exp_requirements = 7400
+	minimal_player_age = 14
+	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_SERVICE
 
@@ -33,6 +33,11 @@
 		/obj/item/stack/sheet/bone = 5
 	)
 
+	departments_list = list(
+		/datum/job_department/service,
+		/datum/job_department/command,
+	)
+
 	rpg_title = "Guild Questgiver"
 	rpg_title_ru = "Квестодатель гильдии"
 
@@ -42,7 +47,7 @@
 		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, .proc/minor_announce, "Учитывая нехватку экипажа, текущим капитаном станции теперь является [H.real_name]!"))
 
 /datum/outfit/job/hop
-	name = "Head of Personnel"
+	name = JOB_HEAD_OF_PERSONNEL
 	jobtype = /datum/job/head_of_personnel
 
 	id = /obj/item/card/id/advanced/silver

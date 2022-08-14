@@ -156,6 +156,8 @@
 #define COMSIG_ATOM_SMOOTHED_ICON "atom_smoothed_icon"
 ///from base of atom/Entered(): (atom/movable/arrived, atom/old_loc, list/atom/old_locs)
 #define COMSIG_ATOM_ENTERED "atom_entered"
+///from base of atom/movable/Moved(): (atom/movable/arrived, atom/old_loc, list/atom/old_locs)
+#define COMSIG_ATOM_ABSTRACT_ENTERED "atom_abstract_entered"
 /// Sent from the atom that just Entered src. From base of atom/Entered(): (/atom/destination, atom/old_loc, list/atom/old_locs)
 #define COMSIG_ATOM_ENTERING "atom_entering"
 ///from base of atom/Exit(): (/atom/movable/leaving, direction)
@@ -163,6 +165,8 @@
 	#define COMPONENT_ATOM_BLOCK_EXIT (1<<0)
 ///from base of atom/Exited(): (atom/movable/gone, direction)
 #define COMSIG_ATOM_EXITED "atom_exited"
+///from base of atom/movable/Moved(): (atom/movable/gone, direction)
+#define COMSIG_ATOM_ABSTRACT_EXITED "atom_abstract_exited"
 ///from base of atom/Bumped(): (/atom/movable)
 #define COMSIG_ATOM_BUMPED "atom_bumped"
 ///from base of atom/ex_act(): (severity, target)
@@ -336,6 +340,8 @@
 	#define COMSIG_ATOM_CANT_PULL (1 << 0)
 ///signal sent out by an atom when it is no longer being pulled by something else
 #define COMSIG_ATOM_NO_LONGER_PULLED "movable_no_longer_pulled"
+///signal sent out by an atom when it is no longer pulling something : (atom/pulling)
+#define COMSIG_ATOM_NO_LONGER_PULLING "movable_no_longer_pulling"
 ///called for each movable in a turf contents on /turf/zImpact(): (atom/movable/A, levels)
 #define COMSIG_ATOM_INTERCEPT_Z_FALL "movable_intercept_z_impact"
 ///called on a movable (NOT living) when it starts pulling (atom/movable/pulled, state, force)
@@ -375,6 +381,8 @@
 #define COMSIG_ENTER_AREA "enter_area"
 ///from base of area/Exited(): (/area). Sent to "area-sensitive" movables, see __DEFINES/traits.dm for info.
 #define COMSIG_EXIT_AREA "exit_area"
+/// Sent when a shuttle leaves this area
+#define COMSIG_AREA_AFTER_SHUTTLE_MOVE "area_after_shuttle_move"
 ///from base of atom/Click(): (location, control, params, mob/user)
 #define COMSIG_CLICK "atom_click"
 ///from base of atom/ShiftClick(): (/mob)
@@ -448,6 +456,12 @@
 ///from base of atom/movable/newtonian_move(): (inertia_direction)
 #define COMSIG_MOVABLE_NEWTONIAN_MOVE "movable_newtonian_move"
 	#define COMPONENT_MOVABLE_NEWTONIAN_BLOCK (1<<0)
+///from datum/component/drift/apply_initial_visuals(): ()
+#define COMSIG_MOVABLE_DRIFT_VISUAL_ATTEMPT "movable_drift_visual_attempt"
+	#define DRIFT_VISUAL_FAILED (1<<0)
+///from datum/component/drift/allow_final_movement(): ()
+#define COMSIG_MOVABLE_DRIFT_BLOCK_INPUT "movable_drift_block_input"
+	#define DRIFT_ALLOW_INPUT (1<<0)
 ///from base of atom/movable/throw_impact(): (/atom/hit_atom, /datum/thrownthing/throwingdatum)
 #define COMSIG_MOVABLE_IMPACT "movable_impact"
 	#define COMPONENT_MOVABLE_IMPACT_FLIP_HITPUSH (1<<0) //if true, flip if the impact will push what it hits
@@ -509,6 +523,9 @@
 #define COMSIG_BUCKLED_CAN_Z_MOVE "ridden_pre_can_z_move"
 	#define COMPONENT_RIDDEN_STOP_Z_MOVE 1
 	#define COMPONENT_RIDDEN_ALLOW_Z_MOVE 2
+/// from base of atom/movable/Process_Spacemove(): (movement_dir, continuous_move)
+#define COMSIG_MOVABLE_SPACEMOVE "spacemove"
+	#define COMSIG_MOVABLE_STOP_SPACEMOVE (1<<0)
 ///Called when a movable is teleported from `do_teleport()`: (destination, channel)
 #define COMSIG_MOVABLE_TELEPORTED "movable_teleported"
 
@@ -770,6 +787,8 @@
 #define COMSIG_OBJ_PAINTED "obj_painted"
 /// from /obj/proc/obj_break: ()
 #define COMSIG_OBJ_BREAK "obj_break"
+/// from base of [/atom/proc/obj_destruction]: (damage_flag)
+#define COMSIG_OBJ_DESTRUCTION "obj_destruction"
 /// from base of [/obj/proc/obj_fix]: ()
 #define COMSIG_OBJ_FIX "obj_fix"
 
@@ -848,6 +867,8 @@
 #define COMSIG_ITEM_EQUIPPED "item_equip"
 /// A mob has just equipped an item. Called on [/mob] from base of [/obj/item/equipped()]: (/obj/item/equipped_item, slot)
 #define COMSIG_MOB_EQUIPPED_ITEM "mob_equipped_item"
+/// A mob has just unequipped an item.
+#define COMSIG_MOB_UNEQUIPPED_ITEM "mob_unequipped_item"
 ///called on [/obj/item] before unequip from base of [mob/proc/doUnEquip]: (force, atom/newloc, no_move, invdrop, silent)
 #define COMSIG_ITEM_PRE_UNEQUIP "item_pre_unequip"
 	///only the pre unequip can be cancelled
@@ -1157,6 +1178,8 @@
 	///Returned by cleanable components when they are cleaned.
 	#define COMPONENT_CLEANED (1<<0)
 
+///Called from a cleaning tool to start cleaning something.
+#define COMSIG_START_CLEANING "start_cleaning"
 
 //Creamed
 
@@ -1396,6 +1419,8 @@
 #define COMSIG_MOB_MOVESPEED_UPDATED "mob_update_movespeed"
 ///(NOT on humans) from mob/living/*/UnarmedAttack(): (atom/target, proximity, modifiers)
 #define COMSIG_LIVING_UNARMED_ATTACK "living_unarmed_attack"
+///From base of mob/living/MobBump() (mob/living)
+#define COMSIG_LIVING_MOB_BUMP "living_mob_bump"
 ///from mob/living/carbon/human/UnarmedAttack(): (atom/target, proximity, modifiers)
 #define COMSIG_HUMAN_EARLY_UNARMED_ATTACK "human_early_unarmed_attack"
 ///from mob/living/carbon/human/UnarmedAttack(): (atom/target, proximity, modifiers)
@@ -1403,6 +1428,9 @@
 //from /mob/living/carbon/human/proc/check_shields(): (atom/hit_by, damage, attack_text, attack_type, armour_penetration)
 #define COMSIG_HUMAN_CHECK_SHIELDS "human_check_shields"
 	#define SHIELD_BLOCK (1<<0)
+///From base of mob/living/ZImpactDamage() (mob/living, levels, turf/t)
+#define COMSIG_LIVING_Z_IMPACT "living_z_impact"
+	#define NO_Z_IMPACT_DAMAGE (1<<0)
 
 // Aquarium related signals
 #define COMSIG_AQUARIUM_BEFORE_INSERT_CHECK "aquarium_about_to_be_inserted"
@@ -1430,6 +1458,10 @@
 
 ///from base of /obj/item/mmi/set_brainmob(): (mob/living/brain/new_brainmob)
 #define COMSIG_MMI_SET_BRAINMOB "mmi_set_brainmob"
+
+/// from base of /obj/item/slimepotion/speed/afterattack(): (obj/target, /obj/src, mob/user)
+#define COMSIG_SPEED_POTION_APPLIED "speed_potion"
+	#define SPEED_POTION_STOP (1<<0)
 
 /// Exoprobe adventure finished: (result) result is ADVENTURE_RESULT_??? values
 #define COMSIG_ADVENTURE_FINISHED "adventure_done"
@@ -1490,6 +1522,10 @@
 /// Called when the integrated circuit is locked.
 #define COMSIG_CIRCUIT_SET_LOCKED "circuit_set_locked"
 
+/// Called before power is used in an integrated circuit (power_to_use)
+#define COMSIG_CIRCUIT_PRE_POWER_USAGE "circuit_pre_power_usage"
+	#define COMPONENT_OVERRIDE_POWER_USAGE (1<<0)
+
 /// Called right before the integrated circuit data is converted to json. Allows modification to the data right before it is returned.
 #define COMSIG_CIRCUIT_PRE_SAVE_TO_JSON "circuit_pre_save_to_json"
 
@@ -1511,8 +1547,16 @@
 /// Called when the circuit component is saved.
 #define COMSIG_CIRCUIT_COMPONENT_SAVE "circuit_component_save"
 
+/// Called when circuit component data should be saved
+#define COMSIG_CIRCUIT_COMPONENT_SAVE_DATA "circuit_component_save_data"
+/// Called when circuit component data should be loaded
+#define COMSIG_CIRCUIT_COMPONENT_LOAD_DATA "circuit_component_load_data"
+
 /// Called when an external object is loaded.
 #define COMSIG_MOVABLE_CIRCUIT_LOADED "movable_circuit_loaded"
+
+/// Called when a ui action is sent for the circuit component
+#define COMSIG_CIRCUIT_COMPONENT_PERFORM_ACTION "circuit_component_perform_action"
 
 /// Sent from /obj/structure/industrial_lift/tram when its travelling status updates. (travelling)
 #define COMSIG_TRAM_SET_TRAVELLING "tram_set_travelling"
@@ -1697,3 +1741,9 @@
 
 /// generally called before temporary non-parallel animate()s on the atom (animation_duration)
 #define COMSIG_ATOM_TEMPORARY_ANIMATION_START "atom_temp_animate_start"
+
+/// Called when a techweb design is researched (datum/design/researched_design, custom)
+#define COMSIG_TECHWEB_ADD_DESIGN "techweb_add_design"
+
+/// Called when a techweb design is removed (datum/design/removed_design, custom)
+#define COMSIG_TECHWEB_REMOVE_DESIGN "techweb_remove_design"

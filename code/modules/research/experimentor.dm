@@ -195,7 +195,7 @@
 			use_power(750)
 			if(dotype != FAIL)
 				var/list/nodes = techweb_item_boost_check(process)
-				var/picked = pickweight(nodes)		//This should work.
+				var/picked = pick_weight(nodes)		//This should work.
 				stored_research.boost_with_path(SSresearch.techweb_node_by_id(picked), process.type)
 	updateUsrDialog()
 
@@ -230,8 +230,8 @@
 		loaded_item = null
 
 /obj/machinery/rnd/experimentor/proc/throwSmoke(turf/where)
-	var/datum/effect_system/smoke_spread/smoke = new
-	smoke.set_up(0, where)
+	var/datum/effect_system/fluid_spread/smoke/smoke = new
+	smoke.set_up(0, location = where)
 	smoke.start()
 
 
@@ -286,7 +286,7 @@
 		else if(prob(EFFECT_PROB_MEDIUM-badThingCoeff))
 			var/savedName = "[exp_on]"
 			ejectItem(TRUE)
-			var/newPath = text2path(pickweight(valid_items))
+			var/newPath = text2path(pick_weight(valid_items))
 			loaded_item = new newPath(src)
 			visible_message(span_warning("[capitalize(src.name)] malfunctions, transforming [savedName] into [loaded_item]!"))
 			investigate_log("Experimentor has transformed [savedName] into [loaded_item]", INVESTIGATE_EXPERIMENTOR)
@@ -303,27 +303,27 @@
 		else if(prob(EFFECT_PROB_VERYLOW-badThingCoeff))
 			visible_message(span_danger("[capitalize(src.name)] destroys [exp_on], leaking dangerous gas!"))
 			chosenchem = pick(/datum/reagent/carbon,/datum/reagent/uranium/radium,/datum/reagent/toxin,/datum/reagent/consumable/condensedcapsaicin,/datum/reagent/drug/mushroomhallucinogen,/datum/reagent/drug/space_drugs,/datum/reagent/consumable/ethanol,/datum/reagent/consumable/ethanol/beepsky_smash)
-			var/datum/reagents/R = new/datum/reagents(50)
-			R.my_atom = src
-			R.add_reagent(chosenchem , 50)
+			var/datum/reagents/tmp_holder = new/datum/reagents(50)
+			tmp_holder.my_atom = src
+			tmp_holder.add_reagent(chosenchem , 50)
 			investigate_log("Experimentor has released [chosenchem] smoke.", INVESTIGATE_EXPERIMENTOR)
-			var/datum/effect_system/smoke_spread/chem/smoke = new
-			smoke.set_up(R, 0, src, silent = TRUE)
+			var/datum/effect_system/fluid_spread/smoke/chem/smoke = new
+			smoke.set_up(0, location = src, carry = tmp_holder, silent = TRUE)
 			playsound(src, 'sound/effects/smoke.ogg', 50, TRUE, -3)
 			smoke.start()
-			qdel(R)
+			qdel(tmp_holder)
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_VERYLOW-badThingCoeff))
 			visible_message(span_danger("[capitalize(src.name)] chemical chamber has sprung a leak!"))
 			chosenchem = pick(/datum/reagent/mutationtoxin/random,/datum/reagent/nanomachines,/datum/reagent/toxin/acid)
-			var/datum/reagents/R = new/datum/reagents(50)
-			R.my_atom = src
-			R.add_reagent(chosenchem , 50)
-			var/datum/effect_system/smoke_spread/chem/smoke = new
-			smoke.set_up(R, 0, src, silent = TRUE)
+			var/datum/reagents/tmp_holder = new/datum/reagents(50)
+			tmp_holder.my_atom = src
+			tmp_holder.add_reagent(chosenchem , 50)
+			var/datum/effect_system/fluid_spread/smoke/chem/smoke = new
+			smoke.set_up(0, location = src, carry = tmp_holder, silent = TRUE)
 			playsound(src, 'sound/effects/smoke.ogg', 50, TRUE, -3)
 			smoke.start()
-			qdel(R)
+			qdel(tmp_holder)
 			ejectItem(TRUE)
 			warn_admins(usr, "[chosenchem] smoke")
 			investigate_log("Experimentor has released <font color='red'>[chosenchem]</font> smoke!", INVESTIGATE_EXPERIMENTOR)
@@ -399,15 +399,15 @@
 			investigate_log("Experimentor has made a cup of [chosenchem] coffee.", INVESTIGATE_EXPERIMENTOR)
 		else if(prob(EFFECT_PROB_VERYLOW-badThingCoeff))
 			visible_message(span_danger("[capitalize(src.name)] malfunctions, shattering [exp_on] and releasing a dangerous cloud of coolant!"))
-			var/datum/reagents/R = new/datum/reagents(50)
-			R.my_atom = src
-			R.add_reagent(/datum/reagent/consumable/frostoil , 50)
+			var/datum/reagents/tmp_holder = new/datum/reagents(50)
+			tmp_holder.my_atom = src
+			tmp_holder.add_reagent(/datum/reagent/consumable/frostoil, 50)
 			investigate_log("Experimentor has released frostoil gas.", INVESTIGATE_EXPERIMENTOR)
-			var/datum/effect_system/smoke_spread/chem/smoke = new
-			smoke.set_up(R, 0, src, silent = TRUE)
+			var/datum/effect_system/fluid_spread/smoke/chem/smoke = new
+			smoke.set_up(0, location = src, carry = tmp_holder, silent = TRUE)
 			playsound(src, 'sound/effects/smoke.ogg', 50, TRUE, -3)
 			smoke.start()
-			qdel(R)
+			qdel(tmp_holder)
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_LOW-badThingCoeff))
 			visible_message(span_warning("[capitalize(src.name)] malfunctions, shattering [exp_on] and leaking cold air!"))
@@ -425,8 +425,8 @@
 			ejectItem(TRUE)
 		else if(prob(EFFECT_PROB_MEDIUM-badThingCoeff))
 			visible_message(span_warning("[capitalize(src.name)] malfunctions, releasing a flurry of chilly air as [exp_on] pops out!"))
-			var/datum/effect_system/smoke_spread/smoke = new
-			smoke.set_up(0, loc)
+			var/datum/effect_system/fluid_spread/smoke/smoke = new
+			smoke.set_up(0, location = loc)
 			smoke.start()
 			ejectItem()
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -593,8 +593,8 @@
 //////////////// RELIC PROCS /////////////////////////////
 
 /obj/item/relic/proc/throwSmoke(turf/where)
-	var/datum/effect_system/smoke_spread/smoke = new
-	smoke.set_up(0, get_turf(where))
+	var/datum/effect_system/fluid_spread/smoke/smoke = new
+	smoke.set_up(0, location = get_turf(where))
 	smoke.start()
 
 /obj/item/relic/proc/corgicannon(mob/user)

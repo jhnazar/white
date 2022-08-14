@@ -327,7 +327,7 @@
 	min_val = -1
 
 /datum/config_entry/string/overflow_job
-	config_entry_value = "Assistant"
+	config_entry_value = JOB_ASSISTANT
 
 /datum/config_entry/flag/starlight
 	config_entry_value = TRUE // valera jral
@@ -434,3 +434,4 @@
 	default = 15
 	min_val = 15
 	max_val = 50 // Byond (the) limits
+

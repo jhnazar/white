@@ -3,6 +3,7 @@
 	create_reagents(1000, REAGENT_HOLDER_ALIVE)
 	assign_bodypart_ownership()
 	update_body_parts() //to update the carbon's new bodyparts appearance
+	register_context()
 
 	// Carbons cannot taste anything without a tongue; the tongue organ removes this on Insert
 	ADD_TRAIT(src, TRAIT_AGEUSIA, NO_TONGUE_TRAIT)
@@ -83,6 +84,12 @@
 			return 1
 
 	return ..()
+
+/mob/living/carbon/CtrlShiftClick(mob/user)
+	..()
+	if(iscarbon(user))
+		var/mob/living/carbon/carbon_user = user
+		carbon_user.give(src)
 
 /mob/living/carbon/throw_impact(atom/hit_atom, datum/thrownthing/throwingdatum)
 	if(mind?.martial_art.handle_throw(hit_atom, src))
@@ -226,23 +233,18 @@
 	if(HAS_TRAIT(src, TRAIT_RESTRAINED))
 		changeNext_move(CLICK_CD_BREAKOUT)
 		last_special = world.time + CLICK_CD_BREAKOUT
-		var/buckle_break_chance = 100
 		var/buckle_time = 1 SECONDS
 
 		var/obj/item/restraints/O
 		if(handcuffed)
 			O = src.get_item_by_slot(ITEM_SLOT_HANDCUFFED)
-			buckle_break_chance = O.breakoutchance
 			buckle_time = O.breakouttime
 		visible_message(span_warning("[capitalize(src.name)] пытается выбраться из наручников!") , \
 					span_notice("Пытаюсь выбраться из наручников..."))
 		if(do_after(src, buckle_time, target = src, timed_action_flags = IGNORE_HELD_ITEM))
 			if(!buckled)
 				return
-			if(prob(buckle_break_chance))
-				buckled.user_unbuckle_mob(src,src)
-			else
-				to_chat(src, span_notice(pick("Ещё раз...", "Почти получилось...", "А ну-ка...", "А если так...", "Чёрт...", "Ну давай же...")))
+			buckled.user_unbuckle_mob(src,src)
 		else
 			if(src && buckled)
 				to_chat(src, span_warning("Не получилось выбраться из наручников!"))
@@ -280,33 +282,35 @@
 		cuff_resist(I)
 
 
-/mob/living/carbon/proc/cuff_resist(obj/item/I, breakoutchance = 5, cuff_break = 0)
+/mob/living/carbon/proc/cuff_resist(obj/item/I, cuff_break = 0)
 	if(I.item_flags & BEING_REMOVED)
 		to_chat(src, span_warning("Уже пытаюсь снять [I]!"))
 		return
 	I.item_flags |= BEING_REMOVED
-	breakoutchance = I.breakoutchance
+	var/breakouttimeisfsecurity = 1
 	if(!cuff_break)
 		visible_message(span_warning("[capitalize(src.name)] пытается снять [I]!"))
 		to_chat(src, span_notice("Пытаюсь снять [I]..."))
-		if(do_after(src, I.breakouttime, target = src, timed_action_flags = IGNORE_HELD_ITEM))
-			if(prob(breakoutchance))
-				. = clear_cuffs(I, cuff_break)
-			else
-				//I.breakoutchance++
-				to_chat(src, span_notice(pick("Ещё раз...", "Почти получилось...", "А ну-ка...", "А если так...", "Чёрт...", "Ну давай же...")))
+		if(istype(I,/obj/item/restraints/handcuffs/cable) && (src.job in (GLOB.security_positions)))
+			if(prob(80))
+				var/obj/item/bodypart/arm = src.hand_bodyparts[src.active_hand_index]
+				to_chat(src, span_notice("Вспоминаю курс \"Как не быть закованным в стяжки\" и пытаюсь повторить действия инструктора."))
+				breakouttimeisfsecurity = 15
+				to_chat(src, span_notice("Резким движением лопаю стяжки."))
+				arm.receive_damage(rand(5,8))
+
+
+
+		if(do_after(src, I.breakouttime/breakouttimeisfsecurity, target = src, timed_action_flags = IGNORE_HELD_ITEM))
+			. = clear_cuffs(I, cuff_break)
 		else
 			to_chat(src, span_warning("Не получилось снять [I]!"))
 
 	else if(cuff_break == FAST_CUFFBREAK)
-		breakoutchance = I.breakoutchance * 2
 		visible_message(span_warning("[capitalize(src.name)] пытается разорвать [I]!"))
 		to_chat(src, span_notice("Пытаюсь разорвать [I]..."))
 		if(do_after(src, I.breakouttime * 0.1, target = src, timed_action_flags = IGNORE_HELD_ITEM))
-			if(prob(breakoutchance))
-				. = clear_cuffs(I, cuff_break)
-			else
-				to_chat(src, span_alert(pick("СУКА!", "ДА БЛЯТЬ!", "ЧЁРТ!", "УКУСИ МЕНЯ ПЧЕЛА!", "ДО ЧЕГО ЖЕ КРЕПКИЕ, СУКА!", "УХ МЛЯ!")))
+			. = clear_cuffs(I, cuff_break)
 		else
 			to_chat(src, span_warning("У меня не вышло разорвать [I]!"))
 
@@ -360,8 +364,6 @@
 		return TRUE
 
 	else
-
-		I.breakoutchance = initial(I.breakoutchance)
 
 		if(I == handcuffed)
 			handcuffed.forceMove(drop_location())
@@ -575,7 +577,7 @@
 		if(!isnull(E.lighting_alpha))
 			lighting_alpha = E.lighting_alpha
 
-	if(client.eye != src)
+	if(client.eye && client.eye != src)
 		var/atom/A = client.eye
 		if(A.update_remote_sight(src)) //returns 1 if we override all other sight updates.
 			return
@@ -590,6 +592,14 @@
 			see_invisible = min(G.invis_view, see_invisible)
 		if(!isnull(G.lighting_alpha))
 			lighting_alpha = min(lighting_alpha, G.lighting_alpha)
+
+	if(HAS_TRAIT(src, TRAIT_TRUE_NIGHT_VISION))
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_MOSTLY_INVISIBLE)
+		see_in_dark = max(see_in_dark, 8)
+
+	if(HAS_TRAIT(src, TRAIT_MESON_VISION))
+		sight |= SEE_TURFS
+		lighting_alpha = min(lighting_alpha, LIGHTING_PLANE_ALPHA_MOSTLY_VISIBLE)
 
 	if(HAS_TRAIT(src, TRAIT_THERMAL_VISION))
 		sight |= (SEE_MOBS)
@@ -631,18 +641,6 @@
 
 	else
 		. += INFINITY
-
-/mob/living/carbon/get_permeability_protection(list/target_zones = list(HANDS,CHEST,GROIN,LEGS,FEET,ARMS,HEAD))
-	var/list/tally = list()
-	for(var/obj/item/I in get_equipped_items())
-		for(var/zone in target_zones)
-			if(I.body_parts_covered & zone)
-				tally["[zone]"] = max(1 - I.permeability_coefficient, target_zones["[zone]"])
-	var/protection = 0
-	for(var/key in tally)
-		protection += tally[key]
-	protection *= INVERSE(target_zones.len)
-	return protection
 
 //this handles hud updates
 /mob/living/carbon/update_damage_hud()

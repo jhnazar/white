@@ -259,9 +259,8 @@
 
 /datum/controller/configuration/proc/LoadMOTD()
 	motd = file2text("[directory]/motd.txt")
-	var/tm_info = GLOB.revdata.GetTestMergeInfo()
-	if(motd || tm_info)
-		motd = motd ? "[motd]<br>[tm_info]" : tm_info
+	if(motd)
+		motd = "[motd]<br>"
 /*
 Policy file should be a json file with a single object.
 Value is raw html.
@@ -275,7 +274,7 @@ special keywords defined in _DEFINES/admin.dm
 
 Example config:
 {
-	"Assistant" : "Don't kill everyone",
+	JOB_ASSISTANT : "Don't kill everyone",
 	"/datum/antagonist/highlander" : "<b>Kill everyone</b>",
 	"Ash Walker" : "Kill all spacemans"
 }

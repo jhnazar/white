@@ -73,7 +73,7 @@
 	subcategory = CAT_WEAPON
 
 /datum/crafting_recipe/strobeshield
-	name = "Strobe Shield"
+	name = "Ослепляющий щит"
 	result = /obj/item/shield/riot/flash
 	reqs = list(/obj/item/wallframe/flasher = 1,
 				/obj/item/assembly/flash/handheld = 1,
@@ -135,6 +135,14 @@
 	time = 40
 	category= CAT_WEAPONRY
 	subcategory = CAT_WEAPON
+
+/datum/crafting_recipe/potato_cell
+	name = "Батарейка из картошки"
+	result = /obj/item/stock_parts/cell/potato
+	reqs = list(/obj/item/food/grown/potato = 1,
+				/obj/item/stack/cable_coil = 10)
+	time = 25
+	category = CAT_MISC
 
 /datum/crafting_recipe/tailclub
 	name = "Tail Club"
@@ -682,6 +690,29 @@
 	time = 200
 	category = CAT_MISC
 
+/datum/crafting_recipe/trapdoor_kit
+	name = "Trapdoor Construction Kit"
+	result = /obj/item/trapdoor_kit
+	reqs = list(/obj/item/stack/sheet/iron = 4,
+		/obj/item/stack/rods = 4,
+		/obj/item/stack/cable_coil = 10,
+		/obj/item/stock_parts/manipulator = 2,
+		/obj/item/assembly/signaler = 1)
+	tool_behaviors = list(TOOL_WELDER, TOOL_SCREWDRIVER)
+	time = 10 SECONDS
+	category = CAT_MISC
+
+/datum/crafting_recipe/trapdoor_remote
+	name = "Trapdoor Remote"
+	result = /obj/item/trapdoor_remote/preloaded // since its useless without its assembly just require an assembly to craft it
+	reqs = list(
+		/obj/item/compact_remote = 1,
+		/obj/item/stack/cable_coil = 5,
+		/obj/item/assembly/trapdoor = 1)
+	tool_behaviors = list(TOOL_SCREWDRIVER, TOOL_WIRECUTTER)
+	time = 5 SECONDS
+	category = CAT_MISC
+
 /datum/crafting_recipe/mousetrap
 	name = "Mouse Trap"
 	result = /obj/item/assembly/mousetrap
@@ -1213,6 +1244,31 @@
 	reqs = list(/obj/item/stack/sheet/iron = 15,
 				/obj/item/stack/sheet/glass = 10,
 				/obj/item/aquarium_kit = 1
+				)
+	category = CAT_MISC
+
+/datum/crafting_recipe/mod_core_standard
+	name = "MOD core (Standard)"
+	result = /obj/item/mod/core/standard
+	tool_behaviors = list(TOOL_SCREWDRIVER)
+	time = 10 SECONDS
+	reqs = list(/obj/item/stack/cable_coil = 5,
+				/obj/item/stack/rods = 2,
+				/obj/item/stack/sheet/glass = 1,
+				/obj/item/organ/heart/ethereal = 1,
+				)
+	category = CAT_MISC
+
+/datum/crafting_recipe/mod_core_ethereal
+	name = "MOD core (Ethereal)"
+	result = /obj/item/mod/core/ethereal
+	tool_behaviors = list(TOOL_SCREWDRIVER)
+	time = 10 SECONDS
+	reqs = list(/datum/reagent/consumable/liquidelectricity = 5,
+				/obj/item/stack/cable_coil = 5,
+				/obj/item/stack/rods = 2,
+				/obj/item/stack/sheet/glass = 1,
+				/obj/item/reagent_containers/syringe = 1,
 				)
 	category = CAT_MISC
 

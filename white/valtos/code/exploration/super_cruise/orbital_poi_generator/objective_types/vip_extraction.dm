@@ -46,7 +46,7 @@
 		new /obj/item/tank/internals/oxygen(T)
 		new /obj/item/clothing/mask/gas(T)
 		new /obj/item/storage/belt/utility/full(T)
-	switch(pickweight(list("centcom_official" = 2, "hos" = 1, "greytide" = 3, "engi" = 3, "sci" = 1)))
+	switch(pick_weight(list("centcom_official" = 2, "hos" = 1, "greytide" = 3, "engi" = 3, "sci" = 1)))
 		if("centcom_official")
 			created_human.equipOutfit(/datum/outfit/derelict_vip/inspector)
 			created_human.mind.add_antag_datum(/datum/antagonist/derelict_vip/inspector)
@@ -250,7 +250,7 @@
 	uniform = /obj/item/clothing/under/rank/engineering/engineer
 	mask = /obj/item/clothing/mask/breath
 	suit = /obj/item/clothing/suit/space/hardsuit/engine
-	suit_store = /obj/item/tank/internals/tactical/nail_gun
+	r_hand = /obj/item/tank/internals/tactical/nail_gun
 	shoes = /obj/item/clothing/shoes/workboots
 	ears = /obj/item/radio/headset/headset_eng
 	glasses = /obj/item/clothing/glasses/meson
@@ -264,7 +264,7 @@
 
 /obj/item/storage/belt/utility/full/vip_engi/PopulateContents()
 	new /obj/item/construction/rcd/loaded(src)
-	new /obj/item/screwdriver/power(src)
+	new /obj/item/screwdriver/power/orange(src)
 	new /obj/item/weldingtool/largetank(src)
 	new /obj/item/crowbar(src)
 	new /obj/item/wirecutters(src)

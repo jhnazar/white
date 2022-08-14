@@ -190,7 +190,7 @@
 
 	. = ..()
 	if (prob(mineralChance))
-		var/path = pickweight(mineralSpawnChanceList)
+		var/path = pick_weight(mineralSpawnChanceList)
 		if(ispath(path, /turf))
 			var/stored_flags = 0
 			if(turf_flags & NO_RUINS)
@@ -556,6 +556,10 @@
 	baseturfs = /turf/open/floor/plating/asteroid/snow/ice/icemoon
 	turf_type = /turf/open/floor/plating/asteroid/snow/ice/icemoon
 	initial_gas_mix = ICEMOON_DEFAULT_ATMOS
+
+/turf/closed/mineral/snowmountain/cavern/safe
+	baseturfs = /turf/open/floor/plating/snowed/dug
+	turf_type = /turf/open/floor/plating/snowed/dug
 
 //yoo RED ROCK RED ROCK
 

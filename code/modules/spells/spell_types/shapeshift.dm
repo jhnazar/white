@@ -72,7 +72,7 @@
 					if(possiblevent.parents.len && possiblevent.parents[1] == ourpipeline)
 						new gibtype(get_turf(possiblevent))
 						playsound(possiblevent, 'sound/effects/reee.ogg', 75, TRUE)
-				priority_announce("We detected a pipe blockage around [get_area(get_turf(M))], please dispatch someone to investigate.", "Central Command")
+				priority_announce("We detected a pipe blockage around [get_area(get_turf(M))], please dispatch someone to investigate.", JOB_CENTCOM)
 				M.death()
 				qdel(M)
 				return
@@ -162,7 +162,7 @@
 	shape = null
 	return ..()
 
-/obj/shapeshift_holder/Moved()
+/obj/shapeshift_holder/Moved(atom/old_loc, movement_dir, forced, list/old_locs, momentum_change = TRUE)
 	. = ..()
 	if(!restoring || QDELETED(src))
 		restore()

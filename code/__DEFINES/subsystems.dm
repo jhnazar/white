@@ -134,6 +134,7 @@
 #define INIT_ORDER_TCG				55
 #define INIT_ORDER_REAGENTS 		55 //HAS to be before mapping - mapping creates objects, which creates reagents, which relies on lists made in this subsystem
 #define INIT_ORDER_MAPPING			50
+#define INIT_ORDER_DAY_NIGHT 		49 // Networking and atoms require this
 #define INIT_ORDER_TIMETRACK		47
 #define INIT_ORDER_NETWORKS			45
 #define INIT_ORDER_SPATIAL_GRID 	43
@@ -154,7 +155,6 @@
 #define INIT_ORDER_ASSETS			-4
 #define INIT_ORDER_ICON_SMOOTHING	-5
 #define INIT_ORDER_OVERLAY			-6
-#define INIT_ORDER_XKEYSCORE		-10
 #define INIT_ORDER_STICKY_BAN		-10
 #define INIT_ORDER_LIGHTING			-20
 #define INIT_ORDER_SHUTTLE			-21
@@ -178,6 +178,7 @@
 #define FIRE_PRIORITY_GARBAGE		15
 #define FIRE_PRIORITY_DATABASE 		16
 #define FIRE_PRIORITY_WET_FLOORS	20
+#define FIRE_PRIORITY_FLUIDS 		20
 #define FIRE_PRIORITY_AIR			20
 #define FIRE_PRIORITY_NPC 			20
 #define FIRE_PRIORITY_NPC_MOVEMENT 	21
@@ -281,9 +282,28 @@
 #define SSEXPLOSIONS_TURFS 2
 #define SSEXPLOSIONS_THROWS 3
 
+// Wardrobe subsystem tasks
+#define SSWARDROBE_STOCK 1
+#define SSWARDROBE_INSPECT 2
+
+//Wardrobe cache metadata indexes
+#define WARDROBE_CACHE_COUNT 1
+#define WARDROBE_CACHE_LAST_INSPECT 2
+#define WARDROBE_CACHE_CALL_INSERT 3
+#define WARDROBE_CACHE_CALL_REMOVAL 4
+
+//Wardrobe preloaded stock indexes
+#define WARDROBE_STOCK_CONTENTS 1
+#define WARDROBE_STOCK_CALL_INSERT 2
+#define WARDROBE_STOCK_CALL_REMOVAL 3
+
+//Wardrobe callback master list indexes
+#define WARDROBE_CALLBACK_INSERT 1
+#define WARDROBE_CALLBACK_REMOVE 2
+
 // Subsystem delta times or tickrates, in seconds. I.e, how many seconds in between each process() call for objects being processed by that subsystem.
 // Only use these defines if you want to access some other objects processing delta_time, otherwise use the delta_time that is sent as a parameter to process()
-#define SSFLUIDS_DT (SSfluids.wait/10)
+#define SSFLUIDS_DT (SSplumbing.wait/10)
 #define SSMACHINES_DT (SSmachines.wait/10)
 #define SSMOBS_DT (SSmobs.wait/10)
 #define SSOBJ_DT (SSobj.wait/10)

@@ -106,7 +106,7 @@
 		reward.bounty_name = curr_bounty.name
 		reward.bounty_holder = inserted_scan_id.registered_name
 		reward.name = "[reward.name] [reward.bounty_value] кредит[get_num_string(reward.bounty_value)] "
-		reward.desc += " Бирка указывает, что этот куб принадлежит [reward.bounty_holder] за выполнение заказа <i>[reward.bounty_name]</i> которые было принято в [station_time_timestamp(format = "hh:mm")]."
+		reward.desc += " Бирка указывает, что этот куб принадлежит [reward.bounty_holder] за выполнение заказа <i>[reward.bounty_name]</i> который был принят в [SSday_night.get_twentyfourhour_timestamp()]."
 		reward.AddComponent(/datum/component/pricetag, inserted_scan_id.registered_account, CIV_BOUNTY_SPLIT)
 		switch(curr_bounty.reward)
 			if(1 to 10 * CARGO_CRATE_VALUE)
@@ -253,6 +253,10 @@
 	var/bounty_holder
 	///What the bounty was for.
 	var/bounty_name
+
+/obj/item/bounty_cube/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NO_BARCODES, INNATE_TRAIT) // Don't allow anyone to override our pricetag component with a barcode
 
 ///Beacon to launch a new bounty setup when activated.
 /obj/item/civ_bounty_beacon

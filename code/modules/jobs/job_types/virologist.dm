@@ -1,14 +1,14 @@
 /datum/job/virologist
-	title = "Virologist"
+	title = JOB_VIROLOGIST
 	ru_title = "Вирусолог"
-	department_head = list("Chief Medical Officer")
+	department_head = list(JOB_CHIEF_MEDICAL_OFFICER)
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "главному врачу"
 	selection_color = "#ffeef0"
 	exp_type = EXP_TYPE_CREW
-	exp_requirements = 900
+	exp_requirements = 300
 
 	outfit = /datum/outfit/job/virologist
 
@@ -28,11 +28,15 @@
 		/obj/item/stack/sheet/mineral/uranium = 5
 	)
 
+	departments_list = list(
+		/datum/job_department/medical,
+	)
+
 	rpg_title = "Plague Doctor"
 	rpg_title_ru = "Чумной доктор"
 
 /datum/outfit/job/virologist
-	name = "Virologist"
+	name = JOB_VIROLOGIST
 	jobtype = /datum/job/virologist
 
 	belt = /obj/item/modular_computer/tablet/pda/viro

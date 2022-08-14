@@ -39,6 +39,8 @@ GLOBAL_VAR_INIT(blob_current_icon, pick('icons/mob/blob_64.dmi', 'icons/mob/blob
 
 	icon = GLOB.blob_current_icon
 
+	register_context()
+
 	if(owner_overmind)
 		overmind = owner_overmind
 		overmind.all_blobs += src
@@ -59,6 +61,22 @@ GLOBAL_VAR_INIT(blob_current_icon, pick('icons/mob/blob_64.dmi', 'icons/mob/blob
 
 	for(var/obj/structure/blob/B in orange(src,1))
 		anim(target = loc, a_icon = icon, flick_anim = "connect_spawn", sleeptime = 15, direction = get_dir(src, B), lay = layer, offX = -16, offY = -16, plane = plane)
+
+/obj/structure/blob/add_context(atom/source, list/context, obj/item/held_item, mob/user)
+	. = ..()
+
+	if (!isovermind(user))
+		return .
+
+	if(istype(src, /obj/structure/blob/normal))
+		context[SCREENTIP_CONTEXT_CTRL_LMB] = "Создать крепкую массу"
+	if(istype(src, /obj/structure/blob/shield) && !istype(src, /obj/structure/blob/shield/reflective))
+		context[SCREENTIP_CONTEXT_CTRL_LMB] = "Создать отражающую массу"
+
+	if(point_return >= 0)
+		context[SCREENTIP_CONTEXT_ALT_LMB] = "Удалить массу"
+
+	return CONTEXTUAL_SCREENTIP_SET
 
 /obj/structure/blob/proc/creation_action() //When it's created by the overmind, do this.
 	return
@@ -271,9 +289,11 @@ GLOBAL_VAR_INIT(blob_current_icon, pick('icons/mob/blob_64.dmi', 'icons/mob/blob
 
 /obj/structure/blob/proc/typereport(mob/user)
 	RETURN_TYPE(/list)
-	return list("\n<b>Тип массы:</b> <span class='notice'>[uppertext(initial(name))]</span>",
-							"\n<b>Здоровье:</b> <span class='notice'>[obj_integrity]/[max_integrity]</span>",
-							"\n<b>Эффекты:</b> <span class='notice'>[scannerreport()]</span>")
+	return list(
+		"\n<b>Тип массы:</b> <span class='notice'>[uppertext(initial(name))]</span>",
+		"\n<b>Здоровье:</b> <span class='notice'>[obj_integrity]/[max_integrity]</span>",
+		"\n<b>Эффекты:</b> <span class='notice'>[scannerreport()]</span>"
+	)
 
 
 /obj/structure/blob/attack_animal(mob/living/simple_animal/M)
@@ -331,7 +351,7 @@ GLOBAL_VAR_INIT(blob_current_icon, pick('icons/mob/blob_64.dmi', 'icons/mob/blob
 /obj/structure/blob/examine(mob/user)
 	. = ..()
 	var/datum/atom_hud/hud_to_check = GLOB.huds[DATA_HUD_MEDICAL_ADVANCED]
-	if(user.research_scanner || hud_to_check.hud_users[user])
+	if(HAS_TRAIT(user, TRAIT_RESEARCH_SCANNER) || hud_to_check.hud_users[user])
 		. += "<hr><b>HUD показывает расширенный отчёт...</b><br>"
 		if(overmind)
 			. += overmind.blobstrain.examine(user)

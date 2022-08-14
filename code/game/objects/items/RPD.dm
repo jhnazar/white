@@ -13,68 +13,70 @@ RPD
 
 
 GLOBAL_LIST_INIT(atmos_pipe_recipes, list(
-	"Pipes" = list(
-		new /datum/pipe_info/pipe("Pipe", /obj/machinery/atmospherics/pipe/smart, TRUE),
-		new /datum/pipe_info/pipe("Layer Adapter", /obj/machinery/atmospherics/pipe/layer_manifold, TRUE),
-		new /datum/pipe_info/pipe("Color Adapter", /obj/machinery/atmospherics/pipe/color_adapter, TRUE),
-		new /datum/pipe_info/pipe("Bridge Pipe", /obj/machinery/atmospherics/pipe/bridge_pipe, TRUE),
-		new /datum/pipe_info/pipe("Multi-Deck Adapter", /obj/machinery/atmospherics/pipe/multiz, FALSE),
+	"Трубы" = list(
+		new /datum/pipe_info/pipe("Умные трубы",			/obj/machinery/atmospherics/pipe/smart, TRUE),
+		new /datum/pipe_info/pipe("Адаптер уровней", 		/obj/machinery/atmospherics/pipe/layer_manifold, TRUE),
+		new /datum/pipe_info/pipe("Адаптер цветов", 		/obj/machinery/atmospherics/pipe/color_adapter, TRUE),
+		new /datum/pipe_info/pipe("Мост", 					/obj/machinery/atmospherics/pipe/bridge_pipe, TRUE),
+		new /datum/pipe_info/pipe("Адаптер Z-уровня", 		/obj/machinery/atmospherics/pipe/multiz, FALSE),
 	),
-	"Devices" = list(
-		new /datum/pipe_info/pipe("Connector",			/obj/machinery/atmospherics/components/unary/portables_connector, TRUE),
-		new /datum/pipe_info/pipe("Gas Pump",			/obj/machinery/atmospherics/components/binary/pump, TRUE),
-		new /datum/pipe_info/pipe("Volume Pump",		/obj/machinery/atmospherics/components/binary/volume_pump, TRUE),
-		new /datum/pipe_info/pipe("Gas Filter",			/obj/machinery/atmospherics/components/trinary/filter, TRUE),
-		new /datum/pipe_info/pipe("Gas Mixer",			/obj/machinery/atmospherics/components/trinary/mixer, TRUE),
-		new /datum/pipe_info/pipe("Passive Gate",		/obj/machinery/atmospherics/components/binary/passive_gate, TRUE),
-		new /datum/pipe_info/pipe("Injector",			/obj/machinery/atmospherics/components/unary/outlet_injector, TRUE),
-		new /datum/pipe_info/pipe("Scrubber",			/obj/machinery/atmospherics/components/unary/vent_scrubber, TRUE),
-		new /datum/pipe_info/pipe("Unary Vent",			/obj/machinery/atmospherics/components/unary/vent_pump, TRUE),
-		new /datum/pipe_info/pipe("Passive Vent",		/obj/machinery/atmospherics/components/unary/passive_vent, TRUE),
-		new /datum/pipe_info/pipe("Manual Valve",		/obj/machinery/atmospherics/components/binary/valve, TRUE),
-		new /datum/pipe_info/pipe("Digital Valve",		/obj/machinery/atmospherics/components/binary/valve/digital, TRUE),
-		new /datum/pipe_info/pipe("Pressure Valve",		/obj/machinery/atmospherics/components/binary/pressure_valve, TRUE),
-		new /datum/pipe_info/pipe("Temperature Gate",	/obj/machinery/atmospherics/components/binary/temperature_gate, TRUE),
-		new /datum/pipe_info/pipe("Temperature Pump",	/obj/machinery/atmospherics/components/binary/temperature_pump, TRUE),
-		new /datum/pipe_info/meter("Meter"),
+	"Устройства" = list(
+		new /datum/pipe_info/pipe("Порт подключения",		/obj/machinery/atmospherics/components/unary/portables_connector, TRUE),
+		new /datum/pipe_info/pipe("Газовый насос",			/obj/machinery/atmospherics/components/binary/pump, TRUE),
+		new /datum/pipe_info/pipe("Объемный насос",			/obj/machinery/atmospherics/components/binary/volume_pump, TRUE),
+		new /datum/pipe_info/pipe("Газовый фильтр",			/obj/machinery/atmospherics/components/trinary/filter, TRUE),
+		new /datum/pipe_info/pipe("Газовый смеситель",		/obj/machinery/atmospherics/components/trinary/mixer, TRUE),
+		new /datum/pipe_info/pipe("Пассивный клапан",		/obj/machinery/atmospherics/components/binary/passive_gate, TRUE),
+		new /datum/pipe_info/pipe("Инжектор",				/obj/machinery/atmospherics/components/unary/outlet_injector, TRUE),
+		new /datum/pipe_info/pipe("Фильтр",					/obj/machinery/atmospherics/components/unary/vent_scrubber, TRUE),
+		new /datum/pipe_info/pipe("Вентиляция",				/obj/machinery/atmospherics/components/unary/vent_pump, TRUE),
+		new /datum/pipe_info/pipe("Пассивная вентиляция",	/obj/machinery/atmospherics/components/unary/passive_vent, TRUE),
+		new /datum/pipe_info/pipe("Ручной вентиль",			/obj/machinery/atmospherics/components/binary/valve, TRUE),
+		new /datum/pipe_info/pipe("Цифровой вентиль",		/obj/machinery/atmospherics/components/binary/valve/digital, TRUE),
+		new /datum/pipe_info/pipe("Вентиль давления",		/obj/machinery/atmospherics/components/binary/pressure_valve, TRUE),
+		new /datum/pipe_info/pipe("Температурный клапан",	/obj/machinery/atmospherics/components/binary/temperature_gate, TRUE),
+		new /datum/pipe_info/pipe("Температурная помпа",	/obj/machinery/atmospherics/components/binary/temperature_pump, TRUE),
+		new /datum/pipe_info/meter("Измеритель"),
 	),
-	"Heat Exchange" = list(
-		new /datum/pipe_info/pipe("Pipe",				/obj/machinery/atmospherics/pipe/heat_exchanging/simple, FALSE),
-		new /datum/pipe_info/pipe("Manifold",			/obj/machinery/atmospherics/pipe/heat_exchanging/manifold, FALSE),
-		new /datum/pipe_info/pipe("4-Way Manifold",		/obj/machinery/atmospherics/pipe/heat_exchanging/manifold4w, FALSE),
-		new /datum/pipe_info/pipe("Junction",			/obj/machinery/atmospherics/pipe/heat_exchanging/junction, FALSE),
-		new /datum/pipe_info/pipe("Heat Exchanger",		/obj/machinery/atmospherics/components/unary/heat_exchanger, FALSE),
+	"Теплообменники" = list(
+		new /datum/pipe_info/pipe("Трубы",					/obj/machinery/atmospherics/pipe/heat_exchanging/simple, FALSE),
+		new /datum/pipe_info/pipe("Тройник",				/obj/machinery/atmospherics/pipe/heat_exchanging/manifold, FALSE),
+		new /datum/pipe_info/pipe("Перекресток",			/obj/machinery/atmospherics/pipe/heat_exchanging/manifold4w, FALSE),
+		new /datum/pipe_info/pipe("Соединительный узел",	/obj/machinery/atmospherics/pipe/heat_exchanging/junction, FALSE),
+		new /datum/pipe_info/pipe("Теплообменник",			/obj/machinery/atmospherics/components/unary/heat_exchanger, FALSE),
 	)
 ))
 
 GLOBAL_LIST_INIT(disposal_pipe_recipes, list(
-	"Disposal Pipes" = list(
-		new /datum/pipe_info/disposal("Pipe",			/obj/structure/disposalpipe/segment, PIPE_BENDABLE),
-		new /datum/pipe_info/disposal("Junction",		/obj/structure/disposalpipe/junction, PIPE_TRIN_M),
-		new /datum/pipe_info/disposal("Y-Junction",		/obj/structure/disposalpipe/junction/yjunction),
-		new /datum/pipe_info/disposal("Sort Junction",	/obj/structure/disposalpipe/sorting/mail, PIPE_TRIN_M),
-		new /datum/pipe_info/disposal("Trunk",			/obj/structure/disposalpipe/trunk),
-		new /datum/pipe_info/disposal("Bin",			/obj/machinery/disposal/bin, PIPE_ONEDIR),
-		new /datum/pipe_info/disposal("Outlet",			/obj/structure/disposaloutlet),
-		new /datum/pipe_info/disposal("Chute",			/obj/machinery/disposal/delivery_chute),
-		new /datum/pipe_info/disposal("Multi-Deck Up",	/obj/structure/disposalpipe/trunk/multiz, PIPE_ONEDIR),
-		new /datum/pipe_info/disposal("Multi-Deck Down",/obj/structure/disposalpipe/trunk/multiz/down, PIPE_ONEDIR),
+	"Мусорные" = list(
+		new /datum/pipe_info/disposal("Трубы",						/obj/structure/disposalpipe/segment, PIPE_BENDABLE),
+		new /datum/pipe_info/disposal("Прямой тройник",				/obj/structure/disposalpipe/junction, PIPE_TRIN_M),
+		new /datum/pipe_info/disposal("Объединяющий тройник",		/obj/structure/disposalpipe/junction/yjunction),
+		new /datum/pipe_info/disposal("Сортировочные трубы",		/obj/structure/disposalpipe/sorting/mail, PIPE_TRIN_M),
+		new /datum/pipe_info/disposal("Порт подключения",			/obj/structure/disposalpipe/trunk),
+		new /datum/pipe_info/disposal("Мусорка",					/obj/machinery/disposal/bin, PIPE_ONEDIR),
+		new /datum/pipe_info/disposal("Пневмовыход",				/obj/structure/disposaloutlet),
+		new /datum/pipe_info/disposal("Пневмовход",					/obj/machinery/disposal/delivery_chute),
+		new /datum/pipe_info/disposal("Переходник Z-уровня вверх",	/obj/structure/disposalpipe/trunk/multiz, PIPE_ONEDIR),
+		new /datum/pipe_info/disposal("Переходник Z-уровня вниз",	/obj/structure/disposalpipe/trunk/multiz/down, PIPE_ONEDIR),
 	)
 ))
 
 GLOBAL_LIST_INIT(transit_tube_recipes, list(
-	"Transit Tubes" = list(
-		new /datum/pipe_info/transit("Straight Tube",				/obj/structure/c_transit_tube, PIPE_STRAIGHT),
-		new /datum/pipe_info/transit("Straight Tube with Crossing",	/obj/structure/c_transit_tube/crossing, PIPE_STRAIGHT),
-		new /datum/pipe_info/transit("Curved Tube",					/obj/structure/c_transit_tube/curved, PIPE_UNARY_FLIPPABLE),
-		new /datum/pipe_info/transit("Diagonal Tube",				/obj/structure/c_transit_tube/diagonal, PIPE_STRAIGHT),
-		new /datum/pipe_info/transit("Diagonal Tube with Crossing",	/obj/structure/c_transit_tube/diagonal/crossing, PIPE_STRAIGHT),
-		new /datum/pipe_info/transit("Junction",					/obj/structure/c_transit_tube/junction, PIPE_UNARY_FLIPPABLE),
+	"Транзитные" = list(
+		new /datum/pipe_info/transit("Трубы",							/obj/structure/c_transit_tube, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Труба с переходом",				/obj/structure/c_transit_tube/crossing, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Поворотная труба",				/obj/structure/c_transit_tube/curved, PIPE_UNARY_FLIPPABLE),
+		new /datum/pipe_info/transit("Диагональная труба",				/obj/structure/c_transit_tube/diagonal, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Диагональная труба с переходом",	/obj/structure/c_transit_tube/diagonal/crossing, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Тройник",							/obj/structure/c_transit_tube/junction, PIPE_UNARY_FLIPPABLE),
 	),
-	"Station Equipment" = list(
-		new /datum/pipe_info/transit("Through Tube Station",		/obj/structure/c_transit_tube/station, PIPE_STRAIGHT),
-		new /datum/pipe_info/transit("Terminus Tube Station",		/obj/structure/c_transit_tube/station/reverse, PIPE_UNARY),
-		new /datum/pipe_info/transit("Transit Tube Pod",			/obj/structure/c_transit_tube_pod, PIPE_ONEDIR),
+	"Станции" = list(
+		new /datum/pipe_info/transit("Промежуточная станция",		/obj/structure/c_transit_tube/station, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Конечная станция",			/obj/structure/c_transit_tube/station/reverse, PIPE_UNARY),
+		new /datum/pipe_info/transit("Промежуточный раздатчик",		/obj/structure/c_transit_tube/station/dispenser, PIPE_STRAIGHT),
+		new /datum/pipe_info/transit("Тупиковый раздатчик",			/obj/structure/c_transit_tube/station/dispenser/reverse, PIPE_UNARY),
+		new /datum/pipe_info/transit("Транзитная капсула",			/obj/structure/c_transit_tube_pod, PIPE_ONEDIR),
 	)
 ))
 
@@ -103,25 +105,55 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 	var/list/dirs
 	switch(dirtype)
 		if(PIPE_STRAIGHT, PIPE_BENDABLE)
-			dirs = list("[NORTH]" = "Vertical", "[EAST]" = "Horizontal")
+			dirs = list(
+				"[NORTH]" = "Vertical",
+				"[EAST]" = "Horizontal"
+			)
 			if(dirtype == PIPE_BENDABLE)
-				dirs += list("[NORTHWEST]" = "West to North", "[NORTHEAST]" = "North to East",
-							"[SOUTHWEST]" = "South to West", "[SOUTHEAST]" = "East to South")
+				dirs += list(
+					"[NORTHWEST]" = "West to North",
+					"[NORTHEAST]" = "North to East",
+					"[SOUTHWEST]" = "South to West",
+					"[SOUTHEAST]" = "East to South"
+				)
 		if(PIPE_TRINARY)
-			dirs = list("[NORTH]" = "West South East", "[SOUTH]" = "East North West",
-						"[EAST]" = "North West South", "[WEST]" = "South East North")
+			dirs = list(
+				"[NORTH]" = "West South East",
+				"[SOUTH]" = "East North West",
+				"[EAST]" = "North West South",
+				"[WEST]" = "South East North"
+			)
 		if(PIPE_TRIN_M)
-			dirs = list("[NORTH]" = "North East South", "[SOUTHWEST]" = "North West South",
-						"[NORTHEAST]" = "South East North", "[SOUTH]" = "South West North",
-						"[WEST]" = "West North East", "[SOUTHEAST]" = "West South East",
-						"[NORTHWEST]" = "East North West", "[EAST]" = "East South West",)
+			dirs = list(
+				"[NORTH]" = "North East South",
+				"[SOUTHWEST]" = "North West South",
+				"[NORTHEAST]" = "South East North",
+				"[SOUTH]" = "South West North",
+				"[WEST]" = "West North East",
+				"[SOUTHEAST]" = "West South East",
+				"[NORTHWEST]" = "East North West",
+				"[EAST]" = "East South West",
+			)
 		if(PIPE_UNARY)
-			dirs = list("[NORTH]" = "North", "[SOUTH]" = "South", "[WEST]" = "West", "[EAST]" = "East")
+			dirs = list(
+				"[NORTH]" = "North",
+				"[SOUTH]" = "South",
+				"[WEST]" = "West",
+				"[EAST]" = "East"
+			)
 		if(PIPE_ONEDIR)
 			dirs = list("[SOUTH]" = name)
 		if(PIPE_UNARY_FLIPPABLE)
-			dirs = list("[NORTH]" = "North", "[EAST]" = "East", "[SOUTH]" = "South", "[WEST]" = "West",
-						"[NORTHEAST]" = "North Flipped", "[SOUTHEAST]" = "East Flipped", "[SOUTHWEST]" = "South Flipped", "[NORTHWEST]" = "West Flipped")
+			dirs = list(
+				"[NORTH]" = "North",
+				"[EAST]" = "East",
+				"[SOUTH]" = "South",
+				"[WEST]" = "West",
+				"[NORTHEAST]" = "North Flipped",
+				"[SOUTHEAST]" = "East Flipped",
+				"[SOUTHWEST]" = "South Flipped",
+				"[NORTHWEST]" = "West Flipped"
+			)
 
 
 	var/list/rows = list()
@@ -445,9 +477,10 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 	if((mode & DESTROY_MODE) && istype(attack_target, /obj/item/pipe) || istype(attack_target, /obj/structure/disposalconstruct) || istype(attack_target, /obj/structure/c_transit_tube) || istype(attack_target, /obj/structure/c_transit_tube_pod) || istype(attack_target, /obj/item/pipe_meter) || istype(attack_target, /obj/structure/disposalpipe/broken))
 		to_chat(user, span_notice("You start destroying a pipe..."))
 		playsound(get_turf(src), 'sound/machines/click.ogg', 50, TRUE)
-		if(do_after(user, destroy_speed, target = attack_target))
+		if(do_after(user, destroy_speed*user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER), target = attack_target))
 			activate()
 			qdel(attack_target)
+			user.mind.adjust_experience(/datum/skill/engineering, destroy_speed)
 		return
 
 	if(mode & BUILD_MODE)
@@ -458,8 +491,9 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 				playsound(get_turf(src), 'sound/machines/click.ogg', 50, TRUE)
 				if (recipe.type == /datum/pipe_info/meter)
 					to_chat(user, span_notice("You start building a meter..."))
-					if(do_after(user, atmos_build_speed, target = attack_target))
+					if(do_after(user, atmos_build_speed*user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER), target = attack_target))
 						activate()
+						user.mind.adjust_experience(/datum/skill/engineering, atmos_build_speed)
 						var/obj/item/pipe_meter/PM = new /obj/item/pipe_meter(get_turf(attack_target))
 						PM.setAttachLayer(piping_layer)
 						if(mode & WRENCH_MODE)
@@ -469,11 +503,12 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 						to_chat(user, span_notice("You can't build this object on the layer..."))
 						return ..()
 					to_chat(user, span_notice("You start building a pipe..."))
-					if(do_after(user, atmos_build_speed, target = attack_target))
+					if(do_after(user, atmos_build_speed*user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER), target = attack_target))
 						if(recipe.all_layers == FALSE && (piping_layer == 1 || piping_layer == 5))//double check to stop cheaters (and to not waste time waiting for something that can't be placed)
 							to_chat(user, span_notice("You can't build this object on the layer..."))
 							return ..()
 						activate()
+						user.mind.adjust_experience(/datum/skill/engineering, atmos_build_speed)
 						var/obj/machinery/atmospherics/path = queued_p_type
 						var/pipe_item_type = initial(path.construction_type) || /obj/item/pipe
 						var/obj/item/pipe/pipe_type = new pipe_item_type(
@@ -505,7 +540,7 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 					return
 				to_chat(user, span_notice("You start building a disposals pipe..."))
 				playsound(get_turf(src), 'sound/machines/click.ogg', 50, TRUE)
-				if(do_after(user, disposal_build_speed, target = attack_target))
+				if(do_after(user, disposal_build_speed*user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER), target = attack_target))
 					var/obj/structure/disposalconstruct/C = new (attack_target, queued_p_type, queued_p_dir, queued_p_flipped)
 
 					if(!C.can_place())
@@ -514,7 +549,7 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 						return
 
 					activate()
-
+					user.mind.adjust_experience(/datum/skill/engineering, disposal_build_speed)
 					C.add_fingerprint(usr)
 					C.update_icon()
 					if(mode & WRENCH_MODE)
@@ -530,8 +565,9 @@ GLOBAL_LIST_INIT(transit_tube_recipes, list(
 					return
 				to_chat(user, span_notice("You start building a transit tube..."))
 				playsound(get_turf(src), 'sound/machines/click.ogg', 50, TRUE)
-				if(do_after(user, transit_build_speed, target = attack_target))
+				if(do_after(user, transit_build_speed*user.mind.get_skill_modifier(/datum/skill/engineering, SKILL_SPEED_MODIFIER), target = attack_target))
 					activate()
+					user.mind.adjust_experience(/datum/skill/engineering, transit_build_speed)
 					if(queued_p_type == /obj/structure/c_transit_tube_pod)
 						var/obj/structure/c_transit_tube_pod/pod = new /obj/structure/c_transit_tube_pod(attack_target)
 						pod.add_fingerprint(usr)

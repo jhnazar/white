@@ -104,6 +104,7 @@
 	icon_state = "resin_membrane-0"
 	base_icon_state = "resin_membrane"
 	opacity = FALSE
+	pass_flags_self = PASSGLASS
 	max_integrity = 160
 	resintype = "membrane"
 	smoothing_groups = list(SMOOTH_GROUP_ALIEN_RESIN, SMOOTH_GROUP_ALIEN_WALLS)
@@ -332,12 +333,12 @@
 /obj/structure/alien/egg/proc/Grow()
 	status = GROWN
 	update_icon()
-	proximity_monitor.SetRange(1)
+	proximity_monitor.set_range(1)
 
 //drops and kills the hugger if any is remaining
 /obj/structure/alien/egg/proc/Burst(kill = TRUE)
 	if(status == GROWN || status == GROWING)
-		proximity_monitor.SetRange(0)
+		proximity_monitor.set_range(0)
 		status = BURST
 		update_icon()
 		flick("egg_opening", src)

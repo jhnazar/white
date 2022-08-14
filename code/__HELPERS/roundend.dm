@@ -61,7 +61,7 @@
 				else if(issilicon(L))
 					category = "silicons"
 					if(isAI(L))
-						mob_data["module"] = "AI"
+						mob_data["module"] = JOB_AI
 					else if(ispAI(L))
 						mob_data["module"] = "pAI"
 					else if(iscyborg(L))
@@ -541,7 +541,7 @@
 				count_ai++
 				parts += "▶ \[[count_ai]/[total_ai]\] <b><font color=\"#60b6ff\">[aiPlayer.name]</font></b> (игрок: <b>[aiPlayer.mind.key]</b>)"
 				parts += "[FOURSPACES]├ Статус: [aiPlayer.stat != DEAD ? "<b>активен</b>" : span_redtext("деактивирован") ]"
-				parts += "[FOURSPACES]├ Суммарное кол-во сменов набора законов: <b>[aiPlayer.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("[aiPlayer.law_change_counter]") ]</b>"
+				parts += "[FOURSPACES]├ Суммарное кол-во изменений законов: <b>[aiPlayer.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("[aiPlayer.law_change_counter]") ]</b>"
 				parts += "[FOURSPACES]└ <font color=\"#60b6ff\">ЗАКОНЫ ИИ //</font>"
 				var/list/temp_law_list = aiPlayer.laws.get_law_list(include_zeroth = TRUE)
 				for(var/law in temp_law_list)
@@ -574,7 +574,7 @@
 			if (!standalone_silicon.connected_ai && standalone_silicon.mind)
 				parts += "▶ ([count_silicon]/[total_silicon]) [minion_spacer ? "<br>" : ""]<b><font color=\"#60b6ff\">[standalone_silicon.name]</font></b> (игрок: <b>[standalone_silicon.mind.key]</b>)"
 				parts += "[FOURSPACES]├ Статус: [(standalone_silicon.stat != DEAD) ? "<span class='greentext'>выжил</span> как самостоятельный киборг без связи с ИИ!" : "<span class='redtext'>не смог выжить</span> в суровых условиях, будучи самостоятельным киборгом без связи с ИИ."]"
-				parts += "[FOURSPACES]├ Суммарное кол-во сменов набора законов: <b>[standalone_silicon.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("standalone_silicon.law_change_counter") ]</b>"
+				parts += "[FOURSPACES]├ Суммарное кол-во изменений законов: <b>[standalone_silicon.law_change_counter == 0 ? span_greentext("изменения отсутствуют")  : span_redtext("standalone_silicon.law_change_counter") ]</b>"
 				parts += "[FOURSPACES]└ <font color=\"#60b6ff\">ЗАКОНЫ КИБОРГА //</font>"
 
 				if(standalone_silicon) //How the hell do we lose standalone_silicon between here and the world messages directly above this?
@@ -668,14 +668,14 @@
 				continue
 			//general awards
 			service_member.client?.give_award(award, service_member)
-			if(service_mind.assigned_role == "Cook")
+			if(service_mind.assigned_role == JOB_COOK)
 				var/datum/venue/restaurant = SSrestaurant.all_venues[/datum/venue/restaurant]
 				var/award_score = restaurant.total_income
 				var/award_status = service_member.client.get_award_status(/datum/award/score/chef_tourist_score)
 				if(award_score > award_status)
 					award_score -= award_status
 				service_member.client?.give_award(/datum/award/score/chef_tourist_score, service_member, award_score)
-			if(service_mind.assigned_role == "Bartender")
+			if(service_mind.assigned_role == JOB_BARTENDER)
 				var/datum/venue/bar = SSrestaurant.all_venues[/datum/venue/bar]
 				var/award_score = bar.total_income
 				var/award_status = service_member.client.get_award_status(/datum/award/score/bartender_tourist_score)

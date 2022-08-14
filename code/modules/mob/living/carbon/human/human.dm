@@ -295,7 +295,7 @@
 					return
 				fine = min(fine, maxFine)
 
-				var/crime = GLOB.data_core.createCrimeEntry(t1, "", allowed_access, station_time_timestamp(), fine)
+				var/crime = GLOB.data_core.createCrimeEntry(t1, "", allowed_access, SSday_night.get_twentyfourhour_timestamp(), fine)
 				for (var/obj/item/modular_computer/tablet in GLOB.TabletMessengers)
 					if(tablet.saved_identification == R.fields["name"])
 						var/message = "You have been fined [fine] credits for '[t1]'. Fines may be paid at security."
@@ -320,7 +320,7 @@
 					return
 				if(!HAS_TRAIT(H, TRAIT_SECURITY_HUD))
 					return
-				var/crime = GLOB.data_core.createCrimeEntry(t1, null, allowed_access, station_time_timestamp())
+				var/crime = GLOB.data_core.createCrimeEntry(t1, null, allowed_access, SSday_night.get_twentyfourhour_timestamp())
 				GLOB.data_core.addCrime(R.fields["id"], crime)
 				investigate_log("New Crime: <strong>[t1]</strong> | Added to [R.fields["name"]] by [key_name(usr)]", INVESTIGATE_RECORDS)
 				to_chat(usr, span_notice("Успешно добавили преступление."))
@@ -364,7 +364,7 @@
 				var/counter = 1
 				while(R.fields[text("com_[]", counter)])
 					counter++
-				R.fields[text("com_[]", counter)] = text("Сделано [] в [] [], []<BR>[]", allowed_access, station_time_timestamp(), time2text(world.realtime, "MMM DD"), GLOB.year_integer+540, t1)
+				R.fields[text("com_[]", counter)] = text("Сделано [] в [] [], []<BR>[]", allowed_access, SSday_night.get_twentyfourhour_timestamp(), time2text(world.realtime, "MMM DD"), GLOB.year_integer+540, t1)
 				to_chat(usr, span_notice("Успешно добавили комментарий."))
 				return
 
@@ -657,7 +657,7 @@
 	cut_overlay(MA)
 
 /mob/living/carbon/human/resist_restraints()
-	if(wear_suit?.breakoutchance)
+	if(wear_suit?.breakouttime)
 		changeNext_move(CLICK_CD_BREAKOUT)
 		last_special = world.time + CLICK_CD_BREAKOUT
 		cuff_resist(wear_suit)
@@ -750,11 +750,6 @@
 	coretemperature = get_body_temp_normal(apply_change=FALSE)
 	heat_exposure_stacks = 0
 	return ..()
-
-/mob/living/carbon/human/check_weakness(obj/item/weapon, mob/living/attacker)
-	. = ..()
-	if (dna && dna.species)
-		. *= dna.species.check_species_weakness(weapon, attacker)
 
 /mob/living/carbon/human/is_literate()
 	return TRUE

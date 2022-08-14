@@ -126,8 +126,6 @@ All ShuttleMove procs go here
 		update_light()
 	if(rotation)
 		shuttleRotate(rotation)
-	if(proximity_monitor)
-		proximity_monitor.HandleMove()
 
 	update_parallax_contents()
 
@@ -174,6 +172,8 @@ All ShuttleMove procs go here
 
 // Called on areas after everything has been moved
 /area/proc/afterShuttleMove(new_parallax_dir)
+	SEND_SIGNAL(src, COMSIG_AREA_AFTER_SHUTTLE_MOVE)
+	update_day_night_turfs(FALSE, TRUE)
 	parallax_movedir = new_parallax_dir
 	return TRUE
 
@@ -398,7 +398,3 @@ All ShuttleMove procs go here
 
 /obj/docking_port/stationary/public_mining_dock/onShuttleMove(turf/newT, turf/oldT, list/movement_force, move_dir, obj/docking_port/stationary/old_dock, obj/docking_port/mobile/moving_dock)
 	id = "mining_public" //It will not move with the base, but will become enabled as a docking point.
-
-/obj/effect/abstract/proximity_checker/onShuttleMove(turf/newT, turf/oldT, list/movement_force, move_dir, obj/docking_port/stationary/old_dock, obj/docking_port/mobile/moving_dock)
-	//timer so it only happens once
-	addtimer(CALLBACK(monitor, /datum/proximity_monitor/proc/SetRange, monitor.current_range, TRUE), 0, TIMER_UNIQUE)

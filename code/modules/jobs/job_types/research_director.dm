@@ -1,8 +1,8 @@
 /datum/job/research_director
-	title = "Research Director"
+	title = JOB_RESEARCH_DIRECTOR
 	ru_title = "Научный Руководитель"
 	auto_deadmin_role_flags = DEADMIN_POSITION_HEAD
-	department_head = list("Captain")
+	department_head = list(JOB_CAPTAIN)
 	head_announce = list("Science")
 	faction = "Station"
 	total_positions = 1
@@ -10,9 +10,9 @@
 	supervisors = "капитану"
 	selection_color = "#ffddff"
 	req_admin_notify = 1
-	minimal_player_age = 7
+	minimal_player_age = 14
 	exp_type_department = EXP_TYPE_SCIENCE
-	exp_requirements = 12000
+	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/rd
@@ -32,6 +32,11 @@
 		/obj/item/borg/upgrade/ai = 2
 	)
 
+	departments_list = list(
+		/datum/job_department/science,
+		/datum/job_department/command,
+	)
+
 	rpg_title = "Archmagister"
 	rpg_title_ru = "Архимагистр"
 
@@ -41,7 +46,7 @@
 		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, .proc/minor_announce, "Учитывая нехватку экипажа, текущим капитаном станции теперь является [H.real_name]!"))
 
 /datum/outfit/job/rd
-	name = "Research Director"
+	name = JOB_RESEARCH_DIRECTOR
 	jobtype = /datum/job/research_director
 
 	id = /obj/item/card/id/advanced/silver
@@ -69,5 +74,5 @@
 	l_hand = null
 	mask = /obj/item/clothing/mask/breath
 	suit = /obj/item/clothing/suit/space/hardsuit/rd
-	suit_store = /obj/item/tank/internals/oxygen
+	r_hand = /obj/item/tank/internals/oxygen
 	internals_slot = ITEM_SLOT_SUITSTORE

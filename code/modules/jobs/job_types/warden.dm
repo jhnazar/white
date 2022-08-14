@@ -1,15 +1,15 @@
 /datum/job/warden
-	title = "Warden"
+	title = JOB_WARDEN
 	ru_title = "Надзиратель"
 	auto_deadmin_role_flags = DEADMIN_POSITION_SECURITY
-	department_head = list("Head of Security")
+	department_head = list(JOB_HEAD_OF_SECURITY)
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "начальнику охраны"
 	selection_color = "#ffeeee"
-	minimal_player_age = 20
-	exp_requirements = 2100
+	minimal_player_age = 14
+	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/warden
@@ -35,11 +35,15 @@
 		/obj/item/storage/box/lethalshot = 5
 	)
 
+	departments_list = list(
+		/datum/job_department/security,
+	)
+
 	rpg_title = "Jailor"
 	rpg_title_ru = "Тюремщик"
 
 /datum/outfit/job/warden
-	name = "Warden"
+	name = JOB_WARDEN
 	jobtype = /datum/job/warden
 
 	belt = /obj/item/modular_computer/tablet/pda/warden

@@ -1,15 +1,15 @@
 /datum/job/curator
-	title = "Curator"
+	title = JOB_CURATOR
 	ru_title = "Куратор"
-	department_head = list("Head of Personnel")
+	department_head = list(JOB_HEAD_OF_PERSONNEL)
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "главе персонала"
 	selection_color = "#bbe291"
 
-	minimal_player_age = 15
-	exp_requirements = 720
+	minimal_player_age = 14
+	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/curator
@@ -19,11 +19,15 @@
 
 	display_order = JOB_DISPLAY_ORDER_CURATOR
 
+	departments_list = list(
+		/datum/job_department/service,
+	)
+
 	rpg_title = "Veteran Adventurer"
 	rpg_title_ru = "Опытный искатель приключений"
 
 /datum/outfit/job/curator
-	name = "Curator"
+	name = JOB_CURATOR
 	jobtype = /datum/job/curator
 
 	shoes = /obj/item/clothing/shoes/laceup

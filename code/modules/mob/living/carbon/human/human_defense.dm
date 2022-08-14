@@ -684,9 +684,9 @@
 /mob/living/carbon/human/singularity_act()
 	. = 20
 	if(mind)
-		if((mind.assigned_role == "Station Engineer") || (mind.assigned_role == "Chief Engineer"))
+		if((mind.assigned_role == JOB_STATION_ENGINEER) || (mind.assigned_role == JOB_CHIEF_ENGINEER))
 			. = 100
-		if(mind.assigned_role == "Clown")
+		if(mind.assigned_role == JOB_CLOWN)
 			. = rand(-1000, 1000)
 	..() //Called afterwards because getting the mind after getting gibbed is sketchy
 
@@ -716,7 +716,7 @@
 /mob/living/carbon/human/check_self_for_injuries()
 	if(getorganslot(ORGAN_SLOT_BRAIN_BIOMONITOR))
 		to_chat(src, span_notice("Активирую имплант биомонитора..."))
-		healthscan(src, src)
+		healthscan(src, src, advanced = TRUE)
 		chemscan(src, src)
 	else
 		if(stat >= UNCONSCIOUS)

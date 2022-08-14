@@ -1,13 +1,13 @@
 /datum/job/roboticist
-	title = "Roboticist"
+	title = JOB_ROBOTICIST
 	ru_title = "Робототехник"
-	department_head = list("Research Director")
+	department_head = list(JOB_RESEARCH_DIRECTOR)
 	faction = "Station"
 	total_positions = 2
 	spawn_positions = 2
 	supervisors = "научному руководителю"
 	selection_color = "#ffeeff"
-	exp_requirements = 900
+	exp_requirements = 500
 	exp_type = EXP_TYPE_CREW
 	bounty_types = CIV_JOB_ROBO
 
@@ -24,11 +24,15 @@
 		/obj/item/modular_computer/tablet/preset/advanced = 5
 	)
 
+	departments_list = list(
+		/datum/job_department/science,
+	)
+
 	rpg_title = "Necromancer"
 	rpg_title_ru = "Некромант"
 
 /datum/outfit/job/roboticist
-	name = "Roboticist"
+	name = JOB_ROBOTICIST
 	jobtype = /datum/job/roboticist
 
 	belt = /obj/item/storage/belt/utility/full

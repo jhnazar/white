@@ -1,8 +1,8 @@
 /datum/job/chief_engineer
-	title = "Chief Engineer"
+	title = JOB_CHIEF_ENGINEER
 	ru_title = "Старший Инженер"
 	auto_deadmin_role_flags = DEADMIN_POSITION_HEAD
-	department_head = list("Captain")
+	department_head = list(JOB_CAPTAIN)
 	head_announce = list("Engineering")
 	faction = "Station"
 	total_positions = 1
@@ -10,15 +10,15 @@
 	supervisors = "капитану"
 	selection_color = "#ffeeaa"
 	req_admin_notify = 1
-	minimal_player_age = 30
-	exp_requirements = 7400
+	minimal_player_age = 14
+	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_ENGINEERING
 
 	outfit = /datum/outfit/job/ce
 
-	skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
-	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE)
+	skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE, /datum/skill/engineering = SKILL_EXP_EXPERT)
+	minimal_skills = list(/datum/skill/ranged = SKILL_EXP_APPRENTICE, /datum/skill/engineering = SKILL_EXP_EXPERT)
 
 	paycheck = PAYCHECK_COMMAND
 	paycheck_department = ACCOUNT_ENG
@@ -37,6 +37,11 @@
 		/obj/effect/spawner/lootdrop/space/fancytool/engineonly = 3
 	)
 
+	departments_list = list(
+		/datum/job_department/engineering,
+		/datum/job_department/command,
+	)
+
 	rpg_title = "Head Crystallomancer"
 	rpg_title_ru = "Старший Кристалломант"
 
@@ -46,7 +51,7 @@
 		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, .proc/minor_announce, "Учитывая нехватку экипажа, текущим капитаном станции теперь является [H.real_name]!"))
 
 /datum/outfit/job/ce
-	name = "Chief Engineer"
+	name = JOB_CHIEF_ENGINEER
 	jobtype = /datum/job/chief_engineer
 
 	id = /obj/item/card/id/advanced/silver
@@ -76,7 +81,7 @@
 	mask = /obj/item/clothing/mask/breath
 	suit = /obj/item/clothing/suit/space/hardsuit/engine/elite
 	shoes = /obj/item/clothing/shoes/magboots/advance
-	suit_store = /obj/item/tank/internals/oxygen
+	l_hand = /obj/item/tank/internals/oxygen
 	glasses = /obj/item/clothing/glasses/meson/engine
 	gloves = /obj/item/clothing/gloves/color/yellow
 	head = null

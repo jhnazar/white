@@ -19,21 +19,21 @@
 	desc = "Используется для создания медицинского оборудования."
 	circuit = /obj/item/circuitboard/machine/mechfab/med
 	drop_zone = FALSE
-	part_sets = list(											// Подклассы:
-								"Хирургические инструменты",	// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Прочее"
-								"Медицинское снаряжение",		// "Диагностика и мониторинг","Экипировка", "Прочее", "Датчики и Сигнальные устройства"
-								"Фармацевтика",					// "Химическая посуда", "Инъекции", "Хим-фабрика", "Прочее"
-								"Кибернетика",					// "Базовые кибернетические органы", "Базовые протезы", "Продвинутые протезы", "Стандартные кибернетические органы", "Продвинутые кибернетические органы", "Сенсорика"
-								"Импланты",						// "Кибер Импланты", "Микро Импланты", "Дополненая реальность"
-								"Медицинское оборудование",		// "Програмное обеспечение", "Терморегуляция", "Химпроизводство", "Автохирургия", "Реанимация и хирургия", "Биоманипулирование", "Прочее"
-								"Гранаты",						//
-								"Прочее"						//
-								)
+	part_sets = list(					// Подклассы:
+		"Хирургические инструменты",	// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Прочее"
+		"Медицинское снаряжение",		// "Диагностика и мониторинг","Экипировка", "Прочее", "Датчики и Сигнальные устройства"
+		"Фармацевтика",					// "Химическая посуда", "Инъекции", "Хим-фабрика", "Прочее"
+		"Кибернетика",					// "Базовые кибернетические органы", "Базовые протезы", "Продвинутые протезы", "Стандартные кибернетические органы", "Продвинутые кибернетические органы", "Сенсорика"
+		"Импланты",						// "Кибер Импланты", "Микро Импланты", "Дополненая реальность"
+		"Медицинское оборудование",		// "Програмное обеспечение", "Терморегуляция", "Химпроизводство", "Автохирургия", "Реанимация и хирургия", "Биоманипулирование", "Прочее"
+		"Гранаты",						//
+		"Прочее"						//
+	)
 
 /obj/item/circuitboard/machine/mechfab/med
 	name = "плата медицинского фабрикатора"
 	desc = "Продвинутая версия протолата с удобным визуальным интерфейсом."
-	icon_state = "medical"
+	greyscale_colors = CIRCUIT_COLOR_MEDICAL
 	build_path = /obj/machinery/mecha_part_fabricator/med
 
 /obj/machinery/mecha_part_fabricator/med/Initialize(mapload)
@@ -55,26 +55,26 @@
 	desc = "Используется для создания инженерного оборудования."
 	circuit = /obj/item/circuitboard/machine/mechfab/engi
 	drop_zone = FALSE
-	part_sets = list(											// Подклассы:
-								"Рабочие инструменты ",			// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
-								"Инженерное снаряжение",		// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
-								"Строительство",				// "Контролеры", "Освещение и наблюдение", "Настенные конструкции", "Напольные конструкции"
-								"Инженерное оборудование",		//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
-								"Детали машин",					//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
-								"Детали машин - х10",			//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
-								"Подпространственная связь",	//	"Радиорелейные платы", "Радиорелейные детали"
-								"Энергетические разработки",	//
-								"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
-								"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
-								"Персональные компьютеры",		//	"Основа", "Жесткие диски", "Сетевые карты", "Внешние накопители", "Слоты карт", "Утилитарные модули", "Питание и батареи", "Процессоры"
-								"Интегральные схемы",			//	"Ядро", "Компоненты", "Оболочки"
-								"Прочее"						//
-								)
+	part_sets = list(					// Подклассы:
+		"Рабочие инструменты ",			// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
+		"Инженерное снаряжение",		// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
+		"Строительство",				// "Контролеры", "Освещение и наблюдение", "Настенные конструкции", "Напольные конструкции"
+		"Инженерное оборудование",		//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
+		"Детали машин",					//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
+		"Детали машин - х10",			//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
+		"Подпространственная связь",	//	"Радиорелейные платы", "Радиорелейные детали"
+		"Энергетические разработки",	//
+		"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
+		"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
+		"Персональные компьютеры",		//	"Основа", "Жесткие диски", "Сетевые карты", "Внешние накопители", "Слоты карт", "Утилитарные модули", "Питание и батареи", "Процессоры"
+		"Интегральные схемы",			//	"Ядро", "Компоненты", "Оболочки"
+		"Прочее"						//
+	)
 
 /obj/item/circuitboard/machine/mechfab/engi
 	name = "плата инженерного фабрикатора"
 	desc = "Продвинутая версия протолата с удобным визуальным интерфейсом."
-	icon_state = "engineering"
+	greyscale_colors = CIRCUIT_COLOR_ENGINEERING
 	build_path = /obj/machinery/mecha_part_fabricator/engi
 
 /obj/machinery/mecha_part_fabricator/engi/Initialize(mapload)
@@ -96,26 +96,26 @@
 	desc = "Используется для создания научного оборудования."
 	circuit = /obj/item/circuitboard/machine/mechfab/sci
 	drop_zone = FALSE
-	part_sets = list(											// Подклассы:
-								"Хирургические инструменты",	// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Прочее"
-								"Рабочие инструменты  ",		// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
-								"Научное снаряжение",			// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
-								"Научное оборудование",			//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
-								"Детали машин",					//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
-								"Детали машин - х10",			//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
-								"Подпространственная связь",	//	"Радиорелейные платы", "Радиорелейные детали"
-								"Энергетические разработки",	//
-								"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
-								"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
-								"Персональные компьютеры",		//	"Основа", "Жесткие диски", "Сетевые карты", "Внешние накопители", "Слоты карт", "Утилитарные модули", "Питание и батареи", "Процессоры"
-								"Интегральные схемы",			//	"Ядро", "Компоненты", "Оболочки"
-								"Прочее"						//
-								)
+	part_sets = list(					// Подклассы:
+		"Хирургические инструменты",	// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Прочее"
+		"Рабочие инструменты  ",		// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
+		"Научное снаряжение",			// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
+		"Научное оборудование",			//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
+		"Детали машин",					//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
+		"Детали машин - х10",			//	"Базовые компоненты", "Продвинутые компоненты", "Супер компоненты", "Ультра компоненты", "Неевклидовые компоненты"
+		"Подпространственная связь",	//	"Радиорелейные платы", "Радиорелейные детали"
+		"Энергетические разработки",	//
+		"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
+		"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
+		"Персональные компьютеры",		//	"Основа", "Жесткие диски", "Сетевые карты", "Внешние накопители", "Слоты карт", "Утилитарные модули", "Питание и батареи", "Процессоры"
+		"Интегральные схемы",			//	"Ядро", "Компоненты", "Оболочки"
+		"Прочее"						//
+	)
 
 /obj/item/circuitboard/machine/mechfab/sci
 	name = "плата научного фабрикатора"
 	desc = "Продвинутая версия протолата с удобным визуальным интерфейсом."
-	icon_state = "science"
+	greyscale_colors = CIRCUIT_COLOR_SCIENCE
 	build_path = /obj/machinery/mecha_part_fabricator/sci
 
 /obj/machinery/mecha_part_fabricator/sci/Initialize(mapload)
@@ -137,20 +137,20 @@
 	desc = "Используется для создания карго оборудования."
 	circuit = /obj/item/circuitboard/machine/mechfab/cargo
 	drop_zone = FALSE
-	part_sets = list(											// Подклассы:
-								"Рабочие инструменты   ",		// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
-								"Карго снаряжение",				// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
-								"Карго оборудование",			//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
-								"Энергетические разработки",	//
-								"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
-								"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
-								"Прочее"						//
-								)
+	part_sets = list(					// Подклассы:
+		"Рабочие инструменты   ",		// "Базовые инструменты", "Продвинутые инструменты", "Инопланетные инструменты", "Монтажные комплексы", "Обслуживание монтажных комплексов", "Прочее"
+		"Карго снаряжение",				// "Огнетушители и газовые баллоны", "Экипировка", "Маркировщики", "Датчики и Сигнальные устройства", "Связь и навигация", "Диагностика и мониторинг"
+		"Карго оборудование",			//	"Терморегуляция", "Портативные генераторы", "Консоли", "Производство", "АТМОС", "Энергоснабжение", "ТЭГ", "Газовая турбина", "Телепортация", "Химпроизводство", "Сингулярность, тесла и суперматерия", "Прочее",
+		"Энергетические разработки",	//
+		"Сплавы и синтез",				//	"Сплавы металлов", "Силикатные сплавы", "Синтез"
+		"Спейсподы и шатлостроение",	//	"Производство", "Броня", "Системы вооружения", "Добыча полезных ископаемых", "Вспомогательные системы", "Шатлостроение"
+		"Прочее"						//
+	)
 
 /obj/item/circuitboard/machine/mechfab/cargo
 	name = "плата карго фабрикатора"
 	desc = "Продвинутая версия протолата с удобным визуальным интерфейсом."
-	icon_state = "supply"
+	greyscale_colors = CIRCUIT_COLOR_SUPPLY
 	build_path = /obj/machinery/mecha_part_fabricator/cargo
 
 /obj/machinery/mecha_part_fabricator/cargo/Initialize()
@@ -201,6 +201,7 @@
 	pshoom_or_beepboopblorpzingshadashwoosh = 'sound/items/screwdriver.ogg'
 	component_type = /datum/component/storage/concrete/rped/x10
 	var/ripsound = 'white/valtos/sounds/rip1.ogg'
+	var/item_type = null
 
 /datum/component/storage/concrete/rped/x10
 	max_items = 10
@@ -208,45 +209,11 @@
 /obj/item/storage/part_replacer/stock_parts_box_x10/Initialize(mapload)
 	. = ..()
 	if(contents.len)
-		var/obj/item/I = contents[1]
-		if (istype(I, /obj/item/stock_parts/scanning_module/noneuclid) || istype(I, /obj/item/stock_parts/micro_laser/quadultra))
-			var/mutable_appearance/part_overlay = new(I)
-			part_overlay.plane = FLOAT_PLANE
-			part_overlay.layer = FLOAT_LAYER
-			part_overlay.pixel_x = base_pixel_x + rand(-2, 2)
-			part_overlay.pixel_y = base_pixel_y + rand(-2, 2)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-2, 2)
-			part_overlay.pixel_y = base_pixel_y + rand(-2, 2)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-2, 2)
-			part_overlay.pixel_y = base_pixel_y + rand(-2, 2)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-2, 2)
-			part_overlay.pixel_y = base_pixel_y + rand(-2, 2)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-2, 2)
-			part_overlay.pixel_y = base_pixel_y + rand(-2, 2)
-			add_overlay(part_overlay)
-			add_overlay("evidence")
-		else
-			var/mutable_appearance/part_overlay = new(I)
-			part_overlay.plane = FLOAT_PLANE
-			part_overlay.layer = FLOAT_LAYER
-			part_overlay.pixel_x = base_pixel_x + rand(-5, 5)
-			part_overlay.pixel_y = base_pixel_y + rand(-5, 5)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-5, 5)
-			part_overlay.pixel_y = base_pixel_y + rand(-5, 5)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-5, 5)
-			part_overlay.pixel_y = base_pixel_y + rand(-5, 5)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-5, 5)
-			part_overlay.pixel_y = base_pixel_y + rand(-5, 5)
-			add_overlay(part_overlay)
-			part_overlay.pixel_x = base_pixel_x + rand(-5, 5)
-			part_overlay.pixel_y = base_pixel_y + rand(-5, 5)
+		for(var/obj/item/I as() in contents)
+			var/rand_size = (istype(I, /obj/item/stock_parts/scanning_module/noneuclid) || istype(I, /obj/item/stock_parts/micro_laser/quadultra)) ? 2 : 5
+			var/mutable_appearance/part_overlay = mutable_appearance(I.icon, I.icon_state, layer = FLOAT_LAYER, plane = FLOAT_PLANE)
+			part_overlay.pixel_x = base_pixel_x + rand(-rand_size, rand_size)
+			part_overlay.pixel_y = base_pixel_y + rand(-rand_size, rand_size)
 			add_overlay(part_overlay)
 			add_overlay("evidence")
 
@@ -265,190 +232,94 @@
 		qdel(T)
 	return ..()
 
+/obj/item/storage/part_replacer/stock_parts_box_x10/PopulateContents()
+	for(var/i in 1 to 10)
+		new item_type(src)
+
 //	Детали Т1 х10
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t1
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t1/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/capacitor(src)
-
+	item_type = /obj/item/stock_parts/capacitor
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t1
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t1/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/scanning_module(src)
-
+	item_type = /obj/item/stock_parts/scanning_module
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t1
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t1/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/manipulator(src)
-
+	item_type = /obj/item/stock_parts/manipulator
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t1
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t1/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/micro_laser(src)
-
+	item_type = /obj/item/stock_parts/micro_laser
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/bin_t1
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/bin_t1/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/matter_bin(src)
-
+	item_type = /obj/item/stock_parts/matter_bin
 
 //	Детали Т2 х10
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t2
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t2/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/capacitor/adv(src)
-
+	item_type = /obj/item/stock_parts/capacitor/adv
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t2
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t2/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/scanning_module/adv(src)
-
+	item_type = /obj/item/stock_parts/scanning_module/adv
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t2
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t2/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/manipulator/nano(src)
-
+	item_type = /obj/item/stock_parts/manipulator/nano
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t2
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t2/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/micro_laser/high(src)
-
+	item_type = /obj/item/stock_parts/micro_laser/high
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/bin_t2
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/bin_t2/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/matter_bin/adv(src)
-
+	item_type = /obj/item/stock_parts/matter_bin/adv
 
 //	Детали Т3 х10
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t3
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t3/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/capacitor/super(src)
-
+	item_type = /obj/item/stock_parts/capacitor/super
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t3
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t3/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/scanning_module/phasic(src)
-
+	item_type = /obj/item/stock_parts/scanning_module/phasic
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t3
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t3/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/manipulator/pico(src)
-
+	item_type = /obj/item/stock_parts/manipulator/pico
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t3
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t3/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/micro_laser/ultra(src)
-
+	item_type = /obj/item/stock_parts/micro_laser/ultra
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/bin_t3
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/bin_t3/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/matter_bin/super(src)
-
+	item_type = /obj/item/stock_parts/matter_bin/super
 
 //	Детали Т4 х10
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t4
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t4/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/capacitor/quadratic(src)
-
+	item_type = /obj/item/stock_parts/capacitor/quadratic
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t4
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t4/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/scanning_module/triphasic(src)
-
+	item_type = /obj/item/stock_parts/scanning_module/triphasic
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t4
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t4/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/manipulator/femto(src)
-
+	item_type = /obj/item/stock_parts/manipulator/femto
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t4
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t4/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/micro_laser/quadultra(src)
-
+	item_type = /obj/item/stock_parts/micro_laser/quadultra
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/bin_t4
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/bin_t4/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/matter_bin/bluespace(src)
-
+	item_type = /obj/item/stock_parts/matter_bin/bluespace
 
 //	Детали Т5 х10
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t5
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/capacitor_t5/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/capacitor/noneuclid(src)
-
+	item_type = /obj/item/stock_parts/capacitor/noneuclid
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t5
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/scanning_module_t5/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/scanning_module/noneuclid(src)
-
+	item_type = /obj/item/stock_parts/scanning_module/noneuclid
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t5
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/manipulator_t5/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/manipulator/noneuclid(src)
-
+	item_type = /obj/item/stock_parts/manipulator/noneuclid
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t5
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/micro_laser_t5/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/micro_laser/noneuclid(src)
-
+	item_type = /obj/item/stock_parts/micro_laser/noneuclid
 
 /obj/item/storage/part_replacer/stock_parts_box_x10/bin_t5
-
-/obj/item/storage/part_replacer/stock_parts_box_x10/bin_t5/PopulateContents()
-	for(var/i in 1 to 10)
-		new /obj/item/stock_parts/matter_bin/noneuclid(src)
-
+	item_type = /obj/item/stock_parts/matter_bin/noneuclid
 
 //Capacitors
 /datum/design/basic_capacitor_x10
@@ -785,27 +656,35 @@
 
 /obj/item/stack/sheet/plasteel/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/plasteel
 
 /obj/item/stack/sheet/mineral/plastitanium/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/mineral/plastitanium
 
 /obj/item/stack/sheet/plasmaglass/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/plasmaglass
 
 /obj/item/stack/sheet/plasmarglass/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/plasmarglass
 
 /obj/item/stack/sheet/titaniumglass/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/titaniumglass
 
 /obj/item/stack/sheet/plastitaniumglass/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/plastitaniumglass
 
 /obj/item/stack/sheet/mineral/abductor/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/mineral/abductor
 
 /obj/item/stack/sheet/rglass/x10
 	amount = 10
+	merge_type = /obj/item/stack/sheet/rglass
 
 /datum/design/plasteel_alloy_x10
 	name = "Пласталь: Железо + Плазма"

@@ -218,8 +218,8 @@
 	list_reagents = list(/datum/reagent/consumable/ethanol/beer/maltliquor = 100)
 
 /obj/item/reagent_containers/food/drinks/bottle/holywater
-	name = "flask of holy water"
-	desc = "A flask of the chaplain's holy water."
+	name = "фляга святой воды"
+	desc = "Откуда такая уверенность, что там святая вода?"
 	icon_state = "holyflask"
 	list_reagents = list(/datum/reagent/water/holywater = 100)
 	foodtype = NONE
@@ -295,7 +295,7 @@
 	// There was a large fight in the coderbus about a player reference
 	// in absinthe. Ergo, this is why the name generation is now so
 	// complicated. Judge us kindly.
-	var/shortname = pickweight(
+	var/shortname = pick_weight(
 		list("T&T" = 1, "A&A" = 1, "Generic" = 1))
 	var/fullname
 	switch(shortname)

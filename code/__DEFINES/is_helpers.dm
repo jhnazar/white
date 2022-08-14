@@ -28,7 +28,7 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 
 #define isspaceturf(A) (istype(A, /turf/open/space))
 
-#define isopenspace(A) (istype(A, /turf/open/openspace))
+#define isopenspace(A) (istype(A, /turf/open/openspace) || istype(A, /turf/open/space/openspace))
 
 #define isfloorturf(A) (istype(A, /turf/open/floor))
 
@@ -97,8 +97,6 @@ GLOBAL_LIST_INIT(turfs_without_ground, typecacheof(list(
 #define isalienroyal(A) (istype(A, /mob/living/carbon/alien/humanoid/royal))
 
 #define isalienqueen(A) (istype(A, /mob/living/carbon/alien/humanoid/royal/queen))
-
-#define istruedevil(A) (istype(A, /mob/living/carbon/true_devil))
 
 //Silicon mobs
 #define issilicon(A) (istype(A, /mob/living/silicon))
@@ -269,3 +267,5 @@ GLOBAL_LIST_INIT(book_types, typecacheof(list(
 
 #define is_traitor(M) (istype(M, /mob/living) && M.mind?.has_antag_datum(/datum/antagonist/traitor))
 #define is_hired_yohei(M) (istype(M, /mob/living) && M.mind?.has_antag_datum(/datum/antagonist/yohei))
+
+#define isdatum(thing) (istype(thing, /datum))

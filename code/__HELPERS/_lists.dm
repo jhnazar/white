@@ -195,13 +195,46 @@
 
 			return "[output][and_text][input[index]]"
 
-//Checks for specific types in a list
-/proc/is_type_in_list(atom/A, list/L)
-	if(!LAZYLEN(L) || !A)
+/**
+ * Checks for specific types in a list.
+ *
+ * If using zebra mode the list should be an assoc list with truthy/falsey values.
+ * The check short circuits so earlier entries in the input list will take priority.
+ * Ergo, subtypes should come before parent types.
+ * Notice that this is the opposite priority of [/proc/typecacheof].
+ *
+ * Arguments:
+ * - [type_to_check][/datum]: An instance to check.
+ * - [list_to_check][/list]: A list of typepaths to check the type_to_check against.
+ * - zebra: Whether to use the value of the matching type in the list instead of just returning true when a match is found.
+ */
+/proc/is_type_in_list(datum/type_to_check, list/list_to_check, zebra = FALSE)
+	if(!LAZYLEN(list_to_check) || !type_to_check)
 		return FALSE
-	for(var/type in L)
-		if(istype(A, type))
-			return TRUE
+	for(var/type in list_to_check)
+		if(istype(type_to_check, type))
+			return !zebra || list_to_check[type] // Subtypes must come first in zebra lists.
+	return FALSE
+
+/**
+ * Checks for specific paths in a list.
+ *
+ * If using zebra mode the list should be an assoc list with truthy/falsey values.
+ * The check short circuits so earlier entries in the input list will take priority.
+ * Ergo, subpaths should come before parent paths.
+ * Notice that this is the opposite priority of [/proc/typecacheof].
+ *
+ * Arguments:
+ * - path_to_check: A typepath to check.
+ * - [list_to_check][/list]: A list of typepaths to check the path_to_check against.
+ * - zebra: Whether to use the value of the mathing path in the list instead of just returning true when a match is found.
+ */
+/proc/is_path_in_list(path_to_check, list/list_to_check, zebra = FALSE)
+	if(!LAZYLEN(list_to_check) || !path_to_check)
+		return FALSE
+	for(var/path in list_to_check)
+		if(ispath(path_to_check, path))
+			return !zebra || list_to_check[path]
 	return FALSE
 
 /// Return either pick(list) or null if list is not of type /list or is empty
@@ -308,7 +341,7 @@
 //2. Gets a number between 1 and that total
 //3. For each element in the list, subtracts its weighting from that number
 //4. If that makes the number 0 or less, return that element.
-/proc/pickweight(list/L)
+/proc/pick_weight(list/L)
 	var/total = 0
 	var/item
 	for (item in L)
@@ -715,3 +748,148 @@
 	for(var/i in list_to_filter)
 		if(condition.Invoke(i))
 			. |= i
+
+///Returns a list with all weakrefs resolved
+/proc/recursive_list_resolve(list/list_to_resolve)
+	. = list()
+	for(var/element in list_to_resolve)
+		if(istext(element))
+			. += element
+			var/possible_assoc_value = list_to_resolve[element]
+			if(possible_assoc_value)
+				.[element] = recursive_list_resolve_element(possible_assoc_value)
+		else
+			. += list(recursive_list_resolve_element(element))
+
+///Helper for /proc/recursive_list_resolve
+/proc/recursive_list_resolve_element(element)
+	if(islist(element))
+		var/list/inner_list = element
+		return recursive_list_resolve(inner_list)
+	else if(isweakref(element))
+		var/datum/weakref/ref = element
+		return ref.resolve()
+	else
+		return element
+
+/// Returns a copy of the list where any element that is a datum or the world is converted into a ref
+/proc/refify_list(list/target_list)
+	var/list/ret = list()
+	for(var/i in 1 to target_list.len)
+		var/key = target_list[i]
+		var/new_key = key
+		if(isweakref(key))
+			var/datum/weakref/ref = key
+			var/resolved = ref.resolve()
+			if(resolved)
+				new_key = "[resolved] [REF(resolved)]"
+			else
+				new_key = "null weakref [REF(key)]"
+		else if(isdatum(key))
+			new_key = "[key] [REF(key)]"
+		else if(key == world)
+			new_key = "world [REF(world)]"
+		else if(islist(key))
+			new_key = refify_list(key)
+		var/value
+		if(istext(key) || islist(key) || ispath(key) || isdatum(key) || key == world)
+			value = target_list[key]
+		if(isweakref(value))
+			var/datum/weakref/ref = value
+			var/resolved = ref.resolve()
+			if(resolved)
+				value = "[resolved] [REF(resolved)]"
+			else
+				value = "null weakref [REF(key)]"
+		else if(isdatum(value))
+			value = "[value] [REF(value)]"
+		else if(value == world)
+			value = "world [REF(world)]"
+		else if(islist(value))
+			value = refify_list(value)
+		var/list/to_add = list(new_key)
+		if(value)
+			to_add[new_key] = value
+		ret += to_add
+		if(i < target_list.len)
+			CHECK_TICK
+	return ret
+
+/**
+ * Converts a list into a list of assoc lists of the form ("key" = key, "value" = value)
+ * so that list keys that are themselves lists can be fully json-encoded
+ */
+/proc/kvpify_list(list/target_list, depth = INFINITY)
+	var/list/ret = list()
+	for(var/i in 1 to target_list.len)
+		var/key = target_list[i]
+		var/new_key = key
+		if(islist(key) && depth)
+			new_key = kvpify_list(key, depth-1)
+		var/value
+		if(istext(key) || islist(key) || ispath(key) || isdatum(key) || key == world)
+			value = target_list[key]
+		if(islist(value) && depth)
+			value = kvpify_list(value, depth-1)
+		if(value)
+			ret += list(list("key" = new_key, "value" = value))
+		else
+			ret += list(list("key" = i, "value" = new_key))
+		if(i < target_list.len)
+			CHECK_TICK
+	return ret
+
+/// Compares 2 lists, returns TRUE if they are the same
+/proc/deep_compare_list(list/list_1, list/list_2)
+	if(!islist(list_1) || !islist(list_2))
+		return FALSE
+
+	if(list_1 == list_2)
+		return TRUE
+
+	if(list_1.len != list_2.len)
+		return FALSE
+
+	for(var/i in 1 to list_1.len)
+		var/key_1 = list_1[i]
+		var/key_2 = list_2[i]
+		if (islist(key_1) && islist(key_2))
+			if(!deep_compare_list(key_1, key_2))
+				return FALSE
+		else if(key_1 != key_2)
+			return FALSE
+		if(istext(key_1) || islist(key_1) || ispath(key_1) || isdatum(key_1) || key_1 == world)
+			var/value_1 = list_1[key_1]
+			var/value_2 = list_2[key_1]
+			if (islist(value_1) && islist(value_2))
+				if(!deep_compare_list(value_1, value_2))
+					return FALSE
+			else if(value_1 != value_2)
+				return FALSE
+
+	return TRUE
+
+/// Returns a copy of the list where any element that is a datum is converted into a weakref
+/proc/weakrefify_list(list/target_list)
+	var/list/ret = list()
+	for(var/i in 1 to target_list.len)
+		var/key = target_list[i]
+		var/new_key = key
+		if(isdatum(key))
+			new_key = WEAKREF(key)
+		else if(islist(key))
+			new_key = weakrefify_list(key)
+		var/value
+		if(istext(key) || islist(key) || ispath(key) || isdatum(key) || key == world)
+			value = target_list[key]
+		if(isdatum(value))
+			value = WEAKREF(value)
+		else if(islist(value))
+			value = weakrefify_list(value)
+		var/list/to_add = list(new_key)
+		if(value)
+			to_add[new_key] = value
+		ret += to_add
+		if(i < target_list.len)
+			CHECK_TICK
+	return ret

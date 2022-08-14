@@ -67,7 +67,7 @@
 	spawn_antag(student.client, get_turf(src), apprentice_school, teacher.mind)
 
 /obj/item/antag_spawner/contract/spawn_antag(client/C, turf/T, kind, datum/mind/user)
-	new /obj/effect/particle_effect/smoke(T)
+	new /obj/effect/particle_effect/fluid(T)
 	var/mob/living/carbon/human/M = new/mob/living/carbon/human(T)
 	C.prefs.copy_to(M)
 	M.key = C.key
@@ -137,6 +137,10 @@
 	C.prefs.copy_to(M)
 	M.key = C.key
 	var/datum/mind/op_mind = M.mind
+	if(length(GLOB.newplayer_start)) // needed as hud code doesn't render huds if the atom (in this case the nukie) is in nullspace, so just move the nukie somewhere safe
+		M.forceMove(pick(GLOB.newplayer_start))
+	else
+		M.forceMove(locate(1,1,1))
 
 	antag_datum = new()
 	antag_datum.send_to_spawnpoint = FALSE

@@ -46,6 +46,7 @@
 #define UNIT_TEST_FAILED 1
 #define UNIT_TEST_SKIPPED 2
 
+#define TEST_PRE 0
 #define TEST_DEFAULT 1
 #define TEST_DEL_WORLD INFINITY
 
@@ -84,6 +85,7 @@
 #include "holidays.dm"
 #include "keybinding_init.dm"
 #include "machine_disassembly.dm"
+//#include "mapping.dm" // something wrong
 #include "medical_wounds.dm"
 #include "merge_type.dm"
 #include "metabolizing.dm"

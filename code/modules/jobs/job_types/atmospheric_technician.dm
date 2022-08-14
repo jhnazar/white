@@ -1,16 +1,19 @@
 /datum/job/atmospheric_technician
-	title = "Atmospheric Technician"
+	title = JOB_ATMOSPHERIC_TECHNICIAN
 	ru_title = "Атмосферный Техник"
-	department_head = list("Chief Engineer" = "Старший Инженер")
+	department_head = list(JOB_CHIEF_ENGINEER = "Старший Инженер")
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "старшему инженеру"
 	selection_color = "#fff5cc"
-	exp_requirements = 600
+	exp_requirements = 300
 	exp_type = EXP_TYPE_CREW
 
 	outfit = /datum/outfit/job/atmos
+
+	skills = list(/datum/skill/engineering = SKILL_EXP_APPRENTICE)
+	minimal_skills = list(/datum/skill/engineering = SKILL_EXP_APPRENTICE)
 
 	paycheck = PAYCHECK_MEDIUM
 	paycheck_department = ACCOUNT_ENG
@@ -20,11 +23,15 @@
 	display_order = JOB_DISPLAY_ORDER_ATMOSPHERIC_TECHNICIAN
 	bounty_types = CIV_JOB_ENG
 
+	departments_list = list(
+		/datum/job_department/engineering,
+	)
+
 	rpg_title = "Aeromancer"
 	rpg_title_ru = "Аэромансер"
 
 /datum/outfit/job/atmos
-	name = "Atmospheric Technician"
+	name = JOB_ATMOSPHERIC_TECHNICIAN
 	jobtype = /datum/job/atmospheric_technician
 
 	belt = /obj/item/storage/belt/utility/atmostech
@@ -47,5 +54,5 @@
 
 	mask = /obj/item/clothing/mask/gas/atmos
 	suit = /obj/item/clothing/suit/space/hardsuit/engine/atmos
-	suit_store = /obj/item/tank/internals/oxygen
+	l_hand = /obj/item/tank/internals/oxygen
 	internals_slot = ITEM_SLOT_SUITSTORE

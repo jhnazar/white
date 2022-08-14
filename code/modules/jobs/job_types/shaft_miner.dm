@@ -1,7 +1,7 @@
 /datum/job/shaft_miner
-	title = "Shaft Miner"
+	title = JOB_SHAFT_MINER
 	ru_title = "Шахтёр"
-	department_head = list("Head of Personnel")
+	department_head = list(JOB_HEAD_OF_PERSONNEL)
 	faction = "Station"
 	total_positions = 2
 	spawn_positions = 2
@@ -9,7 +9,7 @@
 	selection_color = "#dcba97"
 
 	exp_type = EXP_TYPE_CREW
-	exp_requirements = 900
+	exp_requirements = 300
 
 	outfit = /datum/outfit/job/miner
 
@@ -23,7 +23,7 @@
 	rpg_title_ru = "Искатель приключений"
 
 /datum/outfit/job/miner
-	name = "Shaft Miner"
+	name = JOB_SHAFT_MINER
 	jobtype = /datum/job/shaft_miner
 
 	belt = /obj/item/modular_computer/tablet/pda/shaftminer
@@ -53,7 +53,7 @@
 	suit = /obj/item/clothing/suit/hooded/explorer
 	mask = /obj/item/clothing/mask/gas/explorer
 	glasses = /obj/item/clothing/glasses/meson
-	suit_store = /obj/item/tank/internals/tactical
+	r_hand = /obj/item/tank/internals/tactical
 	internals_slot = ITEM_SLOT_SUITSTORE
 	backpack_contents = list(
 		/obj/item/flashlight/seclite=1,\

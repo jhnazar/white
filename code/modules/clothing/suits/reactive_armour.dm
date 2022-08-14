@@ -3,7 +3,7 @@
 	desc = "Экспериментальный образец, в ожидании установки аномального ядра."
 	icon_state = "reactiveoff"
 	icon = 'icons/obj/clothing/suits.dmi'
-	w_class = WEIGHT_CLASS_BULKY
+	w_class = WEIGHT_CLASS_NORMAL
 
 /obj/item/reactive_armour_shell/attackby(obj/item/I, mob/user, params)
 	..()
@@ -141,6 +141,7 @@
 	var/zap_power = 25000
 	var/zap_range = 20
 	var/zap_flags = ZAP_MOB_DAMAGE | ZAP_OBJ_DAMAGE
+	reactivearmor_cooldown_duration = 15 SECONDS
 
 /obj/item/clothing/suit/armor/reactive/tesla/dropped(mob/user)
 	..()

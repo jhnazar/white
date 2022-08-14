@@ -1,8 +1,8 @@
 /datum/job/head_of_security
-	title = "Head of Security"
+	title = JOB_HEAD_OF_SECURITY
 	ru_title = "Начальник Охраны"
 	auto_deadmin_role_flags = DEADMIN_POSITION_HEAD|DEADMIN_POSITION_SECURITY
-	department_head = list("Captain")
+	department_head = list(JOB_CAPTAIN)
 	head_announce = list(RADIO_CHANNEL_SECURITY)
 	faction = "Station"
 	total_positions = 1
@@ -10,8 +10,8 @@
 	supervisors = "капитану"
 	selection_color = "#ffdddd"
 	req_admin_notify = 1
-	minimal_player_age = 45
-	exp_requirements = 9100
+	minimal_player_age = 14
+	exp_requirements = 1800
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_SECURITY
 
@@ -29,6 +29,11 @@
 	display_order = JOB_DISPLAY_ORDER_HEAD_OF_SECURITY
 	bounty_types = CIV_JOB_SEC
 
+	departments_list = list(
+		/datum/job_department/security,
+		/datum/job_department/command,
+	)
+
 	rpg_title = "Guard Leader"
 	rpg_title_ru = "Начальник стражи"
 
@@ -38,7 +43,7 @@
 		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, .proc/minor_announce, "Учитывая нехватку экипажа, текущим капитаном станции теперь является [H.real_name]!"))
 
 /datum/outfit/job/hos
-	name = "Head of Security"
+	name = JOB_HEAD_OF_SECURITY
 	jobtype = /datum/job/head_of_security
 
 	id = /obj/item/card/id/advanced/silver
@@ -72,5 +77,5 @@
 
 	mask = /obj/item/clothing/mask/gas/sechailer
 	suit = /obj/item/clothing/suit/space/hardsuit/security/hos
-	suit_store = /obj/item/tank/internals/oxygen
+	l_hand = /obj/item/tank/internals/oxygen
 

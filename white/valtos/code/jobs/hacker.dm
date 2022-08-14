@@ -1,14 +1,14 @@
 /datum/job/hacker
-	title = "Hacker"
+	title = JOB_HACKER
 	ru_title = "Взломщик"
 	auto_deadmin_role_flags = DEADMIN_POSITION_HEAD
-	department_head = list("Research Director")
+	department_head = list(JOB_RESEARCH_DIRECTOR)
 	faction = "Scarlet"
 	total_positions = 0
 	spawn_positions = 0
 	supervisors = "научному руководителю"
 	selection_color = "#00eeff"
-	exp_requirements = 30000
+	exp_requirements = 3000
 	exp_type = EXP_TYPE_CREW
 	display_order = JOB_DISPLAY_ORDER_SCIENTIST
 
@@ -163,7 +163,7 @@
 	icon_state = "guards"
 	inhand_icon_state = "guards"
 	siemens_coefficient = 0
-	permeability_coefficient = 0.01
+	armor = list(MELEE = 0, BULLET = 0, LASER = 0, ENERGY = 0, BOMB = 0, BIO = 100, FIRE = 0, ACID = 0)
 	strip_delay = 500
 	cold_protection = HANDS
 	min_cold_protection_temperature = GLOVES_MIN_TEMP_PROTECT

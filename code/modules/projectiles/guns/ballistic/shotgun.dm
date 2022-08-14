@@ -62,7 +62,6 @@
 	inhand_icon_state = "shotgun_combat"
 	fire_delay = 5
 	mag_type = /obj/item/ammo_box/magazine/internal/shot/com
-	w_class = WEIGHT_CLASS_HUGE
 
 //Dual Feed Shotgun
 
@@ -159,13 +158,14 @@
 	sawn_desc = "Омар идёт!"
 	obj_flags = UNIQUE_RENAME
 	rack_sound_volume = 0
-	unique_reskin = list("Default" = "dshotgun",
-						"Dark Red Finish" = "dshotgun_d",
-						"Ash" = "dshotgun_f",
-						"Faded Grey" = "dshotgun_g",
-						"Maple" = "dshotgun_l",
-						"Rosewood" = "dshotgun_p"
-						)
+	unique_reskin = list(
+		"Default" = "dshotgun",
+		"Dark Red Finish" = "dshotgun_d",
+		"Ash" = "dshotgun_f",
+		"Faded Grey" = "dshotgun_g",
+		"Maple" = "dshotgun_l",
+		"Rosewood" = "dshotgun_p"
+	)
 	semi_auto = TRUE
 	bolt_type = BOLT_TYPE_NO_BOLT
 	can_be_sawn_off  = TRUE

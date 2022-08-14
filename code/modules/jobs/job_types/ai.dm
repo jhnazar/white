@@ -1,5 +1,5 @@
 /datum/job/ai
-	title = "AI"
+	title = JOB_AI
 	ru_title = "ИИ"
 	auto_deadmin_role_flags = DEADMIN_POSITION_SILICON
 	faction = "Station"
@@ -8,13 +8,17 @@
 	selection_color = "#ccffcc"
 	supervisors = "своим законам"
 	req_admin_notify = TRUE
-	minimal_player_age = 60
-	exp_requirements = 9600
+	minimal_player_age = 14
+	exp_requirements = 1200
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_SILICON
 	display_order = JOB_DISPLAY_ORDER_AI
 	allow_bureaucratic_error = FALSE
 	var/do_special_check = TRUE
+
+	departments_list = list(
+		/datum/job_department/silicon,
+	)
 
 /datum/job/ai/equip(mob/living/carbon/human/H, visualsOnly, announce, latejoin, datum/outfit/outfit_override, client/preference_source = null)
 	if(visualsOnly)

@@ -1,6 +1,6 @@
 /mob/living/simple_animal/hostile/illusion
-	name = "illusion"
-	desc = "It's a fake!"
+	name = "иллюзия"
+	desc = "Не настоящая?!"
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "static"
 	icon_living = "static"
@@ -76,3 +76,11 @@
 
 /mob/living/simple_animal/hostile/illusion/escape/AttackingTarget()
 	return FALSE
+
+/mob/living/simple_animal/hostile/illusion/mirage
+	AIStatus = AI_OFF
+	density = FALSE
+
+/mob/living/simple_animal/hostile/illusion/mirage/death(gibbed)
+	do_sparks(rand(3, 6), FALSE, src)
+	return ..()

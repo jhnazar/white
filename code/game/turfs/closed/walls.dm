@@ -39,7 +39,7 @@
 		var/mutable_appearance/underlay_appearance = mutable_appearance(layer = TURF_LAYER, plane = FLOOR_PLANE)
 		if(fixed_underlay["space"])
 			underlay_appearance.icon = 'icons/turf/space.dmi'
-			underlay_appearance.icon_state = SPACE_ICON_STATE
+			underlay_appearance.icon_state = SPACE_ICON_STATE(x, y, z)
 			underlay_appearance.plane = PLANE_SPACE
 		else
 			underlay_appearance.icon = fixed_underlay["icon"]
@@ -326,5 +326,7 @@
 		new /obj/effect/temp_visual/glowing_rune(src)
 	ChangeTurf(/turf/closed/wall/rust)
 
+/turf/closed/wall/metal_foam_base
+	girder_type = /obj/structure/foamedmetal
 
 #undef MAX_DENT_DECALS

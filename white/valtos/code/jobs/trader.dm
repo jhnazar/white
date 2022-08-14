@@ -1,12 +1,12 @@
 /datum/job/trader
-	title = "Trader"
+	title = JOB_TRADER
 	ru_title = "Торговец"
 	supervisors = "торговой ассоциации и ордену Алого Рассвета"
 	faction = "Scarlet"
 	total_positions = 0
 	spawn_positions = 0
-	minimal_player_age = 60
-	exp_requirements = 1000
+	minimal_player_age = 14
+	exp_requirements = 600
 	exp_type = EXP_TYPE_CREW
 	exp_type_department = EXP_TYPE_CREW
 	outfit = /datum/outfit/job/trader
