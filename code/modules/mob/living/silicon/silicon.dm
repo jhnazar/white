@@ -87,7 +87,7 @@
 		modularInterface.saved_job = "pAI Messenger"
 		modularInterface.install_component(new /obj/item/computer_hardware/hard_drive/small/integrated)
 
-/mob/living/silicon/robot/model/syndicate/create_modularInterface()
+/mob/living/silicon/robot/modules/syndicate/create_modularInterface()
 	if(!modularInterface)
 		modularInterface = new /obj/item/modular_computer/tablet/integrated/syndicate(src)
 		modularInterface.saved_identification = real_name
@@ -208,7 +208,7 @@
 		if (href_list["dead"] && (!isdead(usr) && !usr.client.holder)) // do not print deadchat law notice if the user is now alive
 			to_chat(usr, span_warning("You cannot view law changes that were made while you were dead."))
 			return
-		to_chat(usr, json_decode(href_list["printlawtext"]))
+		to_chat(usr, url_decode(href_list["printlawtext"]))
 
 	return
 
