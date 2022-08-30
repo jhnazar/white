@@ -340,6 +340,10 @@
 	desc = "Консоль, которая предоставляет персоналу возможность выполнять небольшие поручения, достаточно лишь вставить свою ID-карту."
 	build_path = /obj/machinery/computer/piratepad_control/civilian
 
+/obj/item/circuitboard/computer/tram_controls
+	name = "Управление трамваем"
+	build_path = /obj/machinery/computer/tram_controls
+
 //Medical
 
 /obj/item/circuitboard/computer/crew
@@ -603,8 +607,8 @@
 	build_path = /obj/machinery/computer/shuttle_flight/exploration
 
 /obj/item/circuitboard/computer/shuttle/flight_control
-	name = "консоль управления шатлом"
-	desc = "Терминал управления шатлом из комплекта Сделай сам - шатлостроение."
+	name = "консоль управления шаттлом"
+	desc = "Терминал управления шаттлом из комплекта Сделай сам - шаттлостроение."
 	greyscale_colors = CIRCUIT_COLOR_GENERIC
 	build_path = /obj/machinery/computer/shuttle_flight/custom_shuttle
 

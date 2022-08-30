@@ -273,7 +273,7 @@
 
 		for(var/i in bodyparts)
 			var/obj/item/bodypart/body_part = i
-			if(body_part.get_bleed_rate())
+			if(body_part.get_part_bleed_rate())
 				bleeding_limbs += body_part
 			if(body_part.grasped_by)
 				grasped_limbs += body_part
@@ -379,7 +379,7 @@
 				msg += "<span class='deadsay'>[t_on] выглядит не очень разумно.</span>\n"
 			if(!key)
 				msg += "<span class='deadsay'>[t_on] кататоник. Стресс от жизни в глубоком космосе сильно повлиял на н[t_ego]. Восстановление маловероятно.</span>\n"
-			else if(!client)
+			else if(!client && !hide_client_absence)
 				msg += "<span class='notice'>[t_on] имеет пустой, рассеянный взгляд и кажется совершенно не реагирующим ни на что. [t_on] может выйти из этого в ближайшее время.</span>\n"
 
 	var/trait_exam = common_trait_examine()

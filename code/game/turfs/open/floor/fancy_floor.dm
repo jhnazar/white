@@ -131,7 +131,7 @@
 
 /turf/open/floor/grass/Initialize(mapload)
 	. = ..()
-	AddElement(/datum/element/diggable, ore_type, 2, "вскапываю", "вскапывает")
+	AddElement(/datum/element/diggable, ore_type, 2, worm_chance = 50, action_text = "вскапываю", action_text_third_person = "вскапывает")
 	if(nospawn)
 		return
 	spawniconchange()
@@ -431,6 +431,19 @@
 	underlay_appearance.icon = DEFAULT_FLOORS_ICON
 	underlay_appearance.icon_state = "basalt"
 	return TRUE
+
+/turf/open/floor/fakeice
+	desc = "Is it marble, polished to a mirror finish? Or just really, really grippy ice?"
+	icon = 'icons/turf/floors/ice_turf.dmi'
+	icon_state = "ice_turf-0"
+	base_icon_state = "ice_turf-0"
+
+/turf/open/floor/fakeice/slippery
+	desc = "Somehow, it is not melting under these conditions. Must be some very thick ice. Just as slippery too."
+
+/turf/open/floor/fakeice/slippery/Initialize(mapload)
+	. = ..()
+	MakeSlippery(TURF_WET_PERMAFROST, INFINITY, 0, INFINITY, TRUE)
 
 /turf/open/floor/fakespace
 	icon = 'icons/turf/space.dmi'

@@ -352,13 +352,13 @@
 
 	// allow checks: are we listening on that frequency?
 	if (input_frequency == frequency)
-		playsound(get_turf(src), radiosound, rand(5, 10))
+		playsound(get_turf(src), radiosound, rand(5, 10), extrarange = -3)
 		return TRUE
 	for(var/ch_name in channels)
 		if(channels[ch_name] & FREQ_LISTENING)
 			//the GLOB.radiochannels list is located in communications.dm
 			if(GLOB.radiochannels[ch_name] == text2num(input_frequency) || syndie)
-				playsound(get_turf(src), radiosound, rand(5, 10))
+				playsound(get_turf(src), radiosound, rand(5, 10), extrarange = -3)
 				return TRUE
 	return FALSE
 
@@ -561,7 +561,7 @@
 	name = "старое радио"
 	icon_state = "radio"
 	worn_icon_state = "radio"
-
+/*
 /obj/item/radio/ancient/Initialize(mapload)
 	. = ..()
 	var/datum/component/soundplayer/SP = AddComponent(/datum/component/soundplayer)
@@ -572,3 +572,4 @@
 	SP.playing_range = 14
 	SP.playing_falloff = 1
 	SP.active = TRUE
+*/

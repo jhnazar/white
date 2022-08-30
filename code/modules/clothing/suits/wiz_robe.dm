@@ -72,6 +72,7 @@
 	strip_delay = 50
 	equip_delay_other = 50
 	resistance_flags = FIRE_PROOF | ACID_PROOF
+	clothing_flags = CASTING_CLOTHES
 
 /obj/item/clothing/suit/wizrobe/red
 	name = "красная роба волшебника"
@@ -213,7 +214,7 @@
 /obj/item/wizard_armour_charge
 	name = "заряды щита боевого мага"
 	desc = "Мощная руна которая увеличит количество ударов, которое может выдержать броня боевого мага, перед тем как сломаться.."
-	icon = 'icons/effects/effects.dmi'
-	icon_state = "electricity2"
+	icon = 'icons/effects/anomalies.dmi'
+	icon_state = "flux"
 	/// How many charges get restored
 	var/restored_charges = 8
